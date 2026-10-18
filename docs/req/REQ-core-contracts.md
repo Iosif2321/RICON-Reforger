@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.7 DRAFT (NetworkType registry)**, 2026-10-19. Автор: codex. Ревью: claude.
+Версия: **0.7 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -16,7 +16,10 @@ Snapshot/manager review: snapshot oracle revision 9 согласован в id58
 согласованы в id602. `WORKBENCH_COMPILE_PASS` и runtime всё ещё не выполнялись.
 
 Routing review: route oracle revision 4 согласован в id632; `RICON_NetworkContracts.c` согласован в id635.
-Кэш route-result до `Evaluate` и mutation legs после Evaluate отмечены как low-priority API follow-up без callers.
+Route-result до `Evaluate` различается через `WasEvaluated`; legs защищены builder-правилом AddLeg-before-Evaluate.
+
+Extension/registry review: NetworkType registry и immutable route builder согласованы в id656; Antenna seam — id653;
+TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures ещё не компилировались и SelfCheck не запускался.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
@@ -312,7 +315,7 @@ Stable route reasons:
 | `INVALID_CONTEXT` | maxHops/session/context недопустимы |
 | `EMPTY_ROUTE` | legs отсутствуют |
 | `TOO_MANY_HOPS` | `legs.Count() > maxHops`; равенство допустимо |
-| `NULL_LEG` | элемент legs отсутствует |
+| `NULL_LEG` | элемент legs отсутствует; defensive boundary для malformed/deserialized/subclass state, через public `AddLeg` недостижим |
 | `INVALID_ENDPOINT` | endpoint ID неположителен либо leg ведёт сама в себя |
 | `INVALID_BUDGET` | budget отсутствует/invalid/Q не finite `[0,1]`/state недопустим; LOST обязан иметь Q=0 |
 | `WRONG_START` | первая leg начинается не с talker |
@@ -356,6 +359,8 @@ Authority manager регистрирует NetworkType атомарно: policy 
 CallSessionFactory optional для policy без call sessions; если policy объявляет `RequiresCallSessionFactory`, factory
 обязательна. Переданная factory MUST иметь valid config и тот же networkTypeId. Любая ошибка не меняет ни один map.
 После registry freeze policy/factory доступны только по exact ID; fallback запрещён.
+Freeze разрешён, если есть хотя бы один resolved Band evaluator **или** один NetworkType policy; network-only core
+считается сознательно допустимым, а полностью пустой registry — ошибкой.
 
 `VoNIntegration` не владеет route/snapshot registries. До ADR-001/Workbench evidence методы MAY быть no-op
 scaffold; никакой недоказанный actuator не получает `PASS`. Snapshot должен пройти receiver/ordering contract до
