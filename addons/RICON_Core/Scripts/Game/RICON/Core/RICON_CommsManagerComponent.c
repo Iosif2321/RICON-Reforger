@@ -294,7 +294,9 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		if (!IsAuthority() || linkId <= 0 || m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX)
 			return false;
 
-		int current = m_mLinkSeqById.Get(linkId);
+		int current;
+		if (!m_mLinkSeqById.Find(linkId, current))
+			current = 0;
 		if (current >= int.MAX - 1)
 		{
 			if (!RotateSessionEpoch())
