@@ -1,8 +1,8 @@
 {
   "schema": "ricon.oracle.route",
   "version": 1,
-  "revision": 3,
-  "source": "docs/req/REQ-core-contracts.md@d09968b",
+  "revision": 4,
+  "source": "docs/req/REQ-core-contracts.md@f08e20d",
   "generatedBy": "claude: expected results written by hand from REQ-core §9 (not from Enforce code)",
   "states": [
     "LOST",
