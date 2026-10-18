@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.2 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.3 DRAFT (oracle-review)**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -86,6 +86,7 @@ contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и повторной
 | `interferenceDbm` | float, dBm | finite, meaningful iff flag=true | InterferenceModel | `INVALID_INTERFERENCE` |
 | `bandId` | stable string ID | non-empty, registered | server catalog | `UNKNOWN_BAND` |
 | `modelId` | stable string ID | non-empty, registered for band | registry resolution | `UNKNOWN_MODEL` |
+| `intelligibilityModelId` | stable string ID | non-empty, registered | server config | `UNKNOWN_MODEL` |
 
 Ровно один из `hasRxSensitivity` и `hasRequiredSinr` MUST быть true: каталог либо задаёт измеренную sensitivity,
 либо требуемый SINR, из которого link-eval получает sensitivity по `REQ-link-eval.md`. Оба/ни одного — ошибка
@@ -93,6 +94,28 @@ catalog configuration.
 
 Числовые sentinel (`-999`, `-900`) MUST NOT кодировать отсутствие optional-поля. Global bounds мощности/усиления
 MUST NOT быть зашиты в evaluator: они принадлежат server catalog конкретного устройства/диапазона.
+
+### 4.1 Детерминированный порядок валидации
+
+Если вход нарушает несколько границ, budget MUST сообщать первую причину в фиксированном порядке:
+
+1. координаты;
+2. частота (`f`);
+3. полоса (`B`);
+4. мощность передатчика;
+5. усиления;
+6. noise figure;
+7. XOR «ровно один порог»;
+8. значение выбранного порога;
+9. interference flag/value;
+10. `bandId`;
+11. propagation `modelId`;
+12. `noiseEnvironmentId`;
+13. `intelligibilityModelId`;
+14. domain уже выбранной модели.
+
+Этот порядок — часть schema revision и MUST проверяться multi-invalid vectors, чтобы Enforce и oracle не выбирали
+разные reason codes (`oracle/vectors/link_eval_v1.json`, revision 2).
 
 ## 5. Loss layers и `LinkBudget`
 
@@ -247,7 +270,7 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 |---|---|---|---|
 | CT-CORE-001 | null/transient model lifetime не исчезает | API-01 | CT + WB |
 | CT-CORE-002 | ровно один из sensitivity/required-SINR; omitted interference; explicit `0 dBm` не absent | A13/API-02 | CT |
-| CT-CORE-003 | NaN/Inf в каждом scalar/vector component; invalid outputs остаются finite | A8/A10/API-02 | CT + OR |
+| CT-CORE-003 | NaN/Inf в каждом scalar/vector component; invalid outputs finite; multi-invalid соблюдает §4.1 | A8/A10/API-02 | CT + OR |
 | CT-CORE-004 | empty/duplicate/unknown registry IDs и band/model mismatch | B4/API-04 | CT |
 | CT-CORE-005 | stale/equal/new seq; schema/session/link mismatch | B2 | CT |
 | CT-CORE-006 | seq overflow инициирует epoch rotation до wrap | B2 | CT |

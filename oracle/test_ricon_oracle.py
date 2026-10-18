@@ -24,8 +24,9 @@ class OracleVectorTests(unittest.TestCase):
     def test_vector_schema_is_versioned_and_unique(self) -> None:
         self.assertEqual("ricon.oracle.link_eval", self.document["schema"])
         self.assertEqual(1, self.document["version"])
+        self.assertEqual(2, self.document["revision"])
         identifiers = [vector["id"] for vector in self.document["vectors"]]
-        self.assertEqual(46, len(identifiers))
+        self.assertEqual(57, len(identifiers))
         self.assertEqual(len(identifiers), len(set(identifiers)))
 
     def test_linear_fixture_is_explicitly_test_only(self) -> None:
@@ -43,7 +44,7 @@ class OracleVectorTests(unittest.TestCase):
         invalid_vectors = [
             vector for vector in self.document["vectors"] if vector["kind"] == "invalid"
         ]
-        self.assertEqual(11, len(invalid_vectors))
+        self.assertEqual(22, len(invalid_vectors))
         for vector in invalid_vectors:
             with self.subTest(vector=vector["id"]):
                 actual = ricon_oracle.evaluate_vector(vector, self.document)
@@ -66,6 +67,16 @@ class OracleVectorTests(unittest.TestCase):
         malformed["tolerances"]["db"] = 0
         failures = ricon_oracle.check_document(malformed)
         self.assertEqual(["schema: tolerance db недопустим"], failures)
+
+    def test_tolerance_mapping_distinguishes_metres_from_dbm(self) -> None:
+        tolerances = self.document["tolerances"]
+        self.assertEqual(tolerances["m"], ricon_oracle.tolerance_for("distanceM", tolerances))
+        self.assertEqual(tolerances["m"], ricon_oracle.tolerance_for("effectiveDistanceM", tolerances))
+        self.assertEqual(tolerances["db"], ricon_oracle.tolerance_for("rxPowerDbm", tolerances))
+        self.assertEqual(tolerances["db"], ricon_oracle.tolerance_for("sinrDb", tolerances))
+        self.assertEqual(
+            tolerances["ratio"], ricon_oracle.tolerance_for("intelligibility", tolerances)
+        )
 
     def test_lost_is_valid_physics_not_invalid_input(self) -> None:
         vector = next(

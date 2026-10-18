@@ -200,14 +200,15 @@ def validate_query(query: dict[str, Any]) -> None:
     if bandwidth <= 0:
         raise OracleError("INVALID_BANDWIDTH", "bandwidthHz должна быть положительной")
 
+    require_finite(query.get("txPowerDbm"), "CATALOG_VIOLATION", "txPowerDbm")
+    for field in ("txGainDbi", "rxGainDbi"):
+        require_finite(query.get(field), "INVALID_GAIN", field)
+
     noise_figure = require_finite(
         query.get("rxNoiseFigureDb"), "INVALID_NOISE_FIGURE", "rxNoiseFigureDb"
     )
     if noise_figure < 0:
         raise OracleError("INVALID_NOISE_FIGURE", "rxNoiseFigureDb не может быть отрицательным")
-
-    for field in ("txPowerDbm", "txGainDbi", "rxGainDbi"):
-        require_finite(query.get(field), "CATALOG_VIOLATION", field)
 
     has_sensitivity = require_bool(
         query.get("hasRxSensitivity"), "CATALOG_VIOLATION", "hasRxSensitivity"
@@ -234,16 +235,17 @@ def validate_query(query: dict[str, Any]) -> None:
             query.get("interferenceDbm"), "INVALID_INTERFERENCE", "interferenceDbm"
         )
 
-    environment = query.get("noiseEnvironmentId")
-    if not isinstance(environment, str) or environment not in P372_ENVIRONMENTS:
-        raise OracleError("UNKNOWN_NOISE_ENVIRONMENT", "неизвестная категория внешнего шума")
-
     if not isinstance(query.get("bandId"), str) or not query["bandId"]:
         raise OracleError("UNKNOWN_BAND", "bandId отсутствует")
     if query.get("modelId") != "free_space":
         raise OracleError("UNKNOWN_MODEL", "oracle v1 поддерживает только free_space")
+
+    environment = query.get("noiseEnvironmentId")
+    if not isinstance(environment, str) or environment not in P372_ENVIRONMENTS:
+        raise OracleError("UNKNOWN_NOISE_ENVIRONMENT", "неизвестная категория внешнего шума")
+
     if query.get("intelligibilityModelId") != "linear_test":
-        raise OracleError("CATALOG_VIOLATION", "oracle v1 допускает только TEST_ONLY linear_test")
+        raise OracleError("UNKNOWN_MODEL", "oracle v1 допускает только TEST_ONLY linear_test")
 
 
 def evaluate_budget(query: dict[str, Any], fixture: dict[str, Any]) -> dict[str, Any]:
@@ -372,9 +374,11 @@ def evaluate_vector(vector: dict[str, Any], document: dict[str, Any]) -> dict[st
 
 def tolerance_for(key: str, tolerances: dict[str, Any]) -> float:
     lowered = key.lower()
-    if lowered.endswith("m") or "distance" in lowered:
+    if key.endswith(("Dbm", "Db", "Dbi")):
+        return float(tolerances["db"])
+    if key.endswith("M") or "distance" in lowered:
         return float(tolerances["m"])
-    if "intelligibility" in lowered or lowered.startswith("q"):
+    if "intelligibility" in lowered or key.startswith(("q", "Q")):
         return float(tolerances["ratio"])
     return float(tolerances["db"])
 
