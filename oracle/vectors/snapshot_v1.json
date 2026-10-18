@@ -1,7 +1,7 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 7,
+  "revision": 8,
   "source": "docs/req/REQ-core-contracts.md@b9f90e8",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
@@ -2109,6 +2109,125 @@
       },
       "tags": [
         "resync с epoch = int.MAX отвергается целиком"
+      ]
+    },
+    {
+      "id": "RX-17",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "receive",
+            "nowMs": 10,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 8,
+              "linkId": 10,
+              "linkSeq": 1,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 4,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 30,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 12,
+              "linkSeq": 1,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "после отказа по новому epoch identity снята: повтор снимка старого epoch не принимается как ACCEPT_FIRST"
       ]
     },
     {

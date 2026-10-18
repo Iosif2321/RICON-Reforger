@@ -101,7 +101,10 @@ class Receiver:
         if self.epoch is None or s["schemaVersion"] != self.supported_schema:
             return self.result("INVALID_IDENTITY", ["REQUEST_RESYNC"])
         if s["sessionEpoch"] != self.epoch:
-            self.slots = {}  # сброс state старого epoch (§8.3)
+            # Сброс state старого epoch (§8.3) вместе с identity: иначе повтор старого снимка попал бы
+            # в пустой слот как ACCEPT_FIRST. До нового full resync всё — INVALID_IDENTITY.
+            self.epoch = None
+            self.slots = {}
             return self.result("INVALID_IDENTITY", ["REQUEST_RESYNC"])
         current = self.slots.get(s["linkId"])
         decision = compare(current[0] if current else None, s)
