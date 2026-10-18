@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.6 DRAFT (routing vectors)**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.6 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -14,6 +14,9 @@ claude подтвердил итог в agora id548. Это по-прежнем�
 
 Snapshot/manager review: snapshot oracle revision 9 согласован в id587; Enforce manager/snapshot/allocator
 согласованы в id602. `WORKBENCH_COMPILE_PASS` и runtime всё ещё не выполнялись.
+
+Routing review: route oracle revision 4 согласован в id632; `RICON_NetworkContracts.c` согласован в id635.
+Кэш route-result до `Evaluate` и mutation legs после Evaluate отмечены как low-priority API follow-up без callers.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
