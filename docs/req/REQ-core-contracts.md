@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.4 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.5 DRAFT (snapshot traces)**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -240,20 +240,40 @@ Contract требует различие активных session/world generati
 
 ### 8.2 Sequence overflow
 
-`linkSeq` MUST NOT wrap. До достижения `int.MAX` authority MUST начать новый `sessionEpoch`, выполнить full resync и
-сбросить per-link seq в 1. Saturating/wrapped сравнение запрещено.
+`linkSeq` MUST NOT wrap и authority MUST NOT выдавать значение `int.MAX`. Максимальное выданное значение —
+`int.MAX - 1`. Если следующий seq был бы `int.MAX`, authority MUST получить новый non-zero `sessionEpoch`, отличный
+от прежнего, выполнить full resync и начать seq нового epoch с 1. Saturating/wrapped сравнение запрещено.
 
 ### 8.3 Ordering
 
-Snapshot MAY supersede другой только если совпадают `schemaVersion`, `sessionEpoch` и `linkId`, а новый `linkSeq`
-строго больше. Mismatch identity — `INVALID_IDENTITY`, не «older». Сравнение SHOULD возвращать reason/ordering enum,
-а не терять ошибку в bool.
+Сравнение возвращает стабильный decision enum, а не bool:
+
+| Decision | Условие | Эффект |
+|---|---|---|
+| `ACCEPT_FIRST` | текущего snapshot для linkId нет; вход валиден | принять и сохранить |
+| `ACCEPT_NEWER` | schema/session/link совпадают, новый seq строго больше | заменить текущий |
+| `STALE` | identity совпадает, новый seq меньше либо равен | игнорировать без side effects |
+| `INVALID_SNAPSHOT` | сам вход нарушает field domains §8 | отклонить, сохранить последний valid до TTL, diagnostic |
+| `INVALID_IDENTITY` | schema/session/link не совпадают | отклонить; запросить full resync |
+
+При `INVALID_IDENTITY` из-за нового `sessionEpoch` получатель MUST сбросить state старого epoch и выставить эффект
+`REQUEST_RESYNC`; обычный snapshot нового epoch не принимается как «более новый». Новый epoch принимается только
+отдельным full-resync event, который атомарно меняет session identity и начальное состояние. Mismatch `linkId` —
+ошибка маршрутизации к slot: snapshot не принимается; `REQUEST_RESYNC` остаётся fail-closed эффектом.
+
+Valid snapshot для ordering имеет `schemaVersion > 0`, `sessionEpoch != 0`, `linkId > 0`, `linkSeq > 0`,
+`ttlMs > 0`, `routeId > 0`, `routeNodeCount > 0`, finite `quality` в `[0,1]` и допустимое state. LOST MUST иметь
+quality 0. Нарушение любого из этих условий — `INVALID_SNAPSHOT` до сравнения identity/seq.
 
 ### 8.4 TTL
 
 Authority отвечает за route/lease expiry. Получатель owner-scoped UI сохраняет локальное время получения и скрывает
 snapshot после `ttlMs`; это presentation timeout, не authority. Network delay не превращает TTL в доказательство
 серверного lease. Clock synchronization между клиентом и сервером не предполагается.
+
+Время TTL — локальное монотонное время получателя. Snapshot видим при `elapsedMs < ttlMs` и истёк при
+`elapsedMs >= ttlMs`. Отрицательный elapsed/clock anomaly MUST fail closed как expired и дать diagnostic; wall-clock
+и server UTC для сравнения TTL запрещены.
 
 ## 9. Routing и VoN seam
 
