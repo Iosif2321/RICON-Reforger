@@ -1,6 +1,10 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.1 DRAFT**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.2 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
+
+Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
+`REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
+acceptance и не freeze Э2: ограничения ниже остаются обязательными.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
