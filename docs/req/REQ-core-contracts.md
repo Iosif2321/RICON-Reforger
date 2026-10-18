@@ -225,7 +225,7 @@ implemented later. Unknown key MUST NOT silently use free-space/default.
 | `schemaVersion` | positive int | exact supported version; mismatch reject |
 | `sessionEpoch` | non-zero int | authority-generated; changes before a new world/session may accept snapshots |
 | `linkId` | positive int | unique within session for one logical talker→listener/network link |
-| `linkSeq` | positive int | strictly increasing per `(sessionEpoch, linkId)`; never wraps silently |
+| `linkSeq` | int `1..int.MAX-1` | strictly increasing per `(sessionEpoch, linkId)`; `int.MAX` запрещён |
 | `ttlMs` | positive int, ms | duration; float forbidden |
 | `talkerPlayerId`, `listenerPlayerId` | int | server-resolved identities |
 | `route` / `routeId` | versioned identity | enough to correlate legs/effects without exposing hidden links in UI |
@@ -250,11 +250,14 @@ Contract требует различие активных session/world generati
 
 | Decision | Условие | Эффект |
 |---|---|---|
-| `ACCEPT_FIRST` | текущего snapshot для linkId нет; вход валиден | принять и сохранить |
+| `ACCEPT_FIRST` | session identity уже установлена full resync; текущего snapshot для linkId нет; вход валиден и совпадает с identity | принять и сохранить |
 | `ACCEPT_NEWER` | schema/session/link совпадают, новый seq строго больше | заменить текущий |
 | `STALE` | identity совпадает, новый seq меньше либо равен | игнорировать без side effects |
 | `INVALID_SNAPSHOT` | сам вход нарушает field domains §8 | отклонить, сохранить последний valid до TTL, diagnostic |
 | `INVALID_IDENTITY` | schema/session/link не совпадают | отклонить; запросить full resync |
+
+До первого успешного full resync identity отсутствует: обычный snapshot MUST дать `INVALID_IDENTITY` +
+`REQUEST_RESYNC`, а не `ACCEPT_FIRST`.
 
 При `INVALID_IDENTITY` из-за нового `sessionEpoch` получатель MUST сбросить state старого epoch и выставить эффект
 `REQUEST_RESYNC`; обычный snapshot нового epoch не принимается как «более новый». Новый epoch принимается только
@@ -263,7 +266,13 @@ Contract требует различие активных session/world generati
 
 Valid snapshot для ordering имеет `schemaVersion > 0`, `sessionEpoch != 0`, `linkId > 0`, `linkSeq > 0`,
 `ttlMs > 0`, `routeId > 0`, `routeNodeCount > 0`, finite `quality` в `[0,1]` и допустимое state. LOST MUST иметь
-quality 0. Нарушение любого из этих условий — `INVALID_SNAPSHOT` до сравнения identity/seq.
+quality 0. Дополнительно `linkSeq < int.MAX`. Нарушение любого из этих условий — `INVALID_SNAPSHOT` до сравнения
+identity/seq.
+
+Full resync MUST быть атомарным. Он принимается только если schema поддерживается, epoch non-zero, каждый snapshot
+валиден, совпадает с schema/epoch resync и `linkId` уникален. При успехе effect = `ACCEPT_RESYNC`, identity и все
+slots заменяются одной транзакцией. При любой ошибке весь resync отклоняется, identity/slots очищаются, effects =
+`REQUEST_RESYNC` + `DIAGNOSTIC`; частичное принятие/фильтрация отдельных entries запрещены.
 
 ### 8.4 TTL
 
@@ -273,7 +282,7 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 
 Время TTL — локальное монотонное время получателя. Snapshot видим при `elapsedMs < ttlMs` и истёк при
 `elapsedMs >= ttlMs`. Отрицательный elapsed/clock anomaly MUST fail closed как expired и дать diagnostic; wall-clock
-и server UTC для сравнения TTL запрещены.
+и server UTC для сравнения TTL запрещены. Запрос видимости отсутствующего link slot возвращает false без effects.
 
 ## 9. Routing и VoN seam
 
