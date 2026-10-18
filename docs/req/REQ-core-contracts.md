@@ -115,10 +115,19 @@ MUST NOT быть зашиты в evaluator: они принадлежат serve
 11. propagation `modelId`;
 12. `noiseEnvironmentId`;
 13. `intelligibilityModelId`;
+13a. config выбранной модели разборчивости;
 14. domain уже выбранной модели.
 
 Этот порядок — часть schema revision и MUST проверяться multi-invalid vectors, чтобы Enforce и oracle не выбирали
 разные reason codes (`oracle/vectors/link_eval_v1.json`, revision 2).
+
+После вычисления действуют model-output boundaries в отдельном фиксированном порядке:
+
+15. контракт списка loss layers;
+16. `Q` конечна и находится в `[0,1]`;
+17. при открытом пороге state входит в `{WEAK, DEGRADED, CLEAN}`.
+
+Нарушение шага 13a даёт `CATALOG_VIOLATION`; шагов 15–17 — `MODEL_CONTRACT_VIOLATION`.
 
 ### 4.2 Stable reason codes
 
