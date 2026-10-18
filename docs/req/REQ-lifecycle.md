@@ -1,6 +1,6 @@
 # REQ-lifecycle — server-authoritative жизненный цикл RICON (Э3)
 
-Версия: **0.1 DRAFT**, 2026-10-19. Автор: codex. Ревью: claude.
+Версия: **0.2 DRAFT (review fixes)**, 2026-10-19. Автор: codex. Ревью: claude.
 
 Источник истины: `PLAN_RU.md` v5, Э3; `REQ-core-contracts.md`; evidence `E-offline-api.md` и
 `E1s-von-api.md`. Это requirements-артефакт, а не доказательство поведения Reforger.
@@ -35,7 +35,7 @@
 | API | DOC evidence | Что НЕ доказано |
 |---|---|---|
 | `SCR_BaseGameModeComponent.OnPlayerConnected(int)` | AR `interfaceSCR__BaseGameModeComponent.html:181,594-610`; server-only | порядок относительно identity/entity |
-| `OnPlayerRegistered(int)` | там же `:191,760-775`; всегда после Connected | JIP/reconnect ordering |
+| `OnPlayerRegistered(int)` | там же `:191,760-775`; всегда после Connected, **вызывается на каждой машине** | JIP/reconnect ordering; callback MUST authority-gate mutation |
 | `OnPlayerDisconnected(int, KickCauseCode, int)` | там же `:193,653-675` | доставка последних RPC/cleanup timing |
 | `OnPlayerDeleted(int,IEntity)`, `OnPlayerKilled(...)`, `OnControllableSpawned(IEntity)` | там же `:200-210` | полный respawn порядок |
 | `BaseGameMode.OnPlayerSpawned(int,IEntity)` / `SCR_BaseGameMode.GetOnPlayerSpawned()` | AR `interfaceBaseGameMode.html:145,686-695`; `interfaceSCR__BaseGameMode.html:168,1134-1140` | сервер/клиент ordering |
@@ -70,11 +70,14 @@
 Переходы MUST быть идемпотентны: duplicate callback не создаёт новую generation/lease/device. Неожиданный порядок
 fail closed и пишет diagnostic; не должен приводить к null dereference.
 
+Любой callback, который API не помечает server-only (в частности `OnPlayerRegistered`), MUST проверить authority
+до изменения registries/player state. Клиент MAY обновить только presentation state, отделённое от authority.
+
 ### 4.2 События и эффекты
 
 | Событие | Preconditions | Обязательные эффекты |
 |---|---|---|
-| Connected | authority, PlayerId valid, state отсутствует/tombstone | новая generation; `CONNECTED_UNREGISTERED`; пустые owner leases/snapshots |
+| Connected | authority, PlayerId valid | если живое состояние этого PlayerId уже есть: revoke все leases прежней generation + diagnostic; затем новая generation, `CONNECTED_UNREGISTERED`, пустые owner leases/snapshots |
 | Registered | current generation connected | `REGISTERED_UNBOUND`; подготовить owner channel, но не считать entity существующей |
 | Spawned / controlled entity `null→entity` | registered/current generation | bind entity; `BOUND_ACTIVE`; rebuild device attachments из server inventory/catalog |
 | Entity changed `A→B` | current PlayerId | revoke active PTT; atomарно отвязать A/привязать B; generation не меняется |
@@ -117,10 +120,15 @@ Lease MUST стать terminal при первом из:
 - loss of ownership/access, power/device removal, catalog invalidation;
 - session epoch rotation, admin/policy revoke.
 
-Terminal transition exactly once вызывает `VoNIntegration.OnTransmitLeaseExpired(playerId)` **только когда actuator
-будет разрешён ADR-001**. До этого записывается intended effect/no-op; отсутствие actuator не выдаётся за silence PASS.
-Server clock MUST быть monotonic abstraction; прямое сравнение wall UTC запрещено. `System.GetTickCount` — кандидат,
-его wrap semantics требуют CT/WB/RT.
+Terminal transition exactly once вызывает VoN expiry seam с `(playerId, deviceId, leaseId)` **только когда actuator
+будет разрешён ADR-001**. Одного playerId недостаточно: несколько устройств/leases одного игрока не должны взаимно
+останавливаться. Текущая сигнатура `OnTransmitLeaseExpired(int talkerPlayerId)` в `RICON_NetworkContracts.c` —
+известный code gap, исправляемый после compile gate. До actuator записывается intended effect/no-op; отсутствие
+actuator не выдаётся за silence PASS.
+Server clock MUST быть monotonic abstraction; прямое сравнение wall UTC запрещено. `System.GetTickCount` — int ms
+с запуска; signed-int предел достигается примерно через `2^31 ms = 24.86 суток`. Поведение переполнения Enforce не
+документировано. До этой границы server MUST ротировать session/restart по operational policy либо использовать
+доказанный monotonic источник без переполнения; CT-LC-010 проверяет именно boundary/wrap.
 
 ## 6. RPC trust boundary
 
