@@ -1,8 +1,8 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 3,
-  "source": "docs/req/REQ-core-contracts.md@418ca03",
+  "revision": 4,
+  "source": "docs/req/REQ-core-contracts.md@b182c4a",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
   "supportedSchemaVersion": 1,
