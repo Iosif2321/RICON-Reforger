@@ -1,0 +1,17 @@
+{
+  "goal": "Independently collect and analyze all local and online evidence needed before RICON Reforger implementation, then cross-audit Claude and Codex corpora for completeness, integrity, validity, quality, contradictions, and unresolved gaps.",
+  "cycle": 0,
+  "target_cycles": 3,
+  "stale_cycles": 0,
+  "known_facts": [],
+  "compressed_summary": "",
+  "rejected_branches": [],
+  "queries_used": [],
+  "files_read": [],
+  "open_questions": [
+    "q_000", "q_001", "q_002", "q_003", "q_004", "q_005", "q_006", "q_007",
+    "q_008", "q_009", "q_010", "q_011", "q_012", "q_013", "q_014", "q_015"
+  ],
+  "tool_failures": {},
+  "tree_topology_changed_this_cycle": true
+}

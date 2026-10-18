@@ -1,0 +1,24 @@
+{
+  "root_goal": "Evidence-complete pre-implementation research for RICON on Arma Reforger",
+  "nodes": {
+    "q_000": {"text": "Does the combined evidence justify beginning implementation under the approved constraints?", "parent": null, "depth": 0, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_001": {"text": "Are product scope, source-of-truth artifacts, versions, and prohibited actions complete and internally consistent?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_002": {"text": "Which built-in VoN delivery and radio controls are exposed, authoritative, and mod-accessible?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_003": {"text": "Can a normal Workshop mod dynamically bind RICON per-link quality to audible VoN effects?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_004": {"text": "What do RelayTransceiver and IntercomTransceiver actually do, and can they satisfy leak-free radio-network relay semantics?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_005": {"text": "What replication, JIP, streaming, authority, and lifecycle primitives constrain the server-authoritative design?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_006": {"text": "What is the supported no-Play Workbench addon structure, compilation workflow, and source/resource visibility?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_007": {"text": "What official Workshop, BattlEye, EULA, licensing, security, and reverse-engineering boundaries apply?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_008": {"text": "Which HDSP formulas and calibration claims have primary-source provenance and sufficient validation evidence?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_009": {"text": "What architecture and budgets can plausibly support 30-player acceptance and 60-player stress?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_010": {"text": "Are the common core contracts and extension registries sufficient for radio, infrastructure, and later cellular use without core rewrites?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_011": {"text": "Which offline, compile, runtime, audio, and multi-client checks are possible with one PC, and what remains blocked?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_012": {"text": "Are M3a subscriber, attach, SMS, service-code, and M3b voice/handover semantics complete, private, bounded, and testable?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_013": {"text": "What can be learned from TFAR, ACRE2, Coalition VON, and Lima Charlie without copying incompatible or unlicensed code?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_014": {"text": "Are packaging, versioning, update compatibility, rollback, observability, and operational support requirements complete?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null},
+    "q_015": {"text": "Do the independent Claude and Codex research corpora cover every plan section with adequate source quality and no unresolved contradiction?", "parent": "q_000", "depth": 1, "status": "open", "answer": null, "confidence": null, "source_facts": [], "spawned_by_fact": null, "subagent": null}
+  },
+  "budget": {"max_depth": 4, "max_open_nodes": 40, "max_total_nodes": 120},
+  "convergence": {"cycles_with_no_new_nodes": 0, "cycles_with_no_status_change": 0},
+  "pending_user_questions": []
+}

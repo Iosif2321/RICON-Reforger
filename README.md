@@ -1,0 +1,41 @@
+# RICON for Arma Reforger
+
+Wireless communications simulation platform for Arma Reforger: server-authoritative signal model (HDSP),
+radio networks with towers and repeaters, and (later) cellular networks — on top of the built-in VoN voice.
+
+Status: **pre-alpha, static phase** — the game is not launched yet; code is `STATIC_IMPLEMENTED/COMPILE_ONLY`
+until runtime verification (stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) and `docs/plan/STATUS_RU.md`.
+
+## Layout
+
+| Path | Purpose |
+|---|---|
+| `addons/RICON_Core/` | Reforger addon (Enforce Script, configs, prefabs) |
+| `docs/adr/` | architecture decision records (ADR-002: core contracts) |
+| `docs/evidence/` | evidence notes with levels DOC/SOURCE/COMPILE; `codex-are/` — immutable research snapshots (SHA-256 manifest) |
+| `docs/plan/` | agreed plan and live status |
+| `oracle/` | *planned:* host-side reference model and vector/trace generator (spec, not a second production core) |
+| `tools/ci/` | *planned:* checks |
+
+## Rules
+
+- Only built-in VoN; no TeamSpeak, DLLs, external processes.
+- Clean-room: Coalition-VON / Lima-Charlie are ideas-only (no license); TFAR (APL-SA) and ACRE2 (GPL-3.0) —
+  ideas-only by project policy, no code or assets copied.
+- No reverse engineering of the game or Tools (EULA, `Arma Reforger Tools/Docs/License.txt`, "You May Not").
+  Vanilla scripts and assets are studied only through Workbench.
+
+## License
+
+RICON-Reforger is licensed under the **Arma Public License Share Alike (APL-SA)** — see `LICENSE`
+(official text: <https://www.bohemia.net/en/licenses/arma-public-license-share-alike>).
+
+In short (the full text in `LICENSE` is binding):
+
+- **Attribution** — credit "RICON-Reforger by Iosif2321" and link to this license;
+- **Noncommercial** — no commercial use or monetization;
+- **Arma Only** — the material may not be converted or adapted for games other than Arma;
+- **Share Alike** — adaptations may be distributed only under APL-SA (or a listed compatible license).
+
+This is a new, independent codebase. The earlier RICON for Arma 3 stays under GPL-3.0; no GPL code from it
+was copied here — see `NOTICE.md` for provenance and the clean-room statement.
