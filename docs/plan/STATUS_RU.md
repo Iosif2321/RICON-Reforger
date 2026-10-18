@@ -10,7 +10,7 @@
 
 | Этап | Что | Milestone | Статус | Коммиты | Блокеры / вопросы |
 |---|---|---|---|---|---|
-| Э0 | Evidence baseline | M1 | в работе (спринт 1): корпус перенесён, матрица Q1–Q34 + 15 разделов, лицензия APL-SA | — (baseline готовится) | ревью codex |
+| Э0 | Evidence baseline | M1 | baseline зафиксирован: корпус перенесён (хэши сверены), матрица Q1–Q34 + 15 разделов, лицензия APL-SA; ревью codex — agree (id394, id405, id410) | `598e4e8` | пробелы — в `E-coverage-matrix.md`, раздел «Что нужно для приоритетов» |
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
 | Э1r | Runtime-lab на одном ПК | M1 | BLOCKED_NO_RUNTIME | — | разрешение владельца на запуск |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
@@ -34,7 +34,7 @@
 
 | Спринт | Задачи | Итог |
 |---|---|---|
-| 1 | перенос корпуса, матрица, лицензия APL-SA, baseline-коммит, заказ `[Workbench]` | в работе |
+| 1 | перенос корпуса, матрица, лицензия APL-SA, baseline-коммит, заказ `[Workbench]` | закрыт: `598e4e8` (baseline, agree codex id410); заказ `[Workbench]` №001 — id406. Замечания codex учтены: хэш dossier (id399), граница SOURCE ≠ runtime (id402) |
 
 ## Вопросы владельцу
 
