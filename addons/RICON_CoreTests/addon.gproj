@@ -1,0 +1,15 @@
+GameProject {
+ ID "RICON_CoreTests"
+ GUID "4AAF52C605FC2CC6"
+ TITLE "RICON Core Tests (TEST_ONLY, not for Workshop)"
+ Dependencies {
+  "58D0FB3206B6F859"
+  "7C060DB9E8B90AC7"
+ }
+ Configurations {
+  GameProjectConfig PC {
+  }
+  GameProjectConfig HEADLESS {
+  }
+ }
+}
