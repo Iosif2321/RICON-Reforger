@@ -1,8 +1,8 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 2,
-  "source": "docs/req/REQ-core-contracts.md@d2bea68",
+  "revision": 3,
+  "source": "docs/req/REQ-core-contracts.md@418ca03",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
   "supportedSchemaVersion": 1,
@@ -1110,6 +1110,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1266,6 +1268,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {
               "10": 5,
               "12": 9
@@ -1286,6 +1290,8 @@
             "slots": {}
           },
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {
               "10": 3
             }
@@ -1358,6 +1364,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1437,6 +1445,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1526,6 +1536,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1621,6 +1633,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1694,6 +1708,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {}
           },
           {
@@ -1765,6 +1781,8 @@
       "expected": {
         "steps": [
           {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
             "slots": {
               "10": 2
             }
@@ -1785,6 +1803,379 @@
       },
       "tags": [
         "снимки в resync тоже получают время приёма = время resync; невидимого слота нет"
+      ]
+    },
+    {
+      "id": "RX-10",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 8,
+            "schemaVersion": 2,
+            "snapshots": [
+              {
+                "schemaVersion": 2,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "resync с неподдерживаемой schema отвергается целиком; identity снимается"
+      ]
+    },
+    {
+      "id": "RX-11",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 0,
+            "schemaVersion": 1,
+            "snapshots": []
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "resync с epoch = 0 отвергается целиком"
+      ]
+    },
+    {
+      "id": "RX-12",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 8,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              },
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 12,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 7.0,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "одна неверная запись среди верных — отвергается весь resync, частичного успеха нет"
+      ]
+    },
+    {
+      "id": "RX-13",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 8,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              },
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 12,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "запись другого epoch внутри resync — отвергается весь resync"
+      ]
+    },
+    {
+      "id": "RX-14",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 8,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 1,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              },
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 2,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "повторяющийся linkId в resync — отвергается весь resync"
       ]
     },
     {

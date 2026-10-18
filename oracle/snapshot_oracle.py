@@ -78,13 +78,22 @@ class Receiver:
         self.epoch: int | None = None
         self.slots: dict[int, tuple[dict[str, Any], int]] = {}
 
-    def full_resync(self, now_ms: int, epoch: int, schema: int, snapshots: list[Any]) -> dict[str, Any]:
-        self.epoch = epoch if schema == self.supported_schema else None
-        self.slots = {}
-        for s in snapshots:
-            if is_valid_snapshot(s) and s["sessionEpoch"] == epoch and s["schemaVersion"] == schema:
-                self.slots[s["linkId"]] = (s, now_ms)
-        return {"slots": self.slot_view()}
+    def full_resync(self, now_ms: int, epoch: Any, schema: Any, snapshots: Any) -> dict[str, Any]:
+        """Единственный способ установить identity; атомарный: либо принят целиком, либо отвергнут целиком."""
+        valid = (
+            is_int(epoch) and epoch != 0
+            and schema == self.supported_schema
+            and isinstance(snapshots, list)
+            and all(is_valid_snapshot(s) and s["sessionEpoch"] == epoch and s["schemaVersion"] == schema for s in snapshots)
+            and len({s["linkId"] for s in snapshots}) == len(snapshots)
+        )
+        if not valid:
+            self.epoch = None
+            self.slots = {}
+            return self.result("INVALID_RESYNC", ["REQUEST_RESYNC", "DIAGNOSTIC"])
+        self.epoch = epoch
+        self.slots = {s["linkId"]: (s, now_ms) for s in snapshots}
+        return self.result("ACCEPT_RESYNC", [])
 
     def receive(self, now_ms: int, s: Any) -> dict[str, Any]:
         if not is_valid_snapshot(s):

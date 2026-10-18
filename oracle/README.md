@@ -70,7 +70,9 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 | `receiver_trace` | последовательность событий `full_resync` / `receive` / `visible`: identity только через resync, сброс state при новом epoch, `REQUEST_RESYNC` / `DIAGNOSTIC`, TTL по локальному монотонному времени |
 | `allocator_trace` | выдача seq authority: максимум `int.MAX − 1`, затем новый non-zero epoch, full resync и seq 1 у всех линков |
 
-Толкования, которые прямо не записаны в §8 и требуют подтверждения при ревью: до первого `full_resync` у получателя
-нет identity, поэтому любой снимок → `INVALID_IDENTITY` (RX-01); `visible` для пустого слота → `false` без эффектов
-(RX-09). Проверка: `python -I oracle/snapshot_oracle.py --check oracle/vectors/snapshot_v1.json` →
-`SNAPSHOT_ORACLE_PASS`.
+`full_resync` атомарен: принят целиком (`ACCEPT_RESYNC`) или отвергнут целиком (`INVALID_RESYNC`, эффекты
+`REQUEST_RESYNC` + `DIAGNOSTIC`, identity и слоты сброшены) — при неподдерживаемой schema, epoch = 0, любой
+невалидной записи, записи другого epoch/schema или повторе `linkId`. `ACCEPT_FIRST` возможен только при уже
+установленной identity: до первого успешного resync любой снимок → `INVALID_IDENTITY` (RX-01). `visible` для пустого
+слота → `false` без эффектов (RX-09). Домен `linkSeq` — `[1, int.MAX − 1]`. Проверка:
+`python -I oracle/snapshot_oracle.py --check oracle/vectors/snapshot_v1.json` → `SNAPSHOT_ORACLE_PASS`.
