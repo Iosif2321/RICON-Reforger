@@ -255,6 +255,8 @@ Contract требует различие активных session/world generati
 | `STALE` | identity совпадает, новый seq меньше либо равен | игнорировать без side effects |
 | `INVALID_SNAPSHOT` | сам вход нарушает field domains §8 | отклонить, сохранить последний valid до TTL, diagnostic |
 | `INVALID_IDENTITY` | schema/session/link не совпадают | отклонить; запросить full resync |
+| `ACCEPT_RESYNC` | full-resync event целиком прошёл atomic validation | заменить identity и slots; effects нет |
+| `INVALID_RESYNC` | full-resync event нарушил любое atomic условие | очистить identity/slots; `REQUEST_RESYNC` + `DIAGNOSTIC` |
 
 До первого успешного full resync identity отсутствует: обычный snapshot MUST дать `INVALID_IDENTITY` +
 `REQUEST_RESYNC`, а не `ACCEPT_FIRST`.
@@ -270,9 +272,10 @@ quality 0. Дополнительно `linkSeq < int.MAX`. Нарушение л
 identity/seq.
 
 Full resync MUST быть атомарным. Он принимается только если schema поддерживается, epoch non-zero, каждый snapshot
-валиден, совпадает с schema/epoch resync и `linkId` уникален. При успехе effect = `ACCEPT_RESYNC`, identity и все
-slots заменяются одной транзакцией. При любой ошибке весь resync отклоняется, identity/slots очищаются, effects =
-`REQUEST_RESYNC` + `DIAGNOSTIC`; частичное принятие/фильтрация отдельных entries запрещены.
+валиден, совпадает с schema/epoch resync и `linkId` уникален. При успехе decision = `ACCEPT_RESYNC`, effects пусты,
+identity и все slots заменяются одной транзакцией. При любой ошибке decision = `INVALID_RESYNC`, весь resync
+отклоняется, identity/slots очищаются, effects = `REQUEST_RESYNC` + `DIAGNOSTIC`; частичное
+принятие/фильтрация отдельных entries запрещены.
 
 ### 8.4 TTL
 
