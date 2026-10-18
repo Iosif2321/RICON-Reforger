@@ -1,6 +1,6 @@
 # REQ-lifecycle — server-authoritative жизненный цикл RICON (Э3)
 
-Версия: **0.2 DRAFT (review fixes)**, 2026-10-19. Автор: codex. Ревью: claude.
+Версия: **0.2 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью: claude (agora id686).
 
 Источник истины: `PLAN_RU.md` v5, Э3; `REQ-core-contracts.md`; evidence `E-offline-api.md` и
 `E1s-von-api.md`. Это requirements-артефакт, а не доказательство поведения Reforger.
