@@ -223,7 +223,7 @@ implemented later. Unknown key MUST NOT silently use free-space/default.
 | Поле | Тип/единица | Contract |
 |---|---|---|
 | `schemaVersion` | positive int | exact supported version; mismatch reject |
-| `sessionEpoch` | non-zero int | authority-generated; changes before a new world/session may accept snapshots |
+| `sessionEpoch` | int `1..int.MAX-1` | authority-generated; changes before a new world/session may accept snapshots |
 | `linkId` | positive int | unique within session for one logical talker→listener/network link |
 | `linkSeq` | int `1..int.MAX-1` | strictly increasing per `(sessionEpoch, linkId)`; `int.MAX` запрещён |
 | `ttlMs` | positive int, ms | duration; float forbidden |
@@ -241,8 +241,10 @@ Contract требует различие активных session/world generati
 ### 8.2 Sequence overflow
 
 `linkSeq` MUST NOT wrap и authority MUST NOT выдавать значение `int.MAX`. Максимальное выданное значение —
-`int.MAX - 1`. Если следующий seq был бы `int.MAX`, authority MUST получить новый non-zero `sessionEpoch`, отличный
-от прежнего, выполнить full resync и начать seq нового epoch с 1. Saturating/wrapped сравнение запрещено.
+`int.MAX - 1`. Если следующий seq был бы `int.MAX`, authority MUST получить новый `sessionEpoch` в диапазоне
+`1..int.MAX-1`, отличный от прежнего, выполнить full resync и начать seq нового epoch с 1. Epoch allocator также
+MUST оставаться в signed-int domain: после `int.MAX-1` он MAY продолжить с 1, если это не текущий epoch.
+Saturating/wrapped сравнение запрещено.
 
 ### 8.3 Ordering
 
@@ -266,12 +268,12 @@ Contract требует различие активных session/world generati
 отдельным full-resync event, который атомарно меняет session identity и начальное состояние. Mismatch `linkId` —
 ошибка маршрутизации к slot: snapshot не принимается; `REQUEST_RESYNC` остаётся fail-closed эффектом.
 
-Valid snapshot для ordering имеет `schemaVersion > 0`, `sessionEpoch != 0`, `linkId > 0`, `linkSeq > 0`,
+Valid snapshot для ordering имеет `schemaVersion > 0`, `sessionEpoch` в `1..int.MAX-1`, `linkId > 0`, `linkSeq > 0`,
 `ttlMs > 0`, `routeId > 0`, `routeNodeCount > 0`, finite `quality` в `[0,1]` и допустимое state. LOST MUST иметь
 quality 0. Дополнительно `linkSeq < int.MAX`. Нарушение любого из этих условий — `INVALID_SNAPSHOT` до сравнения
 identity/seq.
 
-Full resync MUST быть атомарным. Он принимается только если schema поддерживается, epoch non-zero, каждый snapshot
+Full resync MUST быть атомарным. Он принимается только если schema поддерживается, epoch в `1..int.MAX-1`, каждый snapshot
 валиден, совпадает с schema/epoch resync и `linkId` уникален. При успехе decision = `ACCEPT_RESYNC`, effects пусты,
 identity и все slots заменяются одной транзакцией. При любой ошибке decision = `INVALID_RESYNC`, весь resync
 отклоняется, identity/slots очищаются, effects = `REQUEST_RESYNC` + `DIAGNOSTIC`; частичное
