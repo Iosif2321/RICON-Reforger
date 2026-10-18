@@ -69,6 +69,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	protected ref map<string, ref RICON_IntelligibilityModel> m_mIntelligibilityById = new map<string, ref RICON_IntelligibilityModel>();
 	protected ref map<string, ref RICON_BandConfig> m_mBandConfigById = new map<string, ref RICON_BandConfig>();
 	protected ref map<string, ref RICON_WirelessLinkEvaluator> m_mEvaluatorByBand = new map<string, ref RICON_WirelessLinkEvaluator>();
+	protected ref map<int, int> m_mLinkSeqById = new map<int, int>();
 	protected ref set<int> m_sConnectedPlayers = new set<int>();
 
 	static RICON_CommsManagerComponent GetInstance()
@@ -90,6 +91,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			return;
 
 		m_iSessionEpoch = AllocateSessionEpoch();
+		m_mLinkSeqById.Clear();
 		m_sLastRegistryError = string.Empty;
 	}
 
@@ -240,7 +242,34 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			return false;
 		int previous = m_iSessionEpoch;
 		m_iSessionEpoch = AllocateSessionEpoch();
-		return m_iSessionEpoch != 0 && m_iSessionEpoch != previous;
+		if (m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX || m_iSessionEpoch == previous)
+			return false;
+		m_mLinkSeqById.Clear();
+		return true;
+	}
+
+	//! Allocate a per-link sequence. Before int.MAX it rotates epoch, clears every link and starts from 1.
+	bool NextLinkSequence(int linkId, out int linkSeq, out bool rotated)
+	{
+		linkSeq = 0;
+		rotated = false;
+		if (!IsAuthority() || linkId <= 0 || m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX)
+			return false;
+
+		int current = m_mLinkSeqById.Get(linkId);
+		if (current >= int.MAX - 1)
+		{
+			if (!RotateSessionEpoch())
+				return false;
+			rotated = true;
+			linkSeq = 1;
+			m_mLinkSeqById.Set(linkId, linkSeq);
+			return true;
+		}
+
+		linkSeq = current + 1;
+		m_mLinkSeqById.Set(linkId, linkSeq);
+		return true;
 	}
 
 	protected bool CanMutateRegistries(string operation)
