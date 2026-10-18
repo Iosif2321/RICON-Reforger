@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.5 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.6 DRAFT (routing vectors)**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -295,14 +295,52 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 
 ## 9. Routing и VoN seam
 
-- Route MUST быть непустым упорядоченным списком legs; каждая leg сильно владеет valid budget.
-- Route quality = minimum leg intelligibility; route state = worst leg state. Invalid/empty → LOST, quality 0.
-- RoutingPolicy MUST получать `RoutingContext` (read-only registries, server time, access policy, topology/capacity),
-  а не скрытые globals.
-- Loop/relay traversal MUST иметь path TTL/hop limit отдельно от snapshot `ttlMs`.
-- `VoNIntegration.ApplySnapshot` MUST сначала проверить schema/identity/order/TTL и authority.
-- До ADR-001/Workbench evidence методы VoN seam MAY быть пустым scaffold; никакой недоказанный actuator не
-  получает `PASS`.
+### 9.1 Route и порядок валидации
+
+Route MUST явно хранить `talkerEndpointId`, `listenerEndpointId` и непустой упорядоченный список legs. Каждая leg
+сильно владеет valid budget и содержит положительные `fromEndpointId`/`toEndpointId`; self-leg запрещена.
+
+Stable route reasons:
+
+| Reason | Значение |
+|---|---|
+| `OK` | маршрут прошёл contract |
+| `INVALID_CONTEXT` | maxHops/session/context недопустимы |
+| `EMPTY_ROUTE` | legs отсутствуют |
+| `TOO_MANY_HOPS` | `legs.Count() > maxHops`; равенство допустимо |
+| `NULL_LEG` | элемент legs отсутствует |
+| `INVALID_ENDPOINT` | endpoint ID неположителен либо leg ведёт сама в себя |
+| `INVALID_BUDGET` | budget отсутствует/invalid/Q не finite `[0,1]`/state недопустим |
+| `WRONG_START` | первая leg начинается не с talker |
+| `DISCONTINUITY` | `leg[i].from != leg[i-1].to` |
+| `CYCLE` | endpoint уже встречался ранее в route |
+| `WRONG_DESTINATION` | последняя leg заканчивается не listener |
+
+Сообщается первая причина в порядке таблицы. Для каждой valid leg endpoint `to` добавляется в seen-set после
+continuity check; talker находится в set до первой leg. Поэтому возврат к talker и повтор любого relay — `CYCLE`.
+
+Route quality = minimum leg intelligibility; route state = worst leg state по stable enum ordering. Invalid route
+MUST давать quality 0 и state LOST, не частичный результат. `maxHops` — path limit и не связан с snapshot `ttlMs`.
+
+### 9.2 RoutingContext и policy
+
+`RoutingContext` — immutable input policy: positive `sessionEpoch`, non-negative monotonic `serverTimeMs`, positive
+`maxHops`, positive correlation ID и strong reference на abstract `AccessPolicy`. Он MUST NOT содержать concrete
+`CommsManagerComponent` или изменяемые registries. Дополнительные topology/capacity services подключаются через
+read-only interfaces в следующей версии context.
+
+`AccessPolicy.CanUseEndpoint(playerId, endpointId)` — server-only seam. Base implementation fail closed.
+`RoutingPolicy.FindRoute(context, talkerEndpointId, listenerEndpointId)` MUST получать context явно и не читать
+скрытые globals.
+
+### 9.3 CallSession и VoN
+
+`CallSession`/`CallSessionFactory` в Э2 — только abstract seam для EXT-3; состояния звонка не придумываются до
+этапа конкретной сети. Factory и policy имеют stable non-empty `networkTypeId`.
+
+`VoNIntegration` не владеет route/snapshot registries. До ADR-001/Workbench evidence методы MAY быть no-op
+scaffold; никакой недоказанный actuator не получает `PASS`. Snapshot должен пройти receiver/ordering contract до
+передачи в seam; server authority проверяется вызывающим service.
 
 ## 10. Пять обязательных extension-сценариев
 
@@ -348,7 +386,7 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 | CT-CORE-006 | seq overflow инициирует epoch rotation до wrap | B2 | CT |
 | CT-CORE-007 | TTL presentation expiry отдельно от server lease | B2 | CT; RT позже |
 | CT-CORE-008 | server-only mutation; fake client parameters не меняют registries | R-04/R-05 | CT; RT позже |
-| CT-CORE-009 | empty/invalid/multi-leg route min/worst/loop limit | B8/B9 | CT |
+| CT-CORE-009 | route reasons/order; min/worst; continuity/cycle/maxHops boundary | B8/B9 | CT + OR |
 | CT-CORE-010 | `GetGame()==null`, no GameMode, no component | API-03 | CT/WB |
 | CT-CORE-011 | model: empty/null/duplicate/wrong-owner layer; Q вне `[0,1]`; LOST выше threshold | C13/REQ-LE-31/73/75 | CT |
 | CT-EXT-001…005 | сценарии EXT-1…EXT-5 | B3/B5/B6/B7/B9 | CT + WB |
