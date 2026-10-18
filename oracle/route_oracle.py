@@ -48,7 +48,9 @@ def budget_valid(budget: Any) -> bool:
     q = budget.get("intelligibility")
     if isinstance(q, bool) or not isinstance(q, (int, float)) or not math.isfinite(q) or not 0.0 <= q <= 1.0:
         return False
-    return budget.get("state") in STATES
+    if budget.get("state") not in STATES:
+        return False
+    return budget["state"] != "LOST" or q == 0.0  # LOST ⇒ Q = 0 (REQ-LE-72)
 
 
 def endpoint_valid(leg: dict[str, Any]) -> bool:
@@ -60,6 +62,8 @@ def validate(context: Any, route: dict[str, Any]) -> str:
     """Первая причина в глобальном порядке §9.1."""
     if not context_valid(context):
         return "INVALID_CONTEXT"
+    if not isinstance(route, dict):
+        return "EMPTY_ROUTE"
     legs = route.get("legs") or []
     if not legs:
         return "EMPTY_ROUTE"
@@ -67,11 +71,13 @@ def validate(context: Any, route: dict[str, Any]) -> str:
         return "TOO_MANY_HOPS"
     if any(leg is None for leg in legs):
         return "NULL_LEG"
+    talker, listener = route.get("talkerEndpointId"), route.get("listenerEndpointId")
+    if not (is_int(talker) and talker > 0 and is_int(listener) and listener > 0):
+        return "INVALID_ENDPOINT"
     if not all(endpoint_valid(leg) for leg in legs):
         return "INVALID_ENDPOINT"
     if not all(budget_valid(leg.get("budget")) for leg in legs):
         return "INVALID_BUDGET"
-    talker, listener = route["talkerEndpointId"], route["listenerEndpointId"]
     if legs[0]["fromEndpointId"] != talker:
         return "WRONG_START"
     seen = {talker}
