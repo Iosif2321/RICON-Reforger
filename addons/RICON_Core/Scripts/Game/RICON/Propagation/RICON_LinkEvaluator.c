@@ -81,6 +81,11 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 		RICON_PropagationModel propagation = m_Propagation;
 		RICON_NoiseModel noise = m_Noise;
 		RICON_IntelligibilityModel intelligibility = m_Intelligibility;
+		if (!intelligibility.IsConfigValid())
+		{
+			budget.MarkInvalid(RICON_EReason.CATALOG_VIOLATION);
+			return budget;
+		}
 		if (!propagation.IsApplicable(query.m_fFrequencyMHz))
 		{
 			budget.MarkInvalid(RICON_EReason.OUT_OF_MODEL_DOMAIN);
@@ -92,6 +97,11 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 		if (!propagation.AppendLosses(query, budget.m_fDistanceM, budget.m_aLayers))
 		{
 			budget.MarkInvalid(RICON_EReason.NUMERIC_FAILURE);
+			return budget;
+		}
+		if (!AreLayersValid(budget.m_aLayers, propagation.GetModelId()))
+		{
+			budget.MarkInvalid(RICON_EReason.MODEL_CONTRACT_VIOLATION);
 			return budget;
 		}
 		budget.m_fTotalLossDb = 0;
@@ -118,7 +128,9 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 			array<float> powers = {};
 			powers.Insert(budget.m_fNoiseDbm);
 			powers.Insert(query.m_fInterferenceDbm);
-			budget.m_fNoisePlusInterferenceDbm = RICON_Num.PowerSumDbm(powers);
+			float sumDbm;
+			RICON_Num.TryPowerSumDbm(powers, sumDbm); // two terms: never empty
+			budget.m_fNoisePlusInterferenceDbm = sumDbm;
 		}
 		budget.m_fSinrDb = budget.m_fRxPowerDbm - budget.m_fNoisePlusInterferenceDbm;
 
@@ -137,6 +149,11 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 		else
 		{
 			budget.m_fIntelligibility = intelligibility.Intelligibility(budget.m_fSinrDb);
+			if (!(budget.m_fIntelligibility >= 0 && budget.m_fIntelligibility <= 1))
+			{
+				budget.MarkInvalid(RICON_EReason.MODEL_CONTRACT_VIOLATION);
+				return budget;
+			}
 			budget.m_eState = intelligibility.StateFor(budget.m_fIntelligibility);
 		}
 
@@ -182,6 +199,28 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 		if (q.m_bHasInterference && !RICON_Num.IsFinite(q.m_fInterferenceDbm))
 			return RICON_EReason.INVALID_INTERFERENCE;
 		return RICON_EReason.OK;
+	}
+
+	//! Contract of a propagation model's layers (REQ-LE-31): not empty, no null entry, non-empty unique ids,
+	//! produced by this model, finite values.
+	protected static bool AreLayersValid(notnull array<ref RICON_LossLayer> layers, string modelId)
+	{
+		if (layers.IsEmpty())
+			return false;
+
+		for (int i = 0; i < layers.Count(); i++)
+		{
+			RICON_LossLayer current = layers[i];
+			if (!current || current.m_sLayerId.IsEmpty() || current.m_sModelId != modelId || !RICON_Num.IsFinite(current.m_fLossDb))
+				return false;
+
+			for (int j = 0; j < i; j++)
+			{
+				if (layers[j].m_sLayerId == current.m_sLayerId)
+					return false;
+			}
+		}
+		return true;
 	}
 
 	protected static bool IsBudgetFinite(RICON_LinkBudget b)

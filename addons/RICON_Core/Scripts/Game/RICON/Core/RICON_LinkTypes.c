@@ -28,7 +28,8 @@ enum RICON_EReason
 	UNKNOWN_MODEL = 11,
 	UNKNOWN_NOISE_ENVIRONMENT = 12,
 	OUT_OF_MODEL_DOMAIN = 13,
-	NUMERIC_FAILURE = 14
+	NUMERIC_FAILURE = 14,
+	MODEL_CONTRACT_VIOLATION = 15
 }
 
 //! One transmitter -> receiver evaluation request, built by the server only (REQ-core §4).
@@ -163,10 +164,12 @@ class RICON_Num
 	}
 
 	//! Power sum in dBm without float32 overflow: factor out the largest term (REQ-LE-65, REQ-LE-66).
-	static float PowerSumDbm(notnull array<float> powersDbm)
+	//! Returns false for an empty list instead of inventing a value.
+	static bool TryPowerSumDbm(notnull array<float> powersDbm, out float sumDbm)
 	{
+		sumDbm = 0;
 		if (powersDbm.IsEmpty())
-			return -float.MAX;
+			return false;
 
 		float peak = powersDbm[0];
 		// Distinct loop variable names: Enforce rejects re-declaring a name in one function.
@@ -180,6 +183,7 @@ class RICON_Num
 		{
 			linearSum += Math.Pow(10, (term - peak) / 10.0);
 		}
-		return peak + 10.0 * Math.Log10(linearSum);
+		sumDbm = peak + 10.0 * Math.Log10(linearSum);
+		return true;
 	}
 }

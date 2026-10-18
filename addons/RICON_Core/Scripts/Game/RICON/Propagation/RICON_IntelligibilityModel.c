@@ -10,6 +10,12 @@ class RICON_IntelligibilityModel
 		return string.Empty;
 	}
 
+	//! Config check; the base class has no config and is never valid (REQ-LE-73).
+	bool IsConfigValid()
+	{
+		return false;
+	}
+
 	//! Must be non-decreasing in SINR and return a finite value in [0, 1] for every finite input.
 	float Intelligibility(float sinrDb)
 	{
@@ -43,7 +49,7 @@ class RICON_LinearTestIntelligibility : RICON_IntelligibilityModel
 	}
 
 	//! Config check of REQ-LE-76: a < b and 0 <= Q_deg <= Q_clean <= 1.
-	bool IsConfigValid()
+	override bool IsConfigValid()
 	{
 		return m_fLowDb < m_fHighDb && m_fDegradedQ >= 0 && m_fDegradedQ <= m_fCleanQ && m_fCleanQ <= 1;
 	}
