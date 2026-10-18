@@ -1,8 +1,8 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 5,
-  "source": "docs/req/REQ-core-contracts.md@b182c4a",
+  "revision": 6,
+  "source": "docs/req/REQ-core-contracts.md@b9f90e8",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
   "supportedSchemaVersion": 1,
@@ -372,7 +372,89 @@
         "decision": "INVALID_SNAPSHOT"
       },
       "tags": [
-        "sessionEpoch != 0"
+        "sessionEpoch в 1..int.MAX-1"
+      ]
+    },
+    {
+      "id": "CMP-25",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": -5,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "отрицательный epoch вне домена"
+      ]
+    },
+    {
+      "id": "CMP-26",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 2147483647,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "epoch = int.MAX вне домена"
       ]
     },
     {
@@ -1968,6 +2050,68 @@
       ]
     },
     {
+      "id": "RX-15",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "full_resync",
+            "nowMs": 10,
+            "sessionEpoch": 2147483647,
+            "schemaVersion": 1,
+            "snapshots": []
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "ACCEPT_RESYNC",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_RESYNC",
+            "effects": [
+              "REQUEST_RESYNC",
+              "DIAGNOSTIC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "resync с epoch = int.MAX отвергается целиком"
+      ]
+    },
+    {
       "id": "RX-12",
       "kind": "receiver_trace",
       "req": [
@@ -2220,7 +2364,7 @@
             "rotated": false
           }
         ],
-        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
+        "epochRule": "после rotated=true sessionEpoch != прежнего; без rotated epoch не меняется; всегда в 1..int.MAX-1"
       },
       "tags": [
         "обычная выдача seq по линку, независимо для разных линков"
@@ -2266,7 +2410,7 @@
             "rotated": false
           }
         ],
-        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
+        "epochRule": "после rotated=true sessionEpoch != прежнего; без rotated epoch не меняется; всегда в 1..int.MAX-1"
       },
       "tags": [
         "максимальный выданный seq = int.MAX - 1; следующий запрос — новый epoch, full resync, seq 1 у всех линков"
@@ -2281,7 +2425,7 @@
       ],
       "input": {
         "state": {
-          "sessionEpoch": 2147483647,
+          "sessionEpoch": 2147483646,
           "seqByLink": {
             "10": 2147483646
           }
@@ -2299,10 +2443,10 @@
             "fullResync": true
           }
         ],
-        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
+        "epochRule": "после rotated=true sessionEpoch != прежнего; без rotated epoch не меняется; всегда в 1..int.MAX-1"
       },
       "tags": [
-        "ротация при epoch = int.MAX остаётся в int32 Enforce, non-zero и отличается от прежнего"
+        "ротация при epoch = int.MAX-1 продолжается с 1 (домен 1..int.MAX-1, отличается от текущего)"
       ]
     }
   ]

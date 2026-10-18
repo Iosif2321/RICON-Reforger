@@ -44,7 +44,7 @@ def is_valid_snapshot(s: Any, int_max: int = INT_MAX) -> bool:
             return False
     if s["linkSeq"] >= int_max:
         return False
-    if not is_int(s.get("sessionEpoch")) or s["sessionEpoch"] == 0:
+    if not is_int(s.get("sessionEpoch")) or not 1 <= s["sessionEpoch"] <= int_max - 1:
         return False
     quality = s.get("quality")
     if isinstance(quality, bool) or not isinstance(quality, (int, float)) or not math.isfinite(quality):
@@ -81,7 +81,7 @@ class Receiver:
     def full_resync(self, now_ms: int, epoch: Any, schema: Any, snapshots: Any) -> dict[str, Any]:
         """Единственный способ установить identity; атомарный: либо принят целиком, либо отвергнут целиком."""
         valid = (
-            is_int(epoch) and epoch != 0
+            is_int(epoch) and 1 <= epoch <= INT_MAX - 1
             and schema == self.supported_schema
             and isinstance(snapshots, list)
             and all(is_valid_snapshot(s) and s["sessionEpoch"] == epoch and s["schemaVersion"] == schema for s in snapshots)
@@ -143,11 +143,8 @@ class Allocator:
             self.seq[link_id] = candidate
             return {"linkId": link_id, "linkSeq": candidate, "rotated": False}
         old = self.epoch
-        # Enforce int is 32-bit: stay inside [-int.MAX, int.MAX], never 0, never the previous value.
-        if old >= self.int_max:
-            self.epoch = -self.int_max
-        else:
-            self.epoch = old + 1 if old + 1 != 0 else old + 2
+        # Epoch domain 1..int.MAX-1 (REQ-core §8.2): after int.MAX-1 continue with 1 if that is not the current one.
+        self.epoch = old + 1 if old + 1 <= self.int_max - 1 else 1
         self.seq = {link_id: 1}
         return {"linkId": link_id, "linkSeq": 1, "rotated": True, "fullResync": True, "_oldEpoch": old}
 
@@ -182,8 +179,8 @@ def run_vector(vector: dict[str, Any], document: dict[str, Any]) -> list[str]:
         epoch = allocator.epoch
         for index, (link_id, want) in enumerate(zip(data["requests"], expected["steps"], strict=True)):
             got = allocator.next(link_id)
-            if not -document["intMax"] - 1 <= allocator.epoch <= document["intMax"]:
-                errors.append(f"step {index}: epoch {allocator.epoch} outside Enforce int32")
+            if not 1 <= allocator.epoch <= document["intMax"] - 1:
+                errors.append(f"step {index}: epoch {allocator.epoch} outside 1..int.MAX-1")
             if got.get("rotated"):
                 if allocator.epoch in (0, got["_oldEpoch"]):
                     errors.append(f"step {index}: epoch not rotated to a new non-zero value")
