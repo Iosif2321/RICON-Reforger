@@ -202,7 +202,7 @@ class RICON_Ext4DirectionalAntenna : RICON_AntennaPattern
 	override bool GetGainDbi(vector directionWorld, float frequencyMHz, out float gainDbi)
 	{
 		gainDbi = 0;
-		if (!IsConfigValid() || !IsInputValid(directionWorld, frequencyMHz))
+		if (!IsConfigValid() || !RICON_AntennaPattern.IsInputValid(directionWorld, frequencyMHz))
 			return false;
 
 		float cosAngle = vector.Dot(directionWorld.Normalized(), m_vBoresight.Normalized());

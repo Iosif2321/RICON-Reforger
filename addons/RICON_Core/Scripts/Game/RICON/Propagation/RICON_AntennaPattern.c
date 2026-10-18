@@ -55,6 +55,6 @@ class RICON_IsotropicPattern : RICON_AntennaPattern
 	override bool GetGainDbi(vector directionWorld, float frequencyMHz, out float gainDbi)
 	{
 		gainDbi = 0;
-		return IsInputValid(directionWorld, frequencyMHz);
+		return RICON_AntennaPattern.IsInputValid(directionWorld, frequencyMHz);
 	}
 }
