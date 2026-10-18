@@ -70,6 +70,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	protected ref map<string, ref RICON_IntelligibilityModel> m_mIntelligibilityById = new map<string, ref RICON_IntelligibilityModel>();
 	protected ref map<string, ref RICON_BandConfig> m_mBandConfigById = new map<string, ref RICON_BandConfig>();
 	protected ref map<string, ref RICON_WirelessLinkEvaluator> m_mEvaluatorByBand = new map<string, ref RICON_WirelessLinkEvaluator>();
+	protected ref map<string, ref RICON_RoutingPolicy> m_mRoutingPolicyByNetworkType = new map<string, ref RICON_RoutingPolicy>();
+	protected ref map<string, ref RICON_CallSessionFactory> m_mCallFactoryByNetworkType = new map<string, ref RICON_CallSessionFactory>();
 	protected ref map<int, int> m_mLinkSeqById = new map<int, int>();
 	protected ref set<int> m_sConnectedPlayers = new set<int>();
 
@@ -186,13 +188,35 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		return true;
 	}
 
+	//! Register one NetworkType atomically. A call factory is optional unless the policy requires one.
+	bool RegisterNetworkType(RICON_RoutingPolicy policy, RICON_CallSessionFactory callFactory = null)
+	{
+		if (!CanMutateRegistries("RegisterNetworkType"))
+			return false;
+		if (!policy || policy.GetNetworkTypeId().IsEmpty() || !policy.IsConfigValid())
+			return RegistryFailure("RegisterNetworkType: invalid policy, id or config");
+
+		string networkTypeId = policy.GetNetworkTypeId();
+		if (m_mRoutingPolicyByNetworkType.Contains(networkTypeId))
+			return RegistryFailure("RegisterNetworkType: duplicate network type id");
+		if (policy.RequiresCallSessionFactory() && !callFactory)
+			return RegistryFailure("RegisterNetworkType: required call-session factory is missing");
+		if (callFactory && (!callFactory.IsConfigValid() || callFactory.GetNetworkTypeId() != networkTypeId))
+			return RegistryFailure("RegisterNetworkType: factory config or network type mismatch");
+
+		m_mRoutingPolicyByNetworkType.Set(networkTypeId, policy);
+		if (callFactory)
+			m_mCallFactoryByNetworkType.Set(networkTypeId, callFactory);
+		return true;
+	}
+
 	//! No registration is allowed after freeze. At least one fully resolved band is required.
 	bool FreezeRegistries()
 	{
 		if (!CanMutateRegistries("FreezeRegistries"))
 			return false;
-		if (m_mEvaluatorByBand.IsEmpty())
-			return RegistryFailure("FreezeRegistries: no resolved bands");
+		if (m_mEvaluatorByBand.IsEmpty() && m_mRoutingPolicyByNetworkType.IsEmpty())
+			return RegistryFailure("FreezeRegistries: no resolved bands or network types");
 		m_bRegistriesFrozen = true;
 		return true;
 	}
@@ -202,6 +226,20 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		if (!m_bRegistriesFrozen || bandId.IsEmpty())
 			return null;
 		return m_mEvaluatorByBand.Get(bandId);
+	}
+
+	RICON_RoutingPolicy GetRoutingPolicy(string networkTypeId)
+	{
+		if (!m_bRegistriesFrozen || networkTypeId.IsEmpty())
+			return null;
+		return m_mRoutingPolicyByNetworkType.Get(networkTypeId);
+	}
+
+	RICON_CallSessionFactory GetCallSessionFactory(string networkTypeId)
+	{
+		if (!m_bRegistriesFrozen || networkTypeId.IsEmpty())
+			return null;
+		return m_mCallFactoryByNetworkType.Get(networkTypeId);
 	}
 
 	string GetNoiseSourceId(string environmentId)

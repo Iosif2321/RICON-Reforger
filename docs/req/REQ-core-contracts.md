@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.6 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью: claude.
+Версия: **0.7 DRAFT (NetworkType registry)**, 2026-10-19. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -332,6 +332,10 @@ null-leg имеет приоритет над более ранним cycle.
 Route quality = minimum leg intelligibility; route state = worst leg state по stable enum ordering. Invalid route
 MUST давать quality 0 и state LOST, не частичный результат. `maxHops` — path limit и не связан с snapshot `ttlMs`.
 
+Route строится через `AddLeg` до первого `Evaluate`. После Evaluate legs MUST быть immutable: повторный AddLeg
+отклоняется, чтобы cached reason/quality/state не устарели. `WasEvaluated` отличает ещё не вычисленный объект от
+реального `INVALID_CONTEXT` результата.
+
 ### 9.2 RoutingContext и policy
 
 `RoutingContext` — immutable input policy: `sessionEpoch` в `1..int.MAX-1`, non-negative monotonic `serverTimeMs`, positive
@@ -347,6 +351,11 @@ read-only interfaces в следующей версии context.
 
 `CallSession`/`CallSessionFactory` в Э2 — только abstract seam для EXT-3; состояния звонка не придумываются до
 этапа конкретной сети. Factory и policy имеют stable non-empty `networkTypeId`.
+
+Authority manager регистрирует NetworkType атомарно: policy обязана иметь valid config/non-empty unique ID.
+CallSessionFactory optional для policy без call sessions; если policy объявляет `RequiresCallSessionFactory`, factory
+обязательна. Переданная factory MUST иметь valid config и тот же networkTypeId. Любая ошибка не меняет ни один map.
+После registry freeze policy/factory доступны только по exact ID; fallback запрещён.
 
 `VoNIntegration` не владеет route/snapshot registries. До ADR-001/Workbench evidence методы MAY быть no-op
 scaffold; никакой недоказанный actuator не получает `PASS`. Snapshot должен пройти receiver/ordering contract до
@@ -399,6 +408,7 @@ scaffold; никакой недоказанный actuator не получает
 | CT-CORE-009 | route reasons/order; min/worst; continuity/cycle/maxHops boundary | B8/B9 | CT + OR |
 | CT-CORE-010 | `GetGame()==null`, no GameMode, no component | API-03 | CT/WB |
 | CT-CORE-011 | model: empty/null/duplicate/wrong-owner layer; Q вне `[0,1]`; LOST выше threshold | C13/REQ-LE-31/73/75 | CT |
+| CT-CORE-012 | NetworkType: optional/required factory, ID mismatch, duplicate, atomic failure, freeze/no fallback | §9.3/EXT-3 | CT/WB |
 | CT-EXT-001…005 | сценарии EXT-1…EXT-5 | B3/B5/B6/B7/B9 | CT + WB |
 
 ## 13. Mapping findings → требования

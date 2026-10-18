@@ -81,11 +81,12 @@ class RICON_Route
 {
 	int m_iTalkerEndpointId;
 	int m_iListenerEndpointId;
-	ref array<ref RICON_RouteLeg> m_aLegs = {};
+	protected ref array<ref RICON_RouteLeg> m_aLegs = {};
 
 	protected RICON_ERouteReason m_eReason = RICON_ERouteReason.INVALID_CONTEXT;
 	protected float m_fQuality;
 	protected RICON_ELinkState m_eState = RICON_ELinkState.LOST;
+	protected bool m_bEvaluated;
 
 	void RICON_Route(int talkerEndpointId, int listenerEndpointId)
 	{
@@ -93,9 +94,31 @@ class RICON_Route
 		m_iListenerEndpointId = listenerEndpointId;
 	}
 
+	//! Route is built once; after Evaluate its cached result cannot be invalidated by later mutations.
+	bool AddLeg(RICON_RouteLeg leg)
+	{
+		if (m_bEvaluated || !leg)
+			return false;
+		m_aLegs.Insert(leg);
+		return true;
+	}
+
+	int GetLegCount()
+	{
+		return m_aLegs.Count();
+	}
+
+	RICON_RouteLeg GetLeg(int index)
+	{
+		if (index < 0 || index >= m_aLegs.Count())
+			return null;
+		return m_aLegs[index];
+	}
+
 	//! Validate globally by reason class, then derive min quality and worst state (REQ-core §9.1).
 	RICON_ERouteReason Evaluate(RICON_RoutingContext context)
 	{
+		m_bEvaluated = true;
 		SetInvalid(RICON_ERouteReason.INVALID_CONTEXT);
 		if (!context || !context.IsValid())
 			return m_eReason;
@@ -165,6 +188,11 @@ class RICON_Route
 		return m_eReason;
 	}
 
+	bool WasEvaluated()
+	{
+		return m_bEvaluated;
+	}
+
 	float GetQuality()
 	{
 		return m_fQuality;
@@ -225,6 +253,16 @@ class RICON_RoutingPolicy
 		return string.Empty;
 	}
 
+	bool IsConfigValid()
+	{
+		return false;
+	}
+
+	bool RequiresCallSessionFactory()
+	{
+		return false;
+	}
+
 	RICON_Route FindRoute(
 		RICON_RoutingContext context,
 		int talkerEndpointId,
@@ -253,6 +291,11 @@ class RICON_CallSessionFactory
 	string GetNetworkTypeId()
 	{
 		return string.Empty;
+	}
+
+	bool IsConfigValid()
+	{
+		return false;
 	}
 
 	RICON_CallSession Create(
