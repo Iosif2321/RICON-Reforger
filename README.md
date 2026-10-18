@@ -10,12 +10,16 @@ until runtime verification (stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) an
 
 | Path | Purpose |
 |---|---|
-| `addons/RICON_Core/` | Reforger addon (Enforce Script, configs, prefabs) |
+| `addons/RICON_Core/` | Reforger addon (Enforce Script): link evaluation, noise/antenna/intelligibility seams, snapshots, routing, comms manager |
+| `addons/RICON_CoreTests/` | TEST_ONLY addon: compile fixtures for the five extension scenarios; not published |
+| `oracle/` | host-side reference (Python stdlib): link-eval, snapshot and route vectors with runners (`ORACLE_PASS`) |
+| `docs/req/` | requirements written from primary sources (link evaluation, core contracts, lifecycle) |
+| `docs/review/` | reviews (core, API, compile readiness) |
 | `docs/adr/` | architecture decision records (ADR-002: core contracts) |
-| `docs/evidence/` | evidence notes with levels DOC/SOURCE/COMPILE; `codex-are/` — immutable research snapshots (SHA-256 manifest) |
-| `docs/plan/` | agreed plan and live status |
-| `oracle/` | *planned:* host-side reference model and vector/trace generator (spec, not a second production core) |
-| `tools/ci/` | *planned:* checks |
+| `docs/evidence/` | evidence notes with levels DOC/SOURCE/STD_COPY/…; `codex-are/` — immutable research snapshots (SHA-256 manifest); `WB-order-*.md` — Workbench requests |
+| `docs/plan/` | agreed plan and live status (`STATUS_RU.md`) |
+
+Nothing has been compiled yet: the first Workbench compile is requested in `docs/evidence/WB-order-003.md`.
 
 ## Rules
 
