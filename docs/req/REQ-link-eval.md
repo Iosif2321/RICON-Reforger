@@ -118,7 +118,7 @@
 | V6 | то же, «сельская», `f = 30 / 50 / 150 / 250 МГц` | `F_a = 26.284 / 20.139 / 6.922 / 0.777 дБ`; `N = −106.668 / −112.650 / −122.906 / −124.873 дБм` |
 | V7 | «сельская», `f = 450 МГц` | `noiseModelInDomain = false`, `N = −125.006 дБм` |
 | V8 | фикстура `linear_test` (TEST_ONLY, self-test seam, не физический oracle): `SINR = −15 / 0 / +9 / +15 / +400 / −400 дБ` | `Q = 0 / 0.5 / 0.8 / 1 / 1 / 0` |
-| V9 | `NaN` в любой координате; `f = 0`; `B = −1`; `NF = −1` | `valid = false`, `INVALID_INPUT`, LOST, всё конечно |
+| V9 | по отдельности: `NaN` в любой компоненте координаты / `f = 0` / `B = −1` / `NF = −1` | соответственно `INVALID_COORDINATE` / `INVALID_FREQUENCY` / `INVALID_BANDWIDTH` / `INVALID_NOISE_FIGURE` (коды — `REQ-core-contracts` §4); в каждом случае `valid = false`, LOST, все числа конечны |
 
 ## 11. Трассировка к ревью
 
