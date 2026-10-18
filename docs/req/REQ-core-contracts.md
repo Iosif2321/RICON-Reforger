@@ -1,10 +1,13 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.3 DRAFT (oracle-review)**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.3 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
 acceptance и не freeze Э2: ограничения ниже остаются обязательными.
+
+Oracle-review: failure precedence и `intelligibilityModelId` сверены с `REQ-link-eval.md@3078f88` и
+`oracle/vectors/link_eval_v1.json` revision 2; claude подтвердил runner/REQ sync в id513.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
