@@ -126,6 +126,13 @@ class RICON_Ext3SatelliteNetwork : RICON_RoutingPolicy
 		ok = RICON_TestSupport.Expect(session != null && session.GetNetworkTypeId() == NETWORK_TYPE_ID, "EXT-3", "call session created") && ok;
 		return ok;
 	}
+
+	//! Registration through the real authority seam (REQ-core §9.3, CT-CORE-012). Compile coverage only:
+	//! it needs a live manager on the server and is not called by SelfCheck.
+	static bool RegisterInto(notnull RICON_CommsManagerComponent manager)
+	{
+		return manager.RegisterNetworkType(new RICON_Ext3SatelliteNetwork(), new RICON_Ext3SatelliteCallFactory());
+	}
 }
 
 //! EXT-3 call-session seam for the satellite fixture. No call state machine is invented (REQ-core §9.3).
@@ -266,6 +273,12 @@ class RICON_Ext5WiredEvaluator : RICON_LinkEvaluator
 		{
 			budget.m_fIntelligibility = 1;
 			budget.m_eState = RICON_ELinkState.CLEAN;
+		}
+		// Same contract as every evaluator: a valid budget carries only finite numbers (REQ-LE-82).
+		if (!RICON_Num.IsFinite(budget.m_fDistanceM) || !RICON_Num.IsFinite(lossDb) || !RICON_Num.IsFinite(budget.m_fRxPowerDbm))
+		{
+			budget.MarkInvalid(RICON_EReason.NUMERIC_FAILURE);
+			return budget;
 		}
 		budget.m_bValid = true;
 		budget.m_eReason = RICON_EReason.OK;
