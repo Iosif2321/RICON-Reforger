@@ -143,7 +143,11 @@ class Allocator:
             self.seq[link_id] = candidate
             return {"linkId": link_id, "linkSeq": candidate, "rotated": False}
         old = self.epoch
-        self.epoch = old + 1 if old + 1 != 0 else old + 2
+        # Enforce int is 32-bit: stay inside [-int.MAX, int.MAX], never 0, never the previous value.
+        if old >= self.int_max:
+            self.epoch = -self.int_max
+        else:
+            self.epoch = old + 1 if old + 1 != 0 else old + 2
         self.seq = {link_id: 1}
         return {"linkId": link_id, "linkSeq": 1, "rotated": True, "fullResync": True, "_oldEpoch": old}
 
@@ -178,6 +182,8 @@ def run_vector(vector: dict[str, Any], document: dict[str, Any]) -> list[str]:
         epoch = allocator.epoch
         for index, (link_id, want) in enumerate(zip(data["requests"], expected["steps"], strict=True)):
             got = allocator.next(link_id)
+            if not -document["intMax"] - 1 <= allocator.epoch <= document["intMax"]:
+                errors.append(f"step {index}: epoch {allocator.epoch} outside Enforce int32")
             if got.get("rotated"):
                 if allocator.epoch in (0, got["_oldEpoch"]):
                     errors.append(f"step {index}: epoch not rotated to a new non-zero value")

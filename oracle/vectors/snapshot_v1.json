@@ -1,7 +1,7 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 4,
+  "revision": 5,
   "source": "docs/req/REQ-core-contracts.md@b182c4a",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
@@ -2220,7 +2220,7 @@
             "rotated": false
           }
         ],
-        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется"
+        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
       },
       "tags": [
         "обычная выдача seq по линку, независимо для разных линков"
@@ -2266,10 +2266,43 @@
             "rotated": false
           }
         ],
-        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется"
+        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
       },
       "tags": [
         "максимальный выданный seq = int.MAX - 1; следующий запрос — новый epoch, full resync, seq 1 у всех линков"
+      ]
+    },
+    {
+      "id": "ALLOC-03",
+      "kind": "allocator_trace",
+      "req": [
+        "REQ-core §8.1",
+        "REQ-core §8.2"
+      ],
+      "input": {
+        "state": {
+          "sessionEpoch": 2147483647,
+          "seqByLink": {
+            "10": 2147483646
+          }
+        },
+        "requests": [
+          10
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "linkId": 10,
+            "linkSeq": 1,
+            "rotated": true,
+            "fullResync": true
+          }
+        ],
+        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется; всегда в int32 Enforce"
+      },
+      "tags": [
+        "ротация при epoch = int.MAX остаётся в int32 Enforce, non-zero и отличается от прежнего"
       ]
     }
   ]
