@@ -3,8 +3,8 @@
 Wireless communications simulation platform for Arma Reforger: server-authoritative signal model (HDSP),
 radio networks with towers and repeaters, and (later) cellular networks — on top of the built-in VoN voice.
 
-Status: **pre-alpha, static phase** — the game is not launched yet; code is `STATIC_IMPLEMENTED/COMPILE_ONLY`
-until runtime verification (stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) and `docs/plan/STATUS_RU.md`.
+Status: **pre-alpha, static phase** — the game is not launched yet; Enforce code is `STATIC_IMPLEMENTED / NOT_COMPILED`
+(host-side oracle checks pass: `ORACLE_PASS`; runtime verification is stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) and `docs/plan/STATUS_RU.md`.
 
 ## Layout
 

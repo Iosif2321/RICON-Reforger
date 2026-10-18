@@ -1,6 +1,6 @@
 # RICON-Reforger — живой статус
 
-Обновлено: 2026-10-19, спринт 10 (тема agora `ricon-reforger-build`). Ведёт claude, сверяет codex.
+Обновлено: 2026-10-19, спринт 11 (тема agora `ricon-reforger-build`). Ведёт claude, сверяет codex.
 План — `PLAN_RU.md` v5 (+ шапка «Решения владельца после v5»). Решения владельца имеют приоритет над v5.
 
 Режим: **статический** — игру и сервер не запускаем; обратная разработка запрещена; ванильные файлы — только
@@ -14,9 +14,9 @@
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
 | Э1r | Runtime-lab на одном ПК | M1 | BLOCKED_NO_RUNTIME | — | разрешение владельца на запуск |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
-| Э2 | Контракты единого ядра | M1 | спринт 8: реестр типов сетей (codex `e669e40`), seam диаграммы антенны (claude `4d541e7`), тестовый аддон `RICON_CoreTests` с фикстурами всех 5 сценариев расширения (claude `f0acd5f`, `62ba841`, `1f46b76`; COMPILE_FIXTURE / SELF_CHECK_NOT_RUN; ядро при этом не менялось). Спринт 7: маршруты по REQ-core §9 (стабильные причины, глобальный порядок проверок, min Q / худшее состояние, неизменяемый RoutingContext, seams AccessPolicy / RoutingPolicy / CallSession, VoN — no-op) — STATIC_IMPLEMENTED (codex `d0c4db3`), эталон маршрутов 48 векторов (claude), code review agree. Спринт 6: `RICON_LinkSnapshot` по REQ-core §8 (порядок, атомарный resync, TTL) и менеджер (реестры, допуск моделей, epoch, seq без переполнения) — STATIC_IMPLEMENTED, code review agree; эталон снимков — 46 трасс, `SNAPSHOT_ORACLE_PASS`. Ранее: ревью ядра выполнено и согласовано: `R-core-20261018.md` (оси A, B; 18 правок, из них 2 блокера clean-room) + `R-core-20261018-api.md` (ось C, codex; 7 правок). Черновик не компилировался; способ проверки компиляции документирован (`E-workbench-build.md`) | `0bd44d6`, `6e6444d`, `d3984b0`, `d6b89d0`, `7a6130d`, `babba42`, `75ecd3b` | требования согласованы (спринт 3): `REQ-link-eval.md` v0.3 (claude) + `REQ-core-contracts.md` (codex), взаимный agree; код — спринт 4; компиляция — через исполнителя заказа №001; кривая разборчивости — `BLOCKED_CALIBRATION` |
+| Э2 | Контракты единого ядра | M1 | STATIC_IMPLEMENTED + code review; host oracle PASS (снимки 46, маршруты 48); REQ-core v0.7, ADR-002; менеджер (реестры, допуск моделей, epoch, seq, типы сетей), снимки, маршруты, seams антенны/шума/разборчивости/сессии вызова; фикстуры EXT-1…5 (COMPILE_FIXTURE / SELF_CHECK_NOT_RUN). Не скомпилировано, не заморожено. Ход по спринтам — таблица «Спринты» | ключевые: `7a6812a`, `9fa04f5`, `fe8e20b`, `eb83219`, `d0c4db3`, `e669e40`, `4d541e7`, `f0acd5f`, `ff8f500`, `b555f35` | **компиляция** — заказ `[Workbench]` №003 (addon target `06979fc`) |
 | Э3 | Server-authoritative lifecycle | M1 | требования готовы: `docs/req/REQ-lifecycle.md` v0.2 AGENT-REVIEWED (codex; состояния игрока, PTT lease, граница доверия RPC, owner-only снимки, CT-LC-001…010). Код не начат — gate: компиляция Э2 | `230354b`, `9814d5c`, `6aa5424` | `WORKBENCH_COMPILE_PASS` Э2 (заказ №003) |
-| Э4 | HDSP на Enforce | M1 | спринт 10: метод L2 выбран по первоисточнику (ITU-R P.526-16 § 4.5, ур. (66)); шум подтверждён P.372-17; универсальной кривой разборчивости нет — BLOCKED_CALIBRATION подтверждён (`E-web3-*`). Ранее: oracle L0 готов: 57 эталонных векторов (claude) + независимый вычислитель на Python stdlib (codex) — `ORACLE_PASS: 57`, 9 unittest; L0 на Enforce переписан с нуля по REQ (clean-room): FreeSpace, шум (P.372 из конфига), seam разборчивости, чистый evaluator с контрактом моделей — STATIC_IMPLEMENTED, взаимный code review (id544); компиляция NOT_TESTED; паритет с oracle — NOT_TESTED | oracle: `ef4e6d8`, `21c9a1f`, `3078f88`, `6a7bc9c`, `9286473`; код: `3b79baa`, `ff62336`, `9d4ea3b`, `03022c3`, `41b5d81`, `7102846`; ADR/REQ: `1f4f0c9`, `af73d06` | Э2; L2-дифракция OPEN (P.526-16); внешний шум P.372 — новый слой |
+| Э4 | HDSP на Enforce | M1 | L0 (свободное пространство, шум, SINR, состояния) — STATIC_IMPLEMENTED, clean-room, host oracle 57 PASS; L2 — метод выбран (ITU-R P.526-16 § 4.5, ур. (66)), требований/реализации нет; production-разборчивость — BLOCKED_CALIBRATION; область шума тихой сельской зоны — OPEN | L0: `3b79baa`…`7102846`; evidence: `8d4d7a6`, `56167cd` | компиляция Э2 (№003); P.372-18 и Fig. 39 не прочитаны; калибровка — runtime |
 | Э4T-s | VoN seam + synthetic LinkSnapshot | M1 | не начат | — | Э1s, Э2 |
 | Э4T-f | VoN финальный маппинг | M1 | BLOCKED_NO_RUNTIME | — | Э4, Э1r |
 | Э5 | Вертикальный срез радио | M1 | не начат | — | Э3, Э4T-f |
@@ -44,6 +44,13 @@
 | 3 | требования к ядру своими словами (clean-room): физика линка и контракты | закрыт: `REQ-link-eval.md` (`6abe92a`…`69b6ed4`), `REQ-core-contracts.md` (`58138a3`, `19d2fe4`); agree id481, id483. Поймано ревью: ошибка `f_a = 0` в шуме (codex id472), необоснованная кривая разборчивости по умолчанию (codex id475), 4 расхождения полей между документами (claude id470) |
 | 2 | ревью ядра (оси A, B — claude; ось C — codex), способ компиляции по документации Tools | закрыт: оба отчёта — взаимный agree (id446, id452). Главное: черновик вычислителя повторяет структуру A3 → переписать с нуля по REQ; шум без P.372 занижен на 12–18 дБ на 30–50 МГц; чувствительность по умолчанию = 0 дБм (почти всё LOST); `m_Model` — слабая ссылка |
 | 1 | перенос корпуса, матрица, лицензия APL-SA, baseline-коммит, заказ `[Workbench]` | закрыт: `598e4e8` (baseline, agree codex id410); заказ `[Workbench]` №001 — id406. Замечания codex учтены: хэш dossier (id399), граница SOURCE ≠ runtime (id402) |
+
+## Текущий блокер (спринт 11)
+
+**BLOCKED_WORKBENCH для нового Enforce-кода.** Код Э2/Э4-L0 и фикстуры ждут первой компиляции (заказ №003,
+addon target `06979fc`; более поздние коммиты меняют только документы — проверка `git diff --exit-code 06979fc..HEAD -- addons`).
+Ванильные файлы — заказ №001. Э3 (требования готовы) и L2 начинаются только после компиляции. Аудит согласованности —
+`docs/review/R-midpoint-evidence-20261019.md`.
 
 ## Вопросы владельцу
 
