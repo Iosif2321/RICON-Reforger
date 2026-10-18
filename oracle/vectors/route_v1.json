@@ -1,7 +1,7 @@
 {
   "schema": "ricon.oracle.route",
   "version": 1,
-  "revision": 2,
+  "revision": 3,
   "source": "docs/req/REQ-core-contracts.md@d09968b",
   "generatedBy": "claude: expected results written by hand from REQ-core §9 (not from Enforce code)",
   "states": [
@@ -1542,6 +1542,142 @@
       },
       "tags": [
         "listener с неположительным id"
+      ]
+    },
+    {
+      "id": "R-45",
+      "kind": "route",
+      "req": [
+        "REQ-core §9.1",
+        "REQ-core §9.2"
+      ],
+      "input": {
+        "context": {
+          "sessionEpoch": 7,
+          "serverTimeMs": 1000,
+          "maxHops": 4,
+          "correlationId": 1,
+          "hasAccessPolicy": true
+        },
+        "route": null
+      },
+      "expected": {
+        "reason": "EMPTY_ROUTE",
+        "quality": 0.0,
+        "state": "LOST"
+      },
+      "tags": [
+        "маршрута нет (null)"
+      ]
+    },
+    {
+      "id": "R-46",
+      "kind": "route",
+      "req": [
+        "REQ-core §9.1",
+        "REQ-core §9.2"
+      ],
+      "input": {
+        "context": {
+          "sessionEpoch": 7,
+          "serverTimeMs": 1000,
+          "maxHops": 4,
+          "correlationId": 1,
+          "hasAccessPolicy": true
+        },
+        "route": {
+          "talkerEndpointId": 1,
+          "listenerEndpointId": 2
+        }
+      },
+      "expected": {
+        "reason": "EMPTY_ROUTE",
+        "quality": 0.0,
+        "state": "LOST"
+      },
+      "tags": [
+        "в маршруте нет списка ног"
+      ]
+    },
+    {
+      "id": "R-47",
+      "kind": "route",
+      "req": [
+        "REQ-core §9.1",
+        "REQ-core §9.2"
+      ],
+      "input": {
+        "context": {
+          "sessionEpoch": 2147483647,
+          "serverTimeMs": 1000,
+          "maxHops": 4,
+          "correlationId": 1,
+          "hasAccessPolicy": true
+        },
+        "route": {
+          "talkerEndpointId": 1,
+          "listenerEndpointId": 2,
+          "legs": [
+            {
+              "fromEndpointId": 1,
+              "toEndpointId": 2,
+              "budget": {
+                "valid": true,
+                "intelligibility": 0.9,
+                "state": "CLEAN"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "reason": "INVALID_CONTEXT",
+        "quality": 0.0,
+        "state": "LOST"
+      },
+      "tags": [
+        "epoch контекста = int.MAX вне домена 1..int.MAX-1"
+      ]
+    },
+    {
+      "id": "R-48",
+      "kind": "route",
+      "req": [
+        "REQ-core §9.1",
+        "REQ-core §9.2"
+      ],
+      "input": {
+        "context": {
+          "sessionEpoch": 7,
+          "serverTimeMs": 1000,
+          "maxHops": 4,
+          "correlationId": 1,
+          "hasAccessPolicy": true
+        },
+        "route": {
+          "talkerEndpointId": 0,
+          "listenerEndpointId": 2,
+          "legs": [
+            {
+              "fromEndpointId": 1,
+              "toEndpointId": 2,
+              "budget": {
+                "valid": false,
+                "intelligibility": 0.9,
+                "state": "CLEAN"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "reason": "INVALID_ENDPOINT",
+        "quality": 0.0,
+        "state": "LOST"
+      },
+      "tags": [
+        "talker = 0 важнее невалидного бюджета (endpoint-проход раньше)",
+        "order"
       ]
     },
     {

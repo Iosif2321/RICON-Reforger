@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 STATES = ("LOST", "WEAK", "DEGRADED", "CLEAN")  # stable ordering: LOST worst
+INT_MAX = 2147483647
 SPECIAL_FLOATS = {"NaN": math.nan, "Infinity": math.inf, "-Infinity": -math.inf}
 
 
@@ -35,7 +36,7 @@ def is_int(value: Any) -> bool:
 def context_valid(c: Any) -> bool:
     """§9.2: positive epoch, non-negative time, positive maxHops and correlation id, AccessPolicy present."""
     return (isinstance(c, dict)
-            and is_int(c.get("sessionEpoch")) and c["sessionEpoch"] > 0
+            and is_int(c.get("sessionEpoch")) and 1 <= c["sessionEpoch"] <= INT_MAX - 1
             and is_int(c.get("serverTimeMs")) and c["serverTimeMs"] >= 0
             and is_int(c.get("maxHops")) and c["maxHops"] > 0
             and is_int(c.get("correlationId")) and c["correlationId"] > 0
@@ -58,7 +59,7 @@ def endpoint_valid(leg: dict[str, Any]) -> bool:
     return is_int(f) and is_int(t) and f > 0 and t > 0 and f != t
 
 
-def validate(context: Any, route: dict[str, Any]) -> str:
+def validate(context: Any, route: Any) -> str:
     """Первая причина в глобальном порядке §9.1."""
     if not context_valid(context):
         return "INVALID_CONTEXT"
@@ -94,7 +95,7 @@ def validate(context: Any, route: dict[str, Any]) -> str:
     return "OK"
 
 
-def evaluate(context: Any, route: dict[str, Any]) -> dict[str, Any]:
+def evaluate(context: Any, route: Any) -> dict[str, Any]:
     reason = validate(context, route)
     if reason != "OK":
         return {"reason": reason, "quality": 0.0, "state": "LOST"}
@@ -115,7 +116,7 @@ def check(path: Path) -> list[str]:
     failures = []
     for vector in document["vectors"]:
         data = decode(vector["input"])
-        got = evaluate(data["context"], data["route"])
+        got = evaluate(data.get("context"), data.get("route"))
         want = vector["expected"]
         if got["reason"] != want["reason"] or got["state"] != want["state"] \
                 or abs(got["quality"] - want["quality"]) > tolerance:
