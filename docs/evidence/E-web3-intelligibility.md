@@ -29,6 +29,8 @@
 | Авторская страница Cees Taal, `https://ceestaal.nl/code/` | HTTP 200, final URL тот же; snapshot HTML SHA-256 `2E2F82531AC779139DB58788F9CE23A172C726611E493DBCEC6F28DF62E3CA67` | `PRIMARY_AUTHOR_DOC` | STOI описан как intrusive function clean+degraded speech; перечислены noise reduction/masking/vocoded conditions |
 | Miller & Nicely, JASA 1955, `https://doi.org/10.1121/1.1907526` | publisher PDF → HTTP 403; Crossref abstract доступен | `PRIMARY_ABSTRACT` | 16 consonants тестировались при frequency distortion и random masking noise; ошибки зависели от типа искажения |
 | ITU-T P.862/P.863/P.563/P.800 official catalog URLs | `itu.int`: PowerShell connection closed; curl Schannel TLS handshake failed | `OFFICIAL_UNAVAILABLE` | названия/методы нельзя повысить до проверенного full-text evidence |
+| TIA TSB-88.1-F (2022), `https://tiaonline.org/standardannouncement/tia-issues-new-wireless-communications-systems/` | official TIA announcement HTTP 200; full standard платный | `STD_METADATA / PAYWALLED` | technology-independent narrowband performance modeling, < 1 GHz; публичных DAQ/C/(I+N) таблиц нет |
+| TIA-603-E (2016), `https://tiaonline.org/standard/tia-603/` | official TIA page HTTP 200; full standard платный | `STD_METADATA / PAYWALLED` | measurement/performance для land-mobile FM/PM voice/data ≤ 1 GHz; публичный abstract не содержит 12 dB SINAD |
 
 Короткие выдержки (каждая меньше 25 слов на источник):
 
@@ -92,6 +94,23 @@ Abstract показывает: паттерны ошибок менялись м
 
 ## 6. Решение для RICON
 
+### 6.0 Land-mobile DAQ/SINAD как кандидаты, не доказанные defaults
+
+Серия TIA TSB-88 наиболее близка предметной области RICON: публичная TIA-страница подтверждает narrowband
+performance modeling в noise/interference-limited land-mobile systems ниже 1 ГГц. Однако полные документы платные;
+в публичном official metadata не найдены:
+
+- определения шкалы Delivered Audio Quality (DAQ);
+- конкретные словесные границы DAQ 1–5;
+- таблицы CPC / required `C/(I+N)` для modulation types.
+
+Поэтому DAQ MAY стать nomenclature/target для будущих состояний после законного доступа к TSB-88 и calibration, но
+сейчас нельзя привязывать CLEAN/DEGRADED/WEAK к числам DAQ «по памяти».
+
+Аналогично official page TIA-603 подтверждает область land-mobile FM/PM и measurement standards, но публичный abstract
+не подтверждает 12 dB SINAD sensitivity criterion. ETSI EN 300 086 PDF в этой сессии не загрузился. Значение 12 dB
+SINAD остаётся `OPEN / UNVERIFIED`, не default RICON.
+
 ### 6.1 Что можно реализовывать сейчас
 
 - Сохранять физический `SINR` как измеримый output.
@@ -119,6 +138,8 @@ Abstract показывает: паттерны ошибок менялись м
 5. Fit monotonic mapping на train set, thresholds CLEAN/DEGRADED/WEAK — по заранее определённым accuracy bands;
    проверить на held-out speakers/material/noise.
 6. Версионировать curve вместе с VoN/game/config; повторять после обновления Reforger.
+7. После доступа к TSB-88 MAY сопоставить измеренные bands с DAQ, но не подменять empirical word accuracy одной
+   нормативной меткой.
 
 До этого production model = `BLOCKED_CALIBRATION`; решение владельца может определить gameplay-quality curve, но она
 должна маркироваться как design policy, не физический стандарт.
@@ -130,6 +151,9 @@ Abstract показывает: паттерны ошибок менялись м
 - IEC webstore 60268-16: connection unexpectedly closed.
 - IEEE Xplore STOI PDF: HTTP 418.
 - AIP/ASA PDFs/страницы: HTTP 403.
+- TIA official pages TSB-88.1-F и TIA-603-E: HTTP 200; full standards paywalled; DAQ/12 dB SINAD text публично не найден.
+- ETSI EN 300 086 official deliver URL: соединение закрыто.
+- Wayback CDX по official PDF patterns ITU-T P.862/P.863/P.563: пустые результаты; `STD_COPY` получить не удалось.
 - Crossref API: HTTP 200 для DOI metadata/abstract, но это не заменяет full standards.
 - Cees Taal author page: HTTP 200.
 
@@ -141,4 +165,6 @@ Abstract показывает: паттерны ошибок менялись м
 | `linear_test` как test fixture | допустимо, `TEST_ONLY` |
 | Production intelligibility/thresholds | `BLOCKED_CALIBRATION` |
 | SII/STI/STOI как будущие offline metrics | PARTIAL: нужны full methods и требуемые inputs |
+| TSB-88 DAQ как шкала land-mobile состояний | CANDIDATE, full standard + calibration required |
+| TIA/ETSI 12 dB SINAD как receiver threshold | OPEN / UNVERIFIED |
 | Изменение текущего Enforce production curve | нет: production curve всё ещё отсутствует |
