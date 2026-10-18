@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.3 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.4 DRAFT (C13 code-review)**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -119,6 +119,23 @@ MUST NOT быть зашиты в evaluator: они принадлежат serve
 
 Этот порядок — часть schema revision и MUST проверяться multi-invalid vectors, чтобы Enforce и oracle не выбирали
 разные reason codes (`oracle/vectors/link_eval_v1.json`, revision 2).
+
+### 4.2 Stable reason codes
+
+`RICON_EReason` использует явные стабильные integer values. Уже опубликованное значение MUST NOT
+перенумеровываться или получать другую семантику.
+
+| Reason | Граница |
+|---|---|
+| `OK` | budget valid |
+| `INVALID_COORDINATE` | нечисловая/неконечная позиция |
+| `INVALID_FREQUENCY`, `INVALID_BANDWIDTH`, `INVALID_GAIN`, `INVALID_NOISE_FIGURE` | соответствующий input-domain |
+| `INVALID_SENSITIVITY`, `INVALID_REQUIRED_SINR`, `INVALID_INTERFERENCE` | выбранное optional-значение некорректно |
+| `CATALOG_VIOLATION` | XOR/конфиг устройства или модели нарушен |
+| `UNKNOWN_BAND`, `UNKNOWN_MODEL`, `UNKNOWN_NOISE_ENVIRONMENT` | ID не разрешён authority registry |
+| `OUT_OF_MODEL_DOMAIN` | input физически валиден, но выбранная модель неприменима |
+| `NUMERIC_FAILURE` | вычисление выпустило нечисловой/неконечный результат |
+| `MODEL_CONTRACT_VIOLATION` | модель вернула недопустимые слои, Q или state при корректном input/config |
 
 ## 5. Loss layers и `LinkBudget`
 
@@ -258,7 +275,9 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 | Query | `f > 0`, но вне domain выбранной модели | invalid budget + `OUT_OF_MODEL_DOMAIN` |
 | Query | прочий malformed/non-finite/domain | invalid budget + specific reason; no exception/NaN |
 | Registry | empty/duplicate/unknown | reject + diagnostic; no fallback |
-| Model | null/out-of-domain/non-finite | invalid budget + model reason |
+| Model | null/unknown | invalid budget + соответствующий `UNKNOWN_*` |
+| Model | out-of-domain/non-finite | `OUT_OF_MODEL_DOMAIN` / `NUMERIC_FAILURE` |
+| Model | invalid layers/Q/state при корректном input | `MODEL_CONTRACT_VIOLATION` |
 | Snapshot | schema/session/link mismatch | reject + resync/diagnostic policy |
 | Snapshot | stale/equal seq | ignore as stale, no side effects |
 | Snapshot | seq near overflow | rotate session + full resync before wrap |
@@ -281,6 +300,7 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 | CT-CORE-008 | server-only mutation; fake client parameters не меняют registries | R-04/R-05 | CT; RT позже |
 | CT-CORE-009 | empty/invalid/multi-leg route min/worst/loop limit | B8/B9 | CT |
 | CT-CORE-010 | `GetGame()==null`, no GameMode, no component | API-03 | CT/WB |
+| CT-CORE-011 | model: empty/null/duplicate/wrong-owner layer; Q вне `[0,1]`; LOST выше threshold | C13/REQ-LE-31/73/75 | CT |
 | CT-EXT-001…005 | сценарии EXT-1…EXT-5 | B3/B5/B6/B7/B9 | CT + WB |
 
 ## 13. Mapping findings → требования
