@@ -316,8 +316,14 @@ Stable route reasons:
 | `CYCLE` | endpoint уже встречался ранее в route |
 | `WRONG_DESTINATION` | последняя leg заканчивается не listener |
 
-Сообщается первая причина в порядке таблицы. Для каждой valid leg endpoint `to` добавляется в seen-set после
-continuity check; talker находится в set до первой leg. Поэтому возврат к talker и повтор любого relay — `CYCLE`.
+Сообщается первая причина в **глобальном** порядке таблицы, а не «все проверки первой leg, затем второй»:
+после context/empty/hops выполняются отдельные полные проходы NULL_LEG → INVALID_ENDPOINT → INVALID_BUDGET,
+затем WRONG_START, затем один упорядоченный проход continuity+cycle, затем WRONG_DESTINATION. Поэтому более поздняя
+null-leg имеет приоритет над более ранним cycle.
+
+В проходе continuity+cycle для каждой leg сначала проверяется continuity, затем endpoint `to` проверяется/добавляется
+в seen-set; talker находится в set до первой leg. Возврат к talker и повтор любого relay — `CYCLE`; если одна leg
+одновременно разрывает путь и повторяет узел, результат `DISCONTINUITY`.
 
 Route quality = minimum leg intelligibility; route state = worst leg state по stable enum ordering. Invalid route
 MUST давать quality 0 и state LOST, не частичный результат. `maxHops` — path limit и не связан с snapshot `ttlMs`.
