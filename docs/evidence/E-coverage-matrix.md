@@ -136,7 +136,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | 5 | Rpl / JIP / стриминг | PARTIAL | OFF Q11–Q12; `interfaceRplComponent.html` (EnableStreamingForConnection «Use with caution») | дальняя связь при стриминге — OPEN |
 | 6 | Workbench / статическая сборка | PARTIAL | игра и Tools установлены (`addons\data\ArmaReforger.gproj`); CX fact_031 | способ компиляции без Play не выяснен; компиляции не было |
 | 7 | Право / Workshop / BattlEye / RE | PARTIAL | Workshop Terms Sec. 3; `LICENSE` (APL-SA); License.txt Tools | лицензия — решена (APL-SA); RE — запрещён; BattlEye — OPEN_NO_PRIMARY_PROOF |
-| 8 | HDSP provenance / калибровка | PARTIAL | W2 Q28; `fn_signalCompute.sqf:96-173`; `signal_core.cpp:133-224` (A3, справочник) | L2-алгоритм OPEN; калибровочных данных нет |
+| 8 | HDSP provenance / калибровка | PARTIAL | W2 Q28; E-web3 (P.526-16, P.372-17, STD_COPY); `fn_signalCompute.sqf:96-173`, `signal_core.cpp:133-224` (A3, справочник) | метод L2 выбран: P.526-16 § 4.5, ур. (66); реализация и калибровка L2 — OPEN; P.372-18 не прочитана; калибровочных данных нет |
 | 9 | Масштаб 30/60 | OPEN | пары 870/3540, активные 87/177; `GetTransceiversInRange`, `AsyncTraceMove` | бюджеты — BLOCKED_NO_RUNTIME |
 | 10 | Общее ядро / расширяемость | OPEN | ADR-002, `addons/RICON_Core` (черновик); `ScriptedRadioComponent` | исполняемых контрактных тестов нет → oracle (приоритет 2) |
 | 11 | Верификация / один ПК | CLOSED (граница) / OPEN (доказательства) | id316, решение №4 | runtime и multi-client — BLOCKED_NO_RUNTIME |
@@ -151,7 +151,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 
 | Приоритет | Чего не хватает | Чем закрыть |
 |---|---|---|
-| 1. Ревью ядра | полный текст актуальной ITU-R P.526 (L2); обоснование порогов 0.85/0.4 и кривой разборчивости; эталонные числа для FSPL/шума | STD (itu.int / зеркала); ревью `docs/review/R-core-*.md` |
+| 1. Ревью ядра | обоснование порогов 0.85/0.4 и кривой разборчивости; эталонные числа для FSPL/шума | STD (itu.int / зеркала); ревью `docs/review/R-core-*.md` |
 | 2. Доработка под Reforger | способ компиляции мода без Play (CLI Workbench или GUI); исполняемые oracle-векторы | документация Workbench; запрос `[Workbench]`; `oracle/` |
 | 3. Слои плана | Q1, Q2, Q4, Q17, Q18, Q19 (ванильные файлы) | `docs/evidence/E-workbench-source.md` (ассистент владельца) |
 | 3. Слои плана (runtime) | Q3, Q5, Q9, Q13, Q23, Q25, Q27 | Э1r — только с разрешения владельца |
@@ -160,8 +160,8 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 
 1. FileIO: W2 (MOD) против офлайн-docs (DOC) — снято в пользу DOC.
 2. maxPlayers: 128 против 256 — открыто, на план не влияет (цель — 30+).
-3. Метод дифракции: A3 — Epstein–Peterson; ITU-R P.526-15 — delta-Bullington; P.526-16 — не подтверждено.
-   Вопрос дизайна Э4.
+3. Метод дифракции — **снято** (2026-10-19, E-web3): production — ITU-R P.526-16 § 4.5 (Bullington + сферическая Земля,
+   ур. (66)); A3 Epstein–Peterson в -16 отсутствует и остаётся только legacy comparator.
 4. PLAN v5 §4.2 и §9.1 п.10 допускают RE через gate; решение владельца №3 запрещает RE. Действует решение
    владельца; отметка — в шапке `PLAN_RU.md` и в `STATUS_RU.md`.
 
