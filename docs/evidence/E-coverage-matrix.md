@@ -18,6 +18,7 @@
 - **[CX]** — `codex-are/` (неизменяемые снимки Codex ARE, циклы 000–004; манифест
   `codex-are.MANIFEST.sha256`); итог — `codex-are/notes/Cycle_004-mutual-research-verdict.md`;
 - **[PLAN]** — `docs/plan/PLAN_RU.md` (v5);
+- **[E-web3]** — `E-web3-itu-p372-p526.md` (ITU-R P.526-16, P.372-17) и `E-web3-intelligibility.md` (разборчивость: универсальной SINR→Q не найдено);
 - **[NR]** — `C:\Users\Ded\duo\work\ricon-reforger-plan\notes_ricon.md`, `notes_refs.md`
   (архив, вне репозитория; Codex проаудировал в id346).
 
@@ -103,7 +104,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 
 | Q | Тема | Статус | Лучший уровень | Где | Проверка (П/Ц/В/К) |
 |---|---|---|---|---|---|
-| Q28 | ITU-R | ЗАКРЫТ (кроме редакции P.526-16 / P.372) | STD-сниппет + REF | W2, CX | В: itu.int недоступен → формулы со сниппетов PDF. К: delta-Bullington подтверждён для P.526-15 §4.5; для P.526-16 НЕ подтверждён (id363) → L2 OPEN, A3 Epstein–Peterson — legacy comparator. P.838 — только 1–1000 ГГц: дождь на УКВ ≈ 0 |
+| Q28 | ITU-R | ЗАКРЫТ (кроме P.372-18) | STD_COPY (официальные PDF ITU через Internet Archive + SHA-256) | W2, CX, **E-web3-itu-p372-p526** | обновлено 2026-10-19: P.526-16 § 4.5, ур. (66) — метод для общего пути (Bullington + сферическая Земля), Epstein–Peterson в -16 нет → L2 выбран; P.372-17 ур. (5), (17), Table 1 подтверждают REQ-LE-61/62; область 0.3–250 МГц — не для тихой сельской зоны и галактики; P.372-18 (09/2026) не прочитана. P.838 — только 1–1000 ГГц: дождь на УКВ ≈ 0 |
 | Q29 | GSM / 3GPP | ЗАКРЫТ (кроме LTE attach) | STD (etsi.org, Rel-19) | W2, CX | `*100#` — USSD-inspired ServiceRequest, не паритет 3GPP |
 | Q30 | Ретрансляторы | ЗАКРЫТ (кроме задержки и петель) | REF | W2 | ок для дизайна |
 | Q31 | Функции TFAR / ACRE2 | ЗАКРЫТ (кроме ретрансляции и антенн TFAR) | MOD | W2, NR | перекрёстная проверка выполнена (id346 PASS по notes_refs); статус не меняется |
