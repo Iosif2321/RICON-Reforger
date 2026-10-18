@@ -51,7 +51,8 @@ class RICON_NoiseRegistration
 
 	bool IsValid()
 	{
-		return m_Model && !m_Model.GetEnvironmentId().IsEmpty() && !m_sSourceId.IsEmpty() && m_iSourceRevision > 0;
+		return m_Model && m_Model.IsConfigValid() && !m_Model.GetEnvironmentId().IsEmpty()
+			&& !m_sSourceId.IsEmpty() && m_iSourceRevision > 0;
 	}
 }
 
@@ -92,7 +93,6 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 
 		m_iSessionEpoch = AllocateSessionEpoch();
 		m_mLinkSeqById.Clear();
-		m_sLastRegistryError = string.Empty;
 	}
 
 	//! OnPlayerConnected is documented server-only.
@@ -119,8 +119,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	{
 		if (!CanMutateRegistries("RegisterPropagation"))
 			return false;
-		if (!model || model.GetModelId().IsEmpty())
-			return RegistryFailure("RegisterPropagation: null model or empty model id");
+		if (!model || model.GetModelId().IsEmpty() || !model.IsConfigValid())
+			return RegistryFailure("RegisterPropagation: invalid model, id or config");
 		if (m_mPropagationById.Contains(model.GetModelId()))
 			return RegistryFailure("RegisterPropagation: duplicate model id");
 		m_mPropagationById.Set(model.GetModelId(), model);

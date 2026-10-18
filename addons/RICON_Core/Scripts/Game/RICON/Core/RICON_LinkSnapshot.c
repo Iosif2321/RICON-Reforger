@@ -123,9 +123,9 @@ class RICON_LinkSnapshotReceiver
 		int schemaVersion,
 		notnull array<ref RICON_LinkSnapshot> snapshots)
 	{
-		ref map<int, ref RICON_LinkSnapshot> nextSlots = new map<int, ref RICON_LinkSnapshot>();
-		ref map<int, int> nextTimes = new map<int, int>();
-		ref set<int> seenLinks = new set<int>();
+		map<int, ref RICON_LinkSnapshot> nextSlots = new map<int, ref RICON_LinkSnapshot>();
+		map<int, int> nextTimes = new map<int, int>();
+		set<int> seenLinks = new set<int>();
 
 		bool valid = m_iSupportedSchemaVersion > 0 && schemaVersion == m_iSupportedSchemaVersion
 			&& sessionEpoch > 0 && sessionEpoch < int.MAX;
