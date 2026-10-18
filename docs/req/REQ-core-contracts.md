@@ -263,9 +263,10 @@ Saturating/wrapped сравнение запрещено.
 До первого успешного full resync identity отсутствует: обычный snapshot MUST дать `INVALID_IDENTITY` +
 `REQUEST_RESYNC`, а не `ACCEPT_FIRST`.
 
-При `INVALID_IDENTITY` из-за нового `sessionEpoch` получатель MUST сбросить state старого epoch и выставить эффект
-`REQUEST_RESYNC`; обычный snapshot нового epoch не принимается как «более новый». Новый epoch принимается только
-отдельным full-resync event, который атомарно меняет session identity и начальное состояние. Mismatch `linkId` —
+При `INVALID_IDENTITY` из-за нового `sessionEpoch` получатель MUST очистить slots **и сбросить установленную
+session identity**, затем выставить эффект `REQUEST_RESYNC`. После этого обычные snapshots как старого, так и нового
+epoch отклоняются до full resync; delayed packet старого epoch не может стать `ACCEPT_FIRST`. Новый epoch принимается
+только отдельным full-resync event, который атомарно меняет session identity и начальное состояние. Mismatch `linkId` —
 ошибка маршрутизации к slot: snapshot не принимается; `REQUEST_RESYNC` остаётся fail-closed эффектом.
 
 Valid snapshot для ordering имеет `schemaVersion > 0`, `sessionEpoch` в `1..int.MAX-1`, `linkId > 0`, `linkSeq > 0`,
