@@ -25,13 +25,16 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 	//! Reference noise temperature T0 (REQ-LE-03).
 	static const float REFERENCE_TEMPERATURE_K = 290.0;
 
+	protected string m_sBandId;
 	protected ref RICON_PropagationModel m_Propagation;
 	protected ref RICON_NoiseModel m_Noise;
 	protected ref RICON_IntelligibilityModel m_Intelligibility;
 
-	//! Any null dependency makes every evaluation fail closed with UNKNOWN_MODEL / UNKNOWN_NOISE_ENVIRONMENT.
-	void RICON_WirelessLinkEvaluator(RICON_PropagationModel propagation, RICON_NoiseModel noise, RICON_IntelligibilityModel intelligibility)
+	//! Built by the manager for one band after it resolved band -> models in its registries.
+	//! An empty band id or a null dependency makes every evaluation fail closed.
+	void RICON_WirelessLinkEvaluator(string bandId, RICON_PropagationModel propagation, RICON_NoiseModel noise, RICON_IntelligibilityModel intelligibility)
 	{
+		m_sBandId = bandId;
 		m_Propagation = propagation;
 		m_Noise = noise;
 		m_Intelligibility = intelligibility;
@@ -55,7 +58,7 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 
 		// The query must name exactly the models this evaluator was built with; a mismatch fails closed instead of
 		// silently using another model (REQ-core §6). Order continues REQ-LE-80: bandId -> model -> noise -> Q model.
-		if (query.m_sBandId.IsEmpty())
+		if (m_sBandId.IsEmpty() || query.m_sBandId != m_sBandId)
 		{
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_BAND);
 			return budget;
