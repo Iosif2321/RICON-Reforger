@@ -14,7 +14,8 @@ class RICON_LinkEvaluator
 }
 
 //! Radio link evaluation: losses -> received power -> noise (+ interference) -> SINR -> threshold -> Q -> state.
-//! Owns its models strongly (REQ-core §3, finding API-01).
+//! A pure evaluator: the authority manager resolves the models from its registries and passes them in; the
+//! evaluator holds them strongly (REQ-core §3, finding API-01) and owns no registry (REQ-core §7).
 class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 {
 	//! Boltzmann constant k = BOLTZMANN_MANTISSA * 10^-23 J/K, exact by SI definition (REQ-LE-03).
@@ -24,33 +25,16 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 	//! Reference noise temperature T0 (REQ-LE-03).
 	static const float REFERENCE_TEMPERATURE_K = 290.0;
 
-	protected ref map<string, ref RICON_PropagationModel> m_mPropagation = new map<string, ref RICON_PropagationModel>();
-	protected ref map<string, ref RICON_NoiseModel> m_mNoise = new map<string, ref RICON_NoiseModel>();
-	protected ref map<string, ref RICON_IntelligibilityModel> m_mIntelligibility = new map<string, ref RICON_IntelligibilityModel>();
+	protected ref RICON_PropagationModel m_Propagation;
+	protected ref RICON_NoiseModel m_Noise;
+	protected ref RICON_IntelligibilityModel m_Intelligibility;
 
-	//! Registration rejects empty ids, null models and duplicates; nothing falls back to a default (REQ-core §6-7).
-	bool RegisterPropagation(RICON_PropagationModel model)
+	//! Any null dependency makes every evaluation fail closed with UNKNOWN_MODEL / UNKNOWN_NOISE_ENVIRONMENT.
+	void RICON_WirelessLinkEvaluator(RICON_PropagationModel propagation, RICON_NoiseModel noise, RICON_IntelligibilityModel intelligibility)
 	{
-		if (!model || model.GetModelId().IsEmpty() || m_mPropagation.Contains(model.GetModelId()))
-			return false;
-		m_mPropagation.Set(model.GetModelId(), model);
-		return true;
-	}
-
-	bool RegisterNoise(RICON_NoiseModel model)
-	{
-		if (!model || model.GetEnvironmentId().IsEmpty() || m_mNoise.Contains(model.GetEnvironmentId()))
-			return false;
-		m_mNoise.Set(model.GetEnvironmentId(), model);
-		return true;
-	}
-
-	bool RegisterIntelligibility(RICON_IntelligibilityModel model)
-	{
-		if (!model || model.GetModelId().IsEmpty() || m_mIntelligibility.Contains(model.GetModelId()))
-			return false;
-		m_mIntelligibility.Set(model.GetModelId(), model);
-		return true;
+		m_Propagation = propagation;
+		m_Noise = noise;
+		m_Intelligibility = intelligibility;
 	}
 
 	override RICON_LinkBudget Evaluate(RICON_LinkQuery query)
@@ -69,30 +53,31 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 			return budget;
 		}
 
-		// Registry lookups continue the fixed order of REQ-LE-80: bandId -> modelId -> noise -> intelligibility.
+		// The query must name exactly the models this evaluator was built with; a mismatch fails closed instead of
+		// silently using another model (REQ-core §6). Order continues REQ-LE-80: bandId -> model -> noise -> Q model.
 		if (query.m_sBandId.IsEmpty())
 		{
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_BAND);
 			return budget;
 		}
-		RICON_PropagationModel propagation = m_mPropagation.Get(query.m_sModelId);
-		if (!propagation)
+		if (!m_Propagation || query.m_sModelId != m_Propagation.GetModelId())
 		{
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_MODEL);
 			return budget;
 		}
-		RICON_NoiseModel noise = m_mNoise.Get(query.m_sNoiseEnvironmentId);
-		if (!noise)
+		if (!m_Noise || query.m_sNoiseEnvironmentId != m_Noise.GetEnvironmentId())
 		{
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_NOISE_ENVIRONMENT);
 			return budget;
 		}
-		RICON_IntelligibilityModel intelligibility = m_mIntelligibility.Get(query.m_sIntelligibilityModelId);
-		if (!intelligibility)
+		if (!m_Intelligibility || query.m_sIntelligibilityModelId != m_Intelligibility.GetModelId())
 		{
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_MODEL);
 			return budget;
 		}
+		RICON_PropagationModel propagation = m_Propagation;
+		RICON_NoiseModel noise = m_Noise;
+		RICON_IntelligibilityModel intelligibility = m_Intelligibility;
 		if (!propagation.IsApplicable(query.m_fFrequencyMHz))
 		{
 			budget.MarkInvalid(RICON_EReason.OUT_OF_MODEL_DOMAIN);

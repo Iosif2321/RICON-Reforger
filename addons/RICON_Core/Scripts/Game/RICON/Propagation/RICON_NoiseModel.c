@@ -61,14 +61,23 @@ class RICON_ManMadeNoiseModel : RICON_NoiseModel
 		outEstimate.m_bInDomain = true;
 	}
 
-	//! Registers the categories of REQ-LE-17 with the constants of REQ-LE-62. Returns false if any is rejected.
-	static bool RegisterDefaults(notnull RICON_WirelessLinkEvaluator evaluator)
+	//! Factory for the categories of REQ-LE-17 with the constants of REQ-LE-62; null for an unknown id.
+	//! The authority manager stores the result in its registry (REQ-core §7).
+	static RICON_NoiseModel CreateDefault(string environmentId)
 	{
-		bool ok = evaluator.RegisterNoise(new RICON_NoiseModel());
-		ok = evaluator.RegisterNoise(new RICON_ManMadeNoiseModel("city", 76.8, 27.7)) && ok;
-		ok = evaluator.RegisterNoise(new RICON_ManMadeNoiseModel("residential", 72.5, 27.7)) && ok;
-		ok = evaluator.RegisterNoise(new RICON_ManMadeNoiseModel("rural", 67.2, 27.7)) && ok;
-		ok = evaluator.RegisterNoise(new RICON_ManMadeNoiseModel("quiet_rural", 53.6, 28.6)) && ok;
-		return ok;
+		switch (environmentId)
+		{
+			case "none":
+				return new RICON_NoiseModel();
+			case "city":
+				return new RICON_ManMadeNoiseModel("city", 76.8, 27.7);
+			case "residential":
+				return new RICON_ManMadeNoiseModel("residential", 72.5, 27.7);
+			case "rural":
+				return new RICON_ManMadeNoiseModel("rural", 67.2, 27.7);
+			case "quiet_rural":
+				return new RICON_ManMadeNoiseModel("quiet_rural", 53.6, 28.6);
+		}
+		return null;
 	}
 }
