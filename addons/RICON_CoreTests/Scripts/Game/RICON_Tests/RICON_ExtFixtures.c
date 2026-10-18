@@ -263,6 +263,11 @@ class RICON_Ext5WiredEvaluator : RICON_LinkEvaluator
 		budget.m_fTotalLossDb = lossDb;
 		budget.m_fRxPowerDbm = query.m_fTxPowerDbm - lossDb;
 		budget.m_fSensitivityDbm = query.m_fRxSensitivityDbm;
+		// A cable has no radio noise model: the noise fields are explicit finite zeros, not computed values.
+		budget.m_fThermalNoiseDbm = 0;
+		budget.m_fNoiseDbm = 0;
+		budget.m_fNoisePlusInterferenceDbm = 0;
+		budget.m_fSinrDb = 0;
 		budget.m_bNoiseModelInDomain = true;
 		if (budget.m_fRxPowerDbm < budget.m_fSensitivityDbm)
 		{
