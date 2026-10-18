@@ -4,7 +4,8 @@
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
-`R-core-20261018-api.md`. Политики: active `AGENTS.md`, `ai-native-sdlc-cycle`, `ponytail full`.
+`R-core-20261018-api.md`. При написании применены инструкции текущей сессии (`AGENTS.md`,
+`ai-native-sdlc-cycle`, `ponytail full`); это metadata процесса, а не файлы/runtime-зависимости репозитория.
 
 Этот документ конкретизирует Э2, но **не замораживает Э2**. Freeze возможен только после реализации,
 contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и повторной сверки с результатом Workbench №001.
@@ -67,17 +68,24 @@ contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и повторной
 | Поле | Тип/единица | Домен | Владелец/источник | Invalid behavior |
 |---|---|---|---|---|
 | `txPos`, `rxPos` | vector, m world-space | каждый компонент finite | server entities/snapshot | `INVALID_COORDINATE` |
-| `frequencyMHz` | float, MHz | finite, `> 0`; модель MAY сузить | validated Band/Device catalog | `OUT_OF_MODEL_DOMAIN` |
+| `frequencyMHz` | float, MHz | finite, `> 0`; модель MAY сузить | validated Band/Device catalog | `INVALID_FREQUENCY`; положительное вне domain модели → `OUT_OF_MODEL_DOMAIN` |
 | `bandwidthHz` | float, Hz | finite, `> 0`; catalog-specific bounds | validated Channel/Device catalog | `INVALID_BANDWIDTH` |
 | `txPowerDbm` | float, dBm | finite; bounds из device catalog | server catalog + state | `CATALOG_VIOLATION` |
 | `txGainDbi`, `rxGainDbi` | float, dBi | finite; результат AntennaPattern | server Antenna service | `INVALID_GAIN` |
 | `rxNoiseFigureDb` | float, dB | finite, `>= 0`; catalog bounds | receiver catalog | `INVALID_NOISE_FIGURE` |
 | `hasRxSensitivity` | bool | — | receiver catalog | — |
 | `rxSensitivityDbm` | float, dBm | finite, meaningful iff flag=true | receiver catalog | `INVALID_SENSITIVITY` |
+| `hasRequiredSinr` | bool | — | receiver catalog | — |
+| `requiredSinrDb` | float, dB | finite, meaningful iff flag=true | receiver catalog | `INVALID_REQUIRED_SINR` |
+| `noiseEnvironmentId` | stable string ID | non-empty, registered | world/mission server config | `UNKNOWN_NOISE_ENVIRONMENT` |
 | `hasInterference` | bool | — | InterferenceModel | — |
 | `interferenceDbm` | float, dBm | finite, meaningful iff flag=true | InterferenceModel | `INVALID_INTERFERENCE` |
 | `bandId` | stable string ID | non-empty, registered | server catalog | `UNKNOWN_BAND` |
 | `modelId` | stable string ID | non-empty, registered for band | registry resolution | `UNKNOWN_MODEL` |
+
+Ровно один из `hasRxSensitivity` и `hasRequiredSinr` MUST быть true: каталог либо задаёт измеренную sensitivity,
+либо требуемый SINR, из которого link-eval получает sensitivity по `REQ-link-eval.md`. Оба/ни одного — ошибка
+catalog configuration.
 
 Числовые sentinel (`-999`, `-900`) MUST NOT кодировать отсутствие optional-поля. Global bounds мощности/усиления
 MUST NOT быть зашиты в evaluator: они принадлежат server catalog конкретного устройства/диапазона.
@@ -106,8 +114,11 @@ MUST NOT быть зашиты в evaluator: они принадлежат serve
 | `layers` | strong array of layers | propagation/noise services | unique IDs; all finite |
 | `totalLossDb` | float, dB | evaluator | finite; равен сумме declared loss layers |
 | `rxPowerDbm` | float, dBm | evaluator | finite |
-| `noiseDbm` | float, dBm | NoiseModel/evaluator | finite |
-| `snrDb` | float, dB | evaluator | finite; `rxPowerDbm - noiseDbm` |
+| `thermalNoiseDbm` | float, dBm | evaluator | finite; `kT₀B` до NF/external noise |
+| `noiseDbm` | float, dBm | NoiseModel/evaluator | finite; system noise до interference |
+| `noisePlusInterferenceDbm` | float, dBm | evaluator | finite; stable power sum N+I |
+| `sinrDb` | float, dB | evaluator | finite; `rxPowerDbm - noisePlusInterferenceDbm` |
+| `noiseModelInDomain` | bool | NoiseModel | false не разрешает экстраполяцию модели |
 | `intelligibility` | float | policy из `REQ-link-eval` | finite `[0,1]` |
 | `state` | enum | state policy | согласован с valid/intelligibility |
 | `fadingM` | optional value + flag | L3 model | finite и domain-valid либо отсутствует |
@@ -138,7 +149,7 @@ Invalid budget MUST иметь `valid=false`, `state=LOST`, `intelligibility=0`,
 |---|---|---|
 | Band | `bandId → BandDefinition` | frequency/channel domain, allowed model IDs, catalog revision |
 | Propagation | `modelId → PropagationModel` | domain, layer IDs, finite self-check |
-| Noise | `noiseModelId → NoiseModel` | frequency/environment domain; out-of-domain is explicit |
+| Noise | `noiseEnvironmentId → NoiseModel + versioned environment config` | frequency/environment domain; out-of-domain is explicit |
 | Interference | `interferenceModelId → InterferenceModel` | returns optional aggregate or documented richer result |
 | Antenna | `patternId → AntennaPattern` | direction/frequency → finite dBi |
 | Network | `networkTypeId → RoutingPolicy` | route context, access policy, topology limits |
@@ -213,7 +224,9 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 
 | Boundary | Failure | Обязательный результат |
 |---|---|---|
-| Query | malformed/non-finite/domain | invalid budget + reason; no exception/NaN |
+| Query | `f <= 0` | invalid budget + `INVALID_FREQUENCY`; это malformed input, не domain модели |
+| Query | `f > 0`, но вне domain выбранной модели | invalid budget + `OUT_OF_MODEL_DOMAIN` |
+| Query | прочий malformed/non-finite/domain | invalid budget + specific reason; no exception/NaN |
 | Registry | empty/duplicate/unknown | reject + diagnostic; no fallback |
 | Model | null/out-of-domain/non-finite | invalid budget + model reason |
 | Snapshot | schema/session/link mismatch | reject + resync/diagnostic policy |
@@ -229,7 +242,7 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 | Test ID | Что проверяет | Findings | Evidence |
 |---|---|---|---|
 | CT-CORE-001 | null/transient model lifetime не исчезает | API-01 | CT + WB |
-| CT-CORE-002 | omitted sensitivity/interference flags; explicit `0 dBm` не считается absent | A13/API-02 | CT |
+| CT-CORE-002 | ровно один из sensitivity/required-SINR; omitted interference; explicit `0 dBm` не absent | A13/API-02 | CT |
 | CT-CORE-003 | NaN/Inf в каждом scalar/vector component; invalid outputs остаются finite | A8/A10/API-02 | CT + OR |
 | CT-CORE-004 | empty/duplicate/unknown registry IDs и band/model mismatch | B4/API-04 | CT |
 | CT-CORE-005 | stale/equal/new seq; schema/session/link mismatch | B2 | CT |
