@@ -155,6 +155,13 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 				return budget;
 			}
 			budget.m_eState = intelligibility.StateFor(budget.m_fIntelligibility);
+			// Above the threshold only WEAK / DEGRADED / CLEAN are allowed; LOST is decided here (REQ-LE-75).
+			if (budget.m_eState != RICON_ELinkState.WEAK && budget.m_eState != RICON_ELinkState.DEGRADED
+				&& budget.m_eState != RICON_ELinkState.CLEAN)
+			{
+				budget.MarkInvalid(RICON_EReason.MODEL_CONTRACT_VIOLATION);
+				return budget;
+			}
 		}
 
 		// Every output finite or the whole budget is invalid (REQ-LE-82).
