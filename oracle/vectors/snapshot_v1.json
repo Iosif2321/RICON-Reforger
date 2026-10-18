@@ -1,0 +1,1803 @@
+{
+  "schema": "ricon.oracle.snapshot",
+  "version": 1,
+  "revision": 1,
+  "source": "docs/req/REQ-core-contracts.md@d2bea68",
+  "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
+  "intMax": 2147483647,
+  "supportedSchemaVersion": 1,
+  "specialFloats": [
+    "NaN",
+    "Infinity",
+    "-Infinity"
+  ],
+  "states": [
+    "LOST",
+    "WEAK",
+    "DEGRADED",
+    "CLEAN"
+  ],
+  "vectors": [
+    {
+      "id": "CMP-01",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": null,
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "ACCEPT_FIRST"
+      },
+      "tags": [
+        "нет текущего, вход валиден"
+      ]
+    },
+    {
+      "id": "CMP-02",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 6,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "ACCEPT_NEWER"
+      },
+      "tags": [
+        "seq строго больше"
+      ]
+    },
+    {
+      "id": "CMP-03",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "STALE"
+      },
+      "tags": [
+        "равный seq"
+      ]
+    },
+    {
+      "id": "CMP-04",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 4,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "STALE"
+      },
+      "tags": [
+        "меньший seq"
+      ]
+    },
+    {
+      "id": "CMP-05",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 8,
+          "linkId": 10,
+          "linkSeq": 1,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_IDENTITY"
+      },
+      "tags": [
+        "другой epoch, даже при seq больше — не newer"
+      ]
+    },
+    {
+      "id": "CMP-06",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 2,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 6,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_IDENTITY"
+      },
+      "tags": [
+        "другая schema"
+      ]
+    },
+    {
+      "id": "CMP-07",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 11,
+          "linkSeq": 6,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_IDENTITY"
+      },
+      "tags": [
+        "другой linkId"
+      ]
+    },
+    {
+      "id": "CMP-08",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 0,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "schemaVersion > 0"
+      ]
+    },
+    {
+      "id": "CMP-09",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 0,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "sessionEpoch != 0"
+      ]
+    },
+    {
+      "id": "CMP-10",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 0,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "linkId > 0"
+      ]
+    },
+    {
+      "id": "CMP-11",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 0,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "linkSeq > 0"
+      ]
+    },
+    {
+      "id": "CMP-12",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 0,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "ttlMs > 0"
+      ]
+    },
+    {
+      "id": "CMP-13",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 0,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "routeId > 0"
+      ]
+    },
+    {
+      "id": "CMP-14",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 0,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "routeNodeCount > 0"
+      ]
+    },
+    {
+      "id": "CMP-15",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 1.5,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "quality в [0,1]"
+      ]
+    },
+    {
+      "id": "CMP-16",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": "NaN",
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "quality finite"
+      ]
+    },
+    {
+      "id": "CMP-17",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "BROKEN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "допустимое state"
+      ]
+    },
+    {
+      "id": "CMP-18",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.2,
+          "state": "LOST",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "LOST ⇒ quality 0"
+      ]
+    },
+    {
+      "id": "CMP-19",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 6,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.0,
+          "state": "LOST",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "ACCEPT_NEWER"
+      },
+      "tags": [
+        "LOST с quality 0 валиден"
+      ]
+    },
+    {
+      "id": "CMP-20",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 0,
+          "linkId": 11,
+          "linkSeq": 5,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "домен проверяется до identity"
+      ]
+    },
+    {
+      "id": "CMP-21",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": null,
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 5,
+          "ttlMs": -5,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "домен проверяется и без текущего"
+      ]
+    },
+    {
+      "id": "CMP-22",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483646,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483647,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "ACCEPT_NEWER"
+      },
+      "tags": [
+        "сравнение не saturating; приём int.MAX — вопрос получателя, домен seq > 0"
+      ]
+    },
+    {
+      "id": "RX-01",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "receive",
+            "nowMs": 0,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          }
+        ]
+      },
+      "tags": [
+        "до первого resync у получателя нет identity: обычный снимок не принимается"
+      ]
+    },
+    {
+      "id": "RX-02",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 10,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 30,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 40,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 2,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "ACCEPT_NEWER",
+            "effects": [],
+            "slots": {
+              "10": 6
+            }
+          },
+          {
+            "decision": "STALE",
+            "effects": [],
+            "slots": {
+              "10": 6
+            }
+          },
+          {
+            "decision": "STALE",
+            "effects": [],
+            "slots": {
+              "10": 6
+            }
+          }
+        ]
+      },
+      "tags": [
+        "resync задаёт identity; первый снимок слота — ACCEPT_FIRST; затем newer/stale"
+      ]
+    },
+    {
+      "id": "RX-03",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 5,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              },
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 12,
+                "linkSeq": 9,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "receive",
+            "nowMs": 10,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 8,
+              "linkId": 10,
+              "linkSeq": 1,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 8,
+              "linkId": 10,
+              "linkSeq": 2,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "full_resync",
+            "nowMs": 30,
+            "sessionEpoch": 8,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 8,
+                "linkId": 10,
+                "linkSeq": 3,
+                "ttlMs": 1000,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "receive",
+            "nowMs": 40,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 8,
+              "linkId": 10,
+              "linkSeq": 4,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {
+              "10": 5,
+              "12": 9
+            }
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {}
+          },
+          {
+            "slots": {
+              "10": 3
+            }
+          },
+          {
+            "decision": "ACCEPT_NEWER",
+            "effects": [],
+            "slots": {
+              "10": 4
+            }
+          }
+        ]
+      },
+      "tags": [
+        "снимок нового epoch: отказ, сброс state старого epoch, REQUEST_RESYNC; новый epoch только через resync"
+      ]
+    },
+    {
+      "id": "RX-04",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 10,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 2.0,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_SNAPSHOT",
+            "effects": [
+              "DIAGNOSTIC"
+            ],
+            "slots": {
+              "10": 5
+            }
+          }
+        ]
+      },
+      "tags": [
+        "невалидный снимок: отказ с diagnostic, последний валидный сохраняется"
+      ]
+    },
+    {
+      "id": "RX-05",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 10,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 20,
+            "snapshot": {
+              "schemaVersion": 2,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "INVALID_IDENTITY",
+            "effects": [
+              "REQUEST_RESYNC"
+            ],
+            "slots": {
+              "10": 5
+            }
+          }
+        ]
+      },
+      "tags": [
+        "другая schema: отказ + REQUEST_RESYNC, state текущего epoch не сбрасывается"
+      ]
+    },
+    {
+      "id": "RX-06",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 100,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 1050,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "visible",
+            "nowMs": 1099,
+            "linkId": 10
+          },
+          {
+            "event": "visible",
+            "nowMs": 1100,
+            "linkId": 10
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "STALE",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "visible": true,
+            "effects": []
+          },
+          {
+            "visible": false,
+            "effects": []
+          }
+        ]
+      },
+      "tags": [
+        "TTL по локальному монотонному времени: виден при elapsed < ttl, истёк при >=; STALE не продлевает"
+      ]
+    },
+    {
+      "id": "RX-07",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 0,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "receive",
+            "nowMs": 900,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 6,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "visible",
+            "nowMs": 1500,
+            "linkId": 10
+          },
+          {
+            "event": "visible",
+            "nowMs": 1900,
+            "linkId": 10
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "decision": "ACCEPT_NEWER",
+            "effects": [],
+            "slots": {
+              "10": 6
+            }
+          },
+          {
+            "visible": true,
+            "effects": []
+          },
+          {
+            "visible": false,
+            "effects": []
+          }
+        ]
+      },
+      "tags": [
+        "ACCEPT_NEWER обновляет время получения"
+      ]
+    },
+    {
+      "id": "RX-08",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 0,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": []
+          },
+          {
+            "event": "receive",
+            "nowMs": 500,
+            "snapshot": {
+              "schemaVersion": 1,
+              "sessionEpoch": 7,
+              "linkId": 10,
+              "linkSeq": 5,
+              "ttlMs": 1000,
+              "routeId": 3,
+              "routeNodeCount": 1,
+              "quality": 0.9,
+              "state": "CLEAN",
+              "talkerPlayerId": 1,
+              "listenerPlayerId": 2
+            }
+          },
+          {
+            "event": "visible",
+            "nowMs": 400,
+            "linkId": 10
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {}
+          },
+          {
+            "decision": "ACCEPT_FIRST",
+            "effects": [],
+            "slots": {
+              "10": 5
+            }
+          },
+          {
+            "visible": false,
+            "effects": [
+              "DIAGNOSTIC"
+            ]
+          }
+        ]
+      },
+      "tags": [
+        "отрицательный elapsed (аномалия часов) — истёк + diagnostic"
+      ]
+    },
+    {
+      "id": "RX-09",
+      "kind": "receiver_trace",
+      "req": [
+        "REQ-core §8.3",
+        "REQ-core §8.4"
+      ],
+      "input": {
+        "events": [
+          {
+            "event": "full_resync",
+            "nowMs": 1000,
+            "sessionEpoch": 7,
+            "schemaVersion": 1,
+            "snapshots": [
+              {
+                "schemaVersion": 1,
+                "sessionEpoch": 7,
+                "linkId": 10,
+                "linkSeq": 2,
+                "ttlMs": 500,
+                "routeId": 3,
+                "routeNodeCount": 1,
+                "quality": 0.9,
+                "state": "CLEAN",
+                "talkerPlayerId": 1,
+                "listenerPlayerId": 2
+              }
+            ]
+          },
+          {
+            "event": "visible",
+            "nowMs": 1499,
+            "linkId": 10
+          },
+          {
+            "event": "visible",
+            "nowMs": 1500,
+            "linkId": 10
+          },
+          {
+            "event": "visible",
+            "nowMs": 1600,
+            "linkId": 99
+          }
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "slots": {
+              "10": 2
+            }
+          },
+          {
+            "visible": true,
+            "effects": []
+          },
+          {
+            "visible": false,
+            "effects": []
+          },
+          {
+            "visible": false,
+            "effects": []
+          }
+        ]
+      },
+      "tags": [
+        "снимки в resync тоже получают время приёма = время resync; невидимого слота нет"
+      ]
+    },
+    {
+      "id": "ALLOC-01",
+      "kind": "allocator_trace",
+      "req": [
+        "REQ-core §8.1",
+        "REQ-core §8.2"
+      ],
+      "input": {
+        "state": {
+          "sessionEpoch": 7,
+          "seqByLink": {}
+        },
+        "requests": [
+          10,
+          10,
+          12,
+          10
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "linkId": 10,
+            "linkSeq": 1,
+            "rotated": false
+          },
+          {
+            "linkId": 10,
+            "linkSeq": 2,
+            "rotated": false
+          },
+          {
+            "linkId": 12,
+            "linkSeq": 1,
+            "rotated": false
+          },
+          {
+            "linkId": 10,
+            "linkSeq": 3,
+            "rotated": false
+          }
+        ],
+        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется"
+      },
+      "tags": [
+        "обычная выдача seq по линку, независимо для разных линков"
+      ]
+    },
+    {
+      "id": "ALLOC-02",
+      "kind": "allocator_trace",
+      "req": [
+        "REQ-core §8.1",
+        "REQ-core §8.2"
+      ],
+      "input": {
+        "state": {
+          "sessionEpoch": 7,
+          "seqByLink": {
+            "10": 2147483645,
+            "12": 40
+          }
+        },
+        "requests": [
+          10,
+          10,
+          12
+        ]
+      },
+      "expected": {
+        "steps": [
+          {
+            "linkId": 10,
+            "linkSeq": 2147483646,
+            "rotated": false
+          },
+          {
+            "linkId": 10,
+            "linkSeq": 1,
+            "rotated": true,
+            "fullResync": true
+          },
+          {
+            "linkId": 12,
+            "linkSeq": 1,
+            "rotated": false
+          }
+        ],
+        "epochRule": "после rotated=true sessionEpoch != прежнего и != 0; без rotated epoch не меняется"
+      },
+      "tags": [
+        "максимальный выданный seq = int.MAX - 1; следующий запрос — новый epoch, full resync, seq 1 у всех линков"
+      ]
+    }
+  ]
+}

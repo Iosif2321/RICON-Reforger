@@ -53,3 +53,24 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 - Константы внешнего шума — ITU-R P.372-11 по вторичному источнику (REF); редакция P.372 не подтверждена.
 - Эти векторы дают только `ORACLE_PASS`. Паритет Enforce ↔ oracle (`ENFORCE_PARITY`) требует исполнения
   Enforce-кода и сейчас `NOT_TESTED`.
+
+## Снимки линка: `vectors/snapshot_v1.json`
+
+Эталон порядка `LinkSnapshot` по `docs/req/REQ-core-contracts.md` §8 (ревизия в поле `source`).
+
+| Файл | Автор | Что содержит |
+|---|---|---|
+| `vectors/snapshot_v1.json` | claude | ожидания, написанные вручную по тексту §8 |
+| `snapshot_oracle.py`, `test_snapshot_oracle.py` | claude | исполнимая модель §8 и тесты (stdlib) |
+| `Core/RICON_LinkSnapshot.c` и менеджер | codex | Enforce-реализация, независимая от этих файлов |
+
+| `kind` | Что проверяет |
+|---|---|
+| `compare` | решение для пары «текущий слот / входящий снимок»: `ACCEPT_FIRST`, `ACCEPT_NEWER`, `STALE`, `INVALID_SNAPSHOT` (домены — до identity), `INVALID_IDENTITY` |
+| `receiver_trace` | последовательность событий `full_resync` / `receive` / `visible`: identity только через resync, сброс state при новом epoch, `REQUEST_RESYNC` / `DIAGNOSTIC`, TTL по локальному монотонному времени |
+| `allocator_trace` | выдача seq authority: максимум `int.MAX − 1`, затем новый non-zero epoch, full resync и seq 1 у всех линков |
+
+Толкования, которые прямо не записаны в §8 и требуют подтверждения при ревью: до первого `full_resync` у получателя
+нет identity, поэтому любой снимок → `INVALID_IDENTITY` (RX-01); `visible` для пустого слота → `false` без эффектов
+(RX-09). Проверка: `python -I oracle/snapshot_oracle.py --check oracle/vectors/snapshot_v1.json` →
+`SNAPSHOT_ORACLE_PASS`.
