@@ -32,13 +32,18 @@ def is_int(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def is_valid_snapshot(s: Any) -> bool:
-    """Домены §8.3: проверяются до identity и seq."""
+INT_MAX = 2147483647
+
+
+def is_valid_snapshot(s: Any, int_max: int = INT_MAX) -> bool:
+    """Домены §8.3: проверяются до identity и seq. linkSeq ∈ [1, int.MAX − 1] (§8.2)."""
     if not isinstance(s, dict):
         return False
     for key in ("schemaVersion", "linkId", "linkSeq", "ttlMs", "routeId", "routeNodeCount"):
         if not is_int(s.get(key)) or s[key] <= 0:
             return False
+    if s["linkSeq"] >= int_max:
+        return False
     if not is_int(s.get("sessionEpoch")) or s["sessionEpoch"] == 0:
         return False
     quality = s.get("quality")
@@ -181,6 +186,8 @@ def check(path: Path) -> list[str]:
     document = json.loads(path.read_text(encoding="utf-8"))
     if document.get("schema") != "ricon.oracle.snapshot" or document.get("version") != 1:
         return ["schema: unsupported schema/version"]
+    if document.get("intMax") != INT_MAX:
+        return ["schema: intMax must be the Enforce int.MAX (2147483647)"]
     ids = [vector["id"] for vector in document["vectors"]]
     if len(ids) != len(set(ids)):
         return ["schema: duplicate vector ids"]

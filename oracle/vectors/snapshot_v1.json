@@ -1,7 +1,7 @@
 {
   "schema": "ricon.oracle.snapshot",
   "version": 1,
-  "revision": 1,
+  "revision": 2,
   "source": "docs/req/REQ-core-contracts.md@d2bea68",
   "generatedBy": "claude: expected values written by hand from REQ-core §8 (not from Enforce code)",
   "intMax": 2147483647,
@@ -890,10 +890,92 @@
         }
       },
       "expected": {
+        "decision": "INVALID_SNAPSHOT"
+      },
+      "tags": [
+        "int.MAX authority не выдаёт (§8.2): домен seq 1..int.MAX-1"
+      ]
+    },
+    {
+      "id": "CMP-23",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483646,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483646,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
+        "decision": "STALE"
+      },
+      "tags": [
+        "граница: равный максимальный seq"
+      ]
+    },
+    {
+      "id": "CMP-24",
+      "kind": "compare",
+      "req": [
+        "REQ-core §8.3"
+      ],
+      "input": {
+        "current": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483645,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        },
+        "incoming": {
+          "schemaVersion": 1,
+          "sessionEpoch": 7,
+          "linkId": 10,
+          "linkSeq": 2147483646,
+          "ttlMs": 1000,
+          "routeId": 3,
+          "routeNodeCount": 1,
+          "quality": 0.9,
+          "state": "CLEAN",
+          "talkerPlayerId": 1,
+          "listenerPlayerId": 2
+        }
+      },
+      "expected": {
         "decision": "ACCEPT_NEWER"
       },
       "tags": [
-        "сравнение не saturating; приём int.MAX — вопрос получателя, домен seq > 0"
+        "граница: максимальный валидный seq принимается"
       ]
     },
     {
