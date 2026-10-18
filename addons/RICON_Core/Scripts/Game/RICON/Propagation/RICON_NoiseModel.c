@@ -24,8 +24,10 @@ class RICON_NoiseModel
 	}
 }
 
-//! Median man-made noise F_am = c - d lg f (dB above kT0b) for one environment category,
-//! ITU-R P.372 values via a secondary source (REQ-LE-62). Valid 0.3..250 MHz, no extrapolation (REQ-LE-63).
+//! Median man-made noise F_am = c - d lg f (dB above kT0b) for one environment category (REQ-LE-62).
+//! Valid 0.3..250 MHz, no extrapolation (REQ-LE-63). The c/d constants are not hardcoded here: they come from
+//! the versioned environment config of the authority manager (REQ-core §7), because the P.372 revision is
+//! still unconfirmed (only a secondary source).
 class RICON_ManMadeNoiseModel : RICON_NoiseModel
 {
 	static const float MIN_FREQUENCY_MHZ = 0.3;
@@ -59,25 +61,5 @@ class RICON_ManMadeNoiseModel : RICON_NoiseModel
 		float faDb = m_fC - m_fD * Math.Log10(frequencyMHz);
 		outEstimate.m_fFactorLinear = Math.Pow(10, faDb / 10.0);
 		outEstimate.m_bInDomain = true;
-	}
-
-	//! Factory for the categories of REQ-LE-17 with the constants of REQ-LE-62; null for an unknown id.
-	//! The authority manager stores the result in its registry (REQ-core §7).
-	static RICON_NoiseModel CreateDefault(string environmentId)
-	{
-		switch (environmentId)
-		{
-			case "none":
-				return new RICON_NoiseModel();
-			case "city":
-				return new RICON_ManMadeNoiseModel("city", 76.8, 27.7);
-			case "residential":
-				return new RICON_ManMadeNoiseModel("residential", 72.5, 27.7);
-			case "rural":
-				return new RICON_ManMadeNoiseModel("rural", 67.2, 27.7);
-			case "quiet_rural":
-				return new RICON_ManMadeNoiseModel("quiet_rural", 53.6, 28.6);
-		}
-		return null;
 	}
 }
