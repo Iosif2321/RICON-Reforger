@@ -34,7 +34,7 @@
 Проверки на `8d212a5`:
 
 - branch: только `main`; remotes: отсутствуют; working tree: чист;
-- 77 файлов, 94 commits до добавления этого отчёта;
+- 79 tracked files (`git ls-tree`), 94 commits до добавления этого отчёта;
 - 11 Enforce `.c`, 1 987 строк: 9 core + 2 TEST_ONLY;
 - запрещённых target paths/artifacts (`extension`, `tsplugin`, `addons/comms`, Discord/spikes, DLL/EXE/PBO/PAK) — 0;
 - secret-pattern scan вне immutable ARE — 0;

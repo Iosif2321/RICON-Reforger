@@ -27,7 +27,8 @@ TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures ещё не компи�
 `ai-native-sdlc-cycle`, `ponytail full`); это metadata процесса, а не файлы/runtime-зависимости репозитория.
 
 Этот документ конкретизирует Э2, но **не замораживает Э2**. Freeze возможен только после реализации,
-contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и повторной сверки с результатом Workbench №001.
+contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и сверки с актуальным compile-заказом Workbench (сейчас №003).
+Заказ №001 остаётся SOURCE-запросом vanilla файлов и не заменяет актуальную компиляцию.
 
 ## Мини-intent
 
@@ -444,5 +445,5 @@ scaffold; никакой недоказанный actuator не получает
 3. отсутствие нерешённых противоречий между двумя REQ.
 
 После реализации статус может быть только `STATIC_IMPLEMENTED` + отдельные `CONTRACT_PASS`/`ORACLE_PASS`.
-Без исполненного Workbench №001 — `WORKBENCH_COMPILE_PASS = BLOCKED`; без разрешения Play — RT/AUDIO остаются
-`BLOCKED_NO_RUNTIME`.
+Без исполненного актуального compile-заказа Workbench (сейчас №003) — `WORKBENCH_COMPILE_PASS = BLOCKED`; без
+разрешения Play — RT/AUDIO остаются `BLOCKED_NO_RUNTIME`.

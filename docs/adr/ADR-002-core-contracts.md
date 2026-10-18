@@ -47,7 +47,8 @@ Production-модель разборчивости и пороги состоя�
 - Host oracle: `ORACLE_PASS: 57 vectors`, 9 unittest. Это проверяет REQ/числа, не Enforce.
 - Static code review C13: взаимный agree id544; legacy fingerprints отсутствуют; API surface сверена офлайн.
 - Авторский `MIRROR_PASS 57` — только вспомогательное static evidence, **не ENFORCE_PARITY**.
-- `WORKBENCH_COMPILE_PASS = NOT_TESTED`; запуск выполняет только ассистент владельца по заказу №001.
+- `WORKBENCH_COMPILE_PASS = NOT_TESTED`; запуск выполняет только ассистент владельца по актуальному compile-заказу
+  (сейчас №003). Заказ №001 остаётся отдельным SOURCE-запросом vanilla файлов.
 - Runtime, Rpl, performance и audio — `BLOCKED_NO_RUNTIME`.
 
 ## Обязательные gate до freeze Э2
