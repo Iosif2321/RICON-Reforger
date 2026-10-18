@@ -28,7 +28,9 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 }
 ```
 
-- Допуски: величины в дБ/дБм — `db`; разборчивость и доли — `ratio`; расстояния в м — `m`.
+- Допуски по имени поля (регистрозависимо): суффиксы `Dbm`, `Db`, `Dbi` — `db`; суффикс `M` (`distanceM`,
+  `effectiveDistanceM`) — `m`; `intelligibility` и пороги `q…` — `ratio`.
+- `revision` растёт при добавлении векторов без смены формата; `version` — версия формата.
 - Стандартный JSON не умеет `NaN`/`Inf`: такие значения записаны строками из `specialFloats`.
 - Имена полей — как в `REQ-core-contracts` §4 (вход) и §5.2 (бюджет); слои — `layers: [{layerId, lossDb}]`.
 
@@ -40,7 +42,7 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 | `power_sum` | `powersDbm[]` | `sumDbm` | REQ-LE-65, 66 |
 | `intelligibility_linear_test` | `sinrDb`, `params{a,b}` | `intelligibility` | REQ-LE-73, 74 (TEST_ONLY) |
 | `budget` | полный `LinkQuery` | все поля бюджета, `state`, `reason = OK` | REQ-LE-40…75 |
-| `invalid` | `LinkQuery` с одним нарушением | `valid = false`, `reason`, `state = LOST`, `intelligibility = 0`, `allFinite = true` | REQ-LE-80, 81 |
+| `invalid` | `LinkQuery` с одним нарушением или с двумя (тег `order`: побеждает первая граница в порядке REQ-LE-80) | `valid = false`, `reason`, `state = LOST`, `intelligibility = 0`, `allFinite = true` | REQ-LE-80, 81 |
 
 Категории внешнего шума (`noiseEnvironmentId`): `city`, `residential`, `rural`, `quiet_rural`, `none`.
 

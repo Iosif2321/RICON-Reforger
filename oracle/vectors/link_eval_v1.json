@@ -1,7 +1,8 @@
 {
   "schema": "ricon.oracle.link_eval",
   "version": 1,
-  "source": "docs/req/REQ-link-eval.md@f751657",
+  "revision": 2,
+  "source": "docs/req/REQ-link-eval.md@3078f88",
   "generatedBy": "claude: independent computation from REQ-LE (not from oracle/ricon_oracle.py, not from A3)",
   "tolerances": {
     "db": 0.01,
@@ -1632,6 +1633,518 @@
       },
       "tags": [
         "malformed"
+      ]
+    },
+    {
+      "id": "INV-12",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": "NaN",
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "INVALID_GAIN"
+      },
+      "tags": [
+        "malformed"
+      ]
+    },
+    {
+      "id": "INV-13",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": "Infinity",
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "INVALID_GAIN"
+      },
+      "tags": [
+        "malformed"
+      ]
+    },
+    {
+      "id": "INV-14",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "speech_v0"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "UNKNOWN_MODEL"
+      },
+      "tags": [
+        "malformed"
+      ]
+    },
+    {
+      "id": "INV-15",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "itm",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "UNKNOWN_MODEL"
+      },
+      "tags": [
+        "malformed"
+      ]
+    },
+    {
+      "id": "INV-16",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "UNKNOWN_BAND"
+      },
+      "tags": [
+        "malformed"
+      ]
+    },
+    {
+      "id": "INV-17",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 0.0,
+        "bandwidthHz": -1.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "INVALID_FREQUENCY"
+      },
+      "tags": [
+        "malformed",
+        "order"
+      ]
+    },
+    {
+      "id": "INV-18",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": "NaN",
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": -1.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "CATALOG_VIOLATION"
+      },
+      "tags": [
+        "malformed",
+        "order"
+      ]
+    },
+    {
+      "id": "INV-19",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": "NaN",
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": -1.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "INVALID_GAIN"
+      },
+      "tags": [
+        "malformed",
+        "order"
+      ]
+    },
+    {
+      "id": "INV-20",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": -1.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": false,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "rural",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "INVALID_NOISE_FIGURE"
+      },
+      "tags": [
+        "malformed",
+        "order"
+      ]
+    },
+    {
+      "id": "INV-21",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "swamp",
+        "bandId": "test_vhf",
+        "modelId": "itm",
+        "intelligibilityModelId": "linear_test"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "UNKNOWN_MODEL"
+      },
+      "tags": [
+        "malformed",
+        "order"
+      ]
+    },
+    {
+      "id": "INV-22",
+      "kind": "invalid",
+      "req": [
+        "REQ-LE-80",
+        "REQ-LE-81"
+      ],
+      "input": {
+        "txPos": [
+          0,
+          0,
+          0
+        ],
+        "rxPos": [
+          1000,
+          0,
+          0
+        ],
+        "frequencyMHz": 150.0,
+        "bandwidthHz": 12500.0,
+        "txPowerDbm": 37.0,
+        "txGainDbi": 0.0,
+        "rxGainDbi": 0.0,
+        "rxNoiseFigureDb": 8.0,
+        "hasRxSensitivity": false,
+        "rxSensitivityDbm": 0.0,
+        "hasRequiredSinr": true,
+        "requiredSinrDb": 10.0,
+        "hasInterference": false,
+        "interferenceDbm": 0.0,
+        "noiseEnvironmentId": "swamp",
+        "bandId": "test_vhf",
+        "modelId": "free_space",
+        "intelligibilityModelId": "speech_v0"
+      },
+      "expected": {
+        "valid": false,
+        "state": "LOST",
+        "intelligibility": 0.0,
+        "allFinite": true,
+        "reason": "UNKNOWN_NOISE_ENVIRONMENT"
+      },
+      "tags": [
+        "malformed",
+        "order"
       ]
     }
   ]
