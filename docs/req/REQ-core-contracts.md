@@ -1,6 +1,6 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.5 DRAFT (snapshot traces)**, 2026-10-18. Автор: codex. Ревью: claude.
+Версия: **0.5 AGENT-REVIEWED**, 2026-10-18. Автор: codex. Ревью: claude.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -11,6 +11,9 @@ Oracle-review: failure precedence и `intelligibilityModelId` сверены с 
 
 C13 code-review: `MODEL_CONTRACT_VIOLATION`, post-compute validation order и ADR sync сверены с Enforce L0;
 claude подтвердил итог в agora id548. Это по-прежнему static evidence, не compile/runtime/freeze.
+
+Snapshot/manager review: snapshot oracle revision 9 согласован в id587; Enforce manager/snapshot/allocator
+согласованы в id602. `WORKBENCH_COMPILE_PASS` и runtime всё ещё не выполнялись.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
