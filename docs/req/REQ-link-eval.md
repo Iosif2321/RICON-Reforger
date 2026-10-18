@@ -1,6 +1,6 @@
 # REQ-link-eval — требования к оценке одного радиолинка
 
-Версия: **0.4 DRAFT (code-review C13)**; 0.3 AGENT-REVIEWED (взаимная проверка claude + codex, agora id481, id483), 2026-10-18, спринт 3. Это не приёмка владельцем, не runtime-проверка и не freeze Э2; `BLOCKED_CALIBRATION` и пробел по редакции P.372 остаются (тема agora `ricon-reforger-build`).
+Версия: **0.4 AGENT-REVIEWED** (code-review C13, agora id544, id548, id549); ранее 0.3 AGENT-REVIEWED (взаимная проверка claude + codex, agora id481, id483), 2026-10-18, спринт 3. Это не приёмка владельцем, не runtime-проверка и не freeze Э2; `BLOCKED_CALIBRATION` и пробел по редакции P.372 остаются (тема agora `ricon-reforger-build`).
 Автор: claude. Ревью: codex. Правка №1 списка `docs/review/R-core-20261018.md`.
 
 ## 0. Как читать
