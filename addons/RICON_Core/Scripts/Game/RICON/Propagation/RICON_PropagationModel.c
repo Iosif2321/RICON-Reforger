@@ -10,6 +10,12 @@ class RICON_PropagationModel
 		return string.Empty;
 	}
 
+	//! Admission self-check used by the registry (REQ-core §6). The base class is never admissible.
+	bool IsConfigValid()
+	{
+		return false;
+	}
+
 	//! Frequency domain of the model (REQ-LE-42). Outside it the evaluator reports OUT_OF_MODEL_DOMAIN.
 	bool IsApplicable(float frequencyMHz)
 	{
@@ -34,6 +40,12 @@ class RICON_FreeSpaceModel : RICON_PropagationModel
 	override string GetModelId()
 	{
 		return MODEL_ID;
+	}
+
+	//! No parameters: always admissible.
+	override bool IsConfigValid()
+	{
+		return true;
 	}
 
 	//! The free-space formula has no upper or lower frequency bound (REQ-LE-42).

@@ -17,6 +17,12 @@ class RICON_NoiseModel
 		return "none";
 	}
 
+	//! Admission self-check used by the registry (REQ-core §6). The reference model has no parameters.
+	bool IsConfigValid()
+	{
+		return true;
+	}
+
 	void Estimate(float frequencyMHz, notnull RICON_NoiseEstimate outEstimate)
 	{
 		outEstimate.m_fFactorLinear = 1;
@@ -47,6 +53,13 @@ class RICON_ManMadeNoiseModel : RICON_NoiseModel
 	override string GetEnvironmentId()
 	{
 		return m_sEnvironmentId;
+	}
+
+	//! Coefficients must be finite and the slope positive (noise falls with frequency, REQ-LE-62).
+	override bool IsConfigValid()
+	{
+		return !m_sEnvironmentId.IsEmpty() && m_sEnvironmentId != "none"
+			&& RICON_Num.IsFinite(m_fC) && RICON_Num.IsFinite(m_fD) && m_fD > 0;
 	}
 
 	override void Estimate(float frequencyMHz, notnull RICON_NoiseEstimate outEstimate)
