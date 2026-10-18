@@ -1,6 +1,6 @@
 # RICON-Reforger — живой статус
 
-Обновлено: 2026-10-19, спринт 7 (тема agora `ricon-reforger-build`). Ведёт claude, сверяет codex.
+Обновлено: 2026-10-19, спринт 8 (тема agora `ricon-reforger-build`). Ведёт claude, сверяет codex.
 План — `PLAN_RU.md` v5 (+ шапка «Решения владельца после v5»). Решения владельца имеют приоритет над v5.
 
 Режим: **статический** — игру и сервер не запускаем; обратная разработка запрещена; ванильные файлы — только
@@ -14,7 +14,7 @@
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
 | Э1r | Runtime-lab на одном ПК | M1 | BLOCKED_NO_RUNTIME | — | разрешение владельца на запуск |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
-| Э2 | Контракты единого ядра | M1 | спринт 7: маршруты по REQ-core §9 (стабильные причины, глобальный порядок проверок, min Q / худшее состояние, неизменяемый RoutingContext, seams AccessPolicy / RoutingPolicy / CallSession, VoN — no-op) — STATIC_IMPLEMENTED (codex `d0c4db3`), эталон маршрутов 48 векторов (claude), code review agree. Спринт 6: `RICON_LinkSnapshot` по REQ-core §8 (порядок, атомарный resync, TTL) и менеджер (реестры, допуск моделей, epoch, seq без переполнения) — STATIC_IMPLEMENTED, code review agree; эталон снимков — 46 трасс, `SNAPSHOT_ORACLE_PASS`. Ранее: ревью ядра выполнено и согласовано: `R-core-20261018.md` (оси A, B; 18 правок, из них 2 блокера clean-room) + `R-core-20261018-api.md` (ось C, codex; 7 правок). Черновик не компилировался; способ проверки компиляции документирован (`E-workbench-build.md`) | `0bd44d6`, `6e6444d`, `d3984b0`, `d6b89d0`, `7a6130d`, `babba42`, `75ecd3b` | требования согласованы (спринт 3): `REQ-link-eval.md` v0.3 (claude) + `REQ-core-contracts.md` (codex), взаимный agree; код — спринт 4; компиляция — через исполнителя заказа №001; кривая разборчивости — `BLOCKED_CALIBRATION` |
+| Э2 | Контракты единого ядра | M1 | спринт 8: реестр типов сетей (codex `e669e40`), seam диаграммы антенны (claude `4d541e7`), тестовый аддон `RICON_CoreTests` с фикстурами всех 5 сценариев расширения (claude `f0acd5f`, `62ba841`, `1f46b76`; COMPILE_FIXTURE / SELF_CHECK_NOT_RUN; ядро при этом не менялось). Спринт 7: маршруты по REQ-core §9 (стабильные причины, глобальный порядок проверок, min Q / худшее состояние, неизменяемый RoutingContext, seams AccessPolicy / RoutingPolicy / CallSession, VoN — no-op) — STATIC_IMPLEMENTED (codex `d0c4db3`), эталон маршрутов 48 векторов (claude), code review agree. Спринт 6: `RICON_LinkSnapshot` по REQ-core §8 (порядок, атомарный resync, TTL) и менеджер (реестры, допуск моделей, epoch, seq без переполнения) — STATIC_IMPLEMENTED, code review agree; эталон снимков — 46 трасс, `SNAPSHOT_ORACLE_PASS`. Ранее: ревью ядра выполнено и согласовано: `R-core-20261018.md` (оси A, B; 18 правок, из них 2 блокера clean-room) + `R-core-20261018-api.md` (ось C, codex; 7 правок). Черновик не компилировался; способ проверки компиляции документирован (`E-workbench-build.md`) | `0bd44d6`, `6e6444d`, `d3984b0`, `d6b89d0`, `7a6130d`, `babba42`, `75ecd3b` | требования согласованы (спринт 3): `REQ-link-eval.md` v0.3 (claude) + `REQ-core-contracts.md` (codex), взаимный agree; код — спринт 4; компиляция — через исполнителя заказа №001; кривая разборчивости — `BLOCKED_CALIBRATION` |
 | Э3 | Server-authoritative lifecycle | M1 | не начат | — | Э2 |
 | Э4 | HDSP на Enforce | M1 | oracle L0 готов: 57 эталонных векторов (claude) + независимый вычислитель на Python stdlib (codex) — `ORACLE_PASS: 57`, 9 unittest; L0 на Enforce переписан с нуля по REQ (clean-room): FreeSpace, шум (P.372 из конфига), seam разборчивости, чистый evaluator с контрактом моделей — STATIC_IMPLEMENTED, взаимный code review (id544); компиляция NOT_TESTED; паритет с oracle — NOT_TESTED | oracle: `ef4e6d8`, `21c9a1f`, `3078f88`, `6a7bc9c`, `9286473`; код: `3b79baa`, `ff62336`, `9d4ea3b`, `03022c3`, `41b5d81`, `7102846`; ADR/REQ: `1f4f0c9`, `af73d06` | Э2; L2-дифракция OPEN (P.526-16); внешний шум P.372 — новый слой |
 | Э4T-s | VoN seam + synthetic LinkSnapshot | M1 | не начат | — | Э1s, Э2 |
@@ -34,6 +34,7 @@
 
 | Спринт | Задачи | Итог |
 |---|---|---|
+| 8 | реестр типов сетей, seam антенны, фикстуры EXT-1…5, заказ компиляции №003 | закрыт: agree id653, id656, id661. Ревью нашло: проводной evaluator фикстуры мог вернуть valid с Inf; реестр типов сетей не был покрыт ни одним вызовом; результат маршрута мог устареть после изменения ног |
 | 7 | маршрутизация: эталон и код | закрыт: эталон claude `35989f1`…`cf01b8e` (48 векторов, `ROUTE_ORACLE_PASS`); код codex `d0c4db3`; REQ-core §9 (`6b01c13`, `d09968b`, `f08e20d`). Ревью нашло: неоднозначный порядок причин (глобально или по ногам) — закреплён глобальный; talker/listener и бюджет LOST с Q > 0 не проверялись; null-маршрут; epoch контекста вне домена |
 | 6 | снимки линка и менеджер ядра; эталон трасс снимков; заказ компиляции №002 | закрыт: код codex `7a6812a`, `9fa04f5`, `fe8e20b`, `eb83219`; эталон claude `b06f855`…`cfc61d3` (46 трасс); REQ-core v0.5 (`d2bea68`…`d19dd57`); заказ `WB-order-002.md`. Ревью нашло: resync был «частичным успехом»; повтор старого снимка мог пройти после смены epoch; seq/epoch = int.MAX считались допустимыми; epoch мог выйти за int32; модели шума с NaN допускались в реестр |
 | 5 | L0 на Enforce с нуля по REQ | закрыт: code review agree id544, документы id547–549. Ревью нашло: реестры должны жить в менеджере, а не в evaluator; bandId не сверялся; нарушения контракта модели (слои, Q, состояние) проходили как valid; NOTICE утверждал больше, чем сделано; константы P.372 были вшиты в код (теперь — из конфига) |
@@ -46,6 +47,7 @@
 
 | Метка | Вопрос | Статус |
 |---|---|---|
+| `[Workbench]` | заказ №003: компиляция `RICON_Core` + `RICON_CoreTests` (`docs/evidence/WB-order-003.md`), заменяет №002 | отправлен в конце спринта 8 |
 | `[Workbench]` | заказ №002: компиляция `RICON_Core` на ревизии конца спринта 6 (`docs/evidence/WB-order-002.md`) | отправлен в конце спринта 6 |
 | `[Workbench]` | заказ №001: ванильные файлы для Q1, Q2, Q4, Q17, Q18, Q19 + компиляция `RICON_Core` (`docs/evidence/WB-order-001.md`) | отправлен (agora id406), ждём `E-workbench-source.md` |
 | `[Решение]` | разрешение на runtime (Э1r) | не задан; нужен позже |
