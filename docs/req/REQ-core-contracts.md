@@ -297,8 +297,9 @@ snapshot после `ttlMs`; это presentation timeout, не authority. Networ
 
 ### 9.1 Route и порядок валидации
 
-Route MUST явно хранить `talkerEndpointId`, `listenerEndpointId` и непустой упорядоченный список legs. Каждая leg
-сильно владеет valid budget и содержит положительные `fromEndpointId`/`toEndpointId`; self-leg запрещена.
+Route MUST быть объектом, явно хранить положительные `talkerEndpointId`, `listenerEndpointId` и непустой
+упорядоченный список legs. Null route либо отсутствующий/пустой legs list → `EMPTY_ROUTE`. Каждая leg сильно
+владеет valid budget и содержит положительные `fromEndpointId`/`toEndpointId`; self-leg запрещена.
 
 Stable route reasons:
 
@@ -310,7 +311,7 @@ Stable route reasons:
 | `TOO_MANY_HOPS` | `legs.Count() > maxHops`; равенство допустимо |
 | `NULL_LEG` | элемент legs отсутствует |
 | `INVALID_ENDPOINT` | endpoint ID неположителен либо leg ведёт сама в себя |
-| `INVALID_BUDGET` | budget отсутствует/invalid/Q не finite `[0,1]`/state недопустим |
+| `INVALID_BUDGET` | budget отсутствует/invalid/Q не finite `[0,1]`/state недопустим; LOST обязан иметь Q=0 |
 | `WRONG_START` | первая leg начинается не с talker |
 | `DISCONTINUITY` | `leg[i].from != leg[i-1].to` |
 | `CYCLE` | endpoint уже встречался ранее в route |
@@ -330,7 +331,7 @@ MUST давать quality 0 и state LOST, не частичный резуль�
 
 ### 9.2 RoutingContext и policy
 
-`RoutingContext` — immutable input policy: positive `sessionEpoch`, non-negative monotonic `serverTimeMs`, positive
+`RoutingContext` — immutable input policy: `sessionEpoch` в `1..int.MAX-1`, non-negative monotonic `serverTimeMs`, positive
 `maxHops`, positive correlation ID и strong reference на abstract `AccessPolicy`. Он MUST NOT содержать concrete
 `CommsManagerComponent` или изменяемые registries. Дополнительные topology/capacity services подключаются через
 read-only interfaces в следующей версии context.
