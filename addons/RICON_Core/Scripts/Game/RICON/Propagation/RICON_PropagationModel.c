@@ -1,56 +1,69 @@
-// Propagation model extension point (ADR-002, PLAN v5 §3.1 invariant 2). Status: STATIC_IMPLEMENTED/COMPILE_ONLY.
-// Models are registered per band by the server and must keep outputs finite.
+// Propagation model seam and the free-space model. Written from docs/req/REQ-link-eval.md §4-5 (clean-room).
+// Status: STATIC_IMPLEMENTED (not compiled yet).
 
-//! Base class: a model fills the loss layers it knows; RICON_LinkEvaluator does the rest.
+//! A propagation model appends its own loss layers to the budget (REQ-LE-30) and declares where it applies.
 class RICON_PropagationModel
 {
-	//! Stable id used in configs and oracle vectors, e.g. "free_space".
+	//! Stable id used by the registry and oracle vectors.
 	string GetModelId()
 	{
-		return "base";
+		return string.Empty;
 	}
 
-	//! Fill loss layers of outBudget for the query. Return false if the model cannot evaluate it.
-	bool EvaluateLosses(RICON_LinkQuery query, RICON_LinkBudget outBudget)
+	//! Frequency domain of the model (REQ-LE-42). Outside it the evaluator reports OUT_OF_MODEL_DOMAIN.
+	bool IsApplicable(float frequencyMHz)
+	{
+		return false;
+	}
+
+	//! Append loss layers for the already validated query. Return false on numeric failure.
+	bool AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
 	{
 		return false;
 	}
 }
 
-//! Free-space reference model (ITU-R P.525 free-space path loss). No terrain, objects or weather:
-//! it is layer L0 of HDSP and the first oracle parity target.
+//! Free-space loss after ITU-R P.525: L = 20 lg(4 pi d / lambda), computed directly (REQ-LE-40).
 class RICON_FreeSpaceModel : RICON_PropagationModel
 {
+	static const string MODEL_ID = "free_space";
+	static const string LAYER_ID = "fspl";
+	//! Speed of light, exact by SI definition (REQ-LE-02).
 	static const float SPEED_OF_LIGHT_MPS = 299792458.0;
 
 	override string GetModelId()
 	{
-		return "free_space";
+		return MODEL_ID;
 	}
 
-	override bool EvaluateLosses(RICON_LinkQuery query, RICON_LinkBudget outBudget)
+	//! The free-space formula has no upper or lower frequency bound (REQ-LE-42).
+	override bool IsApplicable(float frequencyMHz)
 	{
-		float freqMHz = query.m_fFrequencyMHz;
-		if (!RICON_Num.IsFinite(freqMHz) || freqMHz <= 0)
+		return frequencyMHz > 0;
+	}
+
+	override bool AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
+	{
+		float lossDb = LossDb(distanceM, query.m_fFrequencyMHz);
+		if (!RICON_Num.IsFinite(lossDb))
 			return false;
 
-		float distanceM = vector.Distance(query.m_vTxPos, query.m_vRxPos);
-		outBudget.m_fDistanceM = distanceM;
-		outBudget.m_fFsplDb = FreeSpaceLossDb(distanceM, freqMHz);
-		outBudget.m_fDiffractionDb = 0;
-		outBudget.m_fObstructionDb = 0;
-		outBudget.m_fWeatherDb = 0;
-		outBudget.m_fShadowingDb = 0;
-		outBudget.m_fMultipathDb = 0;
+		layers.Insert(new RICON_LossLayer(LAYER_ID, lossDb, MODEL_ID));
 		return true;
 	}
 
-	//! FSPL(dB) = 20*log10(d_km) + 20*log10(f_MHz) + 32.44.
-	//! Distances below one wavelength are clamped to one wavelength (far-field formula is invalid there).
-	static float FreeSpaceLossDb(float distanceM, float freqMHz)
+	//! Wavelength in metres for a frequency in MHz.
+	static float WavelengthM(float frequencyMHz)
 	{
-		float wavelengthM = SPEED_OF_LIGHT_MPS / (freqMHz * 1000000.0);
-		float d = Math.Max(distanceM, wavelengthM);
-		return 20.0 * Math.Log10(d / 1000.0) + 20.0 * Math.Log10(freqMHz) + 32.44;
+		return SPEED_OF_LIGHT_MPS / (frequencyMHz * 1000000.0);
+	}
+
+	//! Inside one wavelength the far-field formula does not hold; the distance is raised to lambda,
+	//! which keeps the loss continuous and finite at d = 0 (REQ-LE-41).
+	static float LossDb(float distanceM, float frequencyMHz)
+	{
+		float wavelengthM = WavelengthM(frequencyMHz);
+		float effectiveDistanceM = Math.Max(distanceM, wavelengthM);
+		return 20.0 * Math.Log10(4.0 * Math.PI * effectiveDistanceM / wavelengthM);
 	}
 }
