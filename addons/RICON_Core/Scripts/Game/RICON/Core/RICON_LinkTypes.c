@@ -124,31 +124,6 @@ class RICON_LinkBudget
 	}
 }
 
-//! Kept unchanged from the baseline until REQ-core §8 is implemented (sprint 6, codex).
-//! Server-authoritative, owner-scoped description of one talker->listener route (PLAN v5 §3).
-class RICON_LinkSnapshot
-{
-	int m_iSessionEpoch;
-	int m_iLinkId;
-	int m_iLinkSeq;		//!< monotonic per link; integers only (R-21)
-	float m_fTtlS;
-	int m_iTalkerPlayerId;
-	int m_iListenerPlayerId;
-	int m_iRouteNodeCount;	//!< 1 = direct radio, 2+ = via relays
-	float m_fQuality;		//!< min(legs) intelligibility, 0..1
-	RICON_ELinkState m_eState;
-
-	//! Newer snapshot wins; stale or replayed ones are rejected (lessons R-01, R-06).
-	bool IsNewerThan(RICON_LinkSnapshot other)
-	{
-		if (!other)
-			return true;
-		if (m_iSessionEpoch != other.m_iSessionEpoch)
-			return m_iSessionEpoch > other.m_iSessionEpoch;
-		return m_iLinkSeq > other.m_iLinkSeq;
-	}
-}
-
 //! Numeric helpers shared by the core.
 class RICON_Num
 {
