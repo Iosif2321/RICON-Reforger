@@ -11,6 +11,8 @@
 //!   -riconGrep=<substring>                                 print lines containing it (required)
 //!   -riconContext=<N>                                      lines of context on each side (default 3, clamped to 0..7)
 //!   -riconMaxFiles=<N>                                     stop after N matching files (default 10, at least 1)
+//!   -riconLine=<N>                                         window mode: print lines N.. of each file instead of
+//!                                                          grep matches (still within the cap; -riconGrep ignored)
 //! Output is hard-capped at MAX_LINES_TOTAL source lines per run (agora #767), so a frequent needle cannot print
 //! a whole file.
 [WorkbenchPluginAttribute(name: "RICON WB Reader", description: "Read-only resource lookup (TOOL_ONLY)", wbModules: {"ScriptEditor", "ResourceManager"})]
@@ -23,6 +25,7 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 	protected ref array<string> m_aFiles = {};
 	protected string m_sPathFilter;
 	protected int m_iPrintedTotal;
+	protected int m_iStartLine;
 
 	//! SearchResourcesCallback: resource name and its exact path.
 	protected void OnResourceFound(ResourceName resourceName, string exactPath = "")
@@ -69,6 +72,19 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 
 		handle.Close();
 
+		if (m_iStartLine > 0)
+		{
+			matchCount = 1;
+			Print(TAG + "---- " + path + " (window)");
+			for (int windowIndex = m_iStartLine - 1; windowIndex < lines.Count() && m_iPrintedTotal < MAX_LINES_TOTAL; windowIndex++)
+			{
+				Print(TAG + path + ":" + (windowIndex + 1).ToString() + ": " + lines[windowIndex]);
+				m_iPrintedTotal++;
+			}
+
+			return;
+		}
+
 		int lastPrinted = -1;
 		for (int lineIndex = 0; lineIndex < lines.Count(); lineIndex++)
 		{
@@ -105,6 +121,7 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 		m_sPathFilter = ReadParam("riconPath", "");
 		int context = Math.ClampInt(ReadParam("riconContext", "3").ToInt(), 0, MAX_CONTEXT);
 		int maxFiles = Math.Max(ReadParam("riconMaxFiles", "10").ToInt(), 1);
+		m_iStartLine = Math.Max(ReadParam("riconLine", "0").ToInt(), 0);
 
 		if (root == "-")
 			root = "";

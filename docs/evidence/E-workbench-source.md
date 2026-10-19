@@ -109,5 +109,69 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 
 ## Заказ №001 — ванильные файлы
 
-Не выполнен. Владелец разрешил (2026-10-19, чат) выполнить его claude в паре с codex, только чтение. Способ чтения
-согласуется в agora (#757); прототип инструмента — `tools/RICON_WbReader/` (не запускался).
+Владелец разрешил (2026-10-19, чат; подтверждено codex в своём окне, agora #777/#778): выполняет claude, проверяет
+логи codex; только чтение. Инструмент — `tools/RICON_WbReader/` (плагин Workbench, `ResourceDatabase.SearchResources` +
+`FileIO.OpenFile(FileMode.READ)`, не больше 15 строк исходника за запуск, логи вне репозитория:
+`%USERPROFILE%\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-wbreader-<имя>-<время>\`). Игра 1.8.0.13.
+Уровень всех выводов — `SOURCE_EVIDENCE`: видимая структура кода; поведение в игре — `НЕ УСТАНОВЛЕНО` / `BLOCKED_NO_RUNTIME`.
+
+Пути ниже — точные пути Workbench (`$ArmaReforger:…`); номера строк — для версии 1.8.0.13.
+
+### Пункт 3 — `ECommMethod` (логи `ecomm-*`)
+
+- Файл `$ArmaReforger:scripts/Game/generated/ECommMethod.c`, помечен как сгенерированный («Do not modify, this script
+  is generated»), т. е. перечисление задаёт движок.
+- Ровно 5 значений, без явных чисел: `DIRECT` (стр. 12, комментарий «Speaking»), `SQUAD_RADIO` (16, «Soldiers squad
+  radio»), `DIRECT_AI` (20), `GAME_MASTER_DIRECT` (24, «Game master speaking direct»), `GAME_MASTER_RADIO` (28, «Game
+  master using radio»).
+- Вывод для RICON: своего значения метода связи в перечислении нет и добавить его скриптом нельзя (generated); радио
+  RICON должно ехать поверх `SQUAD_RADIO`.
+
+### Пункт 4 — `SCR_VoNComponent.OnReceive`, `SCR_VONController`, `SCR_VONEntryRadio` (логи `i4-*`)
+
+- `$ArmaReforger:scripts/GameCode/Network/SCR_VoNComponent.c:78–86`: `OnReceive(int playerId, bool isSenderEditor,
+  BaseTransceiver receiver, int frequency, float quality)` — событие движка. Тело только передаёт аргументы в
+  `SCR_VonDisplay.OnReceive(...)` (UI) и в `m_OnReceivedVON.Invoke(playerId, receiver, frequency, quality)`.
+  **Звук скрипт не меняет**: ни громкости, ни фильтров, ни отказа в приёме.
+- `quality` дальше: `SCR_VonDisplay.c:213` сохраняет её в `m_fQuality` структуры передачи; других использований
+  `m_fQuality` нет (стр. 18, 213, 827 — объявление, запись, повторная передача в `OnReceive`). На событие
+  `m_OnReceivedVON` подписан только `SCR_NameTagData.c:679/717` (UI имён).
+- Выбор трансивера при передаче — `$ArmaReforger:scripts/Game/VON/SCR_VONController.c:622–637`, `SetActiveTransmit`:
+  если `entry.GetVONMethod() == ECommMethod.SQUAD_RADIO` → `SetCommMethod(SQUAD_RADIO)` и
+  `SetTransmitRadio(SCR_VONEntryRadio.Cast(entry).GetTransceiver())`; иначе → `SetCommMethod(DIRECT)` и
+  `SetTransmitRadio(null)`. Оба метода — `proto external` (`generated/Components/VoNComponent.c:27,30`), т. е.
+  доставку голоса выполняет движок.
+- Задержка частоты — `SCR_VONEntryRadio.c:31`, комментарий: «Local frequency getter since atm the transceiver getter is
+  delayed (network?) and not sufficient for instant UI changes»; `GetEntryFrequency()` возвращает локальное
+  `m_iFrequency`. Причина задержки в коде не объяснена («network?») — НЕ УСТАНОВЛЕНО.
+- Вывод для RICON (H3/Q2): из скрипта приёма нельзя управлять слышимостью — только наблюдать `quality`/`frequency`.
+  Влияние `quality` на звук, если есть, — в звуковом графе (пункт 2), не в скриптах.
+
+### Пункт 5 — `SCR_CoverageRadioComponent`, `SCR_RadioCoverageSystem` (логи `i5-*`)
+
+- Файлы: `scripts/Game/Components/SCR_CoverageRadioComponent.c` (`: ScriptedRadioComponent`),
+  `scripts/Game/Systems/SCR_RadioCoverageSystem.c` (`: GameSystem`),
+  `scripts/Game/Components/Locations/SCR_RadioCoverageMapDescriptorComponent.c`.
+- Во всех трёх **нет** упоминаний `VoN`, `VON`, `Transmit` (поиск — 0 совпадений).
+- Граф покрытия — списки `m_aRadiosInRange` / `m_aInRangeOfRadios` (стр. 22–23) с подсчётом по фильтру ключа
+  шифрования (`GetRadiosInRangeCount(string encryptionFilter)`, стр. 91).
+- Пользователи `SCR_RadioCoverageSystem.GetInstance`: сам компонент, `SCR_GameModeCampaign.c:739`,
+  `SCR_CampaignFactionCommanderHandlerComponent.c:373,400` — логика режима Conflict.
+- Вывод: по исходнику покрытие с доставкой голоса **не связано**; это игровая логика Conflict. Ретранслирует ли
+  движок голос через `RelayTransceiver` — пункт 1; runtime — НЕ УСТАНОВЛЕНО.
+
+### Пункт 8 — radial-меню VON (логи `i8-*`)
+
+- Классы записей: `SCR_VONEntry : SCR_SelectionMenuEntry` (`Game/VON/SCR_VONEntry.c:3`),
+  `SCR_VONEntryRadio : SCR_VONEntry` (`SCR_VONEntryRadio.c:3`), `SCR_VONEntryComponent`.
+- `SCR_VONController.c:230–242`, `AddEntry(SCR_VONEntry entry)` — **публичный** метод: добавляет запись, вызывает
+  `entry.InitEntry()`, запоминает long-range радио, шлёт `m_OnEntriesChanged`, делает запись активной, если активной нет.
+- Ванильный код вызывает его извне: `SCR_GadgetManagerComponent.c:597,971`, `SCR_EditorManagerEntity.c:182,192`.
+  Меню строится в `SCR_VONMenu.c:86–88` (`category.AddEntry` / `m_RadialMenu.AddEntry`).
+- Вывод (Q19): свою запись (наследник `SCR_VONEntry`) можно добавить через публичный `AddEntry` **без modded-замены**.
+  Ограничение: `SetActiveTransmit` знает только `SQUAD_RADIO`, всё остальное передаётся как `DIRECT` — запись RICON
+  для радио должна возвращать `SQUAD_RADIO` и реальный `BaseTransceiver`. Отрисовка в меню — runtime, НЕ УСТАНОВЛЕНО.
+
+### Ещё не выполнено
+
+Пункты 1, 2, 6, 7, 9 (префабы, звуковой граф, конфиги, материалы). Пункт 10 закрыт компиляцией №003/004 выше.

@@ -7,7 +7,8 @@ param(
 	[Parameter(Mandatory)][string]$Grep,
 	[string]$PathFilter = "",
 	[int]$Context = 3,
-	[int]$MaxFiles = 10
+	[int]$MaxFiles = 10,
+	[int]$Line = 0
 )
 $steam = "C:\Program Files (x86)\Steam\steamapps\common"
 $wb = "$steam\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe"
@@ -22,6 +23,7 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 	"-riconContext=$Context", "-riconMaxFiles=$MaxFiles", "-wbSilent", "-exitAfterInit", "-noThrow",
 	"-logLevel", "normal", "-logsDir", $logsDir)
 if ($PathFilter) { $argList += "-riconPath=`"$PathFilter`"" }
+if ($Line -gt 0) { $argList += "-riconLine=$Line" }
 $p = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
 $null = $p.Handle
 if (-not $p.WaitForExit(300000)) { Stop-Process -Id $p.Id -Confirm:$false; "FAIL: TIMEOUT"; exit 1 }
