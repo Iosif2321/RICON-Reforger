@@ -1,0 +1,12 @@
+GameProject {
+ ID "RICON_WbReader"
+ GUID "65EE7FDB5893DA69"
+ TITLE "RICON Workbench reader (TOOL_ONLY, not for Workshop)"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+ Configurations {
+  GameProjectConfig PC {
+  }
+ }
+}
