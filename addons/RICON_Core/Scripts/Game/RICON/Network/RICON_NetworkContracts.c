@@ -315,7 +315,7 @@ class RICON_VoNIntegration
 	{
 	}
 
-	void OnTransmitLeaseExpired(int talkerPlayerId)
+	void OnTransmitLeaseExpired(int talkerPlayerId, int deviceId, int leaseId)
 	{
 	}
 }
