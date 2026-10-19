@@ -8,6 +8,10 @@ the vector file; the generator computes nothing. Wire-level absences that a type
 the way a future adapter must map them and are counted as ADAPTER_MAPPED:
   - missing nowMs                 -> nowMs = -1 (outside 0..INT_MAX, so MALFORMED)
   - INIT config with missing keys -> config = null (MALFORMED)
+Trust boundary: before any code is written, validate() admits only closed records whose values are int32 numbers
+or names from closed enum sets (trace ids match [A-Za-z0-9_-]); anything else raises VectorError, so a changed
+vector file cannot inject Enforce code. A catalog network with an empty channel list is refused, because the
+typed flat (network, channel) pairs cannot express it.
 Three negative controls replay a vector with a deliberately broken expectation and must be reported as failed,
 so a vacuous comparison cannot pass.
 """
@@ -17,6 +21,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -24,11 +29,155 @@ CONFIG_KEYS = (
     "maxPlayers", "maxActiveLeases", "maxTerminalLeases", "terminalLeaseTtlMs", "maxTombstones", "tombstoneTtlMs",
     "maxResponseCachePerPlayer", "maxRateEntries", "rateWindowMs", "rateMaxRequests",
 )
+INT_MIN, INT_MAX = -2147483648, 2147483647
+# Closed name sets: the only strings that may reach generated code (enum member names of RICON_Lifecycle.c).
+RESULT_CODES = frozenset((
+    "MALFORMED", "TICK_ANOMALY", "NOT_READY", "INVALID_SESSION", "STALE_CONNECTION", "STALE_GENERATION",
+    "STALE_ENTITY", "DUPLICATE", "REQUEST_CONFLICT", "STALE_REQUEST", "LIMIT_REACHED", "RATE_LIMITED",
+    "FORGED_OWNER", "INACTIVE_ENTITY", "UNKNOWN_DEVICE", "NOT_OWNER", "POWER_OFF", "INVALID_CATALOG",
+    "DEVICE_BUSY", "UNKNOWN_LEASE", "STALE_LEASE", "OK"))
+PLAYER_STATES = frozenset(("NONE", "CONNECTED_UNREGISTERED", "REGISTERED_UNBOUND", "BOUND_ACTIVE", "BOUND_INACTIVE",
+                           "DISCONNECTED"))
+LEASE_STATES = frozenset(("ACTIVE", "EXPIRED", "REVOKED"))
+TERMINAL_REASONS = frozenset((
+    "TTL_EXPIRED", "CLIENT_STOP", "DISCONNECT", "RECONNECT", "ENTITY_CHANGED", "ENTITY_INACTIVE", "ACCESS_LOST",
+    "POWER_LOST", "DEVICE_REMOVED", "CATALOG_INVALIDATED", "SESSION_ROTATED", "ADMIN_REVOKED", "TICK_ANOMALY"))
+DEVICE_KINDS = frozenset(("CARRIED", "WORLD"))
+UNBIND_REASONS = frozenset(("KILLED", "DELETED", "CONTROL_LOST"))
+EVENT_FIELDS = {
+    "INIT": {"nowMs", "sessionEpoch", "config", "catalog"},
+    "CONNECTED": {"nowMs", "playerId", "connectionId"},
+    "REGISTERED": {"nowMs", "playerId", "generation"},
+    "ENTITY_BOUND": {"nowMs", "playerId", "generation", "entityId"},
+    "ENTITY_CHANGED": {"nowMs", "playerId", "generation", "fromEntityId", "toEntityId"},
+    "ENTITY_UNBOUND": {"nowMs", "playerId", "generation", "entityId", "reason"},
+    "DISCONNECTED": {"nowMs", "playerId", "generation", "connectionId"},
+    "TICK": {"nowMs"},
+    "ROTATE_EPOCH": {"nowMs", "sessionEpoch"},
+    "PTT_START": {"nowMs", "schemaVersion", "correlationId", "authenticatedPlayerId", "payloadPlayerId",
+                  "sessionEpoch", "generation", "requestSeq", "deviceId", "networkTypeId", "channelId", "ttlMs"},
+    "PTT_STOP": {"nowMs", "schemaVersion", "correlationId", "authenticatedPlayerId", "payloadPlayerId",
+                 "sessionEpoch", "generation", "requestSeq", "leaseId"},
+}
+EFFECT_FIELDS = {
+    "PLAYER_STATE_CHANGED": {"playerId", "oldGeneration", "newGeneration", "fromState", "toState"},
+    "FULL_RESYNC_REQUIRED": {"playerId", "sessionEpoch", "generation"},
+    "ENTITY_BOUND": {"playerId", "generation", "entityId"},
+    "ENTITY_UNBOUND": {"playerId", "generation", "entityId"},
+    "LEASE_GRANTED": {"playerId", "generation", "deviceId", "leaseId", "issuedAtMs", "ttlMs"},
+    "LEASE_TERMINATED": {"playerId", "generation", "deviceId", "leaseId", "leaseState", "terminalReason"},
+    "VON_EXPIRY_INTENDED": {"playerId", "deviceId", "leaseId"},
+    "SUBSCRIPTIONS_CLEARED": {"playerId", "generation"},
+    "CARRIED_DEVICES_DETACHED": {"playerId", "generation"},
+    "TOMBSTONE_WRITTEN": {"playerId", "generation", "connectionId", "expiresAtMs"},
+}
+NAME_FIELDS = {"fromState": PLAYER_STATES, "toState": PLAYER_STATES, "leaseState": LEASE_STATES,
+               "terminalReason": TERMINAL_REASONS, "reason": UNBIND_REASONS, "resultCode": RESULT_CODES,
+               "cachedResultCode": RESULT_CODES}
+TRACE_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
+CT_ID = re.compile(r"CT-LC-[0-9]{3}")
+NETWORK_KEY = re.compile(r"[1-9][0-9]{0,9}")
+
 RUN = "RICON_LifecycleTraceRun"
 RESULT = "RICON_ELifecycleResult."
 STATE = "RICON_EPlayerLifecycleState."
 LEASE_STATE = "RICON_ETransmitLeaseState."
 REASON = "RICON_ELeaseTerminalReason."
+
+
+class VectorError(ValueError):
+    pass
+
+
+def require(condition: bool, where: str) -> None:
+    if not condition:
+        raise VectorError(f"unsupported vector value at {where}")
+
+
+def check_int(value: object, where: str) -> None:
+    require(isinstance(value, int) and not isinstance(value, bool) and INT_MIN <= value <= INT_MAX, where)
+
+
+def check_record(record: object, fields: set[str], where: str, required: set[str] | None = None) -> None:
+    """Closed record: known keys only; names from closed sets, everything else int32."""
+    require(isinstance(record, dict) and set(record) <= fields, where)
+    require(set(record) >= (fields if required is None else required), where)
+    for key, value in record.items():
+        if key in NAME_FIELDS:
+            require(value in NAME_FIELDS[key], f"{where}.{key}")
+        else:
+            check_int(value, f"{where}.{key}")
+
+
+def check_catalog(catalog: object, where: str) -> None:
+    require(isinstance(catalog, list), where)
+    for index, entry in enumerate(catalog):
+        at = f"{where}[{index}]"
+        keys = {"deviceId", "kind", "ownerPlayerId", "accessPlayerIds", "powered", "allowed"}
+        require(isinstance(entry, dict) and set(entry) <= keys and set(entry) >= keys - {"ownerPlayerId"}, at)
+        check_int(entry["deviceId"], f"{at}.deviceId")
+        if "ownerPlayerId" in entry:
+            check_int(entry["ownerPlayerId"], f"{at}.ownerPlayerId")
+        require(entry["kind"] in DEVICE_KINDS, f"{at}.kind")
+        require(isinstance(entry["powered"], bool), f"{at}.powered")
+        require(isinstance(entry["accessPlayerIds"], list), f"{at}.accessPlayerIds")
+        for player_id in entry["accessPlayerIds"]:
+            check_int(player_id, f"{at}.accessPlayerIds")
+        require(isinstance(entry["allowed"], dict), f"{at}.allowed")
+        for network, channels in entry["allowed"].items():
+            require(isinstance(network, str) and NETWORK_KEY.fullmatch(network) is not None, f"{at}.allowed key")
+            # A network with no channels has no typed form (flat pairs): refuse instead of dropping it silently.
+            require(isinstance(channels, list) and len(channels) > 0, f"{at}.allowed[{network}]")
+            for channel in channels:
+                check_int(channel, f"{at}.allowed[{network}]")
+
+
+def validate(data: object) -> None:
+    """Trust boundary: every value that reaches generated Enforce code is an int32 or a closed enum name."""
+    require(isinstance(data, dict) and data.get("schema") == "ricon.oracle.lifecycle" and data.get("version") == 1,
+            "schema/version")
+    require(isinstance(data.get("source"), str), "source")
+    traces = data.get("traces")
+    require(isinstance(traces, list) and len(traces) > 0, "traces")
+    seen = set()
+    for trace in traces:
+        require(isinstance(trace, dict) and isinstance(trace.get("id"), str)
+                and TRACE_ID.fullmatch(trace["id"]) is not None and trace["id"] not in seen, "trace id")
+        seen.add(trace["id"])
+        tid = trace["id"]
+        require(isinstance(trace.get("ct"), list) and len(trace["ct"]) > 0
+                and all(isinstance(ct, str) and CT_ID.fullmatch(ct) for ct in trace["ct"]), f"{tid}.ct")
+        require(isinstance(trace.get("steps"), list) and len(trace["steps"]) > 0, f"{tid}.steps")
+        for index, step in enumerate(trace["steps"]):
+            at = f"{tid}[{index}]"
+            require(isinstance(step, dict) and isinstance(step.get("event"), dict)
+                    and isinstance(step.get("expect"), dict), at)
+            event = step["event"]
+            kind = event.get("type")
+            require(kind in EVENT_FIELDS, f"{at}.type")
+            fields = EVENT_FIELDS[kind]
+            body = {k: v for k, v in event.items() if k != "type"}
+            if kind == "INIT":
+                require(set(body) <= fields and set(body) >= fields - {"nowMs"}, f"{at} INIT fields")
+                if "nowMs" in body:
+                    check_int(body["nowMs"], f"{at}.nowMs")
+                check_int(body["sessionEpoch"], f"{at}.sessionEpoch")
+                require(isinstance(body["config"], dict) and set(body["config"]) <= set(CONFIG_KEYS), f"{at}.config")
+                for key, value in body["config"].items():
+                    check_int(value, f"{at}.config.{key}")
+                check_catalog(body["catalog"], f"{at}.catalog")
+            else:
+                check_record(body, fields, at, fields - {"nowMs"})
+            expect = step["expect"]
+            effects = expect.get("effects", [])
+            require(isinstance(effects, list), f"{at}.effects")
+            check_record({k: v for k, v in expect.items() if k != "effects"},
+                         {"resultCode", "cachedResultCode", "leaseId", "leaseState", "terminalReason"},
+                         f"{at}.expect", {"resultCode"})
+            for number, effect in enumerate(effects):
+                require(isinstance(effect, dict) and effect.get("type") in EFFECT_FIELDS, f"{at}.effects[{number}]")
+                check_record({k: v for k, v in effect.items() if k != "type"}, EFFECT_FIELDS[effect["type"]],
+                             f"{at}.effects[{number}]")
 
 
 class Generator:
@@ -194,10 +343,12 @@ def controls(traces: list) -> list[tuple[str, dict]]:
 
 
 def generate(vectors_path: Path) -> str:
-    raw = vectors_path.read_bytes()
+    return generate_bytes(vectors_path.read_bytes())
+
+
+def generate_bytes(raw: bytes) -> str:
     data = json.loads(raw.decode("utf-8"))
-    if data.get("schema") != "ricon.oracle.lifecycle" or data.get("version") != 1:
-        raise ValueError("unexpected vector schema")
+    validate(data)
     traces = data["traces"]
     gen = Generator()
     body: list[str] = []
