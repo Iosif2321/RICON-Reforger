@@ -78,6 +78,9 @@ Binding не содержит engine handle. Верхняя граница ин�
 проверяться в Э4T-f до actuator call. Несколько bindings на одного talker допустимы на этой stateless-границе;
 capacity и uniqueness принадлежат authority manager/catalog.
 
+`sessionEpoch` MUST быть одним canonical authority epoch, общим для lifecycle и `LinkSnapshot`; независимые локальные
+счётчики запрещены. Его ротацию и atomic full resync координирует authority service вне stateless seam.
+
 ## 5. `ApplySnapshot` — точный порядок
 
 Вход: `snapshot`, `binding`, `upstreamDecision`. Возвращается ровно один decision, без mutation/effects.
