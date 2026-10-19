@@ -1,6 +1,6 @@
 # ADR-002 — Контракты единого ядра связи (черновик)
 
-Статус: **DRAFT, AGENT-REVIEWED C13; Э4T-s delta C16 REVIEW PENDING** (PLAN v5, Э2).
+Статус: **DRAFT, AGENT-REVIEWED C13 + Э4T-s delta C16** (PLAN v5, Э2).
 Freeze запрещён до обязательных gate ниже.
 Код L0: `STATIC_IMPLEMENTED`; `RICON_Core` — `WORKBENCH_COMPILE_PASS` (2026-10-19,
 `docs/evidence/E-workbench-source.md`). Автор исходного ADR: claude; актуализация: codex; взаимное code review

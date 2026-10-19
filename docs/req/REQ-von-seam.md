@@ -1,6 +1,7 @@
 # REQ-von-seam — безопасная заготовка интеграции VoN (Э4T-s)
 
-Версия: **0.2 DRAFT**, 2026-10-19. Автор: codex. Ревью и независимый oracle: claude, спринт 16.
+Версия: **0.2 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью и независимый oracle: claude
+(agora #1117, #1125, #1150, #1164); oracle cross-review codex #1172, #1183.
 
 Источник истины: утверждённый Intent, `docs/plan/PLAN_RU.md` v5 §4 Э4T,
 `docs/plan/ROADMAP_RU.md` часть 1 п.2, `docs/req/REQ-core-contracts.md` §8, §9.3 и §11,

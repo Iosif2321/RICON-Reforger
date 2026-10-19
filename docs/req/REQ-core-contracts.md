@@ -1,6 +1,7 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.8 DRAFT** (v0.7 AGENT-REVIEWED), 2026-10-19. Автор: codex. Ревью Э4T-s delta: pending claude.
+Версия: **0.8 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью Э4T-s delta: claude #1164,
+cross-review codex #1183.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -23,8 +24,8 @@ Extension/registry review: NetworkType registry и immutable route builder со�
 TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures скомпилированы (`COMPILE_FIXTURE_PASS`, `1c72797`);
 SelfCheck не запускался.
 
-Delta v0.8 добавляет только ссылку на fail-closed synthetic VoN seam Э4T-s (`REQ-von-seam.md`); до отдельного
-review этот delta остаётся DRAFT и не меняет статус ранее согласованных контрактов v0.7.
+Delta v0.8 добавляет только ссылку на fail-closed synthetic VoN seam Э4T-s (`REQ-von-seam.md`) и не меняет
+ранее согласованные контракты v0.7.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
