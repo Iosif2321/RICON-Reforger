@@ -149,6 +149,8 @@ class RICON_TerrainProfileSampling
 			result.m_eCode = RICON_ETerrainSamplingCode.SKIP;
 			return result;
 		}
+		if (distanceKm > 500.0)
+			return result;
 
 		float intervalsFloat = Math.Ceil(distanceKm / config.m_fMaxProfileStepKm);
 		if (!RICON_Num.IsFinite(intervalsFloat) || intervalsFloat > config.m_iMaxProfilePoints - 1)
