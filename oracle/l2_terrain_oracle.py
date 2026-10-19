@@ -29,7 +29,9 @@ CODES = ("INVALID_CONFIG", "OUT_OF_DOMAIN_FREQUENCY", "INVALID_PROFILE", "PROFIL
 BRANCHES = ("LOS", "TRANS")
 SPH_CASES = ("BEYOND", "CLEAR", "AH_NEGATIVE", "INTERPOLATED")
 POLARIZATIONS = ("VERTICAL", "HORIZONTAL")
-CONFIG_KEYS = ("earthRadiusKm", "kFactor", "permittivity", "conductivitySm", "polarization", "maxProfileStepKm")
+CONFIG_KEYS = ("earthRadiusKm", "kFactor", "permittivity", "conductivitySm", "polarization", "maxProfileStepKm",
+               "maxProfilePoints")
+ACCURACY = ("MET", "NOT_MET", "NOT_EVALUATED")
 
 
 class NumericFailure(Exception):
@@ -98,8 +100,10 @@ def surface_k(a_km: float, f_mhz: float, cfg: dict[str, Any]) -> float:
     return k_h * (eps ** 2 + (18000.0 * sigma / f_mhz) ** 2) ** 0.5                                         # (12a)
 
 
-def field_relative_db(d_km: float, h1: float, h2: float, a_km: float, f_mhz: float, cfg: dict[str, Any]) -> float:
-    """20 log(E/E0) = F(X) + G(Y1) + G(Y2) (eq 13) in practical units; a_km is a_e or a_em (REQ §5.3)."""
+def field_relative_db(d_km: float, h1: float, h2: float, a_km: float, f_mhz: float,
+                      cfg: dict[str, Any]) -> tuple[float, str]:
+    """20 log(E/E0) = F(X) + G(Y1) + G(Y2) (eq 13) in practical units; a_km is a_e or a_em (REQ §5.3).
+    Also returns the eq (19) first-term accuracy flag, which never changes the loss."""
     k = surface_k(a_km, f_mhz, cfg)
     beta = (1.0 + 1.6 * k ** 2 + 0.67 * k ** 4) / (1.0 + 4.5 * k ** 2 + 1.53 * k ** 4)                       # (16)
     x = 2.188 * beta * f_mhz ** (1.0 / 3.0) * a_km ** (-2.0 / 3.0) * d_km                                    # (14a)
@@ -113,18 +117,27 @@ def field_relative_db(d_km: float, h1: float, h2: float, a_km: float, f_mhz: flo
             else 20.0 * math.log10(b + 0.1 * b ** 3)                                                            # (18)
         return max(value, g_floor)
 
+    def delta(h: float) -> float:
+        by = beta * (9.575e-3 * beta * f_mhz ** (2.0 / 3.0) * a_km ** (-1.0 / 3.0) * h)                       # beta*Y
+        d0 = 0.5 * (1.0 + math.tanh((0.5 * math.log10(by) - 0.255) / 0.3))                                     # (19c)
+        dinf = 0.5 * (1.0 + math.tanh((0.5 * math.log10(by) + 0.255) / 0.25))                                  # (19d)
+        return math.sqrt(by) * (d0 + 1.779 * (1.0 - beta) * (dinf - d0))                                       # (19b)
+
+    x_lim = 1.096 - 1.280 * (1.0 - beta)                                                                       # (19a)
+    accuracy = "MET" if x - delta(h1) - delta(h2) > x_lim else "NOT_MET"                                       # (19)
     result = f_x + g(h1) + g(h2)
     finite(result)
-    return result
+    return result, accuracy
 
 
 def spherical(d_km: float, h1: float, h2: float, lam: float, ae_km: float, f_mhz: float,
-              cfg: dict[str, Any]) -> tuple[float, str]:
-    """§3.2: Lsph = A (eq 25) and the case (REQ §5.3). Eq 21-24 in metres."""
+              cfg: dict[str, Any]) -> tuple[float, str, str]:
+    """§3.2: Lsph = A (eq 25), the case and the eq (19) flag (REQ §5.3). Eq 21-24 in metres."""
     d, ae = d_km * 1000.0, ae_km * 1000.0
     d_los = math.sqrt(2.0 * ae) * (math.sqrt(h1) + math.sqrt(h2))                                           # (21)
     if d >= d_los:
-        return -field_relative_db(d_km, h1, h2, ae_km, f_mhz, cfg), "BEYOND"
+        rel, accuracy = field_relative_db(d_km, h1, h2, ae_km, f_mhz, cfg)
+        return -rel, "BEYOND", accuracy
     m = d ** 2 / (4.0 * ae * (h1 + h2))                                                                       # (22e)
     c = (h1 - h2) / (h1 + h2)                                                                                 # (22d)
     arg = max(-1.0, min(1.0, 1.5 * c * math.sqrt(3.0 * m / (m + 1.0) ** 3)))  # REQ §5.3 step 2 clamp
@@ -135,12 +148,13 @@ def spherical(d_km: float, h1: float, h2: float, lam: float, ae_km: float, f_mhz
     h_req = 0.552 * math.sqrt(d1 * d2 * lam / d)                                                              # (23)
     finite(h, h_req)
     if h > h_req:
-        return 0.0, "CLEAR"
+        return 0.0, "CLEAR", "NOT_EVALUATED"
     a_em = 0.5 * (d / (math.sqrt(h1) + math.sqrt(h2))) ** 2                                                  # (24)
-    a_h = -field_relative_db(d_km, h1, h2, a_em / 1000.0, f_mhz, cfg)
+    rel, accuracy = field_relative_db(d_km, h1, h2, a_em / 1000.0, f_mhz, cfg)  # a_em metres -> km (REQ §5.3)
+    a_h = -rel
     if a_h < 0:
-        return 0.0, "AH_NEGATIVE"
-    return (1.0 - h / h_req) * a_h, "INTERPOLATED"                                                            # (25)
+        return 0.0, "AH_NEGATIVE", accuracy
+    return (1.0 - h / h_req) * a_h, "INTERPOLATED", accuracy                                                            # (25)
 
 
 # ---------------------------------------------------------------- §4.5.2 complete method (eq. 58-66)
@@ -171,6 +185,7 @@ def validate(inp: Any) -> str | None:
     cfg = inp.get("config") if isinstance(inp, dict) else None
     if not isinstance(cfg, dict) or set(cfg) != set(CONFIG_KEYS) \
             or not all(is_number(cfg[k]) for k in CONFIG_KEYS if k != "polarization") \
+            or not isinstance(cfg["maxProfilePoints"], int) or cfg["maxProfilePoints"] < 3 \
             or cfg["earthRadiusKm"] <= 0 or cfg["kFactor"] <= 0 or cfg["permittivity"] <= 1\
             or cfg["conductivitySm"] < 0 or cfg["maxProfileStepKm"] <= 0 \
             or cfg["polarization"] not in POLARIZATIONS:
@@ -178,7 +193,7 @@ def validate(inp: Any) -> str | None:
     if not is_number(inp.get("frequencyMHz")) or not MIN_FREQUENCY_MHZ <= inp["frequencyMHz"] <= MAX_FREQUENCY_MHZ:
         return "OUT_OF_DOMAIN_FREQUENCY"
     profile = inp.get("profile")
-    if not isinstance(profile, list) or len(profile) < 3 or not all(
+    if not isinstance(profile, list) or not 3 <= len(profile) <= cfg["maxProfilePoints"] or not all(
             isinstance(p, list) and len(p) == 2 and is_number(p[0]) and is_number(p[1]) for p in profile):
         return "INVALID_PROFILE"
     ds = [p[0] for p in profile]
@@ -209,13 +224,13 @@ def l2(inp: Any) -> dict[str, Any]:
         h_st, h_sr = smooth_heights(ds, hs, hts, hrs)                                     # REQ §5.2
         hts_s, hrs_s = hts - h_st, hrs - h_sr                                             # (64)
         lbs, branch_smooth = bullington(ds, [0.0] * len(ds), hts_s, hrs_s, ce, lam)
-        lsph, sph_case = spherical(d, hts_s, hrs_s, lam, ae, f, cfg)                      # (65), REQ §5.3
+        lsph, sph_case, accuracy = spherical(d, hts_s, hrs_s, lam, ae, f, cfg)           # (65), REQ §5.3
         loss = lba + max(lsph - lbs, 0.0)                                                 # (66)
         finite(loss, lsph, lbs)
     except (NumericFailure, ValueError, ZeroDivisionError, OverflowError):
         return {"code": "NUMERIC_FAILURE"}
     return {"code": "OK", "L": loss, "Lba": lba, "Lbs": lbs, "Lsph": lsph, "branchActual": branch_actual,
-            "branchSmooth": branch_smooth, "sphCase": sph_case}
+            "branchSmooth": branch_smooth, "sphCase": sph_case, "firstTermAccuracy": accuracy}
 
 
 # ---------------------------------------------------------------------- runner
@@ -224,7 +239,7 @@ SOURCE = re.compile(r"docs/req/REQ-L2-terrain\.md@[0-9a-f]{7,40}")
 CASE_KEYS = {"id", "ct", "provenance", "note", "input", "expect"}
 PROVENANCE = ("STD_INVARIANT", "HAND_DERIVED", "CROSS_CHECKED")
 NUMERIC_FIELDS = ("L", "Lba", "Lbs", "Lsph")
-EXACT_FIELDS = ("branchActual", "branchSmooth", "sphCase")
+EXACT_FIELDS = ("branchActual", "branchSmooth", "sphCase", "firstTermAccuracy")
 
 
 def check_vector_file(data: Any) -> list[str]:
@@ -254,7 +269,7 @@ def check_vector_file(data: Any) -> list[str]:
         if set(expect) != keys or (expect["code"] == "OK" and not (
                 all(is_number(expect[k]) for k in NUMERIC_FIELDS)
                 and expect["branchActual"] in BRANCHES and expect["branchSmooth"] in BRANCHES
-                and expect["sphCase"] in SPH_CASES)):
+                and expect["sphCase"] in SPH_CASES and expect["firstTermAccuracy"] in ACCURACY)):
             problems.append(f"{case['id']}: expect")
     return problems
 

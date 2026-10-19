@@ -40,6 +40,8 @@ class L2TerrainOracleTest(unittest.TestCase):
         self.assertEqual(cases, set(o.SPH_CASES))
         branches = {c["expect"].get("branchActual") for c in load()["cases"]} - {None}
         self.assertEqual(branches, set(o.BRANCHES))
+        accuracy = {c["expect"].get("firstTermAccuracy") for c in load()["cases"]} - {None}
+        self.assertEqual(accuracy, set(o.ACCURACY))  # eq (19) flag: MET, NOT_MET, NOT_EVALUATED all occur
 
     def test_tampering_is_detected(self) -> None:
         data = load()
@@ -96,7 +98,7 @@ class L2TerrainOracleTest(unittest.TestCase):
         for _ in range(3000):
             cfg = {"earthRadiusKm": 6371.0, "kFactor": rng.choice([0.5, 1.0, 4 / 3, 4.0]),
                    "permittivity": rng.choice([1.0001, 3.0, 15.0, 80.0]), "conductivitySm": rng.choice([0.0, 1e-3, 5.0]),
-                   "polarization": rng.choice(o.POLARIZATIONS), "maxProfileStepKm": 500.0}
+                   "polarization": rng.choice(o.POLARIZATIONS), "maxProfileStepKm": 500.0, "maxProfilePoints": 9}
             d = rng.uniform(0.01, 500.0)
             n = rng.choice([3, 5, 9])
             hs = [rng.uniform(-1000, 3000) for _ in range(n)]
@@ -112,6 +114,8 @@ class L2TerrainOracleTest(unittest.TestCase):
                 (lambda i: i.update(config=None), "INVALID_CONFIG"),
                 (lambda i: i["config"].update(kFactor=True), "INVALID_CONFIG"),
                 (lambda i: i["config"].update(extra=1), "INVALID_CONFIG"),
+                (lambda i: i["config"].update(maxProfilePoints=21.0), "INVALID_CONFIG"),
+                (lambda i: i["config"].update(maxProfilePoints=3), "INVALID_PROFILE"),
                 (lambda i: i.update(frequencyMHz="60"), "OUT_OF_DOMAIN_FREQUENCY"),
                 (lambda i: i.update(frequencyMHz=float("inf")), "OUT_OF_DOMAIN_FREQUENCY"),
                 (lambda i: i.update(profile="flat"), "INVALID_PROFILE"),
