@@ -1,6 +1,7 @@
 # E-workbench-source — результаты Workbench
 
-Ответы на заказы `[Workbench]`. Уровень — `WORKBENCH_COMPILE_PASS` / `SOURCE_EVIDENCE` по пунктам.
+Ответы на заказы `[Workbench]` и прогоны тестов в Workbench. Уровень — `WORKBENCH_COMPILE_PASS` / `SOURCE_EVIDENCE` /
+`ENFORCE_PARITY` по пунктам.
 
 ## Компиляция №003 (и повтор после исправления — №004)
 
@@ -266,3 +267,74 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 | 8 radial-меню | `PARTIAL_SOURCE` | `SCR_VONMenu`/`SCR_VONRadialDisplay` и layout; своя запись — нужна compile fixture, runtime NOT_TESTED |
 | 2 звуковой граф | `OPEN_UNREADABLE` | `.acp`/`.sig` не открываются через `FileIO`; передано Audio Editor ассистенту владельца (agora #791); `Resource.Load`/`BaseContainer` без нового решения не используется |
 | 10 компиляция | **закрыт** (№003/004) | — |
+
+## Э3 final `8ba6d3e` — компиляция и исполнение тестов (2026-10-19)
+
+**Разрешения владельца.**
+- Компиляция в Workbench — как для №003/004.
+- Исполнение тестов: «разрешаю запускать наши тесты в Workbench через плагин, без Play и сервера» (чат claude,
+  2026-10-19).
+- Play, мир и сервер не запускались. Плагин не читает и не пишет файлы и не трогает ресурсы игры.
+
+**Target.** Код `8ba6d3e` (codex: `284dde5`, `f8b137d`, `ad24d51`, `9e6ce55`, `8ba6d3e`).
+- Фикстура, генератор и раннер — `dfd15d1`, `8d3e450`, `36609bf`.
+- Эталон — `1413291`.
+- Дерево `addons/`, `tools/`, `oracle/` при прогоне совпадало с `8ba6d3e` (`git diff --quiet 8ba6d3e`).
+- Workbench: engine 192142, game 1.8.0.13 (built 2026-08-21).
+
+**Команды** (полные пути — в строке `CLI Params` каждого лога):
+- компиляция: `ArmaReforgerWorkbenchSteamDiag.exe -gproj addons/<RICON_Core|RICON_CoreTests>/addon.gproj -addonsDir
+  "<игра>\addons,<Tools>\Workbench\addons,<repo>\addons" -wbModule=ScriptEditor -validate -wbSilent -exitAfterInit
+  -noThrow -logLevel verbose -logsDir <имя> -log-scr-checksum`;
+- тесты: `tools/RICON_TestRunner/run.ps1 -Name r8ba6d3e`. Это то же с `-gproj tools/RICON_TestRunner/addon.gproj
+  -noBackend -plugin=RICON_TestRunnerPlugin`, без `-validate`. PASS только при exit 0 и строке
+  `[RICON_TestRunner] done: PASS`.
+
+**Логи** (`Documents\My Games\ArmaReforgerWorkbench\logs\<папка>\console.log`, вне репозитория; SHA-256 сверил и codex,
+agora #1073):
+
+| Папка | Что | Итог | SHA-256 `console.log` |
+|---|---|---|---|
+| `ricon-validate-core-8ba6d3e-20261019-192847` | компиляция `RICON_Core` | exit 0, «Script validation successful», 0 script (E), 0 (W) по RICON, CRC `RICON_Lifecycle.c` `6975bed0` | `5486a6469ed0f357a86c1213e9f1fd3db94c4d149e654b27c8842dc8b26a16db` |
+| `ricon-validate-coretests-8ba6d3e-20261019-192903` | компиляция `RICON_CoreTests` | exit 0, так же | `bac4c2a3c0f1c08c900e0680338770b05b8965e90c14cbda3a0d92940568bc9a` |
+| `ricon-tests-r8ba6d3e-20261019-192920` | исполнение тестов | exit 0, строки ниже | `c2086549a33981304ceed730cbac7bb75b75edc7608c71435000fefc0d9983e6` |
+
+Строки раннера (дословно из лога):
+```
+[RICON_TestRunner] start
+[RICON_TEST] lifecycle parity: traces 14/14, steps 208/208, negative controls caught 3/3, adapter-mapped steps 3
+[RICON_TEST] LIFECYCLE_ENFORCE_PARITY_PASS
+[RICON_TestRunner] suite lifecycle: PASS
+[RICON_TEST] extension fixtures: 1
+[RICON_TestRunner] suite extension: PASS
+[RICON_TestRunner] done: PASS
+```
+
+**Файлы прогона (SHA-256):**
+
+| Файл | SHA-256 |
+|---|---|
+| `addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c` | `7deef3bc8bf8687f4d5685cb4c228c206d865204971c669e46542fb7b3de4917` |
+| `addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c` | `bf7316901813e7d5c629f7359bdb5a38f00652db3f4c834516ad6dadb1ccda60` |
+| `oracle/vectors/lifecycle_v1.json` (source `REQ-lifecycle.md@9e6ce55`) | `7038c66c0941c3989b0427e121829e31cd2bb233f815381b4a47b5d57d232369` |
+| `addons/RICON_CoreTests/.../RICON_LifecycleFixtures.c` (сгенерирован) | `e653089c38bf4c741077c08d6856515b1c9f09d2c1c94d804dd3c6f5839845ef` |
+| `addons/RICON_CoreTests/.../RICON_LifecycleFixtureSupport.c` | `f2278970ddf316cf854af7e94785b0a74ad7359865190b1a3f07e7eaa25eefa2` |
+| `tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TestRunnerPlugin.c` | `1460c2378b0e209357ace0a1f13eb379e67d73d9181cd8abda5af15994b4be1f` |
+
+**Что сверяется.**
+- На каждом шаге: код ответа, поля кэшированного ответа и lease, число и порядок effects. У каждого effect
+  сравниваются поля, которые REQ-lifecycle §1.1 задаёт для его типа.
+- `ADAPTER_MAPPED` = 3 шага, где типизированный API не выражает отсутствие поля: T02#2 (config без ключа → `null`),
+  T02#6 и T11#12 (нет `nowMs` → `−1`). Ожидание в эталоне — `MALFORMED`; так же поле обязан отображать будущий
+  адаптер.
+- Негативные контроли — копии T01 и T04 с испорченным ожиданием: изменён код, переставлены effects, удалён
+  `VON_EXPIRY_INTENDED`. Все три обязаны провалиться, и все три провалились, поэтому сравнение не пустое.
+- Фикстура совпадает с выводом генератора на текущих векторах (`test_gen_lifecycle_fixture.py`). Генератор пропускает
+  в код только int32 и имена из закрытых наборов.
+
+**Граница доказательства.**
+- `ENFORCE_PARITY`: Enforce-код даёт те же результаты, что host-эталон, на тех же 14 трассах.
+- Это **не** runtime. Не проверены порядок callbacks GameMode, отправитель RPC, репликация и JIP, VoN (actuator
+  отсутствует), переполнение `GetTickCount` (`BLOCKED_NO_RUNTIME`).
+- EXT-1…5 `SelfCheck()` — `SELF_CHECK_PASS` при том же прогоне.
+- Эталоны расчёта связи, снимков и маршрутов в Enforce не исполнялись (`NOT_TESTED`, отложено agora #1064).
