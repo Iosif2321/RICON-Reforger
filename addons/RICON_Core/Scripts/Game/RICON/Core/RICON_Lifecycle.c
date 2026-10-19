@@ -175,7 +175,7 @@ class RICON_LifecycleDevice
 			|| m_iOwnerPlayerId < 0 || !m_aAccessPlayerIds || !m_aAllowed)
 			return false;
 
-		int previousAccess;
+		int previousAccess = 0;
 		foreach (int playerId : m_aAccessPlayerIds)
 		{
 			if (playerId <= 0 || playerId <= previousAccess)
@@ -183,8 +183,8 @@ class RICON_LifecycleDevice
 			previousAccess = playerId;
 		}
 
-		int previousNetwork;
-		int previousChannel;
+		int previousNetwork = 0;
+		int previousChannel = 0;
 		foreach (RICON_LifecycleCatalogPair pair : m_aAllowed)
 		{
 			if (!pair || pair.m_iNetworkTypeId <= 0 || pair.m_iChannelId <= 0)
@@ -487,7 +487,7 @@ class RICON_LifecycleStateMachine
 		if ((!current && m_aPlayers.Count() >= m_Config.m_iMaxPlayers) || m_iGenerationAllocator >= int.MAX)
 			return SetCode(result, RICON_ELifecycleResult.LIMIT_REACHED);
 
-		int oldGeneration;
+		int oldGeneration = 0;
 		RICON_EPlayerLifecycleState fromState = RICON_EPlayerLifecycleState.NONE;
 		if (current)
 		{
@@ -1081,7 +1081,7 @@ class RICON_LifecycleStateMachine
 
 	protected bool AreDevicesCanonical(array<ref RICON_LifecycleDevice> devices)
 	{
-		int previousId;
+		int previousId = 0;
 		foreach (RICON_LifecycleDevice device : devices)
 		{
 			if (!device || !device.IsValid() || device.m_iDeviceId <= previousId)
@@ -1200,7 +1200,7 @@ class RICON_LifecycleStateMachine
 
 	protected int CountActiveLeases()
 	{
-		int count;
+		int count = 0;
 		foreach (RICON_LifecycleLease lease : m_aLeases)
 		{
 			if (lease.m_eState == RICON_ETransmitLeaseState.ACTIVE)
@@ -1211,7 +1211,7 @@ class RICON_LifecycleStateMachine
 
 	protected int CountTerminalLeases()
 	{
-		int count;
+		int count = 0;
 		foreach (RICON_LifecycleLease lease : m_aLeases)
 		{
 			if (lease.m_eState != RICON_ETransmitLeaseState.ACTIVE)
@@ -1245,7 +1245,7 @@ class RICON_LifecycleStateMachine
 	{
 		if (m_aTombstones.IsEmpty())
 			return;
-		int oldestIndex;
+		int oldestIndex = 0;
 		for (int i = 1; i < m_aTombstones.Count(); i++)
 		{
 			RICON_LifecycleTombstone candidate = m_aTombstones[i];
