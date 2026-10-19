@@ -54,8 +54,7 @@
 `SelfCheck()`/поведение — `NOT_TESTED` / `BLOCKED_NO_RUNTIME`.
 
 **Ванильные файлы (№001):** `SOURCE_EVIDENCE` — пункты 3, 4, 7, 9; `PARTIAL_SOURCE` — 1, 5, 6, 8; `OPEN_UNREADABLE` — 2
-(звуковой граф `.acp` через `FileIO` не открывается → Audio Editor). Перед Э3: codex обновляет ADR-002/REQ-core
-(устаревший NOT_COMPILED).
+(звуковой граф `.acp` через `FileIO` не открывается → Audio Editor). ADR-002/REQ-core синхронизированы с компиляцией (`36997b3`, по разрешению владельца).
 
 ## Вопросы владельцу
 
