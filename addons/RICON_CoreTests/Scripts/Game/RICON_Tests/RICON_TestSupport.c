@@ -1,5 +1,5 @@
 // TEST_ONLY helpers for the extension fixtures of REQ-core §10. Not part of RICON_Core, not for Workshop.
-// Status: COMPILE_FIXTURE / SELF_CHECK_NOT_RUN.
+// Status: SELF_CHECK_PASS (executed in Workbench by tools/RICON_TestRunner, 2026-10-19; no Play, no server).
 
 //! Builds queries and fixture models with explicit, documented test values (no physics is claimed).
 class RICON_TestSupport

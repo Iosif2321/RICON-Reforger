@@ -1,6 +1,6 @@
 // TEST_ONLY compile fixtures for the five extension scenarios of REQ-core §10. Each scenario uses only the public
 // contracts of RICON_Core; none of them changes a core file. Numbers are test values, not physics.
-// Status: COMPILE_FIXTURE / SELF_CHECK_NOT_RUN.
+// Status: SELF_CHECK_PASS (executed in Workbench by tools/RICON_TestRunner, 2026-10-19; no Play, no server).
 
 //! EXT-1: a new VHF radio is configuration only. No new class: existing models + a BandConfig.
 class RICON_Ext1NewVhfRadio

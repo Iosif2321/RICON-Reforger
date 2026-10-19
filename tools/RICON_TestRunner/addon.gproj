@@ -1,0 +1,14 @@
+GameProject {
+ ID "RICON_TestRunner"
+ GUID "9B37B2E855AAE105"
+ TITLE "RICON test runner (TOOL_ONLY, not for Workshop)"
+ Dependencies {
+  "58D0FB3206B6F859"
+  "7C060DB9E8B90AC7"
+  "4AAF52C605FC2CC6"
+ }
+ Configurations {
+  GameProjectConfig PC {
+  }
+ }
+}
