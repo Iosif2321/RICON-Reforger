@@ -56,6 +56,12 @@ class GeneratedVoNSeamFixtureTest(unittest.TestCase):
         self._rejects(lambda d: first_apply(d)["binding"].update(linkId=2 ** 31))
         self._rejects(lambda d: first_apply(d).update(upstreamDecision=[]))
         self._rejects(lambda d: d["cases"][0].update(extra=1))
+        # codex #1228: unhashable quality must be a VectorError, and case metadata is as strict as the oracle checker.
+        for bad in ([], {}, None, True):
+            self._rejects(lambda d, bad=bad: first_apply(d)["snapshot"].update(quality=bad))
+        self._rejects(lambda d: d["cases"][0].update(req=[]))
+        self._rejects(lambda d: d["cases"][0].update(req=[""]))
+        self._rejects(lambda d: d["cases"][0].update(note=None))
 
 
 if __name__ == "__main__":

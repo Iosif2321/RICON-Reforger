@@ -65,7 +65,7 @@ def check_snapshot(snapshot: object, where: str) -> None:
     for key in SNAPSHOT_FIELDS:
         value = snapshot[key]
         if key == "quality":
-            require(value in SPECIAL or is_int32(value)
+            require((isinstance(value, str) and value in SPECIAL) or is_int32(value)
                     or (isinstance(value, float) and DECIMAL.fullmatch(repr(value)) is not None), f"{where}.quality")
         elif key == "state":
             require(isinstance(value, str) and STATE_NAME.fullmatch(value) is not None, f"{where}.state")
@@ -94,6 +94,9 @@ def validate(data: object) -> None:
         seen.add(cid)
         require(isinstance(case["ct"], list) and len(case["ct"]) > 0
                 and all(isinstance(ct, str) and CT_ID.fullmatch(ct) for ct in case["ct"]), f"{cid}.ct")
+        require(isinstance(case["req"], list) and len(case["req"]) > 0
+                and all(isinstance(item, str) and item for item in case["req"]), f"{cid}.req")
+        require(isinstance(case["note"], str), f"{cid}.note")
         require(isinstance(case["calls"], list) and len(case["calls"]) > 0, f"{cid}.calls")
         for index, step in enumerate(case["calls"]):
             at = f"{cid}[{index}]"
