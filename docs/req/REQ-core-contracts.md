@@ -367,9 +367,10 @@ CallSessionFactory optional для policy без call sessions; если policy 
 Freeze разрешён, если есть хотя бы один resolved Band evaluator **или** один NetworkType policy; network-only core
 считается сознательно допустимым, а полностью пустой registry — ошибкой.
 
-`VoNIntegration` не владеет route/snapshot registries. До ADR-001/Workbench evidence методы MAY быть no-op
-scaffold; никакой недоказанный actuator не получает `PASS`. Snapshot должен пройти receiver/ordering contract до
-передачи в seam; server authority проверяется вызывающим service.
+`VoNIntegration` не владеет route/snapshot registries. До ADR-001/runtime evidence методы MUST оставаться
+fail-closed no-op; никакой недоказанный actuator не получает `PASS`. Snapshot должен пройти receiver/ordering
+contract до передачи в seam; server authority проверяется вызывающим service. Точный synthetic contract Э4T-s,
+binding и stable decision codes заданы в `docs/req/REQ-von-seam.md`.
 
 ## 10. Пять обязательных extension-сценариев
 

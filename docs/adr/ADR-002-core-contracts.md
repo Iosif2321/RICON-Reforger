@@ -29,7 +29,7 @@ C13 — agora `ricon-reforger-build` id544.
 | `RICON_IntelligibilityModel` | `Propagation/RICON_IntelligibilityModel.c` | Q/state seam с обязательным config contract; concrete `linear_test` только TEST_ONLY, production calibration blocked |
 | `RICON_LinkEvaluator` / `RICON_WirelessLinkEvaluator` | `Propagation/RICON_LinkEvaluator.c` | pure `query→budget`; strong refs на уже разрешённые authority-manager dependencies, без собственных registries; порядок losses→Rx→N/N+I→SINR→threshold→Q/state |
 | `RICON_Route` / `RICON_RouteLeg` / `RICON_RoutingPolicy` | `Network/RICON_NetworkContracts.c` | маршрут из ног; качество = min(legs), состояние = худшая нога; политика на NetworkType |
-| `RICON_VoNIntegration` | там же | узкий seam к VoN. Тела пустые до ADR-001 |
+| `RICON_VoNIntegration` | там же | узкий stateless seam к VoN; Э4T-s валидирует accepted snapshot/binding, но всегда возвращает `BLOCKED_NO_ACTUATOR` до runtime evidence (`REQ-von-seam`) |
 | `RICON_CommsManagerComponent` | `Core/RICON_CommsManagerComponent.c` | **baseline scaffold**: manager registries/epoch/null-safe access ещё не реализуют `REQ-core`; следующий срез |
 
 Production-модель разборчивости и пороги состояний — `BLOCKED_CALIBRATION`; в коде нет неявных значений.

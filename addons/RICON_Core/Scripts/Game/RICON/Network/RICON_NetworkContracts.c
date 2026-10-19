@@ -1,5 +1,5 @@
 // Network-level contracts: route validation, policy context, call-session and VoN seams (REQ-core §9).
-// Status: WORKBENCH_COMPILE_PASS; runtime behavior is not tested.
+// Status: E4T-s change NOT_COMPILED; previous revision passed Workbench. Runtime behavior is not tested.
 
 //! Stable route failure reasons in the global validation order of REQ-core §9.1.
 enum RICON_ERouteReason
@@ -308,14 +308,93 @@ class RICON_CallSessionFactory
 	}
 }
 
-//! Narrow seam to engine VoN. Caller validates authority and snapshot receiver/order before this no-op scaffold.
+//! Stable outcomes for the synthetic VoN seam (REQ-von-seam §3). There is deliberately no OK yet.
+enum RICON_EVoNSeamDecision
+{
+	NULL_INPUT = 0,
+	INVALID_SNAPSHOT = 1,
+	DECISION_NOT_ACCEPTED = 2,
+	INVALID_BINDING = 3,
+	IDENTITY_MISMATCH = 4,
+	INVALID_EXPIRY = 5,
+	BLOCKED_NO_ACTUATOR = 6
+}
+
+//! Pure descriptor for the future DeviceComponent -> transceiver binding; it owns no engine handle.
+class RICON_VoNDeviceBinding
+{
+	int m_iSessionEpoch;
+	int m_iLinkId;
+	int m_iTalkerPlayerId;
+	int m_iListenerPlayerId;
+	int m_iTalkerDeviceId;
+	int m_iListenerDeviceId;
+	int m_iTalkerLeaseId;
+	int m_iTalkerTransceiverIndex = -1;
+	int m_iListenerTransceiverIndex = -1;
+
+	bool IsValid()
+	{
+		return m_iSessionEpoch > 0 && m_iSessionEpoch < int.MAX && m_iLinkId > 0
+			&& m_iTalkerPlayerId > 0 && m_iListenerPlayerId > 0
+			&& m_iTalkerPlayerId != m_iListenerPlayerId
+			&& m_iTalkerDeviceId > 0 && m_iListenerDeviceId > 0
+			&& m_iTalkerLeaseId > 0 && m_iTalkerLeaseId < int.MAX
+			&& m_iTalkerTransceiverIndex >= 0 && m_iListenerTransceiverIndex >= 0;
+	}
+}
+
+//! Narrow stateless seam to engine VoN. Every valid call remains explicitly blocked until an actuator is proven.
 class RICON_VoNIntegration
 {
-	void ApplySnapshot(RICON_LinkSnapshot snapshot)
+	RICON_EVoNSeamDecision ApplySnapshot(
+		RICON_LinkSnapshot snapshot,
+		RICON_VoNDeviceBinding binding,
+		RICON_ESnapshotDecision upstreamDecision)
 	{
+		if (!snapshot || !binding)
+			return RICON_EVoNSeamDecision.NULL_INPUT;
+		if (!IsSnapshotValidForSeam(snapshot))
+			return RICON_EVoNSeamDecision.INVALID_SNAPSHOT;
+		if (!IsAcceptedDecision(upstreamDecision))
+			return RICON_EVoNSeamDecision.DECISION_NOT_ACCEPTED;
+		if (!binding.IsValid())
+			return RICON_EVoNSeamDecision.INVALID_BINDING;
+		if (binding.m_iSessionEpoch != snapshot.m_iSessionEpoch || binding.m_iLinkId != snapshot.m_iLinkId
+			|| binding.m_iTalkerPlayerId != snapshot.m_iTalkerPlayerId
+			|| binding.m_iListenerPlayerId != snapshot.m_iListenerPlayerId)
+			return RICON_EVoNSeamDecision.IDENTITY_MISMATCH;
+		return RICON_EVoNSeamDecision.BLOCKED_NO_ACTUATOR;
 	}
 
-	void OnTransmitLeaseExpired(int playerId, int deviceId, int leaseId)
+	RICON_EVoNSeamDecision OnTransmitLeaseExpired(
+		int playerId,
+		int deviceId,
+		int leaseId,
+		RICON_VoNDeviceBinding currentBinding)
 	{
+		if (!currentBinding)
+			return RICON_EVoNSeamDecision.NULL_INPUT;
+		if (playerId <= 0 || deviceId <= 0 || leaseId <= 0 || leaseId >= int.MAX)
+			return RICON_EVoNSeamDecision.INVALID_EXPIRY;
+		if (!currentBinding.IsValid())
+			return RICON_EVoNSeamDecision.INVALID_BINDING;
+		if (playerId != currentBinding.m_iTalkerPlayerId || deviceId != currentBinding.m_iTalkerDeviceId
+			|| leaseId != currentBinding.m_iTalkerLeaseId)
+			return RICON_EVoNSeamDecision.IDENTITY_MISMATCH;
+		return RICON_EVoNSeamDecision.BLOCKED_NO_ACTUATOR;
+	}
+
+	protected static bool IsSnapshotValidForSeam(RICON_LinkSnapshot snapshot)
+	{
+		return snapshot.IsValid() && snapshot.m_iTalkerPlayerId > 0 && snapshot.m_iListenerPlayerId > 0
+			&& snapshot.m_iTalkerPlayerId != snapshot.m_iListenerPlayerId;
+	}
+
+	protected static bool IsAcceptedDecision(RICON_ESnapshotDecision decision)
+	{
+		return decision == RICON_ESnapshotDecision.ACCEPT_FIRST
+			|| decision == RICON_ESnapshotDecision.ACCEPT_NEWER
+			|| decision == RICON_ESnapshotDecision.ACCEPT_RESYNC;
 	}
 }

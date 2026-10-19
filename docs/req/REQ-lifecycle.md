@@ -336,11 +336,10 @@ Lease MUST стать terminal при первом из:
 - loss of ownership/access, power/device removal, catalog invalidation;
 - session epoch rotation, admin/policy revoke.
 
-Terminal transition exactly once вызывает VoN expiry seam с `(playerId, deviceId, leaseId)` **только когда actuator
-будет разрешён ADR-001**. Одного playerId недостаточно: несколько устройств/leases одного игрока не должны взаимно
-останавливаться. Seam расширен до `OnTransmitLeaseExpired(int playerId, int deviceId, int leaseId)` в Э3, но пока не
-имеет caller/actuator. До доказанного actuator записывается intended effect/no-op; отсутствие actuator не выдаётся за
-silence PASS.
+Terminal transition exactly once выдаёт VoN expiry effect с `(playerId, deviceId, leaseId)`. Одного playerId
+недостаточно: несколько устройств/leases одного игрока не должны взаимно останавливаться. Э4T-s принимает effect
+через `OnTransmitLeaseExpired(playerId, deviceId, leaseId, currentBinding)` и сверяет triple с binding, но до
+разрешённого actuator возвращает только `BLOCKED_NO_ACTUATOR` (`docs/req/REQ-von-seam.md` §6).
 Server clock MUST быть monotonic abstraction; прямое сравнение wall UTC запрещено. `System.GetTickCount` — int ms
 с запуска; signed-int предел достигается примерно через `2^31 ms = 24.86 суток`. Поведение переполнения Enforce не
 документировано. До этой границы server MUST ротировать session/restart по operational policy либо использовать
