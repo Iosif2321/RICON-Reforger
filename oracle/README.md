@@ -111,7 +111,7 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 Покрыты CT-LC-001…010; CT-LC-004 и CT-LC-009 — только в части host-модели (identity, resync-effect, отказ подделки);
 доставка снимков и owner-only транспорт — snapshot oracle и static contract.
 
-Tie-breakers закреплены в REQ@5993d9e (agora #854–#868), запрет пустого списка каналов — в REQ@9e6ce55 (agora #1058); таблица — индекс соответствия эталона:
+Tie-breakers закреплены в REQ@5993d9e (agora #854–#868), запрет пустого списка каналов — в REQ@9e6ce55 (agora #1058), epoch выдачи в `VON_EXPIRY_INTENDED` — в REQ v0.4 @2bf70a7 (agora #1123, трассы 14, шагов 209); таблица — индекс соответствия эталона:
 
 | # | Решение |
 |---|---|

@@ -92,8 +92,9 @@ class Lifecycle:
         effects.append({"type": "LEASE_TERMINATED", "playerId": lease["playerId"], "generation": lease["generation"],
                         "deviceId": lease["deviceId"], "leaseId": lease_id, "leaseState": state,
                         "terminalReason": reason})
-        effects.append({"type": "VON_EXPIRY_INTENDED", "playerId": lease["playerId"], "deviceId": lease["deviceId"],
-                        "leaseId": lease_id})
+        # Epoch of issue: _rotate terminates leases before it switches self.epoch (REQ v0.4 §1.1, §11).
+        effects.append({"type": "VON_EXPIRY_INTENDED", "sessionEpoch": self.epoch, "playerId": lease["playerId"],
+                        "deviceId": lease["deviceId"], "leaseId": lease_id})
         # A cached start response must not keep reporting ACTIVE (§5.2.1).
         player = self.players.get(lease["playerId"])
         if player is not None and player["generation"] == lease["generation"]:

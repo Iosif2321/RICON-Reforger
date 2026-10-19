@@ -66,7 +66,7 @@ EFFECT_FIELDS = {
     "ENTITY_UNBOUND": {"playerId", "generation", "entityId"},
     "LEASE_GRANTED": {"playerId", "generation", "deviceId", "leaseId", "issuedAtMs", "ttlMs"},
     "LEASE_TERMINATED": {"playerId", "generation", "deviceId", "leaseId", "leaseState", "terminalReason"},
-    "VON_EXPIRY_INTENDED": {"playerId", "deviceId", "leaseId"},
+    "VON_EXPIRY_INTENDED": {"sessionEpoch", "playerId", "deviceId", "leaseId"},
     "SUBSCRIPTIONS_CLEARED": {"playerId", "generation"},
     "CARRIED_DEVICES_DETACHED": {"playerId", "generation"},
     "TOMBSTONE_WRITTEN": {"playerId", "generation", "connectionId", "expiresAtMs"},
@@ -275,7 +275,7 @@ def effect_line(effect: dict) -> str:
         return (f"t.Terminated({f['playerId']}, {f['generation']}, {f['deviceId']}, {f['leaseId']}, "
                 f"{LEASE_STATE}{f['leaseState']}, {REASON}{f['terminalReason']});")
     if t == "VON_EXPIRY_INTENDED":
-        return f"t.Von({f['playerId']}, {f['deviceId']}, {f['leaseId']});"
+        return f"t.Von({f['sessionEpoch']}, {f['playerId']}, {f['deviceId']}, {f['leaseId']});"
     if t == "SUBSCRIPTIONS_CLEARED":
         return f"t.Subscriptions({f['playerId']}, {f['generation']});"
     if t == "CARRIED_DEVICES_DETACHED":

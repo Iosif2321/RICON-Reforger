@@ -49,7 +49,8 @@ class GeneratedFixtureTest(unittest.TestCase):
     def test_every_step_is_checked(self) -> None:
         text = FIXTURE.read_text(encoding="utf-8")
         traces = text.split("protected static void Control1")[0]
-        self.assertEqual(traces.count("t.Check("), 208)
+        steps = sum(len(t["steps"]) for t in json.loads(VECTORS.read_text(encoding="utf-8"))["traces"])
+        self.assertEqual(traces.count("t.Check("), steps)
         self.assertEqual(traces.count("ADAPTER_MAPPED"), 3)
 
 

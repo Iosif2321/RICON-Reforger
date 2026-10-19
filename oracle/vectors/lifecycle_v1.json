@@ -1,8 +1,8 @@
 {
  "schema": "ricon.oracle.lifecycle",
  "version": 1,
- "revision": 1,
- "source": "docs/req/REQ-lifecycle.md@9e6ce55",
+ "revision": 2,
+ "source": "docs/req/REQ-lifecycle.md@2bf70a7",
  "note": "Expectations written by hand from REQ-lifecycle; host-model semantics only, not runtime evidence.",
  "traces": [
   {
@@ -1023,6 +1023,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -1182,6 +1183,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 2
@@ -1598,6 +1600,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -1613,6 +1616,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 13,
         "leaseId": 2
@@ -1996,6 +2000,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -2843,6 +2848,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -3158,6 +3164,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -3681,6 +3688,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -3793,6 +3801,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 2
@@ -4390,6 +4399,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 13,
         "leaseId": 1
@@ -4526,7 +4536,7 @@
     "§5.3",
     "§1.1 clock 3-5"
    ],
-   "note": "TTL '<' stays ACTIVE, '=' and '>' expire; a clock step back revokes once and latches until ROTATE_EPOCH",
+   "note": "TTL '<' stays ACTIVE, '=' and '>' expire; a clock step back revokes once and latches until ROTATE_EPOCH; the expiry effect carries the epoch of issue, so lease 1 of epoch 7 and lease 1 of epoch 8 differ",
    "steps": [
     {
      "event": {
@@ -4755,6 +4765,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -4846,6 +4857,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 2
@@ -4916,6 +4928,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 3
@@ -4931,6 +4944,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 13,
         "leaseId": 4
@@ -5123,6 +5137,33 @@
       ],
       "leaseId": 1,
       "leaseState": "ACTIVE"
+     }
+    },
+    {
+     "event": {
+      "type": "TICK",
+      "nowMs": 6254
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "LEASE_TERMINATED",
+        "playerId": 1,
+        "generation": 1,
+        "deviceId": 11,
+        "leaseId": 1,
+        "leaseState": "EXPIRED",
+        "terminalReason": "TTL_EXPIRED"
+       },
+       {
+        "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 8,
+        "playerId": 1,
+        "deviceId": 11,
+        "leaseId": 1
+       }
+      ]
      }
     }
    ]
@@ -5466,6 +5507,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -5481,6 +5523,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 2,
         "deviceId": 13,
         "leaseId": 2
@@ -6211,6 +6254,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1
@@ -6281,6 +6325,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 13,
         "leaseId": 2
@@ -6652,6 +6697,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 13,
         "leaseId": 2
@@ -6681,6 +6727,7 @@
        },
        {
         "type": "VON_EXPIRY_INTENDED",
+        "sessionEpoch": 7,
         "playerId": 1,
         "deviceId": 11,
         "leaseId": 1

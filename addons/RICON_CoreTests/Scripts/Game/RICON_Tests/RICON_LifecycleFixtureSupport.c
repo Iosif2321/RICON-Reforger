@@ -100,9 +100,10 @@ class RICON_LifecycleTraceRun
 		effect.m_eTerminalReason = reason;
 	}
 
-	void Von(int playerId, int deviceId, int leaseId)
+	void Von(int sessionEpoch, int playerId, int deviceId, int leaseId)
 	{
 		RICON_LifecycleEffect effect = NewEffect(RICON_ELifecycleEffectType.VON_EXPIRY_INTENDED, playerId);
+		effect.m_iSessionEpoch = sessionEpoch;
 		effect.m_iDeviceId = deviceId;
 		effect.m_iLeaseId = leaseId;
 	}
@@ -261,6 +262,8 @@ class RICON_LifecycleTraceRun
 			}
 			case RICON_ELifecycleEffectType.VON_EXPIRY_INTENDED:
 			{
+				if (actual.m_iSessionEpoch != expected.m_iSessionEpoch)
+					return "sessionEpoch";
 				if (actual.m_iDeviceId != expected.m_iDeviceId)
 					return "deviceId";
 				if (actual.m_iLeaseId != expected.m_iLeaseId)

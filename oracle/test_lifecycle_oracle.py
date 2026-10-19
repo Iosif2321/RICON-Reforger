@@ -128,6 +128,25 @@ class LifecycleOracleTest(unittest.TestCase):
                               "connectionId": 501})
         self.assertEqual(result["effects"][-1]["expiresAtMs"], lc.INT_MAX)
 
+    def test_expiry_effect_carries_epoch_of_issue(self) -> None:
+        """REQ v0.4: rotation expiries keep the old epoch; lease 1 of epoch 7 and of epoch 8 stay distinguishable."""
+        expiries = {}
+        for trace in load()["traces"]:
+            for step in trace["steps"]:
+                for effect in step["expect"].get("effects", []):
+                    if effect["type"] == "VON_EXPIRY_INTENDED":
+                        expiries.setdefault(trace["id"][:3], []).append(
+                            (step["event"]["type"], effect["sessionEpoch"], effect["deviceId"], effect["leaseId"]))
+        self.assertIn(("ROTATE_EPOCH", 7, 11, 1), expiries["T11"])
+        self.assertIn(("TICK", 7, 11, 1), expiries["T10"])
+        self.assertIn(("TICK", 8, 11, 1), expiries["T10"])
+        data = load()
+        rotate = next(step for trace in data["traces"] if trace["id"].startswith("T11")
+                      for step in trace["steps"] if step["event"]["type"] == "ROTATE_EPOCH"
+                      and step["expect"]["resultCode"] == "OK")
+        rotate["expect"]["effects"][1]["sessionEpoch"] = rotate["event"]["sessionEpoch"]  # new epoch: wrong
+        self.assertEqual(len(failures(data)), 1)
+
     def test_effect_and_code_names_are_closed(self) -> None:
         for trace in load()["traces"]:
             for step in trace["steps"]:

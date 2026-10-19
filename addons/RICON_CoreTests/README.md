@@ -9,7 +9,7 @@
 
 | Набор | Файлы | Статус |
 |---|---|---|
-| lifecycle | `RICON_LifecycleFixtures.c` (сгенерирован из `oracle/vectors/lifecycle_v1.json`), `RICON_LifecycleFixtureSupport.c` | `ENFORCE_PARITY`: 14/14 трасс, 208/208 шагов, 3/3 контрольных ошибки пойманы |
+| lifecycle | `RICON_LifecycleFixtures.c` (сгенерирован из `oracle/vectors/lifecycle_v1.json`), `RICON_LifecycleFixtureSupport.c` | `ENFORCE_PARITY`: 14/14 трасс, 209/209 шагов (векторы rev 2, REQ-lifecycle v0.4), 3/3 контрольных ошибки пойманы |
 | extension | `RICON_ExtFixtures.c`, `RICON_TestSupport.c` | `SELF_CHECK_PASS`: EXT-1…5 |
 
 Это не проверка в игре: нет репликации, событий игры и голосового чата.
