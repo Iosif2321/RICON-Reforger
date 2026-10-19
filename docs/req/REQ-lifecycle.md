@@ -253,6 +253,8 @@ Effect order для одиночных переходов:
   `(playerId, generation, connectionId, lastRequestSeq, expiresAtMs)`; (6) удалить live player state. Для каждого lease
   сначала идут `LEASE_TERMINATED`, затем `VON_EXPIRY_INTENDED`; только после всех lease-пар — шаги 2–6.
   World-owned devices не удаляются.
+- `tombstone.expiresAtMs` вычисляется без int32 overflow: если `nowMs > int.MAX - tombstoneTtlMs`, используется
+  `int.MAX`, иначе `nowMs + tombstoneTtlMs`.
 - Перед добавлением tombstone удаляются истёкшие. Если после cleanup достигнут `maxTombstones`, удаляется самый старый
   terminal tombstone по `(expiresAtMs, playerId)`; live state и active lease ради освобождения места не удаляются.
 - RPC для player без live state: при matching session tombstone и generation `<=` tombstone generation возвращает
@@ -431,7 +433,8 @@ fixed window, keyed by `(authenticatedPlayerId, methodId)`. Config задаёт 
 Deterministic capacity rules:
 
 - Вся TTL-cleanup выполняется только в `ObserveAndSweep`: tombstone удаляется при `nowMs >= expiresAtMs`, terminal
-  lease — при `nowMs >= terminalAtMs + terminalLeaseTtlMs`. Rate entry по времени не удаляется, только сбрасывает
+  lease — при `nowMs - terminalAtMs >= terminalLeaseTtlMs` после monotonic check. Сумма абсолютных времён для TTL не
+  используется, чтобы не переполнять int32. Rate entry по времени не удаляется, только сбрасывает
   window по §6; disconnect/reconnect/rotation удаляет его вместе с live state. Response cache TTL не имеет: он bounded
   только размером, очищается вместе с generation и вытесняет минимальный
   `requestSeq` при вставке.
