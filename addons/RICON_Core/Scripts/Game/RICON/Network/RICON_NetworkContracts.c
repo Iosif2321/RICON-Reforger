@@ -1,5 +1,5 @@
 // Network-level contracts: route validation, policy context, call-session and VoN seams (REQ-core §9).
-// Status: E4T-s change NOT_COMPILED; previous revision passed Workbench. Runtime behavior is not tested.
+// Evidence level: docs/evidence/E-workbench-source.md. Runtime behavior is not tested; no engine VoN actuator.
 
 //! Stable route failure reasons in the global validation order of REQ-core §9.1.
 enum RICON_ERouteReason

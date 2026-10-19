@@ -1,5 +1,5 @@
 // Pure server-authority lifecycle state machine (REQ-lifecycle v0.4; see oracle vector source for revision).
-// Status: E4T-s expiry-epoch delta NOT_COMPILED; prior target passed parity. No Rpl, callbacks or VoN actuator.
+// Evidence level: docs/evidence/E-workbench-source.md. Runtime not tested; no Rpl, callbacks or VoN actuator.
 
 enum RICON_ELifecycleResult
 {
