@@ -108,6 +108,8 @@ class RICON_TerrainProfile
 
 	RICON_TerrainProfile CloneProfile()
 	{
+		if (!m_aDistanceKm || !m_aHeightM || m_aDistanceKm.Count() != m_aHeightM.Count())
+			return null;
 		RICON_TerrainProfile copy = new RICON_TerrainProfile();
 		for (int i = 0; i < m_aDistanceKm.Count(); i++)
 			copy.AddPoint(m_aDistanceKm[i], m_aHeightM[i]);
