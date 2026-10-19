@@ -37,10 +37,14 @@ class GeneratedFixtureTest(unittest.TestCase):
         self._rejects(lambda d: d["traces"][0]["steps"][1]["event"].update(extra=1))
         self._rejects(lambda d: d["traces"][0]["steps"][1]["event"].update(playerId=True))
         self._rejects(lambda d: d["traces"][0]["steps"][1]["event"].update(playerId=2 ** 31))
+        self._rejects(lambda d: d.update(source="docs/req/REQ-lifecycle.md@9e6ce55\nWorkbench.Exit(0);"))
+        self._rejects(lambda d: d.update(source="x"))
 
     def test_untypeable_catalog_is_refused(self) -> None:
         self._rejects(lambda d: d["traces"][0]["steps"][0]["event"]["catalog"][0]["allowed"].update({"5": []}))
         self._rejects(lambda d: d["traces"][0]["steps"][0]["event"]["catalog"][0]["allowed"].update({"05": [1]}))
+        self._rejects(lambda d: d["traces"][0]["steps"][0]["event"]["catalog"][0]["allowed"]
+                      .update({"9999999999": [1]}))
 
     def test_every_step_is_checked(self) -> None:
         text = FIXTURE.read_text(encoding="utf-8")

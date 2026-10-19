@@ -9,7 +9,7 @@ the way a future adapter must map them and are counted as ADAPTER_MAPPED:
   - missing nowMs                 -> nowMs = -1 (outside 0..INT_MAX, so MALFORMED)
   - INIT config with missing keys -> config = null (MALFORMED)
 Trust boundary: before any code is written, validate() admits only closed records whose values are int32 numbers
-or names from closed enum sets (trace ids match [A-Za-z0-9_-]); anything else raises VectorError, so a changed
+or names from closed enum sets (trace ids match [A-Za-z0-9_-], source is REQ-lifecycle.md@<hex>); anything else raises VectorError, so a changed
 vector file cannot inject Enforce code. A catalog network with an empty channel list is refused, because the
 typed flat (network, channel) pairs cannot express it.
 Three negative controls replay a vector with a deliberately broken expectation and must be reported as failed,
@@ -77,6 +77,7 @@ NAME_FIELDS = {"fromState": PLAYER_STATES, "toState": PLAYER_STATES, "leaseState
 TRACE_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
 CT_ID = re.compile(r"CT-LC-[0-9]{3}")
 NETWORK_KEY = re.compile(r"[1-9][0-9]{0,9}")
+SOURCE = re.compile(r"docs/req/REQ-lifecycle\.md@[0-9a-f]{7,40}")
 
 RUN = "RICON_LifecycleTraceRun"
 RESULT = "RICON_ELifecycleResult."
@@ -125,7 +126,8 @@ def check_catalog(catalog: object, where: str) -> None:
             check_int(player_id, f"{at}.accessPlayerIds")
         require(isinstance(entry["allowed"], dict), f"{at}.allowed")
         for network, channels in entry["allowed"].items():
-            require(isinstance(network, str) and NETWORK_KEY.fullmatch(network) is not None, f"{at}.allowed key")
+            require(isinstance(network, str) and NETWORK_KEY.fullmatch(network) is not None
+                    and int(network) <= INT_MAX, f"{at}.allowed key")
             # A network with no channels has no typed form (flat pairs): refuse instead of dropping it silently.
             require(isinstance(channels, list) and len(channels) > 0, f"{at}.allowed[{network}]")
             for channel in channels:
@@ -136,7 +138,7 @@ def validate(data: object) -> None:
     """Trust boundary: every value that reaches generated Enforce code is an int32 or a closed enum name."""
     require(isinstance(data, dict) and data.get("schema") == "ricon.oracle.lifecycle" and data.get("version") == 1,
             "schema/version")
-    require(isinstance(data.get("source"), str), "source")
+    require(isinstance(data.get("source"), str) and SOURCE.fullmatch(data["source"]) is not None, "source")
     traces = data.get("traces")
     require(isinstance(traces, list) and len(traces) > 0, "traces")
     seen = set()
