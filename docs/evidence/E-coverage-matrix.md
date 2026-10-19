@@ -47,10 +47,10 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 
 | Q | Тема | Статус | Лучший уровень | Где | Проверка (П/Ц/В/К) |
 |---|---|---|---|---|---|
-| Q1 | RelayTransceiver | ЧАСТИЧНО | DOC (класс без членов) + MOD/FORUM (поведение 1.8) | E1s, W1, CX | В: голос через relay официально не подтверждён. К: поведение менялось между версиями → SOURCE (`[Workbench]`) + Э1r |
-| Q2 | Звуковой граф VON | ЧАСТИЧНО | DOC-сниппет + MOD | W1, CX | В: дословность не подтверждена у обоих (403). Сигналы ACP общие ≠ привязка к паре VoN (id346/359) → SOURCE: `VON.acp` |
+| Q1 | RelayTransceiver | ЧАСТИЧНО | DOC (класс без членов) + MOD/FORUM (поведение 1.8) + PARTIAL_SOURCE (`E-workbench-source.md` №001 п.1: класс без скриптового API, в префабах — только дальность/шаг) | E1s, W1, CX | пересылки голоса в скриптах/префабах не видно; поведение движка — Э1r/Э7r |
+| Q2 | Звуковой граф VON | ЧАСТИЧНО | DOC-сниппет + MOD; SOURCE скриптов (`E-workbench-source.md` №001 п.4: `quality` в скриптах только UI) | W1, CX | `von.acp`/`Von.sig` — OPEN_UNREADABLE через FileIO → Audio Editor (ассистент владельца) |
 | Q3 | Права SetMuteState | ЧАСТИЧНО | DOC (метод есть, права не указаны) | OFF | → Э1r |
-| Q4 | ECommMethod | ЧАСТИЧНО | DOC (используется, значения не перечислены) | OFF | → SOURCE |
+| Q4 | ECommMethod | ЗАКРЫТ | SOURCE (`E-workbench-source.md` №001 п.3): 5 значений, generated | OFF | своего метода связи добавить нельзя; радио RICON — поверх `SQUAD_RADIO` |
 | Q5 | Формула quality | ЧАСТИЧНО | DOC (дальности 1,3/2 км; quality 0..1); формула НЕ НАЙДЕНА | W1 | → Э1r (замер) |
 | Q6 | Несколько трансиверов | ЗАКРЫТ | DOC | OFF | ок |
 | Q7 | Свой радиокомпонент | ЗАКРЫТ | DOC (`ScriptedRadioComponent`) | E1s, OFF | ок |
@@ -73,14 +73,14 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | Q14 | Высота рельефа | ЗАКРЫТ | DOC | OFF | стоимость → Э1r |
 | Q15 | Трассировка | ЗАКРЫТ | DOC | OFF | ок |
 | Q16 | Погода | ЗАКРЫТ | DOC | OFF | ок |
-| Q17 | Материалы | ЧАСТИЧНО | DOC | OFF | связь SurfaceProperties→GameMaterial → SOURCE |
+| Q17 | Материалы | ЗАКРЫТ | SOURCE (`E-workbench-source.md` №001 п.9): `SurfaceProps` → `GameMaterial` → `BallisticInfo.GetDensity/GetThickness` | OFF | единица плотности не подписана; коэффициенты затухания — свой конфиг (Э4) |
 
 ### D. Интерфейс и ввод
 
 | Q | Тема | Статус | Лучший уровень | Где | Проверка (П/Ц/В/К) |
 |---|---|---|---|---|---|
-| Q18 | Ввод / действия | ЧАСТИЧНО | DOC + MOD (LC/CVON .conf) | OFF, NR | перекрёстная проверка выполнена; новых доказательств нет → статус не повышается. Ванильные `.conf` → SOURCE |
-| Q19 | Расширение VON radial | ЧАСТИЧНО | MOD (LC `LC_VONEntryRadio.c:7-41`) | NR | то же; ванильный `SCR_VONEntryRadio` → SOURCE |
+| Q18 | Ввод / действия | ЗАКРЫТ | SOURCE (`E-workbench-source.md` №001 п.7): `VONContext`, `VONMenuContext` и их действия | OFF, NR | привязки клавиш не читались (не нужны) |
+| Q19 | Расширение VON radial | ЧАСТИЧНО | MOD + PARTIAL_SOURCE (`E-workbench-source.md` №001 п.8: публичный `AddEntry`, ванильные внешние вызовы) | NR | своя запись — compile fixture + runtime NOT_TESTED (Э6) |
 | Q20 | Свои меню | ЗАКРЫТ (механизм) | DOC | OFF | ок |
 
 ### E. Сотовая связь
