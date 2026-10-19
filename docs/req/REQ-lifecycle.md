@@ -1,7 +1,10 @@
 # REQ-lifecycle — server-authoritative жизненный цикл RICON (Э3)
 
-Версия: **0.3 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью v0.3: claude
+Версия: **0.4 DRAFT** (v0.3 AGENT-REVIEWED), 2026-10-19. Автор: codex. Ревью v0.3: claude
 (agora id854, id864); oracle cross-review codex id873.
+
+Delta v0.4 синхронизирует только сигнатуру expiry seam с Э4T-s; lifecycle state machine и vectors остаются v0.3.
+Ревью delta v0.4: pending claude.
 
 Источник истины: `PLAN_RU.md` v5, Э3; `REQ-core-contracts.md`; evidence `E-offline-api.md` и
 `E1s-von-api.md`. Это requirements-артефакт, а не доказательство поведения Reforger.
