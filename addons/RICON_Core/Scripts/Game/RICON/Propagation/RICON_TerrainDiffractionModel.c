@@ -249,7 +249,7 @@ class RICON_L2SphericalResult
 class RICON_TerrainDiffractionCalculator
 {
 	static const float SPEED_OF_LIGHT_MPS = 299792458.0;
-	static const float STEP_SLACK = 1.000001;
+	static const float STEP_ROUNDING_REL = 1e-6;
 
 	static RICON_L2Result Evaluate(
 		RICON_TerrainProfile profile,
@@ -343,6 +343,10 @@ class RICON_TerrainDiffractionCalculator
 			return RICON_EL2ResultCode.INVALID_PROFILE;
 		if (profile.m_aDistanceKm[0] != 0)
 			return RICON_EL2ResultCode.INVALID_PROFILE;
+		float totalKm = profile.m_aDistanceKm[count - 1];
+		if (!RICON_Num.IsFinite(totalKm) || totalKm <= 0 || totalKm > 500.0)
+			return RICON_EL2ResultCode.INVALID_PROFILE;
+		float minimumStepKm = 0.001 - STEP_ROUNDING_REL * (0.001 + totalKm);
 		for (int i = 0; i < count; i++)
 		{
 			float distanceKm = profile.m_aDistanceKm[i];
@@ -352,16 +356,14 @@ class RICON_TerrainDiffractionCalculator
 			if (i == 0)
 				continue;
 			float stepKm = distanceKm - profile.m_aDistanceKm[i - 1];
-			if (!RICON_Num.IsFinite(stepKm) || stepKm < 0.001 / STEP_SLACK)
+			if (!RICON_Num.IsFinite(stepKm) || stepKm < minimumStepKm)
 				return RICON_EL2ResultCode.INVALID_PROFILE;
 		}
-		float totalKm = profile.m_aDistanceKm[count - 1];
-		if (totalKm <= 0 || totalKm > 500.0)
-			return RICON_EL2ResultCode.INVALID_PROFILE;
+		float maximumStepKm = config.m_fMaxProfileStepKm
+			+ STEP_ROUNDING_REL * (config.m_fMaxProfileStepKm + totalKm);
 		for (int j = 1; j < count; j++)
 		{
-			if (profile.m_aDistanceKm[j] - profile.m_aDistanceKm[j - 1]
-				> config.m_fMaxProfileStepKm * STEP_SLACK)
+			if (profile.m_aDistanceKm[j] - profile.m_aDistanceKm[j - 1] > maximumStepKm)
 				return RICON_EL2ResultCode.PROFILE_STEP_TOO_LARGE;
 		}
 		return RICON_EL2ResultCode.OK;
