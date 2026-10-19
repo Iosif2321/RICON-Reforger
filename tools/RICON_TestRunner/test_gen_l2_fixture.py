@@ -59,6 +59,14 @@ class GeneratedL2FixtureTest(unittest.TestCase):
         self._rejects(lambda d: first_ok(d)["expect"].update(L=None))
         self._rejects(lambda d: d.update(enforceToleranceDb=1.0))
 
+    def test_metadata_matches_the_oracle_checker(self) -> None:
+        """codex #1373: the generator may not accept a vector file the oracle checker rejects (e.g. a looser tolerance)."""
+        for key, value in (("enforceToleranceDb", 0.5), ("enforceToleranceDb", 0.049), ("standard", "P.526-15"),
+                           ("revision", "x"), ("revision", 0), ("revision", True), ("note", None),
+                           ("toleranceDb", 1.0), ("toleranceDb", 0)):
+            self._rejects(lambda d, key=key, value=value: d.update({key: value}))
+        self._rejects(lambda d: d["cases"][0].update(note=None))
+
 
 if __name__ == "__main__":
     unittest.main()

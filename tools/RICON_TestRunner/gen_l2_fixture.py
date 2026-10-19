@@ -42,6 +42,9 @@ ACCURACY = ("MET", "NOT_MET", "NOT_EVALUATED")
 POLARIZATIONS = ("VERTICAL", "HORIZONTAL")
 NUMERIC_FIELDS = ("L", "Lba", "Lbs", "Lsph")
 EXACT_FIELDS = ("branchActual", "branchSmooth", "sphCase", "firstTermAccuracy")
+STANDARD = ("Rec. ITU-R P.526-16 (11/2025), sha256 "
+            "7647c3cb3873dc0389a7007f487728359551ed82468a5677b7cd09430875f23d")
+ENFORCE_TOLERANCE_DB = 0.05  # REQ-L2 §6: the vectors may not loosen it
 MAGNITUDE = 1e12
 MAX_POINTS = 100000
 RUN = "RICON_L2Run"
@@ -69,7 +72,13 @@ def validate(data: object) -> None:
     require(isinstance(data, dict) and set(data) == ROOT_KEYS, "root keys")
     require(data["schema"] == "ricon.oracle.l2_terrain" and data["version"] == 1, "schema/version")
     require(isinstance(data["source"], str) and SOURCE.fullmatch(data["source"]) is not None, "source")
-    require(is_plain_number(data["enforceToleranceDb"]) and 0 < data["enforceToleranceDb"] <= 0.5, "enforceToleranceDb")
+    require(data["standard"] == STANDARD, "standard")
+    require(isinstance(data["revision"], int) and not isinstance(data["revision"], bool) and data["revision"] >= 1,
+            "revision")
+    require(isinstance(data["note"], str), "note")
+    require(is_plain_number(data["toleranceDb"]) and 0 < data["toleranceDb"] <= 1e-3, "toleranceDb")
+    require(is_plain_number(data["enforceToleranceDb"]) and data["enforceToleranceDb"] == ENFORCE_TOLERANCE_DB,
+            "enforceToleranceDb")
     require(isinstance(data["cases"], list) and len(data["cases"]) > 0, "cases")
     seen = set()
     for case in data["cases"]:
@@ -80,6 +89,7 @@ def validate(data: object) -> None:
         require(isinstance(case["ct"], list) and case["ct"] and all(isinstance(c, str) and CT_ID.fullmatch(c)
                                                                      for c in case["ct"]), f"{cid}.ct")
         require(isinstance(case["provenance"], str) and case["provenance"] in PROVENANCE, f"{cid}.provenance")
+        require(isinstance(case["note"], str), f"{cid}.note")
         inp = case["input"]
         require(isinstance(inp, dict) and set(inp) == INPUT_KEYS, f"{cid}.input")
         profile = inp["profile"]
@@ -161,8 +171,7 @@ class Generator:
             pre.append(f"t.RequireNonFinite({freq});")
         else:
             freq = literal(inp["frequencyMHz"])
-        call = (f"RICON_TerrainDiffractionCalculator.Evaluate({profile}, {literal(inp['htg'])}, {literal(inp['hrg'])}, "
-                f"{freq}, {cfg})")
+        call = f"t.Evaluate({profile}, {literal(inp['htg'])}, {literal(inp['hrg'])}, {freq}, {cfg})"  # checks purity
         result = self.name("r")
         pre.append(f"RICON_L2Result {result} = {call};")
         code = f"RICON_EL2ResultCode.{expect['code']}"
@@ -220,9 +229,11 @@ def generate_bytes(raw: bytes) -> str:
                     f"\t\t\tPrint(\"[RICON_TEST] FAIL negative control not detected: {what}\");"]
     run_all += [
         f"\t\tbool sampling = {RUN}.CheckSampling();",
-        f"\t\tbool ok = passed == {len(cases)} && controlsCaught == {len(control_list)} && sampling;",
+        f"\t\tbool adapter = {RUN}.CheckAdapter();",
+        f"\t\tbool ok = passed == {len(cases)} && controlsCaught == {len(control_list)} && sampling && adapter;",
         f"\t\tPrintFormat(\"[RICON_TEST] l2 parity: cases %1/{len(cases)}, negative controls caught %2/{len(control_list)}, "
-        f"sampling %3, adapter-mapped inputs {adapter_mapped}, tolerance {literal(tolerance)} dB\", passed, controlsCaught, sampling);",
+        f"sampling %3, adapter %4, adapter-mapped inputs {adapter_mapped}, tolerance {literal(tolerance)} dB\", "
+        "passed, controlsCaught, sampling, adapter);",
         f"\t\tPrintFormat(\"[RICON_TEST] l2 max |Enforce - oracle| = %1 dB\", {RUN}.s_fMaxDeviationDb);",
         "\t\tif (ok)", "\t\t\tPrint(\"[RICON_TEST] L2_ENFORCE_PARITY_PASS\");", "\t\telse",
         "\t\t\tPrint(\"[RICON_TEST] L2_ENFORCE_PARITY_FAIL\");", "\t\treturn ok;", "\t}", ""]

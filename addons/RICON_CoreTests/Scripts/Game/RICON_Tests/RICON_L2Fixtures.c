@@ -211,8 +211,9 @@ class RICON_L2Fixtures
 		else
 			Print("[RICON_TEST] FAIL negative control not detected: invalid profile accepted");
 		bool sampling = RICON_L2Run.CheckSampling();
-		bool ok = passed == 45 && controlsCaught == 3 && sampling;
-		PrintFormat("[RICON_TEST] l2 parity: cases %1/45, negative controls caught %2/3, sampling %3, adapter-mapped inputs 3, tolerance 0.05 dB", passed, controlsCaught, sampling);
+		bool adapter = RICON_L2Run.CheckAdapter();
+		bool ok = passed == 45 && controlsCaught == 3 && sampling && adapter;
+		PrintFormat("[RICON_TEST] l2 parity: cases %1/45, negative controls caught %2/3, sampling %3, adapter %4, adapter-mapped inputs 3, tolerance 0.05 dB", passed, controlsCaught, sampling, adapter);
 		PrintFormat("[RICON_TEST] l2 max |Enforce - oracle| = %1 dB", RICON_L2Run.s_fMaxDeviationDb);
 		if (ok)
 			Print("[RICON_TEST] L2_ENFORCE_PARITY_PASS");
@@ -247,7 +248,7 @@ class RICON_L2Fixtures
 		p2.AddPoint(1.8, 100.0);
 		p2.AddPoint(1.9, 100.0);
 		p2.AddPoint(2.0, 100.0);
-		RICON_L2Result r3 = RICON_TerrainDiffractionCalculator.Evaluate(p2, 10.0, 10.0, 50.0, c1);
+		RICON_L2Result r3 = t.Evaluate(p2, 10.0, 10.0, 50.0, c1);
 		t.CheckCode(r3, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -277,7 +278,7 @@ class RICON_L2Fixtures
 		p5.AddPoint(1.8, 100.0);
 		p5.AddPoint(1.9, 100.0);
 		p5.AddPoint(2.0, 100.0);
-		RICON_L2Result r6 = RICON_TerrainDiffractionCalculator.Evaluate(p5, 10.0, 10.0, 50.0, c4);
+		RICON_L2Result r6 = t.Evaluate(p5, 10.0, 10.0, 50.0, c4);
 		t.CheckCode(r6, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -307,7 +308,7 @@ class RICON_L2Fixtures
 		p8.AddPoint(1.8, 100.0);
 		p8.AddPoint(1.9, 100.0);
 		p8.AddPoint(2.0, 100.0);
-		RICON_L2Result r9 = RICON_TerrainDiffractionCalculator.Evaluate(p8, 10.0, 10.0, 50.0, c7);
+		RICON_L2Result r9 = t.Evaluate(p8, 10.0, 10.0, 50.0, c7);
 		t.CheckCode(r9, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -337,7 +338,7 @@ class RICON_L2Fixtures
 		p11.AddPoint(1.8, 100.0);
 		p11.AddPoint(1.9, 100.0);
 		p11.AddPoint(2.0, 100.0);
-		RICON_L2Result r12 = RICON_TerrainDiffractionCalculator.Evaluate(p11, 10.0, 10.0, 50.0, c10);
+		RICON_L2Result r12 = t.Evaluate(p11, 10.0, 10.0, 50.0, c10);
 		t.CheckCode(r12, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -368,7 +369,7 @@ class RICON_L2Fixtures
 		p15.AddPoint(1.8, 100.0);
 		p15.AddPoint(1.9, 100.0);
 		p15.AddPoint(2.0, 100.0);
-		RICON_L2Result r16 = RICON_TerrainDiffractionCalculator.Evaluate(p15, 10.0, 10.0, 50.0, c14);
+		RICON_L2Result r16 = t.Evaluate(p15, 10.0, 10.0, 50.0, c14);
 		t.CheckCode(r16, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -398,7 +399,7 @@ class RICON_L2Fixtures
 		p18.AddPoint(1.8, 100.0);
 		p18.AddPoint(1.9, 100.0);
 		p18.AddPoint(2.0, 100.0);
-		RICON_L2Result r19 = RICON_TerrainDiffractionCalculator.Evaluate(p18, 10.0, 10.0, 50.0, c17);
+		RICON_L2Result r19 = t.Evaluate(p18, 10.0, 10.0, 50.0, c17);
 		t.CheckCode(r19, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -427,7 +428,7 @@ class RICON_L2Fixtures
 		p20.AddPoint(1.8, 100.0);
 		p20.AddPoint(1.9, 100.0);
 		p20.AddPoint(2.0, 100.0);
-		RICON_L2Result r21 = RICON_TerrainDiffractionCalculator.Evaluate(p20, 10.0, 10.0, 50.0, null /* ADAPTER_MAPPED: config key missing */);
+		RICON_L2Result r21 = t.Evaluate(p20, 10.0, 10.0, 50.0, null /* ADAPTER_MAPPED: config key missing */);
 		t.CheckCode(r21, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -457,7 +458,7 @@ class RICON_L2Fixtures
 		p23.AddPoint(1.8, 100.0);
 		p23.AddPoint(1.9, 100.0);
 		p23.AddPoint(2.0, 100.0);
-		RICON_L2Result r24 = RICON_TerrainDiffractionCalculator.Evaluate(p23, 10.0, 10.0, 29.9, c22);
+		RICON_L2Result r24 = t.Evaluate(p23, 10.0, 10.0, 29.9, c22);
 		t.CheckCode(r24, RICON_EL2ResultCode.OUT_OF_DOMAIN_FREQUENCY);
 	}
 
@@ -487,7 +488,7 @@ class RICON_L2Fixtures
 		p26.AddPoint(1.8, 100.0);
 		p26.AddPoint(1.9, 100.0);
 		p26.AddPoint(2.0, 100.0);
-		RICON_L2Result r27 = RICON_TerrainDiffractionCalculator.Evaluate(p26, 10.0, 10.0, 100001.0, c25);
+		RICON_L2Result r27 = t.Evaluate(p26, 10.0, 10.0, 100001.0, c25);
 		t.CheckCode(r27, RICON_EL2ResultCode.OUT_OF_DOMAIN_FREQUENCY);
 	}
 
@@ -519,7 +520,7 @@ class RICON_L2Fixtures
 		p29.AddPoint(2.0, 100.0);
 		float f30 = RICON_L2Run.NaN(); // ADAPTER_MAPPED: frequency is JSON null
 		t.RequireNonFinite(f30);
-		RICON_L2Result r31 = RICON_TerrainDiffractionCalculator.Evaluate(p29, 10.0, 10.0, f30, c28);
+		RICON_L2Result r31 = t.Evaluate(p29, 10.0, 10.0, f30, c28);
 		t.CheckCode(r31, RICON_EL2ResultCode.OUT_OF_DOMAIN_FREQUENCY);
 	}
 
@@ -530,7 +531,7 @@ class RICON_L2Fixtures
 		RICON_TerrainProfile p33 = new RICON_TerrainProfile();
 		p33.AddPoint(0.0, 100.0);
 		p33.AddPoint(2.0, 100.0);
-		RICON_L2Result r34 = RICON_TerrainDiffractionCalculator.Evaluate(p33, 10.0, 10.0, 50.0, c32);
+		RICON_L2Result r34 = t.Evaluate(p33, 10.0, 10.0, 50.0, c32);
 		t.CheckCode(r34, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -542,7 +543,7 @@ class RICON_L2Fixtures
 		p36.AddPoint(0.05, 100.0);
 		p36.AddPoint(0.1, 100.0);
 		p36.AddPoint(0.2, 100.0);
-		RICON_L2Result r37 = RICON_TerrainDiffractionCalculator.Evaluate(p36, 10.0, 10.0, 50.0, c35);
+		RICON_L2Result r37 = t.Evaluate(p36, 10.0, 10.0, 50.0, c35);
 		t.CheckCode(r37, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -555,7 +556,7 @@ class RICON_L2Fixtures
 		p39.AddPoint(0.1, 100.0);
 		p39.AddPoint(0.1, 100.0);
 		p39.AddPoint(0.2, 100.0);
-		RICON_L2Result r40 = RICON_TerrainDiffractionCalculator.Evaluate(p39, 10.0, 10.0, 50.0, c38);
+		RICON_L2Result r40 = t.Evaluate(p39, 10.0, 10.0, 50.0, c38);
 		t.CheckCode(r40, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -567,7 +568,7 @@ class RICON_L2Fixtures
 		p42.AddPoint(0.0, 100.0);
 		p42.AddPoint(0.1, 10001.0);
 		p42.AddPoint(0.2, 100.0);
-		RICON_L2Result r43 = RICON_TerrainDiffractionCalculator.Evaluate(p42, 10.0, 10.0, 50.0, c41);
+		RICON_L2Result r43 = t.Evaluate(p42, 10.0, 10.0, 50.0, c41);
 		t.CheckCode(r43, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -1078,7 +1079,7 @@ class RICON_L2Fixtures
 		p45.AddPoint(499.0, 0.0);
 		p45.AddPoint(500.0, 0.0);
 		p45.AddPoint(501.0, 0.0);
-		RICON_L2Result r46 = RICON_TerrainDiffractionCalculator.Evaluate(p45, 10.0, 10.0, 50.0, c44);
+		RICON_L2Result r46 = t.Evaluate(p45, 10.0, 10.0, 50.0, c44);
 		t.CheckCode(r46, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -1108,7 +1109,7 @@ class RICON_L2Fixtures
 		p48.AddPoint(1.8, 100.0);
 		p48.AddPoint(1.9, 100.0);
 		p48.AddPoint(2.0, 100.0);
-		RICON_L2Result r49 = RICON_TerrainDiffractionCalculator.Evaluate(p48, 10.0, 10.0, 50.0, c47);
+		RICON_L2Result r49 = t.Evaluate(p48, 10.0, 10.0, 50.0, c47);
 		t.CheckCode(r49, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -1138,7 +1139,7 @@ class RICON_L2Fixtures
 		p51.AddPoint(1.8, 100.0);
 		p51.AddPoint(1.9, 100.0);
 		p51.AddPoint(2.0, 100.0);
-		RICON_L2Result r52 = RICON_TerrainDiffractionCalculator.Evaluate(p51, 10.0, 10.0, 50.0, c50);
+		RICON_L2Result r52 = t.Evaluate(p51, 10.0, 10.0, 50.0, c50);
 		t.CheckCode(r52, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -1150,7 +1151,7 @@ class RICON_L2Fixtures
 		p54.AddPoint(0.0, 100.0);
 		p54.AddPoint(0.0005, 100.0);
 		p54.AddPoint(0.1, 100.0);
-		RICON_L2Result r55 = RICON_TerrainDiffractionCalculator.Evaluate(p54, 10.0, 10.0, 50.0, c53);
+		RICON_L2Result r55 = t.Evaluate(p54, 10.0, 10.0, 50.0, c53);
 		t.CheckCode(r55, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -1180,7 +1181,7 @@ class RICON_L2Fixtures
 		p57.AddPoint(1.8, 100.0);
 		p57.AddPoint(1.9, 100.0);
 		p57.AddPoint(2.0, 100.0);
-		RICON_L2Result r58 = RICON_TerrainDiffractionCalculator.Evaluate(p57, 0.005, 10.0, 50.0, c56);
+		RICON_L2Result r58 = t.Evaluate(p57, 0.005, 10.0, 50.0, c56);
 		t.CheckCode(r58, RICON_EL2ResultCode.INVALID_ANTENNA_HEIGHT);
 	}
 
@@ -1210,7 +1211,7 @@ class RICON_L2Fixtures
 		p60.AddPoint(1.8, 100.0);
 		p60.AddPoint(1.9, 100.0);
 		p60.AddPoint(2.0, 100.0);
-		RICON_L2Result r61 = RICON_TerrainDiffractionCalculator.Evaluate(p60, 10.0, 10.0, 50.0, c59);
+		RICON_L2Result r61 = t.Evaluate(p60, 10.0, 10.0, 50.0, c59);
 		t.CheckCode(r61, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -1240,7 +1241,7 @@ class RICON_L2Fixtures
 		p63.AddPoint(1.8, 100.0);
 		p63.AddPoint(1.9, 100.0);
 		p63.AddPoint(2.0, 100.0);
-		RICON_L2Result r64 = RICON_TerrainDiffractionCalculator.Evaluate(p63, 10.0, 10.0, 50.0, c62);
+		RICON_L2Result r64 = t.Evaluate(p63, 10.0, 10.0, 50.0, c62);
 		t.CheckCode(r64, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -1252,7 +1253,7 @@ class RICON_L2Fixtures
 		p66.AddPoint(0.0, 100.0);
 		p66.AddPoint(0.1, 100.0);
 		p66.AddPoint(0.25, 100.0);
-		RICON_L2Result r67 = RICON_TerrainDiffractionCalculator.Evaluate(p66, 10.0, 10.0, 50.0, c65);
+		RICON_L2Result r67 = t.Evaluate(p66, 10.0, 10.0, 50.0, c65);
 		t.CheckCode(r67, RICON_EL2ResultCode.PROFILE_STEP_TOO_LARGE);
 	}
 
@@ -1282,7 +1283,7 @@ class RICON_L2Fixtures
 		p69.AddPoint(1.8, 100.0);
 		p69.AddPoint(1.9, 100.0);
 		p69.AddPoint(2.0, 100.0);
-		RICON_L2Result r70 = RICON_TerrainDiffractionCalculator.Evaluate(p69, 0.0, 10.0, 50.0, c68);
+		RICON_L2Result r70 = t.Evaluate(p69, 0.0, 10.0, 50.0, c68);
 		t.CheckCode(r70, RICON_EL2ResultCode.INVALID_ANTENNA_HEIGHT);
 	}
 
@@ -1312,7 +1313,7 @@ class RICON_L2Fixtures
 		p72.AddPoint(1.8, 100.0);
 		p72.AddPoint(1.9, 100.0);
 		p72.AddPoint(2.0, 100.0);
-		RICON_L2Result r73 = RICON_TerrainDiffractionCalculator.Evaluate(p72, 10.0, 10001.0, 50.0, c71);
+		RICON_L2Result r73 = t.Evaluate(p72, 10.0, 10001.0, 50.0, c71);
 		t.CheckCode(r73, RICON_EL2ResultCode.INVALID_ANTENNA_HEIGHT);
 	}
 
@@ -1323,7 +1324,7 @@ class RICON_L2Fixtures
 		RICON_TerrainProfile p75 = new RICON_TerrainProfile();
 		p75.AddPoint(0.0, 1.0);
 		p75.AddPoint(1.0, 1.0);
-		RICON_L2Result r76 = RICON_TerrainDiffractionCalculator.Evaluate(p75, 0.0, 0.0, 1.0, c74);
+		RICON_L2Result r76 = t.Evaluate(p75, 0.0, 0.0, 1.0, c74);
 		t.CheckCode(r76, RICON_EL2ResultCode.INVALID_CONFIG);
 	}
 
@@ -1334,7 +1335,7 @@ class RICON_L2Fixtures
 		RICON_TerrainProfile p78 = new RICON_TerrainProfile();
 		p78.AddPoint(0.0, 1.0);
 		p78.AddPoint(1.0, 1.0);
-		RICON_L2Result r79 = RICON_TerrainDiffractionCalculator.Evaluate(p78, 0.0, 0.0, 1.0, c77);
+		RICON_L2Result r79 = t.Evaluate(p78, 0.0, 0.0, 1.0, c77);
 		t.CheckCode(r79, RICON_EL2ResultCode.OUT_OF_DOMAIN_FREQUENCY);
 	}
 
@@ -1346,7 +1347,7 @@ class RICON_L2Fixtures
 		p81.AddPoint(0.0, 1.0);
 		p81.AddPoint(0.5, 1.0);
 		p81.AddPoint(0.5, 1.0);
-		RICON_L2Result r82 = RICON_TerrainDiffractionCalculator.Evaluate(p81, 10.0, 10.0, 50.0, c80);
+		RICON_L2Result r82 = t.Evaluate(p81, 10.0, 10.0, 50.0, c80);
 		t.CheckCode(r82, RICON_EL2ResultCode.INVALID_PROFILE);
 	}
 
@@ -1358,7 +1359,7 @@ class RICON_L2Fixtures
 		p84.AddPoint(0.0, 1.0);
 		p84.AddPoint(0.5, 1.0);
 		p84.AddPoint(1.0, 1.0);
-		RICON_L2Result r85 = RICON_TerrainDiffractionCalculator.Evaluate(p84, 0.0, 0.0, 50.0, c83);
+		RICON_L2Result r85 = t.Evaluate(p84, 0.0, 0.0, 50.0, c83);
 		t.CheckCode(r85, RICON_EL2ResultCode.PROFILE_STEP_TOO_LARGE);
 	}
 
@@ -1418,7 +1419,7 @@ class RICON_L2Fixtures
 		p87.AddPoint(4.8, 100.0);
 		p87.AddPoint(4.9, 100.0);
 		p87.AddPoint(5.0, 100.0);
-		RICON_L2Result r88 = RICON_TerrainDiffractionCalculator.Evaluate(p87, 2.0, 2.0, 50.0, c86);
+		RICON_L2Result r88 = t.Evaluate(p87, 2.0, 2.0, 50.0, c86);
 		t.CheckOk(r88, 43.81433460552958, 12.062990162594375, 12.062990162594357, 43.81433460552957, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -1628,7 +1629,7 @@ class RICON_L2Fixtures
 		p90.AddPoint(19.8, 0.0);
 		p90.AddPoint(19.9, 0.0);
 		p90.AddPoint(20.0, 0.0);
-		RICON_L2Result r91 = RICON_TerrainDiffractionCalculator.Evaluate(p90, 2.0, 2.0, 50.0, c89);
+		RICON_L2Result r91 = t.Evaluate(p90, 2.0, 2.0, 50.0, c89);
 		t.CheckOk(r91, 57.875672660732235, 13.188934577287808, 13.188934577287808, 57.875672660732235, RICON_EL2Branch.TRANS, RICON_EL2Branch.TRANS, RICON_EL2SphericalCase.BEYOND, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -1838,7 +1839,7 @@ class RICON_L2Fixtures
 		p93.AddPoint(19.8, 0.0);
 		p93.AddPoint(19.9, 0.0);
 		p93.AddPoint(20.0, 0.0);
-		RICON_L2Result r94 = RICON_TerrainDiffractionCalculator.Evaluate(p93, 2.0, 2.0, 50.0, c92);
+		RICON_L2Result r94 = t.Evaluate(p93, 2.0, 2.0, 50.0, c92);
 		t.CheckOk(r94, 69.01677510699683, 13.188934577287808, 13.188934577287808, 69.01677510699683, RICON_EL2Branch.TRANS, RICON_EL2Branch.TRANS, RICON_EL2SphericalCase.BEYOND, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -2048,7 +2049,7 @@ class RICON_L2Fixtures
 		p96.AddPoint(19.8, 0.0);
 		p96.AddPoint(19.9, 0.0);
 		p96.AddPoint(20.0, 0.0);
-		RICON_L2Result r97 = RICON_TerrainDiffractionCalculator.Evaluate(p96, 10.0, 10.0, 800.0, c95);
+		RICON_L2Result r97 = t.Evaluate(p96, 10.0, 10.0, 800.0, c95);
 		t.CheckOk(r97, 19.98590375972212, 10.672691958767814, 10.672691958767814, 19.98590375972212, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2073,7 +2074,7 @@ class RICON_L2Fixtures
 		p99.AddPoint(1.1, 50.0);
 		p99.AddPoint(1.2, 50.0);
 		p99.AddPoint(1.25, 50.0);
-		RICON_L2Result r100 = RICON_TerrainDiffractionCalculator.Evaluate(p99, 1.5, 3.0, 60.0, c98);
+		RICON_L2Result r100 = t.Evaluate(p99, 1.5, 3.0, 60.0, c98);
 		t.CheckOk(r100, 32.55008895008985, 11.325640341641552, 11.325640341641552, 32.55008895008985, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -2183,7 +2184,7 @@ class RICON_L2Fixtures
 		p102.AddPoint(9.8, 0.0);
 		p102.AddPoint(9.9, 0.0);
 		p102.AddPoint(10.0, 0.0);
-		RICON_L2Result r103 = RICON_TerrainDiffractionCalculator.Evaluate(p102, 3.0, 3.0, 30.0, c101);
+		RICON_L2Result r103 = t.Evaluate(p102, 3.0, 3.0, 30.0, c101);
 		t.CheckOk(r103, 12.30866379782123, 12.30866379782123, 12.30866379782123, 0.0, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.AH_NEGATIVE, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -2203,7 +2204,7 @@ class RICON_L2Fixtures
 		p105.AddPoint(0.8, 100.0);
 		p105.AddPoint(0.9, 100.0);
 		p105.AddPoint(1.0, 100.0);
-		RICON_L2Result r106 = RICON_TerrainDiffractionCalculator.Evaluate(p105, 30.0, 30.0, 50.0, c104);
+		RICON_L2Result r106 = t.Evaluate(p105, 30.0, 30.0, 50.0, c104);
 		t.CheckOk(r106, 0.0, 0.0, 0.0, 0.0, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.CLEAR, RICON_EFirstTermAccuracy.NOT_EVALUATED, 0.05);
 	}
 
@@ -2233,7 +2234,7 @@ class RICON_L2Fixtures
 		p108.AddPoint(1.8, 100.0);
 		p108.AddPoint(1.9, 100.0);
 		p108.AddPoint(2.0, 100.0);
-		RICON_L2Result r109 = RICON_TerrainDiffractionCalculator.Evaluate(p108, 10.0, 10.0, 60.0, c107);
+		RICON_L2Result r109 = t.Evaluate(p108, 10.0, 10.0, 60.0, c107);
 		t.CheckOk(r109, 22.749015413195558, 21.799149719726266, 2.263496832443737, 3.2133625259130274, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2283,7 +2284,7 @@ class RICON_L2Fixtures
 		p111.AddPoint(3.8, 100.0);
 		p111.AddPoint(3.9, 100.0);
 		p111.AddPoint(4.0, 100.0);
-		RICON_L2Result r112 = RICON_TerrainDiffractionCalculator.Evaluate(p111, 2.0, 2.0, 50.0, c110);
+		RICON_L2Result r112 = t.Evaluate(p111, 2.0, 2.0, 50.0, c110);
 		t.CheckOk(r112, 26.882621334604913, 25.846012335538884, 2.509871090374317, 3.5464800894403457, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2313,7 +2314,7 @@ class RICON_L2Fixtures
 		p114.AddPoint(1.8, 100.0);
 		p114.AddPoint(1.9, 100.0);
 		p114.AddPoint(2.0, 100.0);
-		RICON_L2Result r115 = RICON_TerrainDiffractionCalculator.Evaluate(p114, 15.0, 15.0, 60.0, c113);
+		RICON_L2Result r115 = t.Evaluate(p114, 15.0, 15.0, 60.0, c113);
 		t.CheckOk(r115, 13.721518172907768, 9.548807325222375, 6.014314055152501, 10.187024902837894, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2343,7 +2344,7 @@ class RICON_L2Fixtures
 		p117.AddPoint(1.8, 100.0);
 		p117.AddPoint(1.9, 100.0);
 		p117.AddPoint(2.0, 100.0);
-		RICON_L2Result r118 = RICON_TerrainDiffractionCalculator.Evaluate(p117, 40.0, 40.0, 60.0, c116);
+		RICON_L2Result r118 = t.Evaluate(p117, 40.0, 40.0, 60.0, c116);
 		t.CheckOk(r118, 0.0, 0.0, 0.0, 0.0, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.CLEAR, RICON_EFirstTermAccuracy.NOT_EVALUATED, 0.05);
 	}
 
@@ -2393,7 +2394,7 @@ class RICON_L2Fixtures
 		p120.AddPoint(3.8, 109.38606790241386);
 		p120.AddPoint(3.9, 104.7075457436707);
 		p120.AddPoint(4.0, 100.00000000000001);
-		RICON_L2Result r121 = RICON_TerrainDiffractionCalculator.Evaluate(p120, 2.0, 2.0, 50.0, c119);
+		RICON_L2Result r121 = t.Evaluate(p120, 2.0, 2.0, 50.0, c119);
 		t.CheckOk(r121, 56.24869295203119, 26.491047858042652, 11.971906277953629, 41.72955137194217, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -2433,7 +2434,7 @@ class RICON_L2Fixtures
 		p123.AddPoint(2.8, 141.68353236728962);
 		p123.AddPoint(2.9, 145.81886146929386);
 		p123.AddPoint(3.0, 150.0);
-		RICON_L2Result r124 = RICON_TerrainDiffractionCalculator.Evaluate(p123, 5.0, 5.0, 88.0, c122);
+		RICON_L2Result r124 = t.Evaluate(p123, 5.0, 5.0, 88.0, c122);
 		t.CheckOk(r124, 1.1523814410228703, 1.1523814410228703, 0.0, 0.0, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.CLEAR, RICON_EFirstTermAccuracy.NOT_EVALUATED, 0.05);
 	}
 
@@ -2503,7 +2504,7 @@ class RICON_L2Fixtures
 		p126.AddPoint(5.8, 68.00000000000011);
 		p126.AddPoint(5.9, 64.0);
 		p126.AddPoint(6.0, 60.0);
-		RICON_L2Result r127 = RICON_TerrainDiffractionCalculator.Evaluate(p126, 2.0, 1.5, 70.0, c125);
+		RICON_L2Result r127 = t.Evaluate(p126, 2.0, 1.5, 70.0, c125);
 		t.CheckOk(r127, 31.726084642147452, 17.78897445094806, 9.91421832366266, 23.85132851486205, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -2633,7 +2634,7 @@ class RICON_L2Fixtures
 		p129.AddPoint(11.8, 251.48850908111373);
 		p129.AddPoint(11.9, 259.7861750556958);
 		p129.AddPoint(12.0, 256.52549749176336);
-		RICON_L2Result r130 = RICON_TerrainDiffractionCalculator.Evaluate(p129, 2.0, 2.0, 45.0, c128);
+		RICON_L2Result r130 = t.Evaluate(p129, 2.0, 2.0, 45.0, c128);
 		t.CheckOk(r130, 25.416134461042887, 22.111262235067677, 5.6096158365351005, 8.914488062510312, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2693,7 +2694,7 @@ class RICON_L2Fixtures
 		p132.AddPoint(4.8, 120.00000506408286);
 		p132.AddPoint(4.9, 120.00000031486707);
 		p132.AddPoint(5.0, 120.0000000156763);
-		RICON_L2Result r133 = RICON_TerrainDiffractionCalculator.Evaluate(p132, 3.0, 3.0, 400.0, c131);
+		RICON_L2Result r133 = t.Evaluate(p132, 3.0, 3.0, 400.0, c131);
 		t.CheckOk(r133, 34.01837109323801, 33.803257523676436, 0.7007915878142061, 0.9159051573757818, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.MET, 0.05);
 	}
 
@@ -2733,7 +2734,7 @@ class RICON_L2Fixtures
 		p135.AddPoint(2.8, -999.8965275991094);
 		p135.AddPoint(2.9, -999.9808595304315);
 		p135.AddPoint(3.0, -999.9968754042367);
-		RICON_L2Result r136 = RICON_TerrainDiffractionCalculator.Evaluate(p135, 2.0, 2.0, 30.0, c134);
+		RICON_L2Result r136 = t.Evaluate(p135, 2.0, 2.0, 30.0, c134);
 		t.CheckOk(r136, 59.32110910663239, 59.32110910663239, 0.0, 0.0, RICON_EL2Branch.TRANS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.CLEAR, RICON_EFirstTermAccuracy.NOT_EVALUATED, 0.05);
 	}
 
@@ -2793,7 +2794,7 @@ class RICON_L2Fixtures
 		p138.AddPoint(4.8, 100.0);
 		p138.AddPoint(4.9, 100.0);
 		p138.AddPoint(5.0, 100.0);
-		RICON_L2Result r139 = RICON_TerrainDiffractionCalculator.Evaluate(p138, 2.0, 2.0, 50.0, c137);
+		RICON_L2Result r139 = t.Evaluate(p138, 2.0, 2.0, 50.0, c137);
 		t.CheckOk(r139, 43.91433460552958, 12.062990162594375, 12.062990162594357, 43.81433460552957, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.INTERPOLATED, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -3003,7 +3004,7 @@ class RICON_L2Fixtures
 		p141.AddPoint(19.8, 0.0);
 		p141.AddPoint(19.9, 0.0);
 		p141.AddPoint(20.0, 0.0);
-		RICON_L2Result r142 = RICON_TerrainDiffractionCalculator.Evaluate(p141, 2.0, 2.0, 50.0, c140);
+		RICON_L2Result r142 = t.Evaluate(p141, 2.0, 2.0, 50.0, c140);
 		t.CheckOk(r142, 57.875672660732235, 13.188934577287808, 13.188934577287808, 57.875672660732235, RICON_EL2Branch.LOS, RICON_EL2Branch.TRANS, RICON_EL2SphericalCase.BEYOND, RICON_EFirstTermAccuracy.NOT_MET, 0.05);
 	}
 
@@ -3014,7 +3015,7 @@ class RICON_L2Fixtures
 		RICON_TerrainProfile p144 = new RICON_TerrainProfile();
 		p144.AddPoint(0.0, 100.0);
 		p144.AddPoint(2.0, 100.0);
-		RICON_L2Result r145 = RICON_TerrainDiffractionCalculator.Evaluate(p144, 10.0, 10.0, 50.0, c143);
+		RICON_L2Result r145 = t.Evaluate(p144, 10.0, 10.0, 50.0, c143);
 		t.CheckOk(r145, 0.0, 0.0, 0.0, 0.0, RICON_EL2Branch.LOS, RICON_EL2Branch.LOS, RICON_EL2SphericalCase.CLEAR, RICON_EFirstTermAccuracy.NOT_EVALUATED, 0.05);
 	}
 }
