@@ -7178,7 +7178,7 @@
     "CT-L2-007",
     "CT-L2-009"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "CROSS_CHECKED",
    "note": "sea-like ground eps 80 sigma 5, V, 30 MHz: A_h < 0, so Lsph = 0 and L = Lbs, not Lsph",
    "input": {
     "profile": [
@@ -7698,7 +7698,7 @@
     "CT-L2-006",
     "CT-L2-003"
    ],
-   "provenance": "HAND_DERIVED",
+   "provenance": "CROSS_CHECKED",
    "note": "2 km, one 40 m spike in the middle, 10 m antennas, 60 MHz",
    "input": {
     "profile": [
@@ -8258,7 +8258,7 @@
    "ct": [
     "CT-L2-008"
    ],
-   "provenance": "HAND_DERIVED",
+   "provenance": "CROSS_CHECKED",
    "note": "terminals in valleys, smooth surface clamped to the ground (63)",
    "input": {
     "profile": [
