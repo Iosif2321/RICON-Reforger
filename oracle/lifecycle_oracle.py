@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -185,7 +186,7 @@ class Lifecycle:
             parsed: dict[int, list[int]] = {}
             keys = list(allowed)
             for key in keys:
-                if not key.isdigit() or not is_id(int(key)):
+                if not re.fullmatch(r"[1-9][0-9]{0,9}", key) or not is_id(int(key)):
                     return None
                 channels = allowed[key]
                 if not isinstance(channels, list) or not all(is_id(c) for c in channels) \
@@ -219,7 +220,9 @@ class Lifecycle:
     # ------------------------------------------------------------------ dispatch
 
     def apply(self, ev: dict[str, Any]) -> dict[str, Any]:
-        kind = ev.get("type") if isinstance(ev, dict) else None
+        if not isinstance(ev, dict):
+            return {"resultCode": "MALFORMED" if self.ready else "NOT_READY", "effects": []}
+        kind = ev.get("type")
         if not self.ready:
             if kind == "INIT":
                 return self._init(ev)
@@ -556,8 +559,8 @@ def check_vector_file(data: Any) -> list[str]:
             if expect.get("resultCode") not in RESULT_CODES:
                 problems.append(f"{tid}: resultCode {expect.get('resultCode')!r}")
             for effect in expect.get("effects", []):
-                if effect.get("type") not in EFFECT_TYPES:
-                    problems.append(f"{tid}: effect {effect.get('type')!r}")
+                if not isinstance(effect, dict) or effect.get("type") not in EFFECT_TYPES:
+                    problems.append(f"{tid}: effect {effect.get('type') if isinstance(effect, dict) else effect!r}")
     return problems
 
 

@@ -73,6 +73,21 @@ class LifecycleOracleTest(unittest.TestCase):
         self.assertIn("traces: non-empty list required", lc.check_vector_file(dict(header)))
         self.assertIn("traces: non-empty list required", lc.check_vector_file(dict(header, traces=[])))
         self.assertIn("trace structure", lc.check_vector_file(dict(header, traces=[{"id": "x", "steps": [1]}])))
+        bad_effect = {"id": "x", "ct": ["CT-LC-001"],
+                      "steps": [{"event": {"type": "TICK"}, "expect": {"resultCode": "OK", "effects": [3]}}]}
+        self.assertTrue(any("effect" in p for p in lc.check_vector_file(dict(header, traces=[bad_effect]))))
+
+    def test_hostile_input_is_rejected_without_crash(self) -> None:
+        init = copy.deepcopy(load()["traces"][0]["steps"][0]["event"])
+        for key in ("²", "01", "0", "-1", "1.0", "99999999999"):
+            bad = copy.deepcopy(init)
+            bad["catalog"][0]["allowed"] = {key: [100]}
+            self.assertEqual(lc.Lifecycle().apply(bad)["resultCode"], "MALFORMED", key)
+        model = self._ready_model()
+        self.assertEqual(model.apply([1, 2]), {"resultCode": "MALFORMED", "effects": []})
+        self.assertEqual(lc.Lifecycle().apply("INIT"), {"resultCode": "NOT_READY", "effects": []})
+        ptt = {"type": "PTT_START", "nowMs": 1001, "schemaVersion": 1, "deviceId": [1], "requestSeq": {"a": 1}}
+        self.assertEqual(model.apply(ptt)["resultCode"], "MALFORMED")
 
     def _ready_model(self, **config: int) -> lc.Lifecycle:
         data = load()
