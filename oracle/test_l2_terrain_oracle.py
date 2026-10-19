@@ -60,7 +60,9 @@ class L2TerrainOracleTest(unittest.TestCase):
         self.assertNotIn("STD_INVARIANT", provenance.values())  # numbers are ours (REQ §7)
 
     def test_domain_corners_never_fail_numerically(self) -> None:
-        """REQ §2: every config bound x frequency x path x terrain x antenna extremes gives OK and L >= 0 (float64)."""
+        """REQ §2: bounds of every mathematical config field (radius, k, eps, sigma, both polarizations) x frequency x
+        path x terrain x antenna extremes give OK and L >= 0 (float64). The capacity fields (maxProfileStepKm,
+        maxProfilePoints) are fixed here and covered by test_provider_sampling_rule."""
         lows = {k: (lo if inc else 1.0 + 1e-6) for k, (lo, inc, hi) in o.CONFIG_DOMAIN.items()}
         highs = {k: hi for k, (lo, inc, hi) in o.CONFIG_DOMAIN.items()}
         count = 0
