@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,9 @@ ACCEPTED = frozenset(("ACCEPT_FIRST", "ACCEPT_NEWER", "ACCEPT_RESYNC"))
 BINDING_KEYS = ("sessionEpoch", "linkId", "talkerPlayerId", "listenerPlayerId", "talkerDeviceId", "listenerDeviceId",
                 "talkerLeaseId", "talkerTransceiverIndex", "listenerTransceiverIndex")
 IDENTITY_KEYS = ("sessionEpoch", "linkId", "talkerPlayerId", "listenerPlayerId")  # §5.5
+# Exactly the typed LinkSnapshot fields (REQ-core §8): a record with any other key has no typed form.
+SNAPSHOT_KEYS = frozenset(("schemaVersion", "sessionEpoch", "linkId", "linkSeq", "ttlMs", "routeId", "routeNodeCount",
+                           "quality", "state", "talkerPlayerId", "listenerPlayerId"))
 
 
 def is_int(value: Any) -> bool:
@@ -54,7 +58,7 @@ def is_index(value: Any) -> bool:
 
 def snapshot_ok(snapshot: Any) -> bool:
     """§5.2: the §8.3 domain plus positive, distinct player IDs (seam rule, stronger than REQ-core §8.3)."""
-    if not is_valid_snapshot(snapshot):
+    if not isinstance(snapshot, dict) or set(snapshot) != SNAPSHOT_KEYS or not is_valid_snapshot(snapshot):
         return False
     talker, listener = snapshot.get("talkerPlayerId"), snapshot.get("listenerPlayerId")
     return is_positive(talker) and is_positive(listener) and talker != listener
@@ -62,7 +66,7 @@ def snapshot_ok(snapshot: Any) -> bool:
 
 def binding_ok(binding: Any) -> bool:
     """§4 field domains."""
-    if not isinstance(binding, dict) or any(key not in binding for key in BINDING_KEYS):
+    if not isinstance(binding, dict) or set(binding) != set(BINDING_KEYS):
         return False
     b = binding
     return (is_epoch(b["sessionEpoch"]) and is_positive(b["linkId"])
@@ -80,7 +84,7 @@ def apply(snapshot: Any, binding: Any, upstream: Any) -> str:
         return "NULL_INPUT"
     if not snapshot_ok(snapshot):
         return "INVALID_SNAPSHOT"
-    if upstream not in ACCEPTED:
+    if not isinstance(upstream, str) or upstream not in ACCEPTED:
         return "DECISION_NOT_ACCEPTED"
     if not binding_ok(binding):
         return "INVALID_BINDING"
@@ -118,6 +122,10 @@ def call(step: dict[str, Any]) -> str:
 
 # ---------------------------------------------------------------------- runner
 
+SOURCE = re.compile(r"docs/req/REQ-von-seam\.md@[0-9a-f]{7,40}")
+CASE_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
+CT_ID = re.compile(r"CT-VON-S-[0-9]{3}")
+CASE_KEYS = {"id", "ct", "req", "calls", "note"}
 APPLY_KEYS = {"op", "snapshot", "binding", "upstreamDecision", "expect"}
 EXPIRE_KEYS = {"op", "sessionEpoch", "playerId", "deviceId", "leaseId", "binding", "expect"}
 
@@ -127,26 +135,31 @@ def check_vector_file(data: Any) -> list[str]:
     if not isinstance(data, dict) or data.get("schema") != "ricon.oracle.von_seam" or data.get("version") != 1:
         return ["schema/version"]
     problems = []
-    if not str(data.get("source", "")).startswith("docs/req/REQ-von-seam.md@"):
+    source = data.get("source")
+    if not isinstance(source, str) or SOURCE.fullmatch(source) is None:
         problems.append("source")
     cases = data.get("cases")
     if not isinstance(cases, list) or not cases:
         return problems + ["cases: non-empty list required"]
     seen = set()
     for case in cases:
-        if not isinstance(case, dict) or not isinstance(case.get("calls"), list) or not case["calls"] \
-                or not isinstance(case.get("ct"), list) or not case["ct"]:
+        if not isinstance(case, dict) or set(case) != CASE_KEYS or not isinstance(case["calls"], list) \
+                or not case["calls"] or not isinstance(case["note"], str) \
+                or not all(isinstance(case[key], list) and case[key]
+                           and all(isinstance(item, str) and item for item in case[key]) for key in ("ct", "req")) \
+                or not all(CT_ID.fullmatch(ct) for ct in case["ct"]):
             problems.append("case structure")
             continue
-        cid = case.get("id")
-        if not isinstance(cid, str) or cid in seen:
+        cid = case["id"]
+        if not isinstance(cid, str) or CASE_ID.fullmatch(cid) is None or cid in seen:
             problems.append(f"case id {cid!r}")
+            continue
         seen.add(cid)
         for step in case["calls"]:
             keys = APPLY_KEYS if isinstance(step, dict) and step.get("op") == "apply" else EXPIRE_KEYS
             if not isinstance(step, dict) or step.get("op") not in ("apply", "expire") or set(step) != keys:
                 problems.append(f"{cid}: call structure")
-            elif step["expect"] not in DECISIONS:
+            elif not isinstance(step["expect"], str) or step["expect"] not in DECISIONS:
                 problems.append(f"{cid}: expect {step['expect']!r}")
     return problems
 

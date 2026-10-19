@@ -96,6 +96,43 @@ class VonSeamOracleTest(unittest.TestCase):
         self.assertEqual(vs.expire("7", 1, 11, 1, bind), "INVALID_EXPIRY")
         self.assertEqual(vs.expire(7, 1, 11, None, bind), "INVALID_EXPIRY")
 
+    def test_untypeable_records_fail_closed(self) -> None:
+        """codex #1172: extra keys and unhashable values have no typed Enforce form and must not pass or crash."""
+        data = load()
+        valid = next(step for case in data["cases"] for step in case["calls"]
+                     if step["op"] == "apply" and step["expect"] == "BLOCKED_NO_ACTUATOR")
+        snap, bind = vs.decode(valid["snapshot"]), valid["binding"]
+        self.assertEqual(vs.apply(dict(snap, extra=1), bind, "ACCEPT_NEWER"), "INVALID_SNAPSHOT")
+        self.assertEqual(vs.apply(snap, dict(bind, extra=1), "ACCEPT_NEWER"), "INVALID_BINDING")
+        self.assertEqual(vs.expire(7, 1, 11, 1, dict(bind, extra=1)), "INVALID_BINDING")
+        for upstream in ([], {}, 1.5, ["ACCEPT_NEWER"]):
+            self.assertEqual(vs.apply(snap, bind, upstream), "DECISION_NOT_ACCEPTED", upstream)
+        broken = copy.deepcopy(data)
+        broken["cases"][0]["calls"][0]["expect"] = []
+        broken["cases"][1]["calls"][0]["expect"] = {"x": 1}
+        self.assertEqual(sum("expect" in p for p in vs.check_vector_file(broken)), 2)
+
+    def test_vector_envelope_is_strict(self) -> None:
+        data = load()
+        for source in (data["source"] + "\nWorkbench.Exit(0);", data["source"] + " ", "docs/req/REQ-von-seam.md@xyz",
+                       "x" + data["source"], None):
+            self.assertIn("source", vs.check_vector_file(dict(data, source=source)), repr(source))
+        mutations = [
+            lambda c: c.update(extra=1),
+            lambda c: c.update(ct=[]),
+            lambda c: c.update(ct=["CT-LC-001"]),
+            lambda c: c.update(req=[""]),
+            lambda c: c.update(note=None),
+            lambda c: c.pop("req"),
+        ]
+        for mutate in mutations:
+            broken = copy.deepcopy(data)
+            mutate(broken["cases"][0])
+            self.assertIn("case structure", vs.check_vector_file(broken))
+        broken = copy.deepcopy(data)
+        broken["cases"][0]["id"] = "A01\nWorkbench.Exit(0);"
+        self.assertTrue(any("case id" in p for p in vs.check_vector_file(broken)))
+
     def test_apply_priority_holds_for_every_combination(self) -> None:
         """§5 order is global: with any subset of failures the first one in REQ order wins."""
         data = load()
