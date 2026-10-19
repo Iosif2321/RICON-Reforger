@@ -98,9 +98,9 @@ class L2TerrainOracleTest(unittest.TestCase):
         for _ in range(3000):
             cfg = {"earthRadiusKm": 6371.0, "kFactor": rng.choice([0.5, 1.0, 4 / 3, 4.0]),
                    "permittivity": rng.choice([1.0001, 3.0, 15.0, 80.0]), "conductivitySm": rng.choice([0.0, 1e-3, 5.0]),
-                   "polarization": rng.choice(o.POLARIZATIONS), "maxProfileStepKm": 500.0, "maxProfilePoints": 9}
+                   "polarization": rng.choice(o.POLARIZATIONS), "maxProfileStepKm": 10.0, "maxProfilePoints": 51}
             d = rng.uniform(0.01, 500.0)
-            n = rng.choice([3, 5, 9])
+            n = max(3, math.ceil(d / 10.0) + 1, rng.choice([3, 5, 9]))  # spacing <= 10 km, >= 1 m
             hs = [rng.uniform(-1000, 3000) for _ in range(n)]
             result = o.l2({"profile": [[d * i / (n - 1), hs[i]] for i in range(n)],
                            "htg": rng.uniform(0.01, 1e4), "hrg": rng.uniform(0.01, 1e4),
@@ -151,8 +151,7 @@ class L2TerrainOracleTest(unittest.TestCase):
         self.assertIn("root keys", o.check_vector_file(dict(data, extra=1)))
         self.assertIn("standard", o.check_vector_file(dict(data, standard="P.526-15")))
         self.assertIn("enforceToleranceDb", o.check_vector_file(dict(data, enforceToleranceDb=0.5)))
-        for mutate in (lambda c: c.update(id="E01
-Workbench.Exit(0);"), lambda c: c.update(note=None),
+        for mutate in (lambda c: c.update(id="E01\nWorkbench.Exit(0);"), lambda c: c.update(note=None),
                        lambda c: c["input"].update(extra=1), lambda c: c["input"].update(htg=10 ** 400),
                        lambda c: c["input"]["config"].update(polarization="x); //"),
                        lambda c: c.update(provenance=["HAND_DERIVED"])):
