@@ -50,7 +50,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | Q1 | RelayTransceiver | ЧАСТИЧНО | DOC (класс без членов) + MOD/FORUM (поведение 1.8) + PARTIAL_SOURCE (`E-workbench-source.md` №001 п.1: класс без скриптового API, в префабах — только дальность/шаг) | E1s, W1, CX | пересылки голоса в скриптах/префабах не видно; поведение движка — Э1r/Э7r |
 | Q2 | Звуковой граф VON | ЧАСТИЧНО | DOC-сниппет + MOD; SOURCE скриптов (`E-workbench-source.md` №001 п.4: `quality` в скриптах только UI) | W1, CX | `von.acp`/`Von.sig` — OPEN_UNREADABLE через FileIO → Audio Editor (ассистент владельца) |
 | Q3 | Права SetMuteState | ЧАСТИЧНО | DOC (метод есть, права не указаны) | OFF | → Э1r |
-| Q4 | ECommMethod | ЗАКРЫТ | SOURCE (`E-workbench-source.md` №001 п.3): 5 значений, generated | OFF | своего метода связи добавить нельзя; радио RICON — поверх `SQUAD_RADIO` |
+| Q4 | ECommMethod | ЗАКРЫТ | SOURCE (`E-workbench-source.md` №001 п.3): 5 значений, generated | OFF | публичной точки расширения для нового значения не найдено; текущее сопоставление радио RICON — `SQUAD_RADIO`; своё/native расширение — НЕ УСТАНОВЛЕНО |
 | Q5 | Формула quality | ЧАСТИЧНО | DOC (дальности 1,3/2 км; quality 0..1); формула НЕ НАЙДЕНА | W1 | → Э1r (замер) |
 | Q6 | Несколько трансиверов | ЗАКРЫТ | DOC | OFF | ок |
 | Q7 | Свой радиокомпонент | ЗАКРЫТ | DOC (`ScriptedRadioComponent`) | E1s, OFF | ок |

@@ -124,8 +124,9 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 - Ровно 5 значений, без явных чисел: `DIRECT` (стр. 12, комментарий «Speaking»), `SQUAD_RADIO` (16, «Soldiers squad
   radio»), `DIRECT_AI` (20), `GAME_MASTER_DIRECT` (24, «Game master speaking direct»), `GAME_MASTER_RADIO` (28, «Game
   master using radio»).
-- Вывод для RICON: своего значения метода связи в перечислении нет и добавить его скриптом нельзя (generated); радио
-  RICON должно ехать поверх `SQUAD_RADIO`.
+- Вывод для RICON: публичной точки расширения для нового значения не найдено (файл сгенерирован движком); текущее
+  сопоставление радио RICON — `SQUAD_RADIO` (контроллер различает только его и `DIRECT`, пункт 4); возможность своего или
+  native-расширения — НЕ УСТАНОВЛЕНО.
 
 ### Пункт 4 — `SCR_VoNComponent.OnReceive`, `SCR_VONController`, `SCR_VONEntryRadio` (логи `i4-*`)
 
