@@ -136,16 +136,20 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 - `quality` дальше: `SCR_VonDisplay.c:213` сохраняет её в `m_fQuality` структуры передачи; других использований
   `m_fQuality` нет (стр. 18, 213, 827 — объявление, запись, повторная передача в `OnReceive`). На событие
   `m_OnReceivedVON` подписан только `SCR_NameTagData.c:679/717` (UI имён).
+- Отклонение от правила минимизации: окна `i4-onreceive-93` и `i4-onreceive-108` прочитаны лишними (метод кончается
+  на :86); ~30 строк кода редактора к заказу не относятся и в отчёт не вошли. Правило (agora #789): не больше 2 смежных
+  окон одного файла на пункт, третье — только с обоснованием в отчёте.
 - Выбор трансивера при передаче — `$ArmaReforger:scripts/Game/VON/SCR_VONController.c:622–637`, `SetActiveTransmit`:
   если `entry.GetVONMethod() == ECommMethod.SQUAD_RADIO` → `SetCommMethod(SQUAD_RADIO)` и
   `SetTransmitRadio(SCR_VONEntryRadio.Cast(entry).GetTransceiver())`; иначе → `SetCommMethod(DIRECT)` и
   `SetTransmitRadio(null)`. Оба метода — `proto external` (`generated/Components/VoNComponent.c:27,30`), т. е.
-  доставку голоса выполняет движок.
+  настройку передачи принимает движок (native boundary; это не доказывает, что вся доставка — только движок).
 - Задержка частоты — `SCR_VONEntryRadio.c:31`, комментарий: «Local frequency getter since atm the transceiver getter is
   delayed (network?) and not sufficient for instant UI changes»; `GetEntryFrequency()` возвращает локальное
   `m_iFrequency`. Причина задержки в коде не объяснена («network?») — НЕ УСТАНОВЛЕНО.
-- Вывод для RICON (H3/Q2): из скрипта приёма нельзя управлять слышимостью — только наблюдать `quality`/`frequency`.
-  Влияние `quality` на звук, если есть, — в звуковом графе (пункт 2), не в скриптах.
+- Вывод для RICON (H3/Q2): в проверенных скриптах приёма влияния на слышимость **не видно** — они только наблюдают
+  `quality`/`frequency`. Влияет ли `quality` на звук в native-коде движка или в звуковом графе (пункты 1/2) — НЕ
+  УСТАНОВЛЕНО.
 
 ### Пункт 5 — `SCR_CoverageRadioComponent`, `SCR_RadioCoverageSystem` (логи `i5-*`)
 
@@ -157,8 +161,8 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
   шифрования (`GetRadiosInRangeCount(string encryptionFilter)`, стр. 91).
 - Пользователи `SCR_RadioCoverageSystem.GetInstance`: сам компонент, `SCR_GameModeCampaign.c:739`,
   `SCR_CampaignFactionCommanderHandlerComponent.c:373,400` — логика режима Conflict.
-- Вывод: по исходнику покрытие с доставкой голоса **не связано**; это игровая логика Conflict. Ретранслирует ли
-  движок голос через `RelayTransceiver` — пункт 1; runtime — НЕ УСТАНОВЛЕНО.
+- Вывод: в трёх проверенных файлах **нет прямой текстовой связи** с доставкой голоса, а прямые пользователи — логика
+  Conflict. Косвенная, native или runtime-связь этим не исключена — НЕ УСТАНОВЛЕНО (пункт 1, Э7r).
 
 ### Пункт 8 — radial-меню VON (логи `i8-*`)
 
@@ -168,9 +172,10 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
   `entry.InitEntry()`, запоминает long-range радио, шлёт `m_OnEntriesChanged`, делает запись активной, если активной нет.
 - Ванильный код вызывает его извне: `SCR_GadgetManagerComponent.c:597,971`, `SCR_EditorManagerEntity.c:182,192`.
   Меню строится в `SCR_VONMenu.c:86–88` (`category.AddEntry` / `m_RadialMenu.AddEntry`).
-- Вывод (Q19): свою запись (наследник `SCR_VONEntry`) можно добавить через публичный `AddEntry` **без modded-замены**.
-  Ограничение: `SetActiveTransmit` знает только `SQUAD_RADIO`, всё остальное передаётся как `DIRECT` — запись RICON
-  для радио должна возвращать `SQUAD_RADIO` и реальный `BaseTransceiver`. Отрисовка в меню — runtime, НЕ УСТАНОВЛЕНО.
+- Вывод (Q19): публичный `AddEntry`, вызываемый ванильным кодом извне, — **подтверждённая точка расширения-кандидат**
+  без modded-замены. Своя запись (наследник `SCR_VONEntry`) ещё **NOT_TESTED** (нужны compile fixture и runtime).
+  Ограничение по исходнику: `SetActiveTransmit` знает только `SQUAD_RADIO`, всё остальное передаётся как `DIRECT`, —
+  запись RICON для радио должна возвращать `SQUAD_RADIO` и реальный `BaseTransceiver`.
 
 ### Пункт 1 — `RelayTransceiver` (логи `i1-*`)
 
@@ -188,8 +193,8 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
   `RelayTransceiver` в префабах нет.
 - Скрипты используют его только в `SCR_CampaignMilitaryBaseComponent.c:1136–1152, 2410–2414`: перебор трансиверов и
   `GetRange()` для дальности базы (Conflict).
-- Вывод (Q1, gate M1): логики пересылки голоса в скриптах и префабах **нет**. Делает ли движок ретрансляцию VoN через
-  `RelayTransceiver` — **НЕ УСТАНОВЛЕНО** (`BLOCKED_NO_RUNTIME`, Э7r).
+- Вывод (Q1, gate M1): в проверенных скриптах и префабах логики пересылки голоса **не видно**. Делает ли движок
+  ретрансляцию VoN через `RelayTransceiver` — **НЕ УСТАНОВЛЕНО** (`BLOCKED_NO_RUNTIME`, Э7r).
 
 ### Пункт 2 — звуковой граф VON — **НЕ ПРОЧИТАН**
 
