@@ -2,7 +2,7 @@
  "schema": "ricon.oracle.l2_terrain",
  "version": 1,
  "revision": 1,
- "source": "docs/req/REQ-L2-terrain.md@0c1129f",
+ "source": "docs/req/REQ-L2-terrain.md@bd6d0cc",
  "standard": "Rec. ITU-R P.526-16 (11/2025), sha256 7647c3cb3873dc0389a7007f487728359551ed82468a5677b7cd09430875f23d",
  "note": "TEST_ONLY config values; numbers are host float64 derivations (derive.py), not examples from the standard. enforceToleranceDb is the parity tolerance of REQ §6.",
  "toleranceDb": 1e-06,
@@ -3524,6 +3524,378 @@
      "polarization": "VERTICAL",
      "maxProfileStepKm": 0.1,
      "maxProfilePoints": 2
+    }
+   },
+   "expect": {
+    "code": "INVALID_CONFIG"
+   }
+  },
+  {
+   "id": "E25-profile-spacing-below-1m",
+   "ct": [
+    "CT-L2-001"
+   ],
+   "provenance": "HAND_DERIVED",
+   "note": "two points 0.5 m apart",
+   "input": {
+    "profile": [
+     [
+      0.0,
+      100.0
+     ],
+     [
+      0.0005,
+      100.0
+     ],
+     [
+      0.1,
+      100.0
+     ]
+    ],
+    "htg": 10,
+    "hrg": 10,
+    "frequencyMHz": 50,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.001,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 1000
+    }
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "E26-antenna-below-1cm",
+   "ct": [
+    "CT-L2-001"
+   ],
+   "provenance": "HAND_DERIVED",
+   "note": "htg = 0.005 m",
+   "input": {
+    "profile": [
+     [
+      0.0,
+      100.0
+     ],
+     [
+      0.1,
+      100.0
+     ],
+     [
+      0.2,
+      100.0
+     ],
+     [
+      0.3,
+      100.0
+     ],
+     [
+      0.4,
+      100.0
+     ],
+     [
+      0.5,
+      100.0
+     ],
+     [
+      0.6,
+      100.0
+     ],
+     [
+      0.7,
+      100.0
+     ],
+     [
+      0.8,
+      100.0
+     ],
+     [
+      0.9,
+      100.0
+     ],
+     [
+      1.0,
+      100.0
+     ],
+     [
+      1.1,
+      100.0
+     ],
+     [
+      1.2,
+      100.0
+     ],
+     [
+      1.3,
+      100.0
+     ],
+     [
+      1.4,
+      100.0
+     ],
+     [
+      1.5,
+      100.0
+     ],
+     [
+      1.6,
+      100.0
+     ],
+     [
+      1.7,
+      100.0
+     ],
+     [
+      1.8,
+      100.0
+     ],
+     [
+      1.9,
+      100.0
+     ],
+     [
+      2.0,
+      100.0
+     ]
+    ],
+    "htg": 0.005,
+    "hrg": 10,
+    "frequencyMHz": 50,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.001,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 1000
+    }
+   },
+   "expect": {
+    "code": "INVALID_ANTENNA_HEIGHT"
+   }
+  },
+  {
+   "id": "E27-config-huge-radius",
+   "ct": [
+    "CT-L2-001"
+   ],
+   "provenance": "HAND_DERIVED",
+   "note": "finite but absurd earthRadiusKm = 1e10 (codex #1328)",
+   "input": {
+    "profile": [
+     [
+      0.0,
+      100.0
+     ],
+     [
+      0.1,
+      100.0
+     ],
+     [
+      0.2,
+      100.0
+     ],
+     [
+      0.3,
+      100.0
+     ],
+     [
+      0.4,
+      100.0
+     ],
+     [
+      0.5,
+      100.0
+     ],
+     [
+      0.6,
+      100.0
+     ],
+     [
+      0.7,
+      100.0
+     ],
+     [
+      0.8,
+      100.0
+     ],
+     [
+      0.9,
+      100.0
+     ],
+     [
+      1.0,
+      100.0
+     ],
+     [
+      1.1,
+      100.0
+     ],
+     [
+      1.2,
+      100.0
+     ],
+     [
+      1.3,
+      100.0
+     ],
+     [
+      1.4,
+      100.0
+     ],
+     [
+      1.5,
+      100.0
+     ],
+     [
+      1.6,
+      100.0
+     ],
+     [
+      1.7,
+      100.0
+     ],
+     [
+      1.8,
+      100.0
+     ],
+     [
+      1.9,
+      100.0
+     ],
+     [
+      2.0,
+      100.0
+     ]
+    ],
+    "htg": 10,
+    "hrg": 10,
+    "frequencyMHz": 50,
+    "config": {
+     "earthRadiusKm": 10000000000.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.001,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 1000
+    }
+   },
+   "expect": {
+    "code": "INVALID_CONFIG"
+   }
+  },
+  {
+   "id": "E28-config-points-cap",
+   "ct": [
+    "CT-L2-001"
+   ],
+   "provenance": "HAND_DERIVED",
+   "note": "maxProfilePoints = 100001 above the hard cap",
+   "input": {
+    "profile": [
+     [
+      0.0,
+      100.0
+     ],
+     [
+      0.1,
+      100.0
+     ],
+     [
+      0.2,
+      100.0
+     ],
+     [
+      0.3,
+      100.0
+     ],
+     [
+      0.4,
+      100.0
+     ],
+     [
+      0.5,
+      100.0
+     ],
+     [
+      0.6,
+      100.0
+     ],
+     [
+      0.7,
+      100.0
+     ],
+     [
+      0.8,
+      100.0
+     ],
+     [
+      0.9,
+      100.0
+     ],
+     [
+      1.0,
+      100.0
+     ],
+     [
+      1.1,
+      100.0
+     ],
+     [
+      1.2,
+      100.0
+     ],
+     [
+      1.3,
+      100.0
+     ],
+     [
+      1.4,
+      100.0
+     ],
+     [
+      1.5,
+      100.0
+     ],
+     [
+      1.6,
+      100.0
+     ],
+     [
+      1.7,
+      100.0
+     ],
+     [
+      1.8,
+      100.0
+     ],
+     [
+      1.9,
+      100.0
+     ],
+     [
+      2.0,
+      100.0
+     ]
+    ],
+    "htg": 10,
+    "hrg": 10,
+    "frequencyMHz": 50,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.001,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100001
     }
    },
    "expect": {

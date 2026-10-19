@@ -127,6 +127,39 @@ class L2TerrainOracleTest(unittest.TestCase):
             self.assertEqual(o.l2(bad), {"code": code}, code)
         self.assertEqual(o.l2("x"), {"code": "INVALID_CONFIG"})
 
+    def test_huge_json_numbers_never_crash(self) -> None:
+        """codex #1328: a JSON integer beyond float range is not a number; finite absurd configs are rejected."""
+        good = copy.deepcopy(ok_case(load(), "O01-single-peak")["input"])
+        for key, value in (("earthRadiusKm", 10 ** 400), ("maxProfilePoints", 10 ** 400), ("kFactor", 1e308),
+                           ("earthRadiusKm", 1e308)):
+            bad = copy.deepcopy(good)
+            bad["config"][key] = value
+            self.assertEqual(o.l2(bad), {"code": "INVALID_CONFIG"}, key)
+        for key in ("htg", "frequencyMHz"):
+            bad = copy.deepcopy(good)
+            bad[key] = 10 ** 400
+            self.assertNotEqual(o.l2(bad)["code"], "OK", key)
+        bad = copy.deepcopy(good)
+        bad["profile"][1] = [0.1, 10 ** 400]
+        self.assertEqual(o.l2(bad), {"code": "INVALID_PROFILE"})
+        bad = copy.deepcopy(good)
+        bad["htg"] = bad["hrg"] = 1e-300
+        self.assertEqual(o.l2(bad), {"code": "INVALID_ANTENNA_HEIGHT"})
+
+    def test_vector_envelope_is_closed(self) -> None:
+        data = load()
+        self.assertIn("root keys", o.check_vector_file(dict(data, extra=1)))
+        self.assertIn("standard", o.check_vector_file(dict(data, standard="P.526-15")))
+        self.assertIn("enforceToleranceDb", o.check_vector_file(dict(data, enforceToleranceDb=0.5)))
+        for mutate in (lambda c: c.update(id="E01
+Workbench.Exit(0);"), lambda c: c.update(note=None),
+                       lambda c: c["input"].update(extra=1), lambda c: c["input"].update(htg=10 ** 400),
+                       lambda c: c["input"]["config"].update(polarization="x); //"),
+                       lambda c: c.update(provenance=["HAND_DERIVED"])):
+            broken = copy.deepcopy(data)
+            mutate(broken["cases"][0])
+            self.assertTrue(any(p.startswith("case") for p in o.check_vector_file(broken)))
+
 
 if __name__ == "__main__":
     unittest.main()

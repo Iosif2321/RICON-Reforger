@@ -46,7 +46,30 @@ def finite(*values: float) -> None:
 
 
 def is_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+    """A finite JSON number. A huge JSON integer is not a number here (float conversion would overflow)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    try:
+        return math.isfinite(float(value))
+    except OverflowError:
+        return False
+
+
+# REQ §2: closed, float32-safe domains of every config field: (low, low inclusive, high).
+CONFIG_DOMAIN = {
+    "earthRadiusKm": (1000.0, True, 100000.0),
+    "kFactor": (0.1, True, 100.0),
+    "permittivity": (1.0, False, 1000.0),
+    "conductivitySm": (0.0, True, 1000.0),
+    "maxProfileStepKm": (0.001, True, 10.0),
+}
+MAX_PROFILE_POINTS_CAP = 100000
+MIN_SPACING_KM = 0.001              # REQ §2: 1 m between profile points
+MIN_ANTENNA_M = 0.01
+
+
+def in_domain(value: Any, low: float, low_inclusive: bool, high: float) -> bool:
+    return is_number(value) and (value >= low if low_inclusive else value > low) and value <= high
 
 
 # ---------------------------------------------------------------- §4.5.1 Bullington (eq. 49-57)
@@ -184,11 +207,10 @@ def validate(inp: Any) -> str | None:
     """REQ §3 codes 1-5 in order; None when the input is admissible."""
     cfg = inp.get("config") if isinstance(inp, dict) else None
     if not isinstance(cfg, dict) or set(cfg) != set(CONFIG_KEYS) \
-            or not all(is_number(cfg[k]) for k in CONFIG_KEYS if k != "polarization") \
-            or not isinstance(cfg["maxProfilePoints"], int) or cfg["maxProfilePoints"] < 3 \
-            or cfg["earthRadiusKm"] <= 0 or cfg["kFactor"] <= 0 or cfg["permittivity"] <= 1\
-            or cfg["conductivitySm"] < 0 or cfg["maxProfileStepKm"] <= 0 \
-            or cfg["polarization"] not in POLARIZATIONS:
+            or not all(in_domain(cfg[key], *domain) for key, domain in CONFIG_DOMAIN.items()) \
+            or isinstance(cfg["maxProfilePoints"], bool) or not isinstance(cfg["maxProfilePoints"], int) \
+            or not 3 <= cfg["maxProfilePoints"] <= MAX_PROFILE_POINTS_CAP \
+            or not isinstance(cfg["polarization"], str) or cfg["polarization"] not in POLARIZATIONS:
         return "INVALID_CONFIG"
     if not is_number(inp.get("frequencyMHz")) or not MIN_FREQUENCY_MHZ <= inp["frequencyMHz"] <= MAX_FREQUENCY_MHZ:
         return "OUT_OF_DOMAIN_FREQUENCY"
@@ -197,12 +219,12 @@ def validate(inp: Any) -> str | None:
             isinstance(p, list) and len(p) == 2 and is_number(p[0]) and is_number(p[1]) for p in profile):
         return "INVALID_PROFILE"
     ds = [p[0] for p in profile]
-    if ds[0] != 0 or any(b <= a for a, b in zip(ds, ds[1:])) or ds[-1] > MAX_PATH_KM \
+    if ds[0] != 0 or any(b - a < MIN_SPACING_KM / STEP_SLACK for a, b in zip(ds, ds[1:])) or ds[-1] > MAX_PATH_KM \
             or not all(MIN_TERRAIN_M <= p[1] <= MAX_TERRAIN_M for p in profile):
         return "INVALID_PROFILE"
     if any(b - a > cfg["maxProfileStepKm"] * STEP_SLACK for a, b in zip(ds, ds[1:])):
         return "PROFILE_STEP_TOO_LARGE"
-    if not all(is_number(inp.get(k)) and 0 < inp[k] <= MAX_ANTENNA_M for k in ("htg", "hrg")):
+    if not all(in_domain(inp.get(k), MIN_ANTENNA_M, True, MAX_ANTENNA_M) for k in ("htg", "hrg")):
         return "INVALID_ANTENNA_HEIGHT"
     return None
 
@@ -242,32 +264,78 @@ NUMERIC_FIELDS = ("L", "Lba", "Lbs", "Lsph")
 EXACT_FIELDS = ("branchActual", "branchSmooth", "sphCase", "firstTermAccuracy")
 
 
+ROOT_KEYS = {"schema", "version", "revision", "source", "standard", "note", "toleranceDb", "enforceToleranceDb", "cases"}
+STANDARD = ("Rec. ITU-R P.526-16 (11/2025), sha256 "
+            "7647c3cb3873dc0389a7007f487728359551ed82468a5677b7cd09430875f23d")
+INPUT_KEYS = {"profile", "htg", "hrg", "frequencyMHz", "config"}
+CASE_ID = re.compile(r"[A-Za-z0-9_-]{1,64}")
+SAFE_STRING = re.compile(r"[A-Z_]{1,32}")
+SAFE_KEY = re.compile(r"[A-Za-z]{1,32}")
+SAFE_MAGNITUDE = 1e12
+
+
+def safe_json(value: Any, depth: int = 0) -> bool:
+    """Input values a code generator may carry: null, plain numbers of bounded magnitude, enum-like strings and
+    nested lists/objects with plain keys. Malformed-on-purpose inputs stay possible; unbounded ones do not."""
+    if depth > 4:
+        return False
+    if value is None:
+        return True
+    if isinstance(value, bool):
+        return False
+    if isinstance(value, (int, float)):
+        return is_number(value) and abs(value) <= SAFE_MAGNITUDE
+    if isinstance(value, str):
+        return SAFE_STRING.fullmatch(value) is not None
+    if isinstance(value, list):
+        return len(value) <= MAX_PROFILE_POINTS_CAP and all(safe_json(item, depth + 1) for item in value)
+    if isinstance(value, dict):
+        return all(isinstance(k, str) and SAFE_KEY.fullmatch(k) and safe_json(v, depth + 1) for k, v in value.items())
+    return False
+
+
 def check_vector_file(data: Any) -> list[str]:
     if not isinstance(data, dict) or data.get("schema") != "ricon.oracle.l2_terrain" or data.get("version") != 1:
         return ["schema/version"]
     problems = []
+    if set(data) != ROOT_KEYS:
+        problems.append("root keys")
+    if isinstance(data.get("revision"), bool) or not isinstance(data.get("revision"), int) or data["revision"] < 1:
+        problems.append("revision")
     if not isinstance(data.get("source"), str) or SOURCE.fullmatch(data["source"]) is None:
         problems.append("source")
+    if data.get("standard") != STANDARD:
+        problems.append("standard")
+    if not isinstance(data.get("note"), str):
+        problems.append("note")
     tol = data.get("toleranceDb")
     if not is_number(tol) or not 0 < tol <= 1e-3:
         problems.append("toleranceDb")
+    if data.get("enforceToleranceDb") != 0.05:  # REQ §6
+        problems.append("enforceToleranceDb")
     cases = data.get("cases")
     if not isinstance(cases, list) or not cases:
         return problems + ["cases: non-empty list required"]
     seen = set()
     for case in cases:
         if not isinstance(case, dict) or set(case) != CASE_KEYS or not isinstance(case["id"], str) \
-                or case["id"] in seen or case["provenance"] not in PROVENANCE \
+                or CASE_ID.fullmatch(case["id"]) is None or case["id"] in seen \
+                or not isinstance(case["note"], str) \
+                or not isinstance(case["provenance"], str) or case["provenance"] not in PROVENANCE \
                 or not isinstance(case["ct"], list) or not case["ct"] \
                 or not all(isinstance(c, str) and re.fullmatch(r"CT-L2-[0-9]{3}", c) for c in case["ct"]) \
-                or not isinstance(case["expect"], dict) or case["expect"].get("code") not in CODES:
-            problems.append(f"case {case.get('id') if isinstance(case, dict) else case!r}")
+                or not isinstance(case["input"], dict) or set(case["input"]) != INPUT_KEYS \
+                or not safe_json(case["input"]) \
+                or not isinstance(case["expect"], dict) or not isinstance(case["expect"].get("code"), str) \
+                or case["expect"]["code"] not in CODES:
+            problems.append(f"case {case.get('id') if isinstance(case, dict) else '?'!r}")
             continue
         seen.add(case["id"])
         expect = case["expect"]
         keys = {"code"} | (set(NUMERIC_FIELDS) | set(EXACT_FIELDS) if expect["code"] == "OK" else set())
         if set(expect) != keys or (expect["code"] == "OK" and not (
                 all(is_number(expect[k]) for k in NUMERIC_FIELDS)
+                and all(isinstance(expect[k], str) for k in EXACT_FIELDS)
                 and expect["branchActual"] in BRANCHES and expect["branchSmooth"] in BRANCHES
                 and expect["sphCase"] in SPH_CASES and expect["firstTermAccuracy"] in ACCURACY)):
             problems.append(f"{case['id']}: expect")
