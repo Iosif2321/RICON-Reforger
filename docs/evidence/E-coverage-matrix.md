@@ -38,7 +38,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 |---|---|---|
 | 1 | Единственная цель — репозиторий `RICON-Reforger` | раздел 1: конфликт двух target снят |
 | 2 | Лицензия нового мода — APL-SA; старый A3 — GPLv3; GPL-код не копируется; двойная лицензия не заявляется | Q24: выбор лицензии закрыт; совместимость чужих лицензий — нет |
-| 3 | Обратная разработка запрещена; ванильные файлы — только через Workbench силами ассистента владельца по заказу `[Workbench]` | Q26 и раздел 7: RE снят с пути; SOURCE ждёт `E-workbench-source.md` |
+| 3 | Обратная разработка запрещена; ванильные файлы — только через Workbench силами ассистента владельца по заказу `[Workbench]` | Q26 и раздел 7: RE снят с пути; SOURCE получен инструментом Workbench `tools/RICON_WbReader` (по разрешению владельца, `E-workbench-source.md` №001); звуковой граф — OPEN_UNREADABLE |
 | 4 | Игру (Play / сервер) не запускать без отдельного разрешения | всё runtime — `BLOCKED_NO_RUNTIME` |
 
 ## Матрица Q1–Q34
@@ -131,10 +131,10 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 |---|---|---|---|---|
 | 1 | Scope / артефакты | CLOSED | PLAN v5; решения владельца id302/310/316 и 2026-10-18 | конфликт target снят решением №1 |
 | 2 | VoN / радио-контролы | PARTIAL | E1s §1–3; `interfaceVoNComponent.html:125-149`; `interfaceBaseTransceiver.html` (SetRange 1..65535, только сервер) | runtime authority/latency — BLOCKED_NO_RUNTIME |
-| 3 | Аудиограф / per-pair DSP | OPEN | W1 Q2 (DOC-сниппет), CX cycle_001 | SOURCE `VON.acp`; привязка к паре — Э1r |
-| 4 | Relay / intercom | OPEN | `interfaceRelayTransceiver.html` (нет своих членов); `SCR_CoverageRadioComponent` (граф покрытия Conflict) | SOURCE префабов/скриптов; Э1r |
+| 3 | Аудиограф / per-pair DSP | OPEN | W1 Q2 (DOC-сниппет), CX cycle_001; SOURCE скриптов (`E-workbench-source.md` №001 п.4: `quality` в скриптах только UI) | `von.acp`/`Von.sig` — OPEN_UNREADABLE → Audio Editor (ассистент владельца); привязка к паре — Э1r |
+| 4 | Relay / intercom | PARTIAL | `interfaceRelayTransceiver.html` (нет своих членов); PARTIAL_SOURCE (`E-workbench-source.md` №001 п.1, п.5: класс без API, в префабах — дальность/шаг; покрытие без прямой связи с VoN, пользователи — Conflict) | полный перечень префабов/атрибутов; пересылка голоса движком — Э1r/Э7r |
 | 5 | Rpl / JIP / стриминг | PARTIAL | OFF Q11–Q12; `interfaceRplComponent.html` (EnableStreamingForConnection «Use with caution») | дальняя связь при стриминге — OPEN |
-| 6 | Workbench / статическая сборка | PARTIAL | игра и Tools установлены (`addons\data\ArmaReforger.gproj`); CLI проверки компиляции документирован (`E-workbench-build.md`, `Page_CLI.html`); заказы `WB-order-002/003` | компиляция **выполнена** 2026-10-19 (claude по разрешению владельца): `RICON_Core` и `RICON_CoreTests` — 0 ошибок, 5 конфигураций (`E-workbench-source.md`); открыто: ванильные файлы (№001) |
+| 6 | Workbench / статическая сборка | PARTIAL | игра и Tools установлены (`addons\data\ArmaReforger.gproj`); CLI проверки компиляции документирован (`E-workbench-build.md`, `Page_CLI.html`); заказы `WB-order-002/003` | компиляция **выполнена** 2026-10-19 (claude по разрешению владельца): `RICON_Core` и `RICON_CoreTests` — 0 ошибок, 5 конфигураций (`E-workbench-source.md`); ванильные файлы (№001): SOURCE_EVIDENCE — п. 3, 4, 7, 9; PARTIAL_SOURCE — 1, 5, 6, 8; OPEN_UNREADABLE — 2 (`E-workbench-source.md` №001) |
 | 7 | Право / Workshop / BattlEye / RE | PARTIAL | Workshop Terms Sec. 3; `LICENSE` (APL-SA); License.txt Tools | лицензия — решена (APL-SA); RE — запрещён; BattlEye — OPEN_NO_PRIMARY_PROOF |
 | 8 | HDSP provenance / калибровка | PARTIAL | W2 Q28; E-web3 (P.526-16, P.372-17, STD_COPY); `fn_signalCompute.sqf:96-173`, `signal_core.cpp:133-224` (A3, справочник) | метод L2 выбран: P.526-16 § 4.5, ур. (66); реализация и калибровка L2 — OPEN; P.372-18 не прочитана; калибровочных данных нет |
 | 9 | Масштаб 30/60 | OPEN | пары 870/3540, активные 87/177; `GetTransceiversInRange`, `AsyncTraceMove` | бюджеты — BLOCKED_NO_RUNTIME |
@@ -145,7 +145,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | 14 | Упаковка / операции | PARTIAL | W1 Q24/Q27; CX fact_011 (Workshop хранит последние 50 версий) | CI, сборка, откат — не реализованы; публикация запрещена |
 | 15 | Кросс-аудит | CLOSED | id354–367 | — |
 
-Сводка (2026-10-19): CLOSED — 1, 13, 15 (+ граница 11); PARTIAL — 2, 5, 6, 7, 8, 10, 12, 14; OPEN — 3, 4, 9.
+Сводка (2026-10-19, после №001): CLOSED — 1, 13, 15 (+ граница 11); PARTIAL — 2, 4, 5, 6, 7, 8, 10, 12, 14; OPEN — 3, 9.
 
 ## Что нужно для приоритетов задания
 
@@ -153,7 +153,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 |---|---|---|
 | 1. Ревью ядра | production-модель разборчивости и пороги состояний: полные методы первоисточников + эмпирическая калибровка или одобренная владельцем игровая политика (статус `BLOCKED_CALIBRATION`); эталонные числа FSPL/шума — есть (oracle) | `E-web3-intelligibility.md` + калибровочный набор данных (runtime) или решение владельца `[Решение]` |
 | 2. Доработка под Reforger | паритет Enforce↔oracle и запуск SelfCheck фикстур (компиляция выполнена, `E-workbench-source.md`) | исполнение — Э1r (нужен runtime) |
-| 3. Слои плана | Q1, Q2, Q4, Q17, Q18, Q19 (ванильные файлы) | `docs/evidence/E-workbench-source.md` (ассистент владельца) |
+| 3. Слои плана | после №001: Q4, Q17, Q18 — SOURCE_EVIDENCE; Q1, Q19 — PARTIAL_SOURCE; Q2 — OPEN_UNREADABLE | Q2 — Audio Editor (ассистент владельца); Q1 — Э7r; Q19 — compile fixture + runtime (Э6) |
 | 3. Слои плана (runtime) | Q3, Q5, Q9, Q13, Q23, Q25, Q27 | Э1r — только с разрешения владельца |
 
 ## Противоречия
@@ -169,5 +169,5 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 
 Закрыто решениями 2026-10-18: лицензия (APL-SA), target (`RICON-Reforger`), RE (запрещён).
 Открыто:
-1. Заказ `[Workbench]` на ванильные файлы (Q1, Q2, Q4, Q17, Q18, Q19) — шина `ricon-reforger-build`.
+1. Заказ `[Workbench]` №001 — выполнен частично (`E-workbench-source.md` №001); открыт пункт 2: звуковой граф VON в **Audio Editor**.
 2. Разрешение на runtime (Э1r) — для Q3, Q5, Q9, Q13, Q23, Q25, Q27.
