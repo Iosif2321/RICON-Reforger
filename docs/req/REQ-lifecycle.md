@@ -45,40 +45,60 @@ bounded state и fixed-window limiter. Она не подтверждает call
 | 2 | `TICK_ANOMALY` | clock anomaly уже зафиксирована; mutable state закрыт до epoch rotation |
 | 3 | `NOT_READY` | manager/session ещё не готовы |
 | 4 | `INVALID_SESSION` | неверный `sessionEpoch` |
-| 5 | `STALE_GENERATION` | generation не текущая |
-| 6 | `STALE_ENTITY` | callback относится не к текущему opaque entity binding |
-| 7 | `DUPLICATE` | точный replay найден в bounded response cache; возвращается сохранённый ответ без side effects |
-| 8 | `STALE_REQUEST` | `requestSeq <= lastRequestSeq`, но точного cached response уже нет |
-| 9 | `RATE_LIMITED` | fixed-window limit authenticated owner/method исчерпан |
-| 10 | `FORGED_OWNER` | payload owner/player не совпадает с authenticated context |
-| 11 | `INACTIVE_ENTITY` | current player не `BOUND_ACTIVE` |
-| 12 | `UNKNOWN_DEVICE` | stable device ID отсутствует в server registry |
-| 13 | `NOT_OWNER` | owner/access policy запрещает устройство |
-| 14 | `POWER_OFF` | устройство не готово к передаче |
-| 15 | `INVALID_CATALOG` | network/channel/tuning не разрешены server catalog |
-| 16 | `DEVICE_BUSY` | на устройстве уже есть чужой active lease |
-| 17 | `UNKNOWN_LEASE` | leaseId никогда не выдавался текущему authenticated owner/generation |
-| 18 | `STALE_LEASE` | lease известен, но принадлежит другой session/generation/owner |
-| 19 | `LIMIT_REACHED` | bounded state заполнен и безопасная cleanup не освободила место |
-| 20 | `OK` | событие принято |
+| 5 | `STALE_CONNECTION` | callback относится не к текущему opaque connection context |
+| 6 | `STALE_GENERATION` | generation не текущая |
+| 7 | `STALE_ENTITY` | callback относится не к текущему opaque entity binding |
+| 8 | `DUPLICATE` | точный replay/callback уже обработан; возвращается сохранённый ответ без side effects |
+| 9 | `REQUEST_CONFLICT` | тот же requestSeq уже связан с другим canonical payload |
+| 10 | `STALE_REQUEST` | `requestSeq <= lastRequestSeq`, но точного cached response уже нет |
+| 11 | `RATE_LIMITED` | fixed-window limit authenticated owner/method исчерпан |
+| 12 | `FORGED_OWNER` | payload owner/player не совпадает с authenticated context |
+| 13 | `INACTIVE_ENTITY` | current player не `BOUND_ACTIVE` |
+| 14 | `UNKNOWN_DEVICE` | stable device ID отсутствует в server registry |
+| 15 | `NOT_OWNER` | owner/access policy запрещает устройство |
+| 16 | `POWER_OFF` | устройство не готово к передаче |
+| 17 | `INVALID_CATALOG` | network/channel/tuning не разрешены server catalog |
+| 18 | `DEVICE_BUSY` | на устройстве уже есть active lease, кроме exact cached duplicate |
+| 19 | `UNKNOWN_LEASE` | leaseId никогда не выдавался текущему authenticated owner/generation |
+| 20 | `STALE_LEASE` | lease известен, но принадлежит другой session/generation/owner |
+| 21 | `LIMIT_REACHED` | bounded state заполнен и безопасная cleanup не освободила место |
+| 22 | `OK` | событие принято |
 
 Для конкретного event применяются только релевантные ему строки, но их относительный порядок не меняется.
 `DUPLICATE` возвращает текущий cached payload/lease terminal state, но не повторяет effects; terminal transition MAY
 обновить cached payload того же request. Диагностика MAY уточнять причину, но не меняет `resultCode` и не раскрывает
 чужое состояние.
 Oracle JSON хранит имена строками; Enforce enum MUST задать явные integer values, равные номеру приоритета.
+Result record всегда содержит `resultCode`; request-`DUPLICATE` дополнительно содержит `cachedResultCode` и cached
+response fields (leaseId/state/reason, если применимо). Callback-`DUPLICATE` не имеет cached payload.
 
 Все числовые пределы приходят из валидированного server config или из oracle-вектора: `maxPlayers`,
-`maxActiveLeases`, `maxTombstones`, `tombstoneTtlMs`, `maxResponseCachePerPlayer`, `maxRateEntries`,
+`maxActiveLeases`, `maxTerminalLeases`, `terminalLeaseTtlMs`, `maxTombstones`, `tombstoneTtlMs`,
+`maxResponseCachePerPlayer`, `maxRateEntries`,
 `rateWindowMs`, `rateMaxRequests`. Каждый параметр MUST быть `> 0`; невалидный config даёт `NOT_READY`.
 Документ не задаёт production defaults до Э10/runtime budget.
 
 Закрытый набор oracle-effects: `PLAYER_STATE_CHANGED`, `ENTITY_BOUND`, `ENTITY_UNBOUND`, `LEASE_GRANTED`,
 `LEASE_TERMINATED`, `VON_EXPIRY_INTENDED`, `SUBSCRIPTIONS_CLEARED`, `CARRIED_DEVICES_DETACHED`,
 `TOMBSTONE_WRITTEN`, `FULL_RESYNC_REQUIRED`. Effect record содержит только нужные stable IDs и новое состояние;
-массив упорядочен фактическим порядком применения. При reject/duplicate/stale callback effects MUST быть пустым.
-Clock anomaly обрабатывается отдельным authority `Tick(nowMs)`: именно Tick создаёт terminal effects; последующие
-requests лишь возвращают latched `TICK_ANOMALY` без новых effects до epoch rotation.
+массив упорядочен фактическим порядком применения.
+
+| Effect | Обязательные поля |
+|---|---|
+| `PLAYER_STATE_CHANGED` | playerId, generation, `fromState`, `toState` |
+| `ENTITY_BOUND` / `ENTITY_UNBOUND` | playerId, generation, entityId |
+| `LEASE_GRANTED` | playerId, generation, deviceId, leaseId, issuedAtMs, ttlMs |
+| `LEASE_TERMINATED` | playerId, generation, deviceId, leaseId, terminal state/reason |
+| `VON_EXPIRY_INTENDED` | playerId, deviceId, leaseId |
+| `SUBSCRIPTIONS_CLEARED` / `CARRIED_DEVICES_DETACHED` | playerId, generation |
+| `TOMBSTONE_WRITTEN` | playerId, generation, connectionId, expiresAtMs |
+| `FULL_RESYNC_REQUIRED` | playerId, new sessionEpoch, new generation |
+
+Каждое authority event сначала выполняет `ObserveAndSweep(nowMs)`: monotonic time обновляется, затем истёкшие leases
+завершаются по `leaseId`. Эти pre-effects идут первыми даже если само событие позже отклонено. Event-phase reject,
+duplicate или stale callback не добавляет effects. При `nowMs < lastObservedNowMs` то же событие защёлкивает anomaly,
+отзывает active leases и возвращает `TICK_ANOMALY`, не выполняя event phase. Последующие events возвращают latched
+`TICK_ANOMALY` без новых effects до epoch rotation. Явный `TICK` состоит только из `ObserveAndSweep`.
 
 ### 1.2 События host-oracle v1
 
@@ -90,7 +110,8 @@ Oracle принимает упорядоченный trace. Общие integer I
 | `CONNECTED` | `nowMs`, `playerId`, opaque `connectionId` |
 | `REGISTERED` | `nowMs`, `playerId`, `connectionGeneration` |
 | `ENTITY_BOUND` | `nowMs`, `playerId`, generation, opaque `entityId` |
-| `ENTITY_UNBOUND` | `nowMs`, `playerId`, generation, текущий/старый `entityId`, reason |
+| `ENTITY_CHANGED` | `nowMs`, `playerId`, generation, текущий `fromEntityId`, новый `toEntityId` |
+| `ENTITY_UNBOUND` | `nowMs`, `playerId`, generation, текущий/старый `entityId`, `KILLED | DELETED | CONTROL_LOST` |
 | `DISCONNECTED` | `nowMs`, `playerId`, generation, `connectionId` |
 | `PTT_START` | `nowMs`, authenticated/payload player, epoch, generation, `requestSeq`, `deviceId`, catalog IDs, server-resolved `ttlMs` (не payload) |
 | `PTT_STOP` | `nowMs`, authenticated/payload player, epoch, generation, `requestSeq`, `leaseId` |
@@ -99,6 +120,8 @@ Oracle принимает упорядоченный trace. Общие integer I
 
 `RENEW` не входит в oracle schema v1: policy по умолчанию его не включает. Device catalog в vectors задаёт stable ID,
 owner/access, power и допустимые network/channel values; клиент не меняет catalog событиями v1.
+Первый valid `INIT` возвращает `OK`; byte-identical повтор того же epoch/config/catalog — `DUPLICATE`; любой другой
+`INIT` при готовом manager — `REQUEST_CONFLICT`. `INIT` не переинициализирует live state.
 
 ## 2. Офлайн API surface
 
@@ -143,7 +166,9 @@ fail closed и пишет diagnostic; не должен приводить к nu
 Host-модель получает непрозрачные `connectionId` и `entityId`; она не выводит их из указателей/адресов. Повторный
 `Connected` с тем же `(playerId, connectionId)` — `DUPLICATE`. Новый `connectionId` для уже живого `playerId` —
 reconnect: старое состояние завершается с reason `RECONNECT`, затем создаётся следующая generation. Generation строго
-возрастает внутри session epoch; перед int32 overflow manager MUST ротировать epoch/full-resync и начать generation с 1.
+возрастает отдельно для каждого player внутри session epoch: первая connection получает 1, reconnect — предыдущая + 1.
+Последняя generation сохраняется tombstone. Перед int32 overflow manager MUST ротировать epoch/full-resync; в новом
+epoch каждый всё ещё подключённый player получает generation 1.
 
 Любой callback, который API не помечает server-only (в частности `OnPlayerRegistered`), MUST проверить authority
 до изменения registries/player state. Клиент MAY обновить только presentation state, отделённое от authority.
@@ -152,25 +177,40 @@ reconnect: старое состояние завершается с reason `REC
 
 | Событие | Preconditions | Обязательные эффекты |
 |---|---|---|
-| Connected | authority, PlayerId/connectionId valid | тот же connection — `DUPLICATE`; новый connection при живом state — cleanup с `RECONNECT`; затем следующая generation, `CONNECTED_UNREGISTERED`, пустые owner leases/snapshots |
-| Registered | current generation connected | `REGISTERED_UNBOUND`; подготовить owner channel, но не считать entity существующей |
-| Spawned / controlled entity `null→entity` | registered/current generation | bind entity; `BOUND_ACTIVE`; rebuild device attachments из server inventory/catalog |
-| Entity changed `A→B` | current PlayerId | revoke active PTT; atomарно отвязать A/привязать B; generation не меняется |
+| Connected | authority, PlayerId/connectionId valid | тот же connection — `DUPLICATE`; новый connection при живом state — cleanup с `RECONNECT`; затем следующая generation, `CONNECTED_UNREGISTERED`, пустые owner leases/snapshots, `fullResyncRequired = true` и `FULL_RESYNC_REQUIRED` |
+| Registered | current generation connected | из `CONNECTED_UNREGISTERED` → `REGISTERED_UNBOUND`; подготовить owner channel, но не считать entity существующей. В `REGISTERED_UNBOUND/BOUND_*` той же generation → `DUPLICATE` |
+| Spawned / `ENTITY_BOUND` | `REGISTERED_UNBOUND`/`BOUND_INACTIVE`, current generation | bind entity; `BOUND_ACTIVE`; rebuild device attachments из server inventory/catalog. При `CONNECTED_UNREGISTERED` → `NOT_READY`; при active с тем же entity → `DUPLICATE`; при active с другим entity → `STALE_ENTITY` (нужен `ENTITY_CHANGED`) |
+| `ENTITY_CHANGED A→B` | `BOUND_ACTIVE`, A = current, B valid/different | revoke active PTT; атомарно отвязать A/привязать B; generation не меняется. A ≠ current → `STALE_ENTITY`; A = B/current → `DUPLICATE` |
 | Entity `A→null`, killed/deleted | current binding | revoke PTT; `BOUND_INACTIVE`; carried device bindings снять, world devices сохранить |
 | Respawn | inactive/current generation | новый binding; старые entity callbacks после bind игнорировать как stale |
-| Disconnected | current connection | revoke all leases; remove owner subscriptions; clear entity binding; tombstone generation; world devices сохранить |
+| Disconnected | current connection | revoke all leases; remove owner subscriptions; clear entity binding; tombstone generation; world devices сохранить. Повтор с matching tombstone → `DUPLICATE`; callback с не-current connection → `STALE_CONNECTION`; неизвестный player/new generation без Connected → `NOT_READY` |
 | Reconnect/JIP | новый connection context | новая generation; полный resync до incremental snapshots/RPC |
+
+Effect order для одиночных переходов:
+
+- first/new `CONNECTED`: `PLAYER_STATE_CHANGED`, затем `FULL_RESYNC_REQUIRED`;
+- `REGISTERED`: `PLAYER_STATE_CHANGED`;
+- bind из unbound/inactive: `ENTITY_BOUND`, затем `PLAYER_STATE_CHANGED(BOUND_ACTIVE)`;
+- `ENTITY_CHANGED A→B`: terminal lease-pairs, `ENTITY_UNBOUND(A)`, `CARRIED_DEVICES_DETACHED`, `ENTITY_BOUND(B)`;
+- current `ENTITY_UNBOUND`: terminal lease-pairs, `ENTITY_UNBOUND`, `CARRIED_DEVICES_DETACHED`, затем
+  `PLAYER_STATE_CHANGED(BOUND_INACTIVE)`.
 
 ### 4.3 Stale entity и terminal cleanup
 
 - Entity callback применим только когда его opaque `entityId` равен текущему binding. Callback от старой entity после
   respawn возвращает `STALE_ENTITY`, не меняет binding и не отзывает новые leases.
+- `ENTITY_UNBOUND` при отсутствии current binding также возвращает `STALE_ENTITY`; отдельный history старых entity не
+  ведётся. Идемпотентность здесь означает отсутствие mutation/effects, а не обязательный код `DUPLICATE`.
 - `Disconnected` и live reconnect выполняют effects строго в порядке: (1) revoke active leases по `leaseId` по
   возрастанию; (2) удалить owner subscriptions/snapshot state; (3) снять entity/carried-device bindings;
-  (4) записать bounded tombstone `(playerId, generation, connectionId, lastRequestSeq, expiresAtMs)`; (5) удалить live
-  player state. World-owned devices не удаляются.
+  (4) `PLAYER_STATE_CHANGED(..., DISCONNECTED)`; (5) записать bounded tombstone
+  `(playerId, generation, connectionId, lastRequestSeq, expiresAtMs)`; (6) удалить live player state. Для каждого lease
+  сначала идут `LEASE_TERMINATED`, затем `VON_EXPIRY_INTENDED`; только после всех lease-пар — шаги 2–6.
+  World-owned devices не удаляются.
 - Перед добавлением tombstone удаляются истёкшие. Если после cleanup достигнут `maxTombstones`, удаляется самый старый
   terminal tombstone по `(expiresAtMs, playerId)`; live state и active lease ради освобождения места не удаляются.
+- RPC для player без live state: при matching session tombstone и generation `<=` tombstone generation возвращает
+  `STALE_GENERATION`; generation больше tombstone либо полностью неизвестный player — `NOT_READY` до `CONNECTED`.
 
 ## 5. PTT lease
 
@@ -189,6 +229,14 @@ Terminal reason — закрытое значение: `TTL_EXPIRED`, `CLIENT_ST
 `ADMIN_REVOKED`, `TICK_ANOMALY`. `EXPIRED` допустим только с `TTL_EXPIRED`; остальные terminal reasons дают
 `REVOKED`.
 
+Любой переход active lease в terminal — включая `CLIENT_STOP` — выдаёт строго соседнюю пару effects:
+`LEASE_TERMINATED`, затем `VON_EXPIRY_INTENDED`. Пары сортируются по `leaseId`; сначала полностью завершается одна
+lease, затем следующая. До доказанного actuator второй effect остаётся intended/no-op, но не пропускается в oracle.
+
+`leaseId` выдаётся глобально внутри session epoch: первый successful start получает 1, далее строго +1; rejected
+start ID не расходует. Перед int32 overflow требуется `ROTATE_EPOCH`. После ротации, когда старые leases отозваны и
+state очищен, allocator нового epoch снова начинает с 1. ID никогда не переиспользуется внутри одного epoch.
+
 Клиент передаёт только intent (`start`, `stop`, допустимая catalog selection). Server clamps/разрешает физические
 параметры сам. У lease нет клиентского срока/мощности/range/mute.
 
@@ -197,24 +245,33 @@ Terminal reason — закрытое значение: `TTL_EXPIRED`, `CLIENT_ST
 | ID | Требование |
 |---|---|
 | REQ-LC-020 | Start MUST проверить current session/generation, RPC owner, active entity, device ownership/access, power/catalog/tuning и rate limit до создания lease. |
-| REQ-LC-021 | Один device MUST иметь не более одного active transmit lease. Policy MAY ограничить player/network concurrency; общей блокировки всей frequency нет по умолчанию. |
-| REQ-LC-022 | Duplicate `(generation, requestSeq)` MUST быть идемпотентен: тот же ответ/lease, без продления скрытым replay. |
+| REQ-LC-021 | Один device MUST иметь не более одного active transmit lease. Новый start на занятое устройство, включая lease того же owner, даёт `DEVICE_BUSY`; только exact cached duplicate возвращает существующий lease. Policy MAY ограничить player/network concurrency; общей блокировки всей frequency нет по умолчанию. |
+| REQ-LC-022 | Duplicate `(generation, requestSeq, canonicalFingerprint)` MUST быть идемпотентен: текущий cached ответ/lease state, без продления скрытым replay; тот же seq с другим fingerprint → `REQUEST_CONFLICT`. |
 | REQ-LC-023 | Stop текущего lease идемпотентен. Stop чужого/stale lease отклоняется без side effects. |
 | REQ-LC-024 | Renew MAY существовать только как явный policy; он повторно проверяет generation/owner/device и имеет bounded max lifetime. |
 
 ### 5.2.1 Request sequence и replay
 
 - `requestSeq` — positive int32, строго возрастающий для `(playerId, connectionGeneration)`.
-- Bounded response cache хранит не больше `maxResponseCachePerPlayer` последних `(requestSeq, response, leaseId?)`.
-  Новая запись вытесняет самый маленький `requestSeq`; active lease при этом не удаляется.
-- Точный replay cached `requestSeq` возвращает `DUPLICATE` и тот же response без продления TTL/повтора effects.
-  Если связанный lease уже terminal, cached response обновляется до его terminal state/reason, поэтому replay не может
-  «оживить» ранее выданный `ACTIVE`.
+- Cache key — `(authenticatedPlayerId, generation, requestSeq)`. Entry хранит canonical fingerprint, response и
+  optional leaseId. Fingerprint содержит `methodId`, correlationId и все client payload fields в schema order;
+  server `nowMs` и server-resolved TTL/config в fingerprint не входят.
+- Тот же key + тот же fingerprint возвращает `DUPLICATE`. Тот же key + другой fingerprint даёт
+  `REQUEST_CONFLICT`; исходный cache entry/lastRequestSeq/rate counter не меняются.
+- Bounded response cache хранит не больше `maxResponseCachePerPlayer` последних entries. Новая запись вытесняет самый
+  маленький `requestSeq`; active lease при этом не удаляется.
+- Каждый первый well-formed request с current session/generation и `requestSeq > lastRequestSeq` считается
+  использованным: после проверки limiter и нижних правил его итог (`RATE_LIMITED`…`LIMIT_REACHED` или `OK`) кэшируется,
+  а `lastRequestSeq` сдвигается. Для retry после reject клиент обязан использовать новый seq.
+- Точный replay возвращает текущий cached response без продления TTL/повтора effects. Если связанный lease стал
+  terminal, cache entry обновляется до terminal state/reason, поэтому replay не может «оживить» `ACTIVE`.
 - `requestSeq <= lastRequestSeq` без cache entry даёт `STALE_REQUEST`. Gap вперёд допустим: новый seq MUST быть
   `> lastRequestSeq`, contiguous sequence не требуется.
 - Stop текущего lease делает terminal transition один раз. Повтор того же stop request — `DUPLICATE`; новый stop для
   уже terminal своего lease возвращает `OK` + terminal state без effect; никогда не выдававшийся текущему owner/gen
-  lease — `UNKNOWN_LEASE`; известный lease другой session/generation/owner — `STALE_LEASE`.
+  lease — `UNKNOWN_LEASE`; известный lease другой session/generation/owner — `STALE_LEASE`. После удаления terminal
+  record по `terminalLeaseTtlMs` новый stop даёт `UNKNOWN_LEASE`; exact request replay всё ещё MAY дать `DUPLICATE`,
+  пока его отдельный response-cache entry не вытеснен.
 
 ### 5.3 Expiry/revoke
 
@@ -240,9 +297,17 @@ TTL истекает при `elapsedMs >= ttlMs`: равенство уже `EXP
 `leaseId` по возрастанию, каждый intended expiry effect записывается ровно один раз; новые mutable requests получают
 `TICK_ANOMALY` до ротации session epoch/full-resync.
 
+Так как sweep идёт до event phase, `PTT_START` на устройстве с истёкшим lease сначала выдаёт terminal effect-pair,
+затем MAY выдать новый lease в том же event. `PTT_STOP` истёкшего lease после sweep возвращает `OK` +
+`EXPIRED/TTL_EXPIRED` без второй terminal pair. Любое event, включая malformed RPC/callback, получает `nowMs` только
+из server clock adapter, обновляет `lastObservedNowMs` и выполняет sweep; client time в schema отсутствует.
+
 `ROTATE_EPOCH` принимает epoch строго больше текущего. Он отзывает active leases с `SESSION_ROTATED` по `leaseId`,
-очищает live generations/request/rate state, записывает `FULL_RESYNC_REQUIRED` последним effect и снимает
-`TICK_ANOMALY` latch. Невозрастающий/неположительный epoch — `MALFORMED`, без mutation.
+затем для каждого live player по `playerId`: очищает subscriptions/binding/carried devices, переводит состояние в
+`CONNECTED_UNREGISTERED`, задаёт generation 1 и выдаёт `FULL_RESYNC_REQUIRED` последним player-effect. Tombstones,
+request/rate caches и terminal leases старого epoch удаляются; lease allocator нового epoch начинается с 1;
+`TICK_ANOMALY` latch снимается. Старый RPC после ротации получает `INVALID_SESSION` до проверки generation.
+Невозрастающий/неположительный epoch — `MALFORMED`, без mutation.
 
 ## 6. RPC trust boundary
 
@@ -255,10 +320,11 @@ TTL истекает при `elapsedMs >= ttlMs`: равенство уже `EXP
 | REQ-LC-034 | Каждый RPC method имеет server-configured per-owner rate limit и bounded state. Reject не продлевает PTT и не меняет snapshot. | CT flood |
 | REQ-LC-035 | Security diagnostic содержит correlation/reason, но не hidden route, SMS content или чужое состояние. | DOC review |
 
-Rate limit v0.3 — deterministic fixed window, keyed by `(authenticatedPlayerId, methodId)`. Config задаёт positive
-`rateWindowMs` и `rateMaxRequests`; production defaults не придумываются до Э10/runtime budget.
+Закрытые `methodId` oracle v1: `PTT_START = 1`, `PTT_STOP = 2`; `RENEW` отсутствует. Rate limit v0.3 — deterministic
+fixed window, keyed by `(authenticatedPlayerId, methodId)`. Config задаёт positive `rateWindowMs` и
+`rateMaxRequests`; production defaults не придумываются до Э10/runtime budget.
 
-1. Точный cached duplicate возвращается до limiter и не расходует attempt.
+1. `DUPLICATE`, `REQUEST_CONFLICT` и `STALE_REQUEST` возвращаются до limiter и не расходуют attempt.
 2. Для нового well-formed request с current session/generation окно начинается в `windowStartMs`; при
    `nowMs - windowStartMs >= rateWindowMs` счётчик сбрасывается и новое окно начинается в `nowMs`.
 3. Если `count >= rateMaxRequests`, результат `RATE_LIMITED`; уже полный счётчик не увеличивается.
@@ -268,7 +334,7 @@ Rate limit v0.3 — deterministic fixed window, keyed by `(authenticatedPlayerId
    сначала удаляются окна terminal/tombstone owners, затем при отсутствии места возвращается `LIMIT_REACHED`.
 
 Изменение внутреннего rate counter не включается в публичный `effects` array и является единственной mutation,
-допустимой для request, который позже отклонён на шагах 10–19 таблицы §1.1.
+допустимой для request, который позже отклонён на шагах 12–21 таблицы §1.1.
 
 ## 7. Snapshot replication и JIP
 
@@ -308,8 +374,10 @@ Deterministic capacity rules:
 
 - Перед любой вставкой очищаются истёкшие tombstones, terminal leases и response-cache entries текущей generation,
   которые старше tombstone window.
-- `maxPlayers` считает live states, `maxActiveLeases` — только `ACTIVE`, `maxTombstones` — terminal generations,
-  `maxRateEntries` — пары owner/method. Ни live player, ни active lease не вытесняются.
+- `maxPlayers` считает live states, `maxActiveLeases` — только `ACTIVE`, `maxTerminalLeases` — сохранённые terminal
+  lease records, `maxTombstones` — terminal generations, `maxRateEntries` — пары owner/method. Ни live player, ни
+  active lease не вытесняются. Terminal lease records удаляются после `terminalLeaseTtlMs`, затем старейшие по
+  `(terminalAtMs, leaseId)` при достижении `maxTerminalLeases`.
 - Если safe cleanup не освободила место, событие возвращает `LIMIT_REACHED` без частичной mutation.
 - Cleanup order стабилен: `expiresAtMs`, затем `playerId`, затем `generation`, затем `leaseId/requestSeq`.
 
@@ -320,12 +388,12 @@ Deterministic capacity rules:
 | CT-LC-001 | connect→register→spawn; duplicate same connection | deterministic state/effects, generation не растёт | WB/RT |
 | CT-LC-002 | respawn ×3, A→null→B, stale A event | `STALE_ENTITY`, новый binding/lease сохраняются | RT |
 | CT-LC-003 | disconnect посреди PTT | revoke по leaseId → subscriptions → binding → tombstone, effects once | RT/ADR-001 |
-| CT-LC-004 | reconnect/JIP: incrementals до resync | snapshot oracle переиспользуется | Rpl/JIP RT |
+| CT-LC-004 | reconnect/JIP identity | host trace: новая generation + `FULL_RESYNC_REQUIRED`; full/incremental ordering — snapshot oracle | Rpl/JIP RT |
 | CT-LC-005 | forged owner/player/device/catalog fields | reject/no mutation | adversarial RT |
 | CT-LC-006 | cached replay, evicted replay, stale generation/session | `DUPLICATE` / `STALE_REQUEST` / reject без mutation | CT/RT |
 | CT-LC-007 | fixed-window boundary, forged burst и bounded cleanup | deterministic count/reset; `RATE_LIMITED`/`LIMIT_REACHED` | perf RT |
 | CT-LC-008 | ground/vehicle device переживает disconnect owner | registry semantics | RT |
-| CT-LC-009 | owner-only snapshot; client forgery не меняет delivery | static contract | Rpl/VoN RT |
+| CT-LC-009 | owner-only snapshot; client forgery | host trace: forged request не меняет authority state; owner-only transport — static contract | Rpl/VoN RT |
 | CT-LC-010 | lease TTL `<`, `=`, `>`, tick anomaly/wrap | ACTIVE / EXPIRED / EXPIRED; anomaly revokes once и требует epoch rotation | CT/WB/RT |
 
 ## 11. Открытые вопросы и следующий gate
