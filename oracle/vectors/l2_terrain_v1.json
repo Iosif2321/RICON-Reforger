@@ -2,7 +2,7 @@
  "schema": "ricon.oracle.l2_terrain",
  "version": 1,
  "revision": 1,
- "source": "docs/req/REQ-L2-terrain.md@bd6d0cc",
+ "source": "docs/req/REQ-L2-terrain.md@ccb2284",
  "standard": "Rec. ITU-R P.526-16 (11/2025), sha256 7647c3cb3873dc0389a7007f487728359551ed82468a5677b7cd09430875f23d",
  "note": "TEST_ONLY config values; numbers are host float64 derivations (derive.py), not examples from the standard. enforceToleranceDb is the parity tolerance of REQ §6.",
  "toleranceDb": 1e-06,
@@ -4318,7 +4318,7 @@
     "CT-L2-007",
     "CT-L2-009"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "flat 100 m, 2 m antennas, 50 MHz, V: G hits the 2+20lgK floor",
    "input": {
     "profile": [
@@ -4558,7 +4558,7 @@
     "CT-L2-004",
     "CT-L2-007"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "flat sea level, beyond d_los",
    "input": {
     "profile": [
@@ -5398,7 +5398,7 @@
     "CT-L2-004",
     "CT-L2-009"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "as S02, horizontal polarization",
    "input": {
     "profile": [
@@ -6238,7 +6238,7 @@
     "CT-L2-004",
     "CT-L2-009"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "800 MHz, 10 m antennas",
    "input": {
     "profile": [
@@ -7077,7 +7077,7 @@
    "ct": [
     "CT-L2-004"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "same flat ground, uneven point spacing (the standard allows it)",
    "input": {
     "profile": [
@@ -7618,7 +7618,7 @@
     "CT-L2-005",
     "CT-L2-007"
    ],
-   "provenance": "STD_INVARIANT",
+   "provenance": "HAND_DERIVED",
    "note": "1 km, 30 m antennas over flat ground: no loss",
    "input": {
     "profile": [

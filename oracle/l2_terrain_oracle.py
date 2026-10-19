@@ -61,7 +61,7 @@ CONFIG_DOMAIN = {
     "kFactor": (0.1, True, 100.0),
     "permittivity": (1.0, False, 1000.0),
     "conductivitySm": (0.0, True, 1000.0),
-    "maxProfileStepKm": (0.001, True, 10.0),
+    "maxProfileStepKm": (0.002, True, 10.0),  # >= 2 m keeps the provider's actual step >= 1 m (REQ §6)
 }
 MAX_PROFILE_POINTS_CAP = 100000
 MIN_SPACING_KM = 0.001              # REQ §2: 1 m between profile points
@@ -227,6 +227,19 @@ def validate(inp: Any) -> str | None:
     if not all(in_domain(inp.get(k), MIN_ANTENNA_M, True, MAX_ANTENNA_M) for k in ("htg", "hrg")):
         return "INVALID_ANTENNA_HEIGHT"
     return None
+
+
+def provider_sampling(horizontal_distance_m: float, cfg: dict[str, Any]) -> tuple[str, list[float]]:
+    """REQ §6 reference for the profile provider: ("SKIP", []) when dKm < 0.002 (terrain layer = 0),
+    ("UNAVAILABLE", []) when n > maxProfilePoints (decided before any allocation), else ("OK", d_i in km)."""
+    d_km = horizontal_distance_m / 1000.0
+    if d_km < 2 * MIN_SPACING_KM:
+        return "SKIP", []
+    step = cfg["maxProfileStepKm"]
+    n = max(3, math.ceil(d_km / step) + 1)
+    if n > cfg["maxProfilePoints"]:
+        return "UNAVAILABLE", []
+    return "OK", [d_km * i / (n - 1) for i in range(n)]
 
 
 def l2(inp: Any) -> dict[str, Any]:

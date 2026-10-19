@@ -5,6 +5,7 @@ tampering and hostile input are detected."""
 from __future__ import annotations
 
 import copy
+import itertools
 import json
 import math
 import random
@@ -42,6 +43,66 @@ class L2TerrainOracleTest(unittest.TestCase):
         self.assertEqual(branches, set(o.BRANCHES))
         accuracy = {c["expect"].get("firstTermAccuracy") for c in load()["cases"]} - {None}
         self.assertEqual(accuracy, set(o.ACCURACY))  # eq (19) flag: MET, NOT_MET, NOT_EVALUATED all occur
+
+    def test_formula_invariants_on_vectors(self) -> None:
+        """CT-L2-004/005 are relations, not standard-provided numbers (REQ §7): checked here, not via provenance."""
+        cases = {c["id"]: c["expect"] for c in load()["cases"]}
+        for cid in ("S01-smooth-5km-low", "S02-smooth-20km-beyond", "S03-smooth-20km-horizontal", "S04-smooth-uhf",
+                    "S05-smooth-irregular-spacing", "S06-sea-ah-negative"):
+            e = cases[cid]
+            self.assertAlmostEqual(e["Lba"], e["Lbs"], places=9, msg=cid)
+            self.assertAlmostEqual(e["L"], max(e["Lsph"], e["Lbs"]), places=9, msg=cid)
+        self.assertEqual(cases["C01-clear-short-high"]["L"], 0.0)
+        self.assertEqual(cases["C01-clear-short-high"]["sphCase"], "CLEAR")
+        provenance = {c["id"]: c["provenance"] for c in load()["cases"]}
+        self.assertEqual({k for k, v in provenance.items() if v == "CROSS_CHECKED"},
+                         {"O01-single-peak", "O05-valley-terminals", "S06-sea-ah-negative"})  # codex #1330 only
+        self.assertNotIn("STD_INVARIANT", provenance.values())  # numbers are ours (REQ §7)
+
+    def test_domain_corners_never_fail_numerically(self) -> None:
+        """REQ §2: every config bound x frequency x path x terrain x antenna extremes gives OK and L >= 0 (float64)."""
+        lows = {k: (lo if inc else 1.0 + 1e-6) for k, (lo, inc, hi) in o.CONFIG_DOMAIN.items()}
+        highs = {k: hi for k, (lo, inc, hi) in o.CONFIG_DOMAIN.items()}
+        count = 0
+        for er, kf, eps, sig in itertools.product(*[(lows[k], highs[k]) for k in
+                                                    ("earthRadiusKm", "kFactor", "permittivity", "conductivitySm")]):
+            for pol in o.POLARIZATIONS:
+                cfg = {"earthRadiusKm": er, "kFactor": kf, "permittivity": eps, "conductivitySm": sig,
+                       "polarization": pol, "maxProfileStepKm": 10.0, "maxProfilePoints": 51}
+                for f, d in itertools.product((30.0, 1e5), (0.002, 500.0)):
+                    n = 3 if d < 1 else 51
+                    for ground, mid in ((-1000.0, 10000.0), (10000.0, -1000.0)):
+                        hs = [ground] + [mid] * (n - 2) + [ground]
+                        for htg, hrg in ((0.01, 0.01), (0.01, 1e4), (1e4, 0.01), (1e4, 1e4)):
+                            r = o.l2({"profile": [[d * i / (n - 1), hs[i]] for i in range(n)], "htg": htg, "hrg": hrg,
+                                      "frequencyMHz": f, "config": cfg})
+                            self.assertEqual(r["code"], "OK", (cfg, f, d, ground, htg, hrg))
+                            self.assertGreaterEqual(r["L"], 0.0)
+                            count += 1
+        self.assertEqual(count, 16 * 2 * 4 * 2 * 4)  # 1024 corners
+
+    def test_provider_sampling_rule(self) -> None:
+        cfg = {"maxProfileStepKm": 0.002, "maxProfilePoints": 100000}
+        self.assertEqual(o.provider_sampling(0.0, cfg), ("SKIP", []))
+        self.assertEqual(o.provider_sampling(1.9999, cfg)[0], "SKIP")
+        code, ds = o.provider_sampling(2.1, cfg)  # n = 3, actual step 1.05 m >= 1 m
+        self.assertEqual((code, len(ds)), ("OK", 3))
+        for got, want in zip(ds, (0.0, 0.00105, 0.0021)):
+            self.assertAlmostEqual(got, want, places=15)
+        rng = random.Random(5)
+        for _ in range(2000):
+            step = rng.choice([0.002, 0.0021, 0.01, 1.0, 10.0, rng.uniform(0.002, 10.0)])
+            d_m = rng.choice([2.0, 2.1, step * 1000, rng.uniform(2.0, 500000.0)])
+            code, ds = o.provider_sampling(d_m, {"maxProfileStepKm": step, "maxProfilePoints": 100000})
+            if code == "UNAVAILABLE":  # e.g. 2 m step over 500 km: more points than the cap, refused up front
+                self.assertGreater(math.ceil(d_m / 1000.0 / step) + 1, 100000)
+                continue
+            self.assertEqual(code, "OK")
+            steps = [b - a for a, b in zip(ds, ds[1:])]
+            self.assertGreaterEqual(min(steps), 0.001 * (1 - 1e-9))
+            self.assertLessEqual(max(steps), step * (1 + 1e-9))
+        self.assertEqual(o.provider_sampling(500000.0, {"maxProfileStepKm": 0.002, "maxProfilePoints": 1000}),
+                         ("UNAVAILABLE", []))
 
     def test_tampering_is_detected(self) -> None:
         data = load()
