@@ -29,7 +29,8 @@ enum RICON_EReason
 	UNKNOWN_NOISE_ENVIRONMENT = 12,
 	OUT_OF_MODEL_DOMAIN = 13,
 	NUMERIC_FAILURE = 14,
-	MODEL_CONTRACT_VIOLATION = 15
+	MODEL_CONTRACT_VIOLATION = 15,
+	TERRAIN_PROFILE_UNAVAILABLE = 16
 }
 
 //! One transmitter -> receiver evaluation request, built by the server only (REQ-core §4).

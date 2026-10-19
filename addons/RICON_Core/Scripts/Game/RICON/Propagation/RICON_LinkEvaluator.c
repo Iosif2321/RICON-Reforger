@@ -94,9 +94,10 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 
 		// Losses (REQ-LE-30, REQ-LE-31).
 		budget.m_fDistanceM = vector.Distance(query.m_vTxPos, query.m_vRxPos);
-		if (!propagation.AppendLosses(query, budget.m_fDistanceM, budget.m_aLayers))
+		RICON_EReason propagationReason = propagation.AppendLosses(query, budget.m_fDistanceM, budget.m_aLayers);
+		if (propagationReason != RICON_EReason.OK)
 		{
-			budget.MarkInvalid(RICON_EReason.NUMERIC_FAILURE);
+			budget.MarkInvalid(propagationReason);
 			return budget;
 		}
 		if (!AreLayersValid(budget.m_aLayers, propagation.GetModelId()))

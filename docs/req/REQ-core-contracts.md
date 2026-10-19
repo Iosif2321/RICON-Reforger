@@ -1,7 +1,7 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.8 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью Э4T-s delta: claude #1164,
-cross-review codex #1183.
+Версия: **0.9 DRAFT** (v0.8 AGENT-REVIEWED), 2026-10-19. Автор: codex.
+Ревью Э4 L2 API delta: pending claude, спринт 19.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime
@@ -165,6 +165,8 @@ MUST NOT быть зашиты в evaluator: они принадлежат serve
 | `UNKNOWN_BAND`, `UNKNOWN_MODEL`, `UNKNOWN_NOISE_ENVIRONMENT` | ID не разрешён authority registry |
 | `OUT_OF_MODEL_DOMAIN` | input физически валиден, но выбранная модель неприменима |
 | `NUMERIC_FAILURE` | вычисление выпустило нечисловой/неконечный результат |
+| `MODEL_CONTRACT_VIOLATION` | модель вернула слои/Q/state, нарушающие общий контракт |
+| `TERRAIN_PROFILE_UNAVAILABLE` | профиль рельефа отсутствует либо нарушает REQ-L2; stable value `16` |
 | `MODEL_CONTRACT_VIOLATION` | модель вернула недопустимые слои, Q или state при корректном input/config |
 
 ## 5. Loss layers и `LinkBudget`
@@ -216,6 +218,8 @@ Invalid budget MUST иметь `valid=false`, `state=LOST`, `intelligibility=0`,
 - Registration MUST быть authority-only, диагностируемой и отклонять empty/duplicate IDs/null model.
 - Model registration MUST требовать declared domain и successful finite/self-check; golden/oracle status хранится как
   evidence metadata, а не вычисляется клиентом.
+- `PropagationModel.AppendLosses` MUST возвращать stable `RICON_EReason`: `OK` только после атомарного добавления
+  всех слоёв; evaluator MUST передавать точную причину вместо сведения каждого отказа к `NUMERIC_FAILURE`.
 - `GetInstance()` MUST быть null-safe для `GetGame()==null` и отсутствующего GameMode/component.
 - Authority check MUST быть централизован; callback, документированный server-only, SHOULD не повторять gate без
   причины. Неверный mutation-call MUST логировать reason в dev/test режиме.

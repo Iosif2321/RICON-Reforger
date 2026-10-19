@@ -43,11 +43,11 @@ class RICON_Ext2SkyWaveModel : RICON_PropagationModel
 		return frequencyMHz >= 3.0 && frequencyMHz <= 30.0;
 	}
 
-	override bool AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
+	override RICON_EReason AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
 	{
 		layers.Insert(new RICON_LossLayer(RICON_FreeSpaceModel.LAYER_ID, RICON_FreeSpaceModel.LossDb(distanceM, query.m_fFrequencyMHz), MODEL_ID));
 		layers.Insert(new RICON_LossLayer(LAYER_ID, FIXED_IONOSPHERE_LOSS_DB, MODEL_ID));
-		return true;
+		return RICON_EReason.OK;
 	}
 
 	static bool SelfCheck()

@@ -25,7 +25,8 @@ C13 — agora `ricon-reforger-build` id544.
 | `RICON_ELinkState` | там же | LOST / WEAK / DEGRADED / CLEAN — продуктовая семантика; production Q/пороги пока не калиброваны |
 | `RICON_LinkSnapshot` | там же | **baseline scaffold, не соответствует REQ-core §8**; переработка отдельным срезом |
 | `RICON_Num` | там же | finite через `float.MAX`; стабильная сумма мощностей `TryPowerSumDbm`, без sentinel |
-| `RICON_PropagationModel` / `RICON_FreeSpaceModel` | `Propagation/RICON_PropagationModel.c` | модель добавляет слои и объявляет domain; L0 FSPL напрямую `20 lg(4πd/λ)`, `d_eff=max(d,λ)` |
+| `RICON_PropagationModel` / `RICON_FreeSpaceModel` | `Propagation/RICON_PropagationModel.c` | модель добавляет слои, объявляет domain и возвращает точный failure reason; L0 FSPL напрямую `20 lg(4πd/λ)`, `d_eff=max(d,λ)` |
+| `RICON_TerrainDiffractionModel` | `Propagation/RICON_TerrainDiffractionModel.c` | L2 P.526-16 §4.5: pure calculator + bounded synthetic provider; runtime world provider отсутствует |
 | `RICON_NoiseModel` / `RICON_ManMadeNoiseModel` | `Propagation/RICON_NoiseModel.c` | внешний шум seam; P.372 coefficients приходят из versioned manager config, вне domain `f_a=1` + flag |
 | `RICON_IntelligibilityModel` | `Propagation/RICON_IntelligibilityModel.c` | Q/state seam с обязательным config contract; concrete `linear_test` только TEST_ONLY, production calibration blocked |
 | `RICON_LinkEvaluator` / `RICON_WirelessLinkEvaluator` | `Propagation/RICON_LinkEvaluator.c` | pure `query→budget`; strong refs на уже разрешённые authority-manager dependencies, без собственных registries; порядок losses→Rx→N/N+I→SINR→threshold→Q/state |

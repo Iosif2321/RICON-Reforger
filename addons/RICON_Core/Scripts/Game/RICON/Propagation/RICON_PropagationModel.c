@@ -22,10 +22,10 @@ class RICON_PropagationModel
 		return false;
 	}
 
-	//! Append loss layers for the already validated query. Return false on numeric failure.
-	bool AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
+	//! Append loss layers for the already validated query and preserve the exact failure reason.
+	RICON_EReason AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
 	{
-		return false;
+		return RICON_EReason.NUMERIC_FAILURE;
 	}
 }
 
@@ -54,14 +54,14 @@ class RICON_FreeSpaceModel : RICON_PropagationModel
 		return frequencyMHz > 0;
 	}
 
-	override bool AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
+	override RICON_EReason AppendLosses(RICON_LinkQuery query, float distanceM, notnull array<ref RICON_LossLayer> layers)
 	{
 		float lossDb = LossDb(distanceM, query.m_fFrequencyMHz);
 		if (!RICON_Num.IsFinite(lossDb))
-			return false;
+			return RICON_EReason.NUMERIC_FAILURE;
 
 		layers.Insert(new RICON_LossLayer(LAYER_ID, lossDb, MODEL_ID));
-		return true;
+		return RICON_EReason.OK;
 	}
 
 	//! Wavelength in metres for a frequency in MHz.

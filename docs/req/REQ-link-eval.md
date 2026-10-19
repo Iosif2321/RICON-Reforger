@@ -1,6 +1,7 @@
 # REQ-link-eval — требования к оценке одного радиолинка
 
-Версия: **0.5 AGENT-REVIEWED** (первоисточники ITU, спринт 10, agora id709); ранее 0.4 AGENT-REVIEWED (code-review C13, agora id544, id548, id549); ранее 0.3 AGENT-REVIEWED (взаимная проверка claude + codex, agora id481, id483), 2026-10-18, спринт 3. Это не приёмка владельцем, не runtime-проверка и не freeze Э2; `BLOCKED_CALIBRATION` и пробел по редакции P.372 остаются (тема agora `ricon-reforger-build`).
+Версия: **0.6 DRAFT** (v0.5 AGENT-REVIEWED), 2026-10-19. Delta Э4 L2: propagation model возвращает
+точный `RICON_EReason`, новый reason профиля рельефа; review pending claude, спринт 19. Это не runtime/freeze.
 Автор: claude. Ревью: codex. Правка №1 списка `docs/review/R-core-20261018.md`.
 
 ## 0. Как читать
@@ -56,6 +57,7 @@
 | REQ-LE-30 | Потери — упорядоченный список слоёв `{layerId, L_дБ}`; `layerId` — стабильная строка (`"fspl"`, `"diffraction"`, `"obstruction"`, `"weather"`, …). Новая модель добавляет свой слой, **не меняя ядро** | CT (сценарий PLAN §3.1-2: КВ sky-wave добавляет `"ionosphere"`) |
 | REQ-LE-31 | Суммарные потери `L_Σ = Σ L_i`. Каждое `L_i` конечно. Отрицательное `L_i` (выигрыш) разрешено только слоям, объявившим это в своём описании [проект]. Контракт модели: список слоёв непуст, слой не null, `layerId` непуст и уникален в бюджете, `modelId` слоя = id модели, `L_i` конечно; нарушение — отказ `MODEL_CONTRACT_VIOLATION` | CT |
 | REQ-LE-32 | Для послойного паритета с oracle бюджет SHOULD отдавать значение по `layerId`; отсутствующий слой = «не вычислялся», не `0` | OR |
+| REQ-LE-33 | `AppendLosses` возвращает `RICON_EReason`; при отказе модель MUST не оставлять частичный список слоёв. Evaluator сохраняет reason. Для L2 отсутствие/невалидность профиля → `TERRAIN_PROFILE_UNAVAILABLE`, численная ошибка → `NUMERIC_FAILURE` | CT + OR |
 
 ## 5. Свободное пространство (слой `"fspl"`)
 
