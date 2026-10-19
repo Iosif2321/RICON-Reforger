@@ -451,4 +451,4 @@ scaffold; никакой недоказанный actuator не получает
 После реализации статус может быть только `STATIC_IMPLEMENTED` + отдельные `CONTRACT_PASS`/`ORACLE_PASS`.
 Текущий compile gate выполнен: `RICON_Core` @ `06979fc` — `WORKBENCH_COMPILE_PASS`, EXT-1…5 @ `1c72797` —
 `COMPILE_FIXTURE_PASS` (`docs/evidence/E-workbench-source.md`). Любое изменение `addons/` возвращает compile gate в
-`BLOCKED` до повторной проверки; без разрешения Play RT/AUDIO остаются `BLOCKED_NO_RUNTIME`.
+`NOT_TESTED` до повторной проверки; без разрешения Play RT/AUDIO остаются `BLOCKED_NO_RUNTIME`.
