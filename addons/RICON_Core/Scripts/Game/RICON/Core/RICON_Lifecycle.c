@@ -1,5 +1,5 @@
 // Pure server-authority lifecycle state machine (REQ-lifecycle v0.3 @ 5993d9e).
-// Status: STATIC_IMPLEMENTED / NOT_COMPILED. No Rpl, GameMode callbacks or VoN actuator.
+// Status: STATIC_IMPLEMENTED; recompile required after post-parity review. No Rpl, GameMode callbacks or VoN actuator.
 
 enum RICON_ELifecycleResult
 {
@@ -253,6 +253,7 @@ class RICON_LifecycleDevice
 
 class RICON_LifecycleEffect
 {
+	// Only fields listed for m_eType in REQ-lifecycle §1.1 are semantically meaningful; others stay at defaults.
 	RICON_ELifecycleEffectType m_eType;
 	int m_iPlayerId;
 	int m_iGeneration;
@@ -649,6 +650,8 @@ class RICON_LifecycleStateMachine
 	RICON_LifecycleResult ProcessPtt(RICON_LifecyclePttRequest request)
 	{
 		RICON_LifecycleResult result = NewResult(RICON_ELifecycleResult.OK);
+		if (!m_bReady)
+			return SetCode(result, RICON_ELifecycleResult.NOT_READY);
 		if (!request)
 			return SetCode(result, RICON_ELifecycleResult.MALFORMED);
 		if (!BeginEvent(request.m_iNowMs, result))

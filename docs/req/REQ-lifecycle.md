@@ -155,7 +155,8 @@ Device catalog entry v1:
 
 Массивы/ключи canonical sorted, IDs positive и bounded. `NOT_OWNER` означает, что authenticated player не равен owner
 и отсутствует в `accessPlayerIds`; `POWER_OFF` — `powered=false`; `INVALID_CATALOG` — пары network/channel нет в
-`allowed`. Catalog v1 статичен. `CARRIED_DEVICES_DETACHED` — informational effect и сам не меняет catalog owner/access.
+`allowed`. Каждый присутствующий network key MUST иметь непустой список channel IDs; пустой список — `MALFORMED`
+(пустой map разрешён). Catalog v1 статичен. `CARRIED_DEVICES_DETACHED` — informational effect и сам не меняет catalog owner/access.
 CT-LC-008 проверяет, что `WORLD`-устройство после disconnect другого player остаётся в registry и доступно только IDs
 из своей access policy.
 
@@ -337,9 +338,9 @@ Lease MUST стать terminal при первом из:
 
 Terminal transition exactly once вызывает VoN expiry seam с `(playerId, deviceId, leaseId)` **только когда actuator
 будет разрешён ADR-001**. Одного playerId недостаточно: несколько устройств/leases одного игрока не должны взаимно
-останавливаться. Текущая сигнатура `OnTransmitLeaseExpired(int talkerPlayerId)` в `RICON_NetworkContracts.c` —
-известный code gap, исправляемый в Э3 после review v0.3/oracle. До actuator записывается intended effect/no-op; отсутствие
-actuator не выдаётся за silence PASS.
+останавливаться. Seam расширен до `OnTransmitLeaseExpired(int playerId, int deviceId, int leaseId)` в Э3, но пока не
+имеет caller/actuator. До доказанного actuator записывается intended effect/no-op; отсутствие actuator не выдаётся за
+silence PASS.
 Server clock MUST быть monotonic abstraction; прямое сравнение wall UTC запрещено. `System.GetTickCount` — int ms
 с запуска; signed-int предел достигается примерно через `2^31 ms = 24.86 суток`. Поведение переполнения Enforce не
 документировано. До этой границы server MUST ротировать session/restart по operational policy либо использовать
