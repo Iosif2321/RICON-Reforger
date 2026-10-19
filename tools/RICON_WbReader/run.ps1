@@ -1,5 +1,5 @@
 # TOOL_ONLY: run the read-only Workbench reader plugin (see RICON_WbReaderPlugin.c). Steam must be running.
-# Example: .\run.ps1 -Name ecomm -Root '$ArmaReforger:Scripts' -Ext c -Grep 'enum ECommMethod' -Context 7
+# Example: .\run.ps1 -Name ecomm -Root 'scripts/Game/' -Ext c -Grep 'enum ECommMethod' -Context 7
 param(
 	[Parameter(Mandatory)][string]$Name,
 	[Parameter(Mandatory)][string]$Root,
@@ -13,6 +13,8 @@ $steam = "C:\Program Files (x86)\Steam\steamapps\common"
 $wb = "$steam\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe"
 $gp = Join-Path $PSScriptRoot "addon.gproj"
 $addons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons"
+# Workbench splits CLI values on spaces; the plugin decodes %20 back to a space.
+$Root = $Root.Replace(" ", "%20"); $Grep = $Grep.Replace(" ", "%20"); $PathFilter = $PathFilter.Replace(" ", "%20")
 # A fresh folder per run, so an early failure can never return an older log.
 $logsDir = "ricon-wbreader-$Name-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=ScriptEditor",

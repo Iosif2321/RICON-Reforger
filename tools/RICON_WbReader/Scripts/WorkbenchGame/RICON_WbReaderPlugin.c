@@ -1,10 +1,12 @@
 //! TOOL_ONLY: read-only lookup of game resources through Workbench for Workbench orders (docs/evidence/WB-order-*.md).
-//! Opens files with FileMode.READ only and prints matching lines with context to the Workbench log.
+//! Lists resources with ResourceDatabase.SearchResources, opens them with FileMode.READ only and prints matching
+//! lines with context to the Workbench log.
 //! It never copies, writes or unpacks resources; whole files are not printed.
 //!
 //! Command line (with -wbModule=ScriptEditor -plugin=RICON_WbReaderPlugin):
-//!   -riconRoot=<exact path, e.g. "$ArmaReforger:Scripts">   search root (required)
+//!   -riconRoot=<exact path, e.g. "$ArmaReforger:Prefabs">   search root (optional, "-" = whole database)
 //!   -riconExt=<extension without dot, e.g. "c">             file extension (required)
+//! Values cannot contain spaces on the command line; write a space as %20.
 //!   -riconPath=<substring>                                 keep files whose path contains it (optional)
 //!   -riconGrep=<substring>                                 print lines containing it (required)
 //!   -riconContext=<N>                                      lines of context on each side (default 3, clamped to 0..7)
@@ -22,9 +24,14 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 	protected string m_sPathFilter;
 	protected int m_iPrintedTotal;
 
-	protected void OnResourceFound(ResourceName resName, string filePath = "")
+	//! SearchResourcesCallback: resource name and its exact path.
+	protected void OnResourceFound(ResourceName resourceName, string exactPath = "")
 	{
-		string path = resName.GetPath();
+		// Scripts have no resource GUID, so GetPath() is empty for them; the exact path is always set.
+		string path = exactPath;
+		if (path.IsEmpty())
+			path = resourceName.GetPath();
+
 		if (!m_sPathFilter.IsEmpty() && !path.Contains(m_sPathFilter))
 			return;
 
@@ -35,7 +42,10 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 	{
 		string value;
 		if (System.GetCLIParam(name, value) && !value.IsEmpty())
+		{
+			value.Replace("%20", " ");
 			return value;
+		}
 
 		return fallback;
 	}
@@ -96,16 +106,23 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 		int context = Math.ClampInt(ReadParam("riconContext", "3").ToInt(), 0, MAX_CONTEXT);
 		int maxFiles = Math.Max(ReadParam("riconMaxFiles", "10").ToInt(), 1);
 
-		if (root.IsEmpty() || ext.IsEmpty() || needle.IsEmpty())
+		if (root == "-")
+			root = "";
+
+		if (ext.IsEmpty() || needle.IsEmpty())
 		{
-			Print(TAG + "missing -riconRoot, -riconExt or -riconGrep", LogLevel.ERROR);
+			Print(TAG + "missing -riconExt or -riconGrep", LogLevel.ERROR);
 			Workbench.Exit(2);
 			return;
 		}
 
 		Print(TAG + "root=" + root + " ext=" + ext + " path~" + m_sPathFilter + " grep=" + needle);
-		Workbench.SearchResources(OnResourceFound, {ext}, null, root, true);
-		Print(TAG + "candidate files: " + m_aFiles.Count().ToString());
+		SearchResourcesFilter filter = new SearchResourcesFilter();
+		filter.rootPath = root;
+		filter.fileExtensions = {ext};
+		filter.recursive = true;
+		bool listed = ResourceDatabase.SearchResources(filter, OnResourceFound);
+		Print(TAG + "SearchResources=" + listed.ToString() + ", candidate files: " + m_aFiles.Count().ToString());
 
 		int matchedFiles = 0;
 		foreach (string path : m_aFiles)
