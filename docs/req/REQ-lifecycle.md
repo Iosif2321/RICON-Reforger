@@ -3,8 +3,8 @@
 Версия: **0.4 DRAFT** (v0.3 AGENT-REVIEWED), 2026-10-19. Автор: codex. Ревью v0.3: claude
 (agora id854, id864); oracle cross-review codex id873.
 
-Delta v0.4 синхронизирует только сигнатуру expiry seam с Э4T-s; lifecycle state machine и vectors остаются v0.3.
-Ревью delta v0.4: pending claude.
+Delta v0.4 добавляет epoch выдачи в `VON_EXPIRY_INTENDED` и синхронизирует expiry seam с Э4T-s; порядок и state
+machine остаются v0.3. Oracle/vectors требуют повторной проверки. Ревью delta v0.4: pending claude.
 
 Источник истины: `PLAN_RU.md` v5, Э3; `REQ-core-contracts.md`; evidence `E-offline-api.md` и
 `E1s-von-api.md`. Это requirements-артефакт, а не доказательство поведения Reforger.
@@ -101,7 +101,7 @@ Generation/lease allocator со значением `int.MAX` также даёт
 | `ENTITY_BOUND` / `ENTITY_UNBOUND` | playerId, generation, entityId |
 | `LEASE_GRANTED` | playerId, generation, deviceId, leaseId, issuedAtMs, ttlMs |
 | `LEASE_TERMINATED` | playerId, generation, deviceId, leaseId, terminal state/reason |
-| `VON_EXPIRY_INTENDED` | playerId, deviceId, leaseId |
+| `VON_EXPIRY_INTENDED` | sessionEpoch выдачи lease, playerId, deviceId, leaseId |
 | `SUBSCRIPTIONS_CLEARED` / `CARRIED_DEVICES_DETACHED` | playerId, generation |
 | `TOMBSTONE_WRITTEN` | playerId, generation, connectionId, expiresAtMs |
 | `FULL_RESYNC_REQUIRED` | playerId, new sessionEpoch, new generation |
@@ -339,10 +339,11 @@ Lease MUST стать terminal при первом из:
 - loss of ownership/access, power/device removal, catalog invalidation;
 - session epoch rotation, admin/policy revoke.
 
-Terminal transition exactly once выдаёт VoN expiry effect с `(playerId, deviceId, leaseId)`. Одного playerId
-недостаточно: несколько устройств/leases одного игрока не должны взаимно останавливаться. Э4T-s принимает effect
-через `OnTransmitLeaseExpired(playerId, deviceId, leaseId, currentBinding)` и сверяет triple с binding, но до
-разрешённого actuator возвращает только `BLOCKED_NO_ACTUATOR` (`docs/req/REQ-von-seam.md` §6).
+Terminal transition exactly once выдаёт VoN expiry effect с `(sessionEpoch, playerId, deviceId, leaseId)`, где epoch
+зафиксирован до возможной ротации. Одного playerId недостаточно: несколько устройств/leases одного игрока не должны
+взаимно останавливаться, а один leaseId повторяется между epoch. Э4T-s принимает effect через
+`OnTransmitLeaseExpired(sessionEpoch, playerId, deviceId, leaseId, currentBinding)` и сверяет quartet с binding, но
+до разрешённого actuator возвращает только `BLOCKED_NO_ACTUATOR` (`docs/req/REQ-von-seam.md` §6).
 Server clock MUST быть monotonic abstraction; прямое сравнение wall UTC запрещено. `System.GetTickCount` — int ms
 с запуска; signed-int предел достигается примерно через `2^31 ms = 24.86 суток`. Поведение переполнения Enforce не
 документировано. До этой границы server MUST ротировать session/restart по operational policy либо использовать

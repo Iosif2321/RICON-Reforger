@@ -1,5 +1,5 @@
-// Pure server-authority lifecycle state machine (REQ-lifecycle v0.3; see oracle vector source for revision).
-// Status: WORKBENCH_COMPILE_PASS + ENFORCE_PARITY; runtime not tested. No Rpl, callbacks or VoN actuator.
+// Pure server-authority lifecycle state machine (REQ-lifecycle v0.4; see oracle vector source for revision).
+// Status: E4T-s expiry-epoch delta NOT_COMPILED; prior target passed parity. No Rpl, callbacks or VoN actuator.
 
 enum RICON_ELifecycleResult
 {
@@ -1357,6 +1357,7 @@ class RICON_LifecycleStateMachine
 		RICON_LifecycleEffect effect = new RICON_LifecycleEffect();
 		effect.m_eType = RICON_ELifecycleEffectType.VON_EXPIRY_INTENDED;
 		effect.m_iPlayerId = lease.m_iPlayerId;
+		effect.m_iSessionEpoch = m_iSessionEpoch;
 		effect.m_iDeviceId = lease.m_iDeviceId;
 		effect.m_iLeaseId = lease.m_iLeaseId;
 		result.m_aEffects.Insert(effect);

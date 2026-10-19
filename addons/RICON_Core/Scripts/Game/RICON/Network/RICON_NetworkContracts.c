@@ -339,7 +339,7 @@ class RICON_VoNDeviceBinding
 			&& m_iTalkerPlayerId > 0 && m_iListenerPlayerId > 0
 			&& m_iTalkerPlayerId != m_iListenerPlayerId
 			&& m_iTalkerDeviceId > 0 && m_iListenerDeviceId > 0
-			&& m_iTalkerLeaseId > 0 && m_iTalkerLeaseId < int.MAX
+			&& m_iTalkerDeviceId != m_iListenerDeviceId && m_iTalkerLeaseId > 0
 			&& m_iTalkerTransceiverIndex >= 0 && m_iListenerTransceiverIndex >= 0;
 	}
 }
@@ -368,6 +368,7 @@ class RICON_VoNIntegration
 	}
 
 	RICON_EVoNSeamDecision OnTransmitLeaseExpired(
+		int sessionEpoch,
 		int playerId,
 		int deviceId,
 		int leaseId,
@@ -375,11 +376,12 @@ class RICON_VoNIntegration
 	{
 		if (!currentBinding)
 			return RICON_EVoNSeamDecision.NULL_INPUT;
-		if (playerId <= 0 || deviceId <= 0 || leaseId <= 0 || leaseId >= int.MAX)
+		if (sessionEpoch <= 0 || sessionEpoch >= int.MAX || playerId <= 0 || deviceId <= 0 || leaseId <= 0)
 			return RICON_EVoNSeamDecision.INVALID_EXPIRY;
 		if (!currentBinding.IsValid())
 			return RICON_EVoNSeamDecision.INVALID_BINDING;
-		if (playerId != currentBinding.m_iTalkerPlayerId || deviceId != currentBinding.m_iTalkerDeviceId
+		if (sessionEpoch != currentBinding.m_iSessionEpoch || playerId != currentBinding.m_iTalkerPlayerId
+			|| deviceId != currentBinding.m_iTalkerDeviceId
 			|| leaseId != currentBinding.m_iTalkerLeaseId)
 			return RICON_EVoNSeamDecision.IDENTITY_MISMATCH;
 		return RICON_EVoNSeamDecision.BLOCKED_NO_ACTUATOR;

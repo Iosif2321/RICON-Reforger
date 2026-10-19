@@ -1,6 +1,6 @@
 # REQ-von-seam — безопасная заготовка интеграции VoN (Э4T-s)
 
-Версия: **0.1 DRAFT**, 2026-10-19. Автор: codex. Ревью и независимый oracle: claude, спринт 16.
+Версия: **0.2 DRAFT**, 2026-10-19. Автор: codex. Ревью и независимый oracle: claude, спринт 16.
 
 Источник истины: утверждённый Intent, `docs/plan/PLAN_RU.md` v5 §4 Э4T,
 `docs/plan/ROADMAP_RU.md` часть 1 п.2, `docs/req/REQ-core-contracts.md` §8, §9.3 и §11,
@@ -56,7 +56,7 @@
 | 2 | `DECISION_NOT_ACCEPTED` | upstream decision не разрешает применение |
 | 3 | `INVALID_BINDING` | binding нарушает field domain |
 | 4 | `IDENTITY_MISMATCH` | binding не относится к snapshot либо expiry triple |
-| 5 | `INVALID_EXPIRY` | player/device/lease ID expiry неположителен |
+| 5 | `INVALID_EXPIRY` | expiry epoch либо player/device/lease ID вне своего domain |
 | 6 | `BLOCKED_NO_ACTUATOR` | вход валиден, но actuator намеренно отсутствует |
 
 `BLOCKED_NO_ACTUATOR` — не успех доставки. Enum намеренно не содержит `OK` в Э4T-s.
@@ -70,8 +70,8 @@ Binding MUST содержать только stable значения:
 | `sessionEpoch` | `1..int.MAX-1` | не позволяет binding прошлого session совпасть по повторному linkId |
 | `linkId` | positive int | связь со snapshot; linkId уникален только внутри epoch |
 | `talkerPlayerId`, `listenerPlayerId` | positive int, различны | server-resolved стороны; равенство запрещено против self-echo |
-| `talkerDeviceId`, `listenerDeviceId` | positive int | stable catalog/device identity |
-| `talkerLeaseId` | `1..int.MAX-1` | связывает apply и delayed expiry с конкретной передачей |
+| `talkerDeviceId`, `listenerDeviceId` | positive int, различны | stable catalog/device identity; одна рация не является обеими сторонами одного radio link |
+| `talkerLeaseId` | positive int, включая `int.MAX` | связывает apply и delayed expiry с конкретной передачей; совпадает с доменом lifecycle Э3 |
 | `talkerTransceiverIndex`, `listenerTransceiverIndex` | explicit non-negative int; default sentinel `-1` | индекс стороны явно назван; count проверит будущий component |
 
 Binding не содержит engine handle. Верхняя граница индекса без реального `BaseRadioComponent` неизвестна и MUST
@@ -97,17 +97,20 @@ actuator effect, как её разрешение.
 
 ## 6. `OnTransmitLeaseExpired` — точный порядок
 
-Вход: `(playerId, deviceId, leaseId, currentBinding)`. Возвращается ровно один decision, без mutation/effects.
+Вход: `(sessionEpoch, playerId, deviceId, leaseId, currentBinding)`. Возвращается ровно один decision, без
+mutation/effects. `sessionEpoch` — epoch, в котором lease был выдан, а не epoch после возможной ротации.
 
 1. `currentBinding == null` → `NULL_INPUT`.
-2. `playerId <= 0`, `deviceId <= 0`, `leaseId <= 0` либо `leaseId >= int.MAX` → `INVALID_EXPIRY`.
+2. `sessionEpoch` вне `1..int.MAX-1` либо любой из остальных трёх ID `<= 0` → `INVALID_EXPIRY`.
 3. Невалидный binding по §4 → `INVALID_BINDING`.
-4. Triple не равен `(binding.talkerPlayerId, binding.talkerDeviceId, binding.talkerLeaseId)` →
+4. Quartet не равен `(binding.sessionEpoch, binding.talkerPlayerId, binding.talkerDeviceId,
+   binding.talkerLeaseId)` →
    `IDENTITY_MISMATCH`.
 5. Иначе → `BLOCKED_NO_ACTUATOR`.
 
-Сравнение leaseId обязательно: запоздалый expiry lease 1 MUST NOT остановить новый lease 2 того же устройства.
-Seam не запоминает current binding; authority service передаёт его явно.
+Сравнение epoch и leaseId обязательно: запоздалый expiry `(epoch 7, lease 1)` MUST NOT остановить новый
+`(epoch 8, lease 1)` того же устройства после сброса allocator. Seam не запоминает current binding; authority service
+передаёт его явно.
 
 ## 7. Инварианты no-op
 
@@ -125,11 +128,11 @@ Seam не запоминает current binding; authority service передаё
 | CT-VON-S-001 | null snapshot и null binding; общий приоритет | OR, затем WB |
 | CT-VON-S-002 | все snapshot field failures, player IDs и self-link | OR, затем WB |
 | CT-VON-S-003 | каждый accepted и каждый rejected upstream decision | OR, затем WB |
-| CT-VON-S-004 | каждое поле binding на границах, два независимых transceiver indices | OR, затем WB |
+| CT-VON-S-004 | каждое поле binding на границах, разные device IDs, два независимых transceiver indices | OR, затем WB |
 | CT-VON-S-005 | mismatch epoch/link/talker/listener по одному полю | OR, затем WB |
 | CT-VON-S-006 | CLEAN/DEGRADED/WEAK и valid LOST дают только `BLOCKED_NO_ACTUATOR` | OR, затем WB |
 | CT-VON-S-007 | invalid expiry IDs и приоритеты | OR, затем WB |
-| CT-VON-S-008 | mismatch player/device/lease; delayed old lease против current binding | OR, затем WB |
+| CT-VON-S-008 | mismatch epoch/player/device/lease; delayed old-epoch lease против current binding | OR, затем WB |
 | CT-VON-S-009 | повтор вызова даёт тот же decision и не хранит state | OR, затем WB |
 | CT-VON-S-010 | dependency scan подтверждает отсутствие engine/Rpl/file/world API | CT |
 
