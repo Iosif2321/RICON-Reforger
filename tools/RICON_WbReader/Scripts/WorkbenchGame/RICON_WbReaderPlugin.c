@@ -26,6 +26,7 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 	protected string m_sPathFilter;
 	protected int m_iPrintedTotal;
 	protected int m_iStartLine;
+	protected int m_iUnopened;
 
 	//! SearchResourcesCallback: resource name and its exact path.
 	protected void OnResourceFound(ResourceName resourceName, string exactPath = "")
@@ -60,6 +61,7 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 		if (!handle)
 		{
 			Print(TAG + "cannot open " + path, LogLevel.WARNING);
+			m_iUnopened++;
 			return;
 		}
 
@@ -158,6 +160,14 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 
 			if (matchedFiles >= maxFiles || m_iPrintedTotal >= MAX_LINES_TOTAL)
 				break;
+		}
+
+		// An unreadable candidate makes a negative result meaningless: report INCOMPLETE, no "done", nonzero exit.
+		if (m_iUnopened > 0)
+		{
+			Print(TAG + "INCOMPLETE: " + m_iUnopened.ToString() + " candidate file(s) could not be opened", LogLevel.ERROR);
+			Workbench.Exit(4);
+			return;
 		}
 
 		Print(TAG + "done, files with matches: " + matchedFiles.ToString() + ", lines printed: " + m_iPrintedTotal.ToString());

@@ -172,6 +172,81 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
   Ограничение: `SetActiveTransmit` знает только `SQUAD_RADIO`, всё остальное передаётся как `DIRECT` — запись RICON
   для радио должна возвращать `SQUAD_RADIO` и реальный `BaseTransceiver`. Отрисовка в меню — runtime, НЕ УСТАНОВЛЕНО.
 
-### Ещё не выполнено
+### Пункт 1 — `RelayTransceiver` (логи `i1-*`)
 
-Пункты 1, 2, 6, 7, 9 (префабы, звуковой граф, конфиги, материалы). Пункт 10 закрыт компиляцией №003/004 выше.
+- Класс: `$ArmaReforger:scripts/Game/generated/Radio/RelayTransceiver.c:12` — `class RelayTransceiver: BaseTransceiver {}`,
+  сгенерированный, **без собственного скриптового API** (тело пустое).
+- Префабы (поиск по `.et`, первые 15 — лимит вывода, полный список может быть длиннее): вышки
+  `Prefabs/Structures/Infrastructure/Towers/TransmitterTower_01/TransmitterTower_01{,_small,_medium}_base.et`, антенны
+  `Prefabs/Props/Military/Compositions/Antenna_0{1,2}_base.et`, Conflict `Prefabs/Systems/MilitaryBase/{ConflictRelayRadio,
+  ConflictMilitaryBase,ConflictBase_Base,ConflictControlPoint}.et`, `Prefabs/MP/Campaign/…MobileAssembly*.et`, командные
+  и ремонтные грузовики `Ural4320_{command,repair}.et`, `M923A1_command.et`.
+- Атрибуты в префабах (только переопределения): `"Transmitting Range"` — вышка 5000 (`TransmitterTower_01_base.et:95`),
+  `ConflictRelayRadio` 3000 (:15), `Ural4320_command` 2000 (:14); `"Frequency resolution" 1` (`ConflictRelayRadio.et:16`).
+- Родительский компонент разный: `ScriptedRadioComponent` (вышка, :92), `SCR_CoverageRadioComponent` с `"Turned on" 0`
+  (`ConflictRelayRadio.et:11–12`), `BaseRadioComponent` (Ural, :11). Частот вход/выход, мощности, ключа у самого
+  `RelayTransceiver` в префабах нет.
+- Скрипты используют его только в `SCR_CampaignMilitaryBaseComponent.c:1136–1152, 2410–2414`: перебор трансиверов и
+  `GetRange()` для дальности базы (Conflict).
+- Вывод (Q1, gate M1): логики пересылки голоса в скриптах и префабах **нет**. Делает ли движок ретрансляцию VoN через
+  `RelayTransceiver` — **НЕ УСТАНОВЛЕНО** (`BLOCKED_NO_RUNTIME`, Э7r).
+
+### Пункт 2 — звуковой граф VON — **НЕ ПРОЧИТАН**
+
+- Найдены `$ArmaReforger:Sounds/VON/von.acp` и `$ArmaReforger:Sounds/VON/Von.sig`, но `FileIO.OpenFile(READ)` их **не
+  открывает** («cannot open», логи `i2-*`). Ранний поиск `TransmissionQuality` по ним — недействителен (файл не прочитан).
+  После этого инструмент стал строгим: непрочитанный кандидат → `INCOMPLETE`, exit 4, без PASS (лог `i2-strict-*`).
+- Нужен другой путь только для чтения: Audio Editor (GUI, ассистент владельца) или отдельно согласованный способ
+  через API ресурсов Workbench. До этого Q2/H3 по звуку — OPEN.
+
+### Пункт 6 — носимые рации (логи `i6-*`)
+
+Префабы `$ArmaReforger:Prefabs/Items/Equipment/Radios/`: `Radio_ANPRC68`, `Radio_ANPRC77`, `Radio_R148`(`_FIA`),
+`Radio_R107M`(`_FIA`), `Radio_Deployable_Base`, `Radio_RF10/Radio_RF10_base`. Наследуются от
+`Prefabs/Items/Core/Radio_base.et` (там `BaseRadioComponent` и `SCR_RadioComponent` со звуками настройки).
+
+| Рация | Ключ шифрования | Трансиверы | Частота канала | Диапазон | Шаг | Дальность |
+|---|---|---|---|---|---|---|
+| ANPRC-68 (`Radio_ANPRC68.et:4–21`) | `"chickenNuggets"` | 2 × `RadioTransceiver` | 32000 и 48000 | 32000–68000 | 200 | 1300 |
+| R-148 (`Radio_R148.et:4–14`) | `"coldBorscht"` | 2 (второй — с :15, не читался) | 38000 | 38000–54000 | 200 | 1300 |
+| ANPRC-77 (`Radio_ANPRC77.et:4–15`, от `Radio_Deployable_Base`) | — (в префабе нет) | ≥ 2 | — | 30000–76000 | 200 | 2000 |
+
+- Атрибуты `RadioTransceiver`: `ChannelFrequency`, `"Transmitting Range"`, `"Min tunable frequency"`, `"Max tunable
+  frequency"`, `"Frequency resolution"`; у `BaseRadioComponent`: `"Encryption key"`, `"Turned on"`.
+- Единицы частот в префабах не подписаны; по значениям (32000…76000 при реальных диапазонах 30–76 МГц) это, вероятно,
+  кГц — **inference**. Единица дальности (вероятно, метры) — тоже не подписана.
+- Рации техники: `Ural4320_command` — `BaseRadioComponent` с `RelayTransceiver` 2000 (пункт 1); подробно не читались.
+
+### Пункт 7 — ввод (лог `i7-von-*`)
+
+`$ArmaReforger:Configs/System/chimeraInputCommon.conf`:
+- контекст `VONContext` (:8848): действия `VONDirect` (:8852), `VONChannel` (:8862), `VONDirectToggle` (:8879),
+  `VONLongRangeToggle` (:8898), `VONTransceiverCycle` (:8930);
+- контекст `VONMenuContext` (:9019): `VONMenuAction` (:9023), `VONMenuMuteAction` (:9041), `VONMenuTuneFrequency`
+  (:9059), `VONMenuCycleChannel` (:9084);
+- действие `VONMenu` (:4723) и контекст `VONMenuOpeningContext` (:9119).
+- Привязки клавиш не читались (не нужны для Q18 на этом этапе).
+
+### Пункт 9 — материалы (логи `i9-*`)
+
+- Скрипты получают материал присваиванием: `GameMaterial material = trace.SurfaceProps;` (например,
+  `SCR_ImpactEffectComponent.c:417`, `SCR_MineAnimationComponent.c:85`, `SCR_RecoilForceAimModifier.c:108`), затем
+  `material.GetBallisticInfo()` (`SCR_RecoilForceAimModifier.c:111`).
+- `GameMaterial` (`generated/Core/GameMaterial.c:14–18`): `GetVehicleInfo`, `GetSoundInfo`, `GetHitEffectInfo`,
+  `GetBallisticInfo`, `GetParticleEffectInfo`.
+- `BallisticInfo` (`generated/Core/BallisticInfo.c:14–18`): `AllowsDeflection()`, `GetDensity()`, `GetThickness()`,
+  `GetThicknessMax()`, `IsWaterSurface()`.
+- Примеры `Density` из `$ArmaReforger:Common/Materials/Game/*.gamemat`: `concrete` 2.3 (:16), `wood_logs` 0.7,
+  `wood_floor` 0.85, `metal_sheet` 2.7, `metal_grid` 7.8, `metal_wire_mesh` 0.001. Единица не подписана (по значениям —
+  вероятно г/см³, inference).
+- Вывод для Э4 (потери на препятствиях): плотность и толщина доступны скрипту через `TraceParam.SurfaceProps` →
+  `GameMaterial` → `BallisticInfo`. Значения рассчитаны на баллистику, не на радиоволны; коэффициенты затухания RICON
+  берутся из своего конфига, а плотность — лишь ключ для выбора категории (решение Э4).
+
+### Итог по №001
+
+| Пункт | Статус |
+|---|---|
+| 1, 3, 4, 5, 6, 7, 8, 9 | `SOURCE_EVIDENCE` (выше); поведение — НЕ УСТАНОВЛЕНО |
+| 2 (звуковой граф) | **OPEN**: `.acp`/`.sig` не открываются через `FileIO`; нужен Audio Editor или согласованный способ |
+| 10 | закрыт компиляцией №003/004 |
