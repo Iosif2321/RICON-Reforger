@@ -338,3 +338,79 @@ agora #1073):
   отсутствует), переполнение `GetTickCount` (`BLOCKED_NO_RUNTIME`).
 - EXT-1…5 `SelfCheck()` — `SELF_CHECK_PASS` при том же прогоне.
 - Эталоны расчёта связи, снимков и маршрутов в Enforce не исполнялись (`NOT_TESTED`, отложено agora #1064).
+
+## Э4T-s final `fec7a30` — исполнение фикстуры VoN seam (2026-10-19)
+
+**Разрешение и границы** — как в разделе «Э3 final»: только тесты в Workbench через плагин, без Play, мира и
+сервера. Плагин не читает и не пишет файлы.
+
+**Target.**
+- Код codex: seam `fd23133`, `2bf70a7`, статус-комментарии `fec7a30`; `addons/RICON_Core` при прогоне == `fec7a30`.
+- Фикстура, генератор и раннер (claude): `fc394b2`, `c4427e5`, `9804782`; дерево `addons/`, `tools/`, `oracle/` == HEAD
+  `fc394b2` в момент прогона. Последующие `c4427e5` и `9804782` — только host-тесты и генератор; фикстура байт в байт
+  та же (`cmp`).
+- Эталон: `8816a37`, `46eacc3`; векторы `von_seam_v1.json`, source `REQ-von-seam.md@949f7ca`.
+- Workbench: engine 192142, game 1.8.0.13.
+
+**Команды** — те же формы, что в разделе «Э3 final»; раннер — `tools/RICON_TestRunner/run.ps1 -Name rfec7a30`.
+
+**Важно про exit code.** `-validate` возвращает **exit 0 даже при ошибке компиляции**: лог
+`ricon-validate-coretests-seam1-20261019-201939` — «Formula too complex» в фикстуре и «Can't compile "Game" script
+module!», а exit = 0. Поэтому `WORKBENCH_COMPILE_PASS` засчитывается только при трёх условиях вместе: exit 0, строка
+«Script validation successful» и **0 строк `SCRIPT (E)`** в логе. Раннер надёжнее: при несобранном скрипте плагин
+не печатает `done: PASS`, и `run.ps1` возвращает FAIL.
+
+**Логи** (`Documents\My Games\ArmaReforgerWorkbench\logs\<папка>\console.log`; SHA-256 сверил и codex, agora #1235):
+
+| Папка | Что | Итог | SHA-256 `console.log` |
+|---|---|---|---|
+| `ricon-validate-core-fec7a30-20261019-202328` | компиляция `RICON_Core` | exit 0, success, 0 `SCRIPT (E)`, 0 (W) по RICON; CRC `RICON_Lifecycle.c` `3b1fb2ad`, `RICON_NetworkContracts.c` `82049322` | `40b3ac7a3bd4d4801c5ee11f7d9a65428a81a0557ed8fc54f98db6e9c8582881` |
+| `ricon-validate-coretests-fec7a30-20261019-202349` | компиляция `RICON_CoreTests` | так же | `961f5b5d71a3dcce96c57ecdf44276b0ae086d30231b01f8b3da1886ec8e8280` |
+| `ricon-tests-rfec7a30-20261019-202412` | исполнение тестов | exit 0, строки ниже | `cd434fcc9d832d139c5d9368f047daad29a526a97f69668699ae0ebfab63af38` |
+
+Строки раннера (дословно):
+```
+[RICON_TEST] lifecycle parity: traces 14/14, steps 209/209, negative controls caught 3/3, adapter-mapped steps 3
+[RICON_TEST] LIFECYCLE_ENFORCE_PARITY_PASS
+[RICON_TestRunner] suite lifecycle: PASS
+[RICON_TEST] extension fixtures: 1
+[RICON_TestRunner] suite extension: PASS
+[RICON_TEST] von seam parity: cases 11/11, calls 103/103, negative controls caught 3/3, adapter-mapped calls 1
+[RICON_TEST] VON_SEAM_ENFORCE_PARITY_PASS
+[RICON_TestRunner] suite von_seam: PASS
+[RICON_TestRunner] done: PASS
+```
+
+**Файлы прогона (SHA-256):**
+
+| Файл | SHA-256 |
+|---|---|
+| `addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c` | `69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1` |
+| `addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c` | `3f159470916f75d92118774ede66980133696d1d0cfc8f74d299129b315b9f4a` |
+| `oracle/vectors/von_seam_v1.json` | `f78ad022bba25cc693a516c91954c33f586d01a241338bfc24893337966c101b` |
+| `oracle/vectors/lifecycle_v1.json` (rev 2) | `1ca07405d752e56f1bbfc20b799913ab4f754f4b54a7d2903c1fdfc53e419268` |
+| `addons/RICON_CoreTests/.../RICON_VoNSeamFixtures.c` (сгенерирован) | `b8e18ff16d744ee4f9ce798aa494c06379e8b2beb8cbab1a20c6643c48639a75` |
+| `addons/RICON_CoreTests/.../RICON_VoNSeamFixtureSupport.c` | `f3b7be3cdddd710e6a1e2ed146947a360bd445588ace6c010b418103c56e7249` |
+| `addons/RICON_CoreTests/.../RICON_LifecycleFixtures.c` (сгенерирован) | `4d7d614f9d6efe22bbbfd26ceabb99029dc1d0f9c9d1600bacefec282cbb21db` |
+| `addons/RICON_CoreTests/.../RICON_LifecycleFixtureSupport.c` | `34ba90f909a444376bf7b20a3345779eec55b6b2ed765c76a730e7d072e01eb1` |
+| `tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TestRunnerPlugin.c` | `b6703878b6c4b69445db915964c8e760c89582b87c59319e85945c6326f2d85c` |
+
+**Что сверяется.**
+- На каждом из 103 вызовов `ApplySnapshot` или `OnTransmitLeaseExpired`: решение равно эталону, а snapshot и binding
+  после вызова равны копиям, снятым до него (§7). У NaN равенство NaN-aware.
+- NaN и ±Inf строятся в рантайме (`Math.Sqrt(-1)`, `float.MAX * 2`); `RequireNonFinite` проверяет их до
+  использования, иначе случай проваливается.
+- `ADAPTER_MAPPED` = 1: имя состояния вне LOST/WEAK/DEGRADED/CLEAN передаётся как значение enum −1. Неизвестные
+  upstream 99 и −1 передаются как int в enum.
+- Негативные контроли: изменённое решение apply, принятый mismatch expiry, принятый NaN. Все три провалились.
+- Первый прогон (`ricon-tests-seam1-20261019-202101`) показал, что объект, переданный прямо в аргументе без
+  переменной, Enforce освобождает во время вызова: сначала «binding changed by the call», затем `NULL_INPUT` во
+  всех случаях. Теперь фикстура держит snapshot и binding в локальных переменных. Сравнение провал поймало, а не
+  пропустило.
+- CT-VON-S-010 — `tools/RICON_TestRunner/test_von_seam_scan.py`: статическая проверка текущего исходника, **не
+  security proof**. В коде `RICON_NetworkContracts.c` (без комментариев, лексер учитывает строки) нет VoN/radio,
+  Rpl, world/entity и file API; подложенная зависимость и маркеры комментариев внутри строк ловятся.
+
+**Граница доказательства.** `ENFORCE_PARITY` seam: Enforce-код принимает те же решения, что host-эталон, на 103
+синтетических вызовах. Любой валидный вход — `BLOCKED_NO_ACTUATOR`: голос не доставляется и не глушится.
+Не проверены реальный трансивер и его число индексов, authority и Rpl, доставка, звук (`BLOCKED_NO_RUNTIME`, Э4T-f).
