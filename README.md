@@ -3,8 +3,9 @@
 Wireless communications simulation platform for Arma Reforger: server-authoritative signal model (HDSP),
 radio networks with towers and repeaters, and (later) cellular networks — on top of the built-in VoN voice.
 
-Status: **pre-alpha, static phase** — the game is not launched yet; Enforce code is `STATIC_IMPLEMENTED / NOT_COMPILED`
-(host-side oracle checks pass: `ORACLE_PASS`; runtime verification is stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) and `docs/plan/STATUS_RU.md`.
+Status: **pre-alpha, static phase** — the game is not launched yet; Enforce code compiles in Workbench
+(`WORKBENCH_COMPILE_PASS`, 2026-10-19, `docs/evidence/E-workbench-source.md`); host-side oracle checks pass (`ORACLE_PASS`);
+behaviour in the game is not tested yet (runtime verification is stage Э1r). See `docs/plan/PLAN_RU.md` (plan v5) and `docs/plan/STATUS_RU.md`.
 
 ## Layout
 
@@ -19,7 +20,7 @@ Status: **pre-alpha, static phase** — the game is not launched yet; Enforce co
 | `docs/evidence/` | evidence notes with levels DOC/SOURCE/STD_COPY/…; `codex-are/` — immutable research snapshots (SHA-256 manifest); `WB-order-*.md` — Workbench requests |
 | `docs/plan/` | agreed plan and live status (`STATUS_RU.md`) |
 
-Nothing has been compiled yet: the first Workbench compile is requested in `docs/evidence/WB-order-003.md`.
+First Workbench compile: `docs/evidence/E-workbench-source.md` (orders `WB-order-003.md`/`004`).
 
 ## Rules
 

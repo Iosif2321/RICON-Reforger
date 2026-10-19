@@ -134,11 +134,11 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | 3 | Аудиограф / per-pair DSP | OPEN | W1 Q2 (DOC-сниппет), CX cycle_001 | SOURCE `VON.acp`; привязка к паре — Э1r |
 | 4 | Relay / intercom | OPEN | `interfaceRelayTransceiver.html` (нет своих членов); `SCR_CoverageRadioComponent` (граф покрытия Conflict) | SOURCE префабов/скриптов; Э1r |
 | 5 | Rpl / JIP / стриминг | PARTIAL | OFF Q11–Q12; `interfaceRplComponent.html` (EnableStreamingForConnection «Use with caution») | дальняя связь при стриминге — OPEN |
-| 6 | Workbench / статическая сборка | PARTIAL | игра и Tools установлены (`addons\data\ArmaReforger.gproj`); CLI проверки компиляции документирован (`E-workbench-build.md`, `Page_CLI.html`); заказы `WB-order-002/003` | компиляция ещё **не выполнена** (заказ №003, addon target `06979fc`); исполнитель — ассистент владельца |
+| 6 | Workbench / статическая сборка | PARTIAL | игра и Tools установлены (`addons\data\ArmaReforger.gproj`); CLI проверки компиляции документирован (`E-workbench-build.md`, `Page_CLI.html`); заказы `WB-order-002/003` | компиляция **выполнена** 2026-10-19 (claude по разрешению владельца): `RICON_Core` и `RICON_CoreTests` — 0 ошибок, 5 конфигураций (`E-workbench-source.md`); открыто: ванильные файлы (№001) |
 | 7 | Право / Workshop / BattlEye / RE | PARTIAL | Workshop Terms Sec. 3; `LICENSE` (APL-SA); License.txt Tools | лицензия — решена (APL-SA); RE — запрещён; BattlEye — OPEN_NO_PRIMARY_PROOF |
 | 8 | HDSP provenance / калибровка | PARTIAL | W2 Q28; E-web3 (P.526-16, P.372-17, STD_COPY); `fn_signalCompute.sqf:96-173`, `signal_core.cpp:133-224` (A3, справочник) | метод L2 выбран: P.526-16 § 4.5, ур. (66); реализация и калибровка L2 — OPEN; P.372-18 не прочитана; калибровочных данных нет |
 | 9 | Масштаб 30/60 | OPEN | пары 870/3540, активные 87/177; `GetTransceiversInRange`, `AsyncTraceMove` | бюджеты — BLOCKED_NO_RUNTIME |
-| 10 | Общее ядро / расширяемость | PARTIAL | REQ-core v0.7, ADR-002; host oracle 57/46/48 PASS (link-eval, снимки, маршруты); фикстуры EXT-1…5 (`RICON_CoreTests`) | Enforce не компилировался; SelfCheck фикстур и паритет Enforce↔oracle — NOT_TESTED |
+| 10 | Общее ядро / расширяемость | PARTIAL | REQ-core v0.7, ADR-002; host oracle 57/46/48 PASS (link-eval, снимки, маршруты); фикстуры EXT-1…5 (`RICON_CoreTests`) | Enforce компилируется (`WORKBENCH_COMPILE_PASS`, EXT-1…5 `COMPILE_FIXTURE_PASS`); SelfCheck фикстур и паритет Enforce↔oracle — NOT_TESTED |
 | 11 | Верификация / один ПК | CLOSED (граница) / OPEN (доказательства) | id316, решение №4 | runtime и multi-client — BLOCKED_NO_RUNTIME |
 | 12 | Сотовая / SMS | PARTIAL | W2 Q29 (3GPP 23.003/23.040/24.090); `PersistenceSystem` | M3a/M3b не реализованы |
 | 13 | Референсы / лицензии | CLOSED (политика) | TFAR `LICENSE.md` APL-SA; `acre2/LICENSE` GPLv3; CVON/LC без лицензии | только идеи и требования; код не копируется |
@@ -152,7 +152,7 @@ MOD — чужой мод; STD — стандарт; REF — справочни�
 | Приоритет | Чего не хватает | Чем закрыть |
 |---|---|---|
 | 1. Ревью ядра | production-модель разборчивости и пороги состояний: полные методы первоисточников + эмпирическая калибровка или одобренная владельцем игровая политика (статус `BLOCKED_CALIBRATION`); эталонные числа FSPL/шума — есть (oracle) | `E-web3-intelligibility.md` + калибровочный набор данных (runtime) или решение владельца `[Решение]` |
-| 2. Доработка под Reforger | фактическая компиляция обоих аддонов; затем паритет Enforce↔oracle и запуск SelfCheck фикстур | заказ `[Workbench]` №003 (компиляция); паритет/SelfCheck — после компиляции, исполнение — Э1r |
+| 2. Доработка под Reforger | паритет Enforce↔oracle и запуск SelfCheck фикстур (компиляция выполнена, `E-workbench-source.md`) | исполнение — Э1r (нужен runtime) |
 | 3. Слои плана | Q1, Q2, Q4, Q17, Q18, Q19 (ванильные файлы) | `docs/evidence/E-workbench-source.md` (ассистент владельца) |
 | 3. Слои плана (runtime) | Q3, Q5, Q9, Q13, Q23, Q25, Q27 | Э1r — только с разрешения владельца |
 

@@ -6,21 +6,25 @@
 
 Дата: 2026-10-19. Исполнитель: claude по **прямому разрешению владельца в чате** («разрешаю запустить компиляцию
 Workbench»). Только проверка скриптов: без Play, без сервера, без мира, без распаковки `.pak`; ванильные файлы не
-открывались.
+открывались. Ревью сырых логов — codex (agora #759, #762).
 
 - Игра: `ArmaReforgerScripted`, version **1.8.0.13**, built 2026-08-21 14:30:18 UTC (из лога Workbench).
-- Workbench: `Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe`; Steam запущен.
+- Workbench: `C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe`;
+  Steam запущен.
 - Ревизия: HEAD `6263310`, `git status` пуст; `git diff --exit-code 06979fc..HEAD -- addons` — без изменений
   (целевая ревизия заказа №003).
 
 ### Команда, которая сработала
 
-```bat
-ArmaReforgerWorkbenchSteamDiag.exe -gproj "<repo>\addons\<проект>\addon.gproj" ^
-  -addonsDir "<Arma Reforger>\addons,<Arma Reforger Tools>\Workbench\addons,<repo>\addons" ^
-  -wbModule=ScriptEditor -validate -wbSilent -exitAfterInit -noThrow ^
-  -logLevel verbose -logsDir <имя> -log-scr-checksum
+Запуск через PowerShell `Start-Process … -PassThru`, код возврата — `$p.ExitCode`. Фактическая строка параметров
+из `console.log` (строка 10, `CLI Params:`), прогон 004 `RICON_Core`:
+
+```text
+-gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_Core\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons -wbModule ScriptEditor -validate -wbSilent -exitAfterInit -noThrow -logLevel verbose -logsDir ricon-validate-004-RICON_Core -log-scr-checksum
 ```
+
+Прогон 004 `RICON_CoreTests` — та же строка с `addons\RICON_CoreTests\addon.gproj` и
+`-logsDir ricon-validate-004-RICON_CoreTests`.
 
 Отличия от `E-workbench-build.md`, найденные на практике:
 
@@ -31,27 +35,55 @@ ArmaReforgerWorkbenchSteamDiag.exe -gproj "<repo>\addons\<проект>\addon.gp
 3. **Нужен `-exitAfterInit`.** Со Steam, но без этого флага Workbench после «Script validation successful.» остаётся
    висеть (вход в backend) и не завершается — процесс пришлось закрыть.
 4. Список файлов `-log-scr-checksum` пишется только при `-logLevel verbose` (или подробнее), не при `warning`.
-5. Логи: `%USERPROFILE%\Documents\My Games\ArmaReforgerWorkbench\logs\<имя>\` (`console.log`, `error.log`, `script.log`).
-6. Workbench создаёт кэш `addons\<проект>\resourceDatabase.rdb` — добавлен в `.gitignore`.
+5. Логи: `%USERPROFILE%\Documents\My Games\ArmaReforgerWorkbench\logs\<logsDir>\` (`console.log`, `error.log`, `script.log`).
+6. Workbench создаёт кэш `<проект>\resourceDatabase.rdb` — добавлен в `.gitignore` (`**/resourceDatabase.rdb`).
 
 ### Результаты
 
 | Прогон | Проект | Ревизия аддонов | Код | Итог |
 |---|---|---|---|---|
-| 003 | `RICON_Core` | `06979fc` | 0* | `Script validation successful.` — WORKBENCH, PC, XBOX, PS4, PS5 |
-| 003 | `RICON_CoreTests` | `06979fc` | — | `Script validation failed.` — 1 ошибка (×5 конфигураций) |
-| 004 | `RICON_CoreTests` | `06979fc` + правка ниже | **0** | `Script validation successful.` — 5 конфигураций |
+| 003 | `RICON_Core` | `06979fc` | не считан* | `Script validation successful.` — WORKBENCH, PC, XBOX, PS4, PS5 |
+| 003 | `RICON_CoreTests` | `06979fc` | не считан* | `Script validation failed.` — 1 ошибка (×5 конфигураций) |
+| 004 | `RICON_CoreTests` | `06979fc` + правка ниже (`1c72797`) | **0** | `Script validation successful.` — 5 конфигураций |
 | 004 | `RICON_Core` | `06979fc` | **0** | `Script validation successful.` — 5 конфигураций |
 
-\* в первом прогоне код не был считан (особенность PowerShell); в прогоне 004 — 0.
+\* в прогоне 003 код не был считан (PowerShell без `$p.Handle`). Коды прогона 004 (`0`) сняты оператором (claude) из
+`Start-Process`; сам лог код возврата не хранит, но независимо подтверждает успех: `Script validation successful.`
+и 0 строк `error:` (проверено codex, #759/#762).
+
+Сырые логи хранятся вне репозитория (путь выше):
+
+| Прогон 004 | `console.log` SHA-256 | `error.log` SHA-256 |
+|---|---|---|
+| `RICON_Core` | `de4ade1b03fea8be33fc10d2ac9ffd0503cfb2db0693b555ab89f8dcdd266c85` | `d11ec4c9f69d00c1299ef4e07bda66c34cc61b66d5bc93431703898ee24cc254` |
+| `RICON_CoreTests` | `b185778d6126c04ff92129573289445b60c0a54a321f363b0e54076d6b281b96` | `414dde6b44931dd137d01f7b0eb6a6addd958e7b68846d5a1421309d9c821d9c` |
 
 **Ошибка 003 (дословно):** `Scripts/Game/RICON_Tests/RICON_ExtFixtures.c(233): error: Broken expression (missing ';'?)`.
-Причина: локальная переменная названа `reference` — в Enforce Script это зарезервированное слово (вывод по факту
-ошибки; в офлайн-документации отдельного списка ключевых слов не найдено). Исправление: переименована в `baseline`.
+Строка 233 объявляла локальную переменную `reference`. Идентификатор отвергнут парсером; вероятно, это ключевое
+слово Enforce Script — **не подтверждено**: списка ключевых слов в офлайн-документации нет, вывод только по тому, что
+после переименования в `baseline` ошибка исчезла. Правило для кода: не использовать `reference` как имя.
 Ядро `RICON_Core` ошибок не имело.
 
-**Предупреждения:** 14 `'…' is obsolete` на конфигурацию — все в ванильных скриптах (`SCR_EditableEntityComponent.c`,
-`CareerBackend.c`, `MainMenuUI.c` и др.). В файлах RICON предупреждений нет.
+**Предупреждения:** в `error.log` каждого прогона 004 — 84 строки `(W)`: 14 различных предупреждений, повторённых при
+компиляции на старте и в каждой из 5 конфигураций. Все — в ванильных скриптах; в файлах RICON — 0. Список (дословно,
+из вывода `-validate`):
+
+```text
+Scripts/Game/Campaign/SCR_PlayerProfileManagerComponent.c(142): warning: 'PlayerData' is obsolete
+Scripts/Game/DataCollection/PlayerData/SCR_PlayerData.c(210): warning: 'PlayerData' is obsolete
+Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(481): warning: 'GetStorage' is obsolete
+Scripts/Game/DataCollection/SCR_DataCollectorComponent.c(483): warning: 'GetOnlineWritePrivilege' is obsolete
+Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(785): warning: 'GetPlayerPlatformKind' is obsolete
+Scripts/Game/Editor/Components/EditableEntity/SCR_EditableEntityComponent.c(786): warning: 'GetPlayerPlatformId' is obsolete
+Scripts/Game/UI/Backend/CareerBackend.c(159): warning: 'GetDSSession' is obsolete
+Scripts/Game/UI/Backend/CareerBackend.c(162): warning: 'RoomID' is obsolete
+Scripts/Game/UI/Backend/CareerBackend.c(197): warning: 'GetDSSession' is obsolete
+Scripts/Game/UI/Backend/CareerBackend.c(201): warning: 'RoomID' is obsolete
+Scripts/Game/UI/Menu/MainMenuUI.c(643): warning: 'GetNotifyCount' is obsolete: Will be substitued by Notification Api.
+Scripts/Game/UI/Menu/MainMenuUI.c(645): warning: 'GetNotifyItem' is obsolete: Will be substitued by Notification Api.
+Scripts/Game/Utilities/SCR_PlayerIdentityUtils.c(20): warning: 'GetPlayerIdentityId' is obsolete
+Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolete: Will be removed
+```
 
 **Скомпилированные файлы RICON (`-log-scr-checksum`, прогон 004):**
 
@@ -71,10 +103,11 @@ ArmaReforgerWorkbenchSteamDiag.exe -gproj "<repo>\addons\<проект>\addon.gp
 
 ### Статусы
 
-- `RICON_Core` @ `06979fc`: **`WORKBENCH_COMPILE_PASS`**.
-- `RICON_CoreTests` (EXT-1…5) @ коммит с правкой `reference` → `baseline`: **`COMPILE_FIXTURE_PASS`**.
+- `RICON_Core` @ `06979fc` (не менялся в `1c72797`): **`WORKBENCH_COMPILE_PASS`**.
+- `RICON_CoreTests` (EXT-1…5) @ `1c72797`: **`COMPILE_FIXTURE_PASS`**.
 - `SelfCheck()` не выполнялся (нужен runtime): `CONTRACT_PASS` — `NOT_TESTED`, поведение — `BLOCKED_NO_RUNTIME`.
 
 ## Заказ №001 — ванильные файлы
 
-Не выполнен (ждёт ассистента владельца в Workbench).
+Не выполнен. Владелец разрешил (2026-10-19, чат) выполнить его claude в паре с codex, только чтение. Способ чтения
+согласуется в agora (#757); прототип инструмента — `tools/RICON_WbReader/` (не запускался).
