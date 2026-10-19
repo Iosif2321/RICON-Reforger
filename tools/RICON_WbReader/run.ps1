@@ -22,8 +22,16 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 if ($PathFilter) { $argList += "-riconPath=`"$PathFilter`"" }
 $p = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
 $null = $p.Handle
-if (-not $p.WaitForExit(300000)) { Stop-Process -Id $p.Id -Confirm:$false; "TIMEOUT" } else { "exit=$($p.ExitCode)" }
+if (-not $p.WaitForExit(300000)) { Stop-Process -Id $p.Id -Confirm:$false; "FAIL: TIMEOUT"; exit 1 }
+$code = $p.ExitCode
+"exit=$code"
 $log = "$env:USERPROFILE\Documents\My Games\ArmaReforgerWorkbench\logs\$logsDir\console.log"
-if (-not (Test-Path $log)) { "NO_LOG $log"; exit 1 }
+if (-not (Test-Path $log)) { "FAIL: NO_LOG $log"; exit 1 }
 "log=$log"
-Get-Content $log | Select-String -Pattern "RICON_WbReader|\(E\)" | ForEach-Object { $_.Line }
+$lines = Get-Content $log
+$lines | Select-String -Pattern "RICON_WbReader|\(E\)" | ForEach-Object { $_.Line }
+# PASS only when Workbench exited with 0 and the plugin reached its final line.
+if ($code -ne 0) { "FAIL: Workbench exit $code"; exit 1 }
+if (-not ($lines | Select-String -SimpleMatch "[RICON_WbReader] done")) { "FAIL: plugin did not finish"; exit 1 }
+"PASS"
+exit 0
