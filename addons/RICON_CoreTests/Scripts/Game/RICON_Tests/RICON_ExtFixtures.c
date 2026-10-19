@@ -230,11 +230,11 @@ class RICON_Ext4DirectionalAntenna : RICON_AntennaPattern
 		RICON_WirelessLinkEvaluator evaluator = new RICON_WirelessLinkEvaluator(RICON_TestSupport.BAND_ID,
 			new RICON_FreeSpaceModel(), new RICON_NoiseModel(), RICON_TestSupport.NewTestIntelligibility());
 		RICON_LinkQuery query = RICON_TestSupport.NewQuery(RICON_FreeSpaceModel.MODEL_ID, 150.0);
-		RICON_LinkBudget reference = evaluator.Evaluate(query);
+		RICON_LinkBudget baseline = evaluator.Evaluate(query);
 		query.m_fTxGainDbi = onAxis;
 		RICON_LinkBudget withGain = evaluator.Evaluate(query);
-		ok = RICON_TestSupport.Expect(reference.m_bValid && withGain.m_bValid
-			&& float.AlmostEqual(withGain.m_fRxPowerDbm - reference.m_fRxPowerDbm, onAxis, 0.01), "EXT-4", "gain adds to Rx power") && ok;
+		ok = RICON_TestSupport.Expect(baseline.m_bValid && withGain.m_bValid
+			&& float.AlmostEqual(withGain.m_fRxPowerDbm - baseline.m_fRxPowerDbm, onAxis, 0.01), "EXT-4", "gain adds to Rx power") && ok;
 		return ok;
 	}
 }
