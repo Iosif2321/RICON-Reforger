@@ -1,7 +1,7 @@
 # RICON_CoreTests — фикстуры ядра (TEST_ONLY)
 
 Отдельный аддон с проверками ядра: пять сценариев расширения `docs/req/REQ-core-contracts.md` §10 и сверка
-жизненного цикла (`docs/req/REQ-lifecycle.md`) с эталоном. Он зависит от `RICON_Core`, **не публикуется в Workshop
+жизненного цикла (`docs/req/REQ-lifecycle.md`) и заготовки VoN (`docs/req/REQ-von-seam.md`) с эталонами. Он зависит от `RICON_Core`, **не публикуется в Workshop
 и не входит в сборку мода**. Все числа в фикстурах — тестовые значения, а не физика.
 
 Фикстуры исполняет плагин `tools/RICON_TestRunner` внутри Workbench (ScriptEditor, без Play и без сервера,
@@ -11,6 +11,7 @@
 |---|---|---|
 | lifecycle | `RICON_LifecycleFixtures.c` (сгенерирован из `oracle/vectors/lifecycle_v1.json`), `RICON_LifecycleFixtureSupport.c` | `ENFORCE_PARITY`: 14/14 трасс, 209/209 шагов (векторы rev 2, REQ-lifecycle v0.4), 3/3 контрольных ошибки пойманы |
 | extension | `RICON_ExtFixtures.c`, `RICON_TestSupport.c` | `SELF_CHECK_PASS`: EXT-1…5 |
+| von_seam | `RICON_VoNSeamFixtures.c` (сгенерирован из `oracle/vectors/von_seam_v1.json`), `RICON_VoNSeamFixtureSupport.c` | `ENFORCE_PARITY`: 11/11 случаев, 103/103 вызова, 3/3 контрольных ошибки пойманы |
 
 Это не проверка в игре: нет репликации, событий игры и голосового чата.
 

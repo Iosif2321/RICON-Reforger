@@ -16,6 +16,7 @@ Workbench plugin that executes the `RICON_CoreTests` fixtures. Not part of the m
 |---|---|---|
 | lifecycle | `RICON_LifecycleFixtures.c`, generated from `oracle/vectors/lifecycle_v1.json` | every step of every trace: result code, PTT response fields, ordered effects (fields of REQ-lifecycle §1.1 per type); 3 negative controls must fail |
 | extension | `RICON_ExtFixtures.c` | `SelfCheck()` of EXT-1…5 (REQ-core §10) |
+| von_seam | `RICON_VoNSeamFixtures.c`, generated from `oracle/vectors/von_seam_v1.json` | every call: decision equals the oracle, snapshot and binding unchanged (REQ-von-seam §7); special floats are verified non-finite at run time; 3 negative controls must fail |
 
 ## Lifecycle fixture generator
 
@@ -26,3 +27,13 @@ mapped as a future adapter must map them and marked `ADAPTER_MAPPED` (missing `n
 missing key → `null`); there are 3 such steps. `test_gen_lifecycle_fixture.py` fails when the committed fixture
 differs from what the generator makes from the current vectors:
 `python -m unittest discover -s tools/RICON_TestRunner -p "test_*.py"`.
+
+## VoN seam fixture generator
+
+`python -I tools/RICON_TestRunner/gen_von_seam_fixture.py oracle/vectors/von_seam_v1.json addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtures.c`
+
+Same trust boundary as the lifecycle generator (closed records, int32, closed names, strict source). One call is
+`ADAPTER_MAPPED`: an unknown link state name becomes enum value `-1`. Snapshots and bindings are held in local
+variables: in the first Workbench run a temporary passed straight as an argument was released during the call.
+`test_von_seam_scan.py` is CT-VON-S-010: the seam file references no engine VoN/radio, Rpl, world/entity or file API
+(comments excluded); a planted dependency is detected.
