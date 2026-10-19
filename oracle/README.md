@@ -130,3 +130,24 @@ Tie-breakers закреплены в REQ@5993d9e (agora #854–#868), запре
 
 Проверка: `python -I oracle/lifecycle_oracle.py --check oracle/vectors/lifecycle_v1.json` → `LIFECYCLE_ORACLE_PASS`.
 Тесты всех эталонов: `python -m unittest discover -s oracle -p "test_*.py"`.
+
+## Заготовка VoN seam: `vectors/von_seam_v1.json`
+
+Источник требований — `docs/req/REQ-von-seam.md` (codex). Seam stateless: ни истории, ни счётчиков. Валидный вход
+всегда даёт `BLOCKED_NO_ACTUATOR` (§3) — это не доставка голоса и не runtime-доказательство.
+
+| Файл | Автор | Что содержит |
+|---|---|---|
+| `vectors/von_seam_v1.json` | claude | вызовы `apply`/`expire` и ожидаемое решение, выписанные вручную по REQ |
+| `von_seam_oracle.py`, `test_von_seam_oracle.py` | claude | исполнимая модель §5–§6 и тесты (stdlib); домен снимка берётся из `snapshot_oracle.is_valid_snapshot` (REQ-core §8.3) |
+| `RICON_VoNIntegration` (Enforce) | codex | реализация, независимая от этих файлов |
+
+Случай — `{id, ct[], req[], note, calls[]}`. Вызов `apply`: `snapshot` (поля LinkSnapshot или `null`), `binding`
+(§4 или `null`), `upstreamDecision` (имя решения receiver или произвольное число — неизвестное значение), `expect`.
+Вызов `expire`: `sessionEpoch`, `playerId`, `deviceId`, `leaseId`, `binding`, `expect`. `"NaN"`/`"Infinity"` в
+`quality` — специальные float, как в snapshot-эталоне. Раннер проверяет и то, что вызов не меняет свои входы (§7).
+
+Покрыты CT-VON-S-001…009. CT-VON-S-010 (в коде нет engine/Rpl/file/world API) — сканирование исходника, не вектор.
+Тесты дополнительно перебирают все сочетания ошибок и проверяют глобальный приоритет §5 и §6.
+
+Проверка: `python -I oracle/von_seam_oracle.py --check oracle/vectors/von_seam_v1.json` → `VON_SEAM_ORACLE_PASS`.

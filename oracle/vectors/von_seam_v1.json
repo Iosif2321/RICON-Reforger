@@ -1,0 +1,2823 @@
+{
+ "schema": "ricon.oracle.von_seam",
+ "version": 1,
+ "revision": 1,
+ "source": "docs/req/REQ-von-seam.md@949f7ca",
+ "note": "Expectations written by hand from REQ-von-seam; synthetic, stateless. BLOCKED_NO_ACTUATOR is not voice delivery. CT-VON-S-010 (dependency scan) is a code scan, not part of these vectors.",
+ "specialFloats": [
+  "NaN",
+  "Infinity"
+ ],
+ "cases": [
+  {
+   "id": "A01-null-inputs",
+   "ct": [
+    "CT-VON-S-001"
+   ],
+   "req": [
+    "§5.1",
+    "§6.1"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": null,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": null,
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "apply",
+     "snapshot": null,
+     "binding": null,
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "apply",
+     "snapshot": null,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 0,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "STALE",
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 5.0,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": null,
+     "upstreamDecision": "STALE",
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": null,
+     "expect": "NULL_INPUT"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 0,
+     "playerId": 0,
+     "deviceId": 0,
+     "leaseId": 0,
+     "binding": null,
+     "expect": "NULL_INPUT"
+    }
+   ],
+   "note": "null snapshot or binding wins over every other failure"
+  },
+  {
+   "id": "A02-snapshot-domain",
+   "ct": [
+    "CT-VON-S-002"
+   ],
+   "req": [
+    "§5.2",
+    "REQ-core §8.3"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 0,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 0,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 2147483647,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 2147483646,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 0,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 0,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 2147483647,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 0,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 0,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 0,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": -0.1,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 1.1,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": "NaN",
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": "Infinity",
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "BOGUS",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.5,
+      "state": "LOST",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 0,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": -1
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 2,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 2,
+      "listenerPlayerId": 3,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_SNAPSHOT"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 0,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 0,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "STALE",
+     "expect": "INVALID_SNAPSHOT"
+    }
+   ],
+   "note": "each snapshot domain failure; invalid snapshot beats stale decision and malformed binding"
+  },
+  {
+   "id": "A03-snapshot-boundaries",
+   "ct": [
+    "CT-VON-S-002"
+   ],
+   "req": [
+    "§5.2",
+    "REQ-core §8.3"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 2147483646,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 2147483646,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 2147483646,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.0,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 1.0,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 2147483647,
+      "listenerPlayerId": 1
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 2147483647,
+      "listenerPlayerId": 1,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "inclusive upper/lower bounds stay valid"
+  },
+  {
+   "id": "A04-upstream-decision",
+   "ct": [
+    "CT-VON-S-003"
+   ],
+   "req": [
+    "§2.3",
+    "§5.3",
+    "§7"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_FIRST",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_RESYNC",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "STALE",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "INVALID_SNAPSHOT",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "INVALID_IDENTITY",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "INVALID_RESYNC",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": 99,
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": -1,
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 0,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "STALE",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 99,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "INVALID_IDENTITY",
+     "expect": "DECISION_NOT_ACCEPTED"
+    }
+   ],
+   "note": "only the three accept decisions pass; unknown values fail closed; decision beats binding failures"
+  },
+  {
+   "id": "A05-binding-domain",
+   "ct": [
+    "CT-VON-S-004"
+   ],
+   "req": [
+    "§4",
+    "§5.4"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 0,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 2147483647,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 0,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 0,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": -3,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 1,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 0,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 0,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 11,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 0,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": -5,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": -1,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": -1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 99,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": -1,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "INVALID_BINDING"
+    }
+   ],
+   "note": "each binding field; the -1 sentinel is not an index; invalid binding beats identity mismatch"
+  },
+  {
+   "id": "A06-binding-boundaries",
+   "ct": [
+    "CT-VON-S-004"
+   ],
+   "req": [
+    "§4"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 2147483647,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 0
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 1,
+      "listenerTransceiverIndex": 0
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 2147483647,
+      "listenerTransceiverIndex": 2147483647
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 2147483647,
+      "listenerDeviceId": 1,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 2147483647,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 2147483647,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "lease int.MAX (Э3 issues it), independent transceiver indices from 0, int.MAX IDs"
+  },
+  {
+   "id": "A07-identity-mismatch",
+   "ct": [
+    "CT-VON-S-005"
+   ],
+   "req": [
+    "§5.5"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 8,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 11,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 3,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 3,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 2,
+      "listenerPlayerId": 1,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 21,
+      "listenerDeviceId": 22,
+      "talkerLeaseId": 9,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "one identity field at a time; swapped sides mismatch; devices/lease are not compared with the snapshot"
+  },
+  {
+   "id": "A08-link-states",
+   "ct": [
+    "CT-VON-S-006"
+   ],
+   "req": [
+    "§5.6"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.5,
+      "state": "DEGRADED",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.1,
+      "state": "WEAK",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.0,
+      "state": "LOST",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.0,
+      "state": "LOST",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_RESYNC",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "every valid state, LOST included, is BLOCKED_NO_ACTUATOR: stopping delivery is an actuator effect too"
+  },
+  {
+   "id": "A09-expiry-domain",
+   "ct": [
+    "CT-VON-S-007"
+   ],
+   "req": [
+    "§6.2",
+    "§6.3"
+   ],
+   "calls": [
+    {
+     "op": "expire",
+     "sessionEpoch": 0,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 2147483647,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": -7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 0,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 0,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 0,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": -1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 0,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 0,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_EXPIRY"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 11,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": -1
+     },
+     "expect": "INVALID_BINDING"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 2147483647,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 2147483647,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 2147483646,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 2147483646,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "expiry domain beats binding domain; lease int.MAX and epoch int.MAX-1 are valid"
+  },
+  {
+   "id": "A10-expiry-identity",
+   "ct": [
+    "CT-VON-S-008"
+   ],
+   "req": [
+    "§6.4"
+   ],
+   "calls": [
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 8,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 2,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 12,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 2,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 2,
+     "deviceId": 12,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 8,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 8,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "delayed epoch-7 lease 1 must not match the epoch-8 lease 1 binding; the listener side never matches"
+  },
+  {
+   "id": "A11-stateless-repeat",
+   "ct": [
+    "CT-VON-S-009"
+   ],
+   "req": [
+    "§7"
+   ],
+   "calls": [
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 11,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 11,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "IDENTITY_MISMATCH"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_NEWER",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "expire",
+     "sessionEpoch": 7,
+     "playerId": 1,
+     "deviceId": 11,
+     "leaseId": 1,
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "expect": "BLOCKED_NO_ACTUATOR"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "STALE",
+     "expect": "DECISION_NOT_ACCEPTED"
+    },
+    {
+     "op": "apply",
+     "snapshot": {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "linkSeq": 5,
+      "ttlMs": 1000,
+      "routeId": 3,
+      "routeNodeCount": 1,
+      "quality": 0.9,
+      "state": "CLEAN",
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2
+     },
+     "binding": {
+      "sessionEpoch": 7,
+      "linkId": 10,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "talkerDeviceId": 11,
+      "listenerDeviceId": 12,
+      "talkerLeaseId": 1,
+      "talkerTransceiverIndex": 0,
+      "listenerTransceiverIndex": 1
+     },
+     "upstreamDecision": "ACCEPT_FIRST",
+     "expect": "BLOCKED_NO_ACTUATOR"
+    }
+   ],
+   "note": "the same input gives the same decision in any order; nothing is remembered between calls"
+  }
+ ]
+}
