@@ -1,8 +1,9 @@
 # ADR-002 — Контракты единого ядра связи (черновик)
 
 Статус: **DRAFT, AGENT-REVIEWED C13** (PLAN v5, Э2). Freeze запрещён до обязательных gate ниже.
-Код L0: `STATIC_IMPLEMENTED / NOT_COMPILED`. Автор исходного ADR: claude; актуализация: codex; взаимное
-code review C13 — agora `ricon-reforger-build` id544.
+Код L0: `STATIC_IMPLEMENTED`; `RICON_Core` — `WORKBENCH_COMPILE_PASS` (2026-10-19,
+`docs/evidence/E-workbench-source.md`). Автор исходного ADR: claude; актуализация: codex; взаимное code review
+C13 — agora `ricon-reforger-build` id544.
 
 Нормативные документы: `docs/req/REQ-link-eval.md` и `docs/req/REQ-core-contracts.md`. При расхождении они
 имеют приоритет над этим описательным ADR.
@@ -47,8 +48,10 @@ Production-модель разборчивости и пороги состоя�
 - Host oracle: `ORACLE_PASS: 57 vectors`, 9 unittest. Это проверяет REQ/числа, не Enforce.
 - Static code review C13: взаимный agree id544; legacy fingerprints отсутствуют; API surface сверена офлайн.
 - Авторский `MIRROR_PASS 57` — только вспомогательное static evidence, **не ENFORCE_PARITY**.
-- `WORKBENCH_COMPILE_PASS = NOT_TESTED`; запуск выполняет только ассистент владельца по актуальному compile-заказу
-  (сейчас №003). Заказ №001 остаётся отдельным SOURCE-запросом vanilla файлов.
+- `WORKBENCH_COMPILE_PASS = PASS`: `RICON_Core` @ `06979fc`; EXT-1…5 @ `1c72797` —
+  `COMPILE_FIXTURE_PASS` (`docs/evidence/E-workbench-source.md`). После любого изменения `addons/` compile gate
+  требуется пройти заново. Заказ №001 выполнен частично как отдельная SOURCE-проверка vanilla-файлов; открытые пункты
+  перечислены в `docs/evidence/E-workbench-source.md`.
 - Runtime, Rpl, performance и audio — `BLOCKED_NO_RUNTIME`.
 
 ## Обязательные gate до freeze Э2
@@ -56,7 +59,8 @@ Production-модель разборчивости и пороги состоя�
 1. `RICON_LinkSnapshot` по `REQ-core` §8: schema/epoch/link identity/seq overflow/int TTL.
 2. Authority manager registries/config: Band→resolved evaluator dependencies; no fallback; versioned P.372 source.
 3. Routing/Evaluator extension CT для EXT-1…5 и model-contract negative tests (`CT-CORE-011`).
-4. Workbench compile с полным log/checksum и устранением ошибок.
+4. **PASS 2026-10-19:** Workbench compile с полным log/checksum и устранением ошибок
+   (`docs/evidence/E-workbench-source.md`); повторить после любого изменения `addons/`.
 5. Enforce execution parity с oracle — только когда разрешён соответствующий запуск; до этого `NOT_TESTED`.
 6. Production intelligibility/calibration и актуальный primary source P.372 остаются отдельными evidence gates.
 

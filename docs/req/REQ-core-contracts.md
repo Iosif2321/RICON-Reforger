@@ -13,13 +13,15 @@ C13 code-review: `MODEL_CONTRACT_VIOLATION`, post-compute validation order и AD
 claude подтвердил итог в agora id548. Это по-прежнему static evidence, не compile/runtime/freeze.
 
 Snapshot/manager review: snapshot oracle revision 9 согласован в id587; Enforce manager/snapshot/allocator
-согласованы в id602. `WORKBENCH_COMPILE_PASS` и runtime всё ещё не выполнялись.
+согласованы в id602. `WORKBENCH_COMPILE_PASS` выполнен 2026-10-19 (`docs/evidence/E-workbench-source.md`);
+runtime не выполнялся.
 
 Routing review: route oracle revision 4 согласован в id632; `RICON_NetworkContracts.c` согласован в id635.
 Route-result до `Evaluate` различается через `WasEvaluated`; legs защищены builder-правилом AddLeg-before-Evaluate.
 
 Extension/registry review: NetworkType registry и immutable route builder согласованы в id656; Antenna seam — id653;
-TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures ещё не компилировались и SelfCheck не запускался.
+TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures скомпилированы (`COMPILE_FIXTURE_PASS`, `1c72797`);
+SelfCheck не запускался.
 
 Источник истины: Git-репозиторий `RICON-Reforger`. Входы: утверждённый `PLAN_RU.md` v5 с приоритетной
 шапкой решений владельца, `ADR-002-core-contracts.md`, ревью `R-core-20261018.md` и
@@ -27,8 +29,10 @@ TEST_ONLY EXT-1…5 compile fixtures — id661. Fixtures ещё не компи�
 `ai-native-sdlc-cycle`, `ponytail full`); это metadata процесса, а не файлы/runtime-зависимости репозитория.
 
 Этот документ конкретизирует Э2, но **не замораживает Э2**. Freeze возможен только после реализации,
-contract/oracle-проверок, `WORKBENCH_COMPILE_PASS` и сверки с актуальным compile-заказом Workbench (сейчас №003).
-Заказ №001 остаётся SOURCE-запросом vanilla файлов и не заменяет актуальную компиляцию.
+contract/oracle-проверок и `WORKBENCH_COMPILE_PASS`. Текущий compile gate выполнен
+(`docs/evidence/E-workbench-source.md`) и должен повторяться после каждого изменения `addons/`.
+Заказ №001 выполнен частично как отдельная SOURCE-проверка vanilla-файлов и не заменяет компиляцию; открытые пункты
+перечислены в `docs/evidence/E-workbench-source.md`.
 
 ## Мини-intent
 
@@ -445,5 +449,6 @@ scaffold; никакой недоказанный actuator не получает
 3. отсутствие нерешённых противоречий между двумя REQ.
 
 После реализации статус может быть только `STATIC_IMPLEMENTED` + отдельные `CONTRACT_PASS`/`ORACLE_PASS`.
-Без исполненного актуального compile-заказа Workbench (сейчас №003) — `WORKBENCH_COMPILE_PASS = BLOCKED`; без
-разрешения Play — RT/AUDIO остаются `BLOCKED_NO_RUNTIME`.
+Текущий compile gate выполнен: `RICON_Core` @ `06979fc` — `WORKBENCH_COMPILE_PASS`, EXT-1…5 @ `1c72797` —
+`COMPILE_FIXTURE_PASS` (`docs/evidence/E-workbench-source.md`). Любое изменение `addons/` возвращает compile gate в
+`BLOCKED` до повторной проверки; без разрешения Play RT/AUDIO остаются `BLOCKED_NO_RUNTIME`.
