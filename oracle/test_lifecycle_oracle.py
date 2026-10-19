@@ -83,6 +83,12 @@ class LifecycleOracleTest(unittest.TestCase):
             bad = copy.deepcopy(init)
             bad["catalog"][0]["allowed"] = {key: [100]}
             self.assertEqual(lc.Lifecycle().apply(bad)["resultCode"], "MALFORMED", key)
+        empty_network = copy.deepcopy(init)
+        empty_network["catalog"][0]["allowed"] = {"1": [100, 101], "5": []}
+        self.assertEqual(lc.Lifecycle().apply(empty_network)["resultCode"], "MALFORMED", "empty channel list")
+        no_networks = copy.deepcopy(init)
+        no_networks["catalog"][0]["allowed"] = {}
+        self.assertEqual(lc.Lifecycle().apply(no_networks)["resultCode"], "OK", "empty allowed map")
         model = self._ready_model()
         self.assertEqual(model.apply([1, 2]), {"resultCode": "MALFORMED", "effects": []})
         self.assertEqual(lc.Lifecycle().apply("INIT"), {"resultCode": "NOT_READY", "effects": []})

@@ -189,7 +189,8 @@ class Lifecycle:
                 if not re.fullmatch(r"[1-9][0-9]{0,9}", key) or not is_id(int(key)):
                     return None
                 channels = allowed[key]
-                if not isinstance(channels, list) or not all(is_id(c) for c in channels) \
+                # A present network key needs at least one channel; an empty list is MALFORMED (REQ catalog v1).
+                if not isinstance(channels, list) or not channels or not all(is_id(c) for c in channels) \
                         or channels != sorted(set(channels)):
                     return None
                 parsed[int(key)] = channels

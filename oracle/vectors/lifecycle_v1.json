@@ -2,7 +2,7 @@
  "schema": "ricon.oracle.lifecycle",
  "version": 1,
  "revision": 1,
- "source": "docs/req/REQ-lifecycle.md@5993d9e",
+ "source": "docs/req/REQ-lifecycle.md@9e6ce55",
  "note": "Expectations written by hand from REQ-lifecycle; host-model semantics only, not runtime evidence.",
  "traces": [
   {
