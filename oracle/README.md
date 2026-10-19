@@ -125,6 +125,8 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 | L8 | ENTITY_CHANGED: `from ≠ current` (в т.ч. повтор уже применённой смены) → `STALE_ENTITY`; `from = to = current` → `DUPLICATE` |
 | L9 | DISCONNECTED без live state: совпадение tombstone по generation и connectionId → `DUPLICATE`; иначе generation ≤ tombstone → `STALE_GENERATION`; иначе `NOT_READY` |
 | L10 | lease, отозванный аномалией времени, получает `terminalAtMs` = `nowMs` этого события |
+| L11 | время без переполнения int32: TTL сравниваются как разность (`nowMs − issuedAtMs ≥ ttlMs`, `nowMs − terminalAtMs ≥ terminalLeaseTtlMs`); `expiresAtMs` tombstone = `min(nowMs + tombstoneTtlMs, int.MAX)` (codex #861) |
+| L12 | исчерпан диапазон generation или leaseId (следующий ID > int.MAX) — `LIMIT_REACHED` в позиции 11 без mutation, до `ROTATE_EPOCH` (codex #861) |
 
 Проверка: `python -I oracle/lifecycle_oracle.py --check oracle/vectors/lifecycle_v1.json` → `LIFECYCLE_ORACLE_PASS`.
 Тесты всех эталонов: `python -m unittest discover -s oracle -p "test_*.py"`.

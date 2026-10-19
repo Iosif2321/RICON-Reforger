@@ -110,6 +110,9 @@ class Lifecycle:
             _, lid = terminal.pop(0)
             del self.leases[lid]
 
+    def _active_lease_ids(self) -> list[int]:
+        return sorted(lid for lid, lease in self.leases.items() if lease["state"] == "ACTIVE")
+
     def _active_leases_of(self, player_id: int) -> list[int]:
         return sorted(lid for lid, lease in self.leases.items()
                       if lease["state"] == "ACTIVE" and lease["playerId"] == player_id)
@@ -121,14 +124,14 @@ class Lifecycle:
     def _observe_and_sweep(self, now: int, effects: list[dict[str, Any]]) -> None:
         """§1.1 step 3 and §9: update time, expire leases by leaseId, then TTL cleanup."""
         self.last_now = now
-        for lid in sorted(self.leases):
-            lease = self.leases[lid]
-            if lease["state"] == "ACTIVE" and now - lease["issuedAtMs"] >= lease["ttlMs"]:
-                self._terminate(lid, "EXPIRED", "TTL_EXPIRED", now, effects)
+        due = [lid for lid in sorted(self.leases) if self.leases[lid]["state"] == "ACTIVE"
+               and now - self.leases[lid]["issuedAtMs"] >= self.leases[lid]["ttlMs"]]
+        for lid in due:  # snapshot: eviction inside _terminate removes only terminal records
+            self._terminate(lid, "EXPIRED", "TTL_EXPIRED", now, effects)
         self.tombstones = [t for t in self.tombstones if now < t["expiresAtMs"]]
         ttl = self.config["terminalLeaseTtlMs"]
         for lid in [lid for lid, lease in self.leases.items()
-                    if lease["state"] != "ACTIVE" and now >= lease["terminalAtMs"] + ttl]:
+                    if lease["state"] != "ACTIVE" and now - lease["terminalAtMs"] >= ttl]:
             del self.leases[lid]
 
     def _cleanup_block(self, player_id: int, reason: str, now: int, effects: list[dict[str, Any]]) -> None:
@@ -148,7 +151,8 @@ class Lifecycle:
             oldest = min(self.tombstones, key=lambda t: (t["expiresAtMs"], t["playerId"], t["generation"]))
             self.tombstones.remove(oldest)
         tomb = {"playerId": player_id, "generation": gen, "connectionId": player["connectionId"],
-                "lastRequestSeq": player["lastRequestSeq"], "expiresAtMs": now + self.config["tombstoneTtlMs"]}
+                "lastRequestSeq": player["lastRequestSeq"],
+                "expiresAtMs": min(now + self.config["tombstoneTtlMs"], INT_MAX)}  # int32-saturated, see README L11
         self.tombstones.append(tomb)
         effects.append({"type": "TOMBSTONE_WRITTEN", "playerId": player_id, "generation": gen,
                         "connectionId": tomb["connectionId"], "expiresAtMs": tomb["expiresAtMs"]})
@@ -230,9 +234,8 @@ class Lifecycle:
             return {"resultCode": "TICK_ANOMALY", "effects": []}
         if now < self.last_now:
             self.latched = True  # step 4
-            for lid in sorted(self.leases):
-                if self.leases[lid]["state"] == "ACTIVE":
-                    self._terminate(lid, "REVOKED", "TICK_ANOMALY", now, effects)
+            for lid in self._active_lease_ids():
+                self._terminate(lid, "REVOKED", "TICK_ANOMALY", now, effects)
             return {"resultCode": "TICK_ANOMALY", "effects": effects}
         self._observe_and_sweep(now, effects)
         handler = {
@@ -266,6 +269,8 @@ class Lifecycle:
             return {"resultCode": "DUPLICATE"}
         if live is None and len(self.players) >= self.config["maxPlayers"]:
             return {"resultCode": "LIMIT_REACHED"}
+        if self.gen_alloc >= INT_MAX:
+            return {"resultCode": "LIMIT_REACHED"}  # generation range exhausted: ROTATE_EPOCH required
         from_state, old_gen = "NONE", 0
         if live is not None:
             old_gen = live["generation"]
@@ -440,7 +445,7 @@ class Lifecycle:
             return {"resultCode": "LIMIT_REACHED"}
         if kind == "PTT_START":
             active = sum(1 for lease in self.leases.values() if lease["state"] == "ACTIVE")
-            if active >= self.config["maxActiveLeases"]:
+            if active >= self.config["maxActiveLeases"] or self.lease_alloc >= INT_MAX:
                 return {"resultCode": "LIMIT_REACHED"}
         entry = self.rate.setdefault(key, {"windowStartMs": now, "count": 0})
         if now - entry["windowStartMs"] >= self.config["rateWindowMs"]:
@@ -495,9 +500,8 @@ class Lifecycle:
         epoch = ev.get("sessionEpoch")
         if not is_id(epoch) or epoch <= self.epoch:
             return {"resultCode": "MALFORMED", "effects": effects}
-        for lid in sorted(self.leases):
-            if self.leases[lid]["state"] == "ACTIVE":
-                self._terminate(lid, "REVOKED", "SESSION_ROTATED", now, effects)
+        for lid in self._active_lease_ids():
+            self._terminate(lid, "REVOKED", "SESSION_ROTATED", now, effects)
         self.gen_alloc = 0
         for pid in sorted(self.players):
             player = self.players[pid]
@@ -529,8 +533,16 @@ def check_vector_file(data: Any) -> list[str]:
         return ["schema/version"]
     if not str(data.get("source", "")).startswith("docs/req/REQ-lifecycle.md@"):
         problems.append("source")
+    traces = data.get("traces")
+    if not isinstance(traces, list) or not traces:
+        return problems + ["traces: non-empty list required"]
     seen = set()
-    for trace in data.get("traces", []):
+    for trace in traces:
+        if not isinstance(trace, dict) or not isinstance(trace.get("steps"), list) or not all(
+                isinstance(step, dict) and isinstance(step.get("event"), dict) and isinstance(step.get("expect"), dict)
+                and isinstance(step["expect"].get("effects", []), list) for step in trace["steps"]):
+            problems.append("trace structure")
+            continue
         tid = trace.get("id")
         if not isinstance(tid, str) or tid in seen:
             problems.append(f"trace id {tid!r}")

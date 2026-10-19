@@ -6381,6 +6381,353 @@
      }
     }
    ]
+  },
+  {
+   "id": "T14-sweep-evicts-terminal",
+   "ct": [
+    "CT-LC-010",
+    "CT-LC-007"
+   ],
+   "req": [
+    "§5.3",
+    "§9"
+   ],
+   "note": "an expiry during sweep may evict a higher terminal leaseId; the sweep must not trip over it (codex #861)",
+   "steps": [
+    {
+     "event": {
+      "type": "INIT",
+      "nowMs": 1000,
+      "sessionEpoch": 7,
+      "config": {
+       "maxPlayers": 4,
+       "maxActiveLeases": 4,
+       "maxTerminalLeases": 1,
+       "terminalLeaseTtlMs": 60000,
+       "maxTombstones": 4,
+       "tombstoneTtlMs": 30000,
+       "maxResponseCachePerPlayer": 4,
+       "maxRateEntries": 8,
+       "rateWindowMs": 1000,
+       "rateMaxRequests": 5
+      },
+      "catalog": [
+       {
+        "deviceId": 11,
+        "kind": "CARRIED",
+        "ownerPlayerId": 1,
+        "accessPlayerIds": [],
+        "powered": true,
+        "allowed": {
+         "1": [
+          100,
+          101
+         ]
+        }
+       },
+       {
+        "deviceId": 12,
+        "kind": "CARRIED",
+        "ownerPlayerId": 2,
+        "accessPlayerIds": [],
+        "powered": true,
+        "allowed": {
+         "1": [
+          100
+         ]
+        }
+       },
+       {
+        "deviceId": 13,
+        "kind": "WORLD",
+        "accessPlayerIds": [
+         1,
+         2
+        ],
+        "powered": true,
+        "allowed": {
+         "1": [
+          100
+         ]
+        }
+       },
+       {
+        "deviceId": 14,
+        "kind": "CARRIED",
+        "ownerPlayerId": 1,
+        "accessPlayerIds": [],
+        "powered": false,
+        "allowed": {
+         "1": [
+          100
+         ]
+        }
+       },
+       {
+        "deviceId": 21,
+        "kind": "WORLD",
+        "accessPlayerIds": [
+         3
+        ],
+        "powered": true,
+        "allowed": {
+         "2": [
+          200
+         ]
+        }
+       }
+      ]
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": []
+     }
+    },
+    {
+     "event": {
+      "type": "CONNECTED",
+      "nowMs": 1000,
+      "playerId": 1,
+      "connectionId": 501
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "PLAYER_STATE_CHANGED",
+        "playerId": 1,
+        "oldGeneration": 0,
+        "newGeneration": 1,
+        "fromState": "NONE",
+        "toState": "CONNECTED_UNREGISTERED"
+       },
+       {
+        "type": "FULL_RESYNC_REQUIRED",
+        "playerId": 1,
+        "sessionEpoch": 7,
+        "generation": 1
+       }
+      ]
+     }
+    },
+    {
+     "event": {
+      "type": "REGISTERED",
+      "nowMs": 1001,
+      "playerId": 1,
+      "generation": 1
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "PLAYER_STATE_CHANGED",
+        "playerId": 1,
+        "oldGeneration": 1,
+        "newGeneration": 1,
+        "fromState": "CONNECTED_UNREGISTERED",
+        "toState": "REGISTERED_UNBOUND"
+       }
+      ]
+     }
+    },
+    {
+     "event": {
+      "type": "ENTITY_BOUND",
+      "nowMs": 1002,
+      "playerId": 1,
+      "generation": 1,
+      "entityId": 7001
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "ENTITY_BOUND",
+        "playerId": 1,
+        "generation": 1,
+        "entityId": 7001
+       },
+       {
+        "type": "PLAYER_STATE_CHANGED",
+        "playerId": 1,
+        "oldGeneration": 1,
+        "newGeneration": 1,
+        "fromState": "REGISTERED_UNBOUND",
+        "toState": "BOUND_ACTIVE"
+       }
+      ]
+     }
+    },
+    {
+     "event": {
+      "type": "PTT_START",
+      "nowMs": 1004,
+      "schemaVersion": 1,
+      "correlationId": 901,
+      "authenticatedPlayerId": 1,
+      "payloadPlayerId": 1,
+      "sessionEpoch": 7,
+      "generation": 1,
+      "requestSeq": 1,
+      "deviceId": 11,
+      "networkTypeId": 1,
+      "channelId": 100,
+      "ttlMs": 100
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "LEASE_GRANTED",
+        "playerId": 1,
+        "generation": 1,
+        "deviceId": 11,
+        "leaseId": 1,
+        "issuedAtMs": 1004,
+        "ttlMs": 100
+       }
+      ],
+      "leaseId": 1,
+      "leaseState": "ACTIVE"
+     }
+    },
+    {
+     "event": {
+      "type": "PTT_START",
+      "nowMs": 1005,
+      "schemaVersion": 1,
+      "correlationId": 902,
+      "authenticatedPlayerId": 1,
+      "payloadPlayerId": 1,
+      "sessionEpoch": 7,
+      "generation": 1,
+      "requestSeq": 2,
+      "deviceId": 13,
+      "networkTypeId": 1,
+      "channelId": 100,
+      "ttlMs": 5000
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "LEASE_GRANTED",
+        "playerId": 1,
+        "generation": 1,
+        "deviceId": 13,
+        "leaseId": 2,
+        "issuedAtMs": 1005,
+        "ttlMs": 5000
+       }
+      ],
+      "leaseId": 2,
+      "leaseState": "ACTIVE"
+     }
+    },
+    {
+     "event": {
+      "type": "PTT_STOP",
+      "nowMs": 1006,
+      "schemaVersion": 1,
+      "correlationId": 903,
+      "authenticatedPlayerId": 1,
+      "payloadPlayerId": 1,
+      "sessionEpoch": 7,
+      "generation": 1,
+      "requestSeq": 3,
+      "leaseId": 2
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "LEASE_TERMINATED",
+        "playerId": 1,
+        "generation": 1,
+        "deviceId": 13,
+        "leaseId": 2,
+        "leaseState": "REVOKED",
+        "terminalReason": "CLIENT_STOP"
+       },
+       {
+        "type": "VON_EXPIRY_INTENDED",
+        "playerId": 1,
+        "deviceId": 13,
+        "leaseId": 2
+       }
+      ],
+      "leaseId": 2,
+      "leaseState": "REVOKED",
+      "terminalReason": "CLIENT_STOP"
+     }
+    },
+    {
+     "event": {
+      "type": "TICK",
+      "nowMs": 1104
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [
+       {
+        "type": "LEASE_TERMINATED",
+        "playerId": 1,
+        "generation": 1,
+        "deviceId": 11,
+        "leaseId": 1,
+        "leaseState": "EXPIRED",
+        "terminalReason": "TTL_EXPIRED"
+       },
+       {
+        "type": "VON_EXPIRY_INTENDED",
+        "playerId": 1,
+        "deviceId": 11,
+        "leaseId": 1
+       }
+      ]
+     }
+    },
+    {
+     "event": {
+      "type": "PTT_STOP",
+      "nowMs": 1105,
+      "schemaVersion": 1,
+      "correlationId": 904,
+      "authenticatedPlayerId": 1,
+      "payloadPlayerId": 1,
+      "sessionEpoch": 7,
+      "generation": 1,
+      "requestSeq": 4,
+      "leaseId": 2
+     },
+     "expect": {
+      "resultCode": "UNKNOWN_LEASE",
+      "effects": []
+     }
+    },
+    {
+     "event": {
+      "type": "PTT_STOP",
+      "nowMs": 1106,
+      "schemaVersion": 1,
+      "correlationId": 905,
+      "authenticatedPlayerId": 1,
+      "payloadPlayerId": 1,
+      "sessionEpoch": 7,
+      "generation": 1,
+      "requestSeq": 5,
+      "leaseId": 1
+     },
+     "expect": {
+      "resultCode": "OK",
+      "effects": [],
+      "leaseId": 1,
+      "leaseState": "EXPIRED",
+      "terminalReason": "TTL_EXPIRED"
+     }
+    }
+   ]
   }
  ]
 }
