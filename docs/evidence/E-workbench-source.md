@@ -189,8 +189,9 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 - Атрибуты в префабах (только переопределения): `"Transmitting Range"` — вышка 5000 (`TransmitterTower_01_base.et:95`),
   `ConflictRelayRadio` 3000 (:15), `Ural4320_command` 2000 (:14); `"Frequency resolution" 1` (`ConflictRelayRadio.et:16`).
 - Родительский компонент разный: `ScriptedRadioComponent` (вышка, :92), `SCR_CoverageRadioComponent` с `"Turned on" 0`
-  (`ConflictRelayRadio.et:11–12`), `BaseRadioComponent` (Ural, :11). Частот вход/выход, мощности, ключа у самого
-  `RelayTransceiver` в префабах нет.
+  (`ConflictRelayRadio.et:11–12`), `BaseRadioComponent` (Ural, :11). В трёх просмотренных префабах (вышка,
+  `ConflictRelayRadio`, `Ural4320_command`) частот вход/выход, мощности и ключа у `RelayTransceiver` не видно; остальные
+  префабы не читались.
 - Скрипты используют его только в `SCR_CampaignMilitaryBaseComponent.c:1136–1152, 2410–2414`: перебор трансиверов и
   `GetRange()` для дальности базы (Conflict).
 - Вывод (Q1, gate M1): в проверенных скриптах и префабах логики пересылки голоса **не видно**. Делает ли движок
@@ -254,13 +255,13 @@ Scripts/Game/Workshop/SCR_AddonManager.c(876): warning: 'GetRefCount' is obsolet
 
 | Пункт | Статус | Чего не хватает |
 |---|---|---|
-| 3 `ECommMethod` | **полностью** (SOURCE) | — |
-| 4 `OnReceive` / выбор трансивера / задержка | **полностью** по скриптам (SOURCE) | native-использование `quality` — вне скриптов |
-| 7 ввод VoN | **полностью** по именам действий и контекстам | привязки клавиш (не требовались) |
-| 9 материалы | **полностью** (цепочка API + 6 примеров) | единица `Density` не подписана |
-| 1 `RelayTransceiver` | **частично** | полный список префабов (упёрся в лимит 15); атрибуты по умолчанию класса (видны только переопределения) |
-| 5 покрытие | **частично** | только прямой текст в 3 файлах; как строится граф (заполнение `m_aRadiosInRange`) не читалось |
-| 6 рации | **частично** | второй трансивер R-148; число трансиверов ANPRC-77; рации техники и стационара |
-| 8 radial-меню | **частично** | `SCR_VONMenu`/`SCR_VONRadialDisplay` и layout не читались; своя запись — NOT_TESTED |
-| 2 звуковой граф | **OPEN** | `.acp`/`.sig` не открываются через `FileIO`; передано Audio Editor ассистенту владельца (agora #791) |
+| 3 `ECommMethod` | `SOURCE_EVIDENCE` | — |
+| 4 `OnReceive` / выбор трансивера / задержка | `SOURCE_EVIDENCE` (по скриптам) | native-использование `quality` — вне скриптов |
+| 7 ввод VoN | `SOURCE_EVIDENCE` (имена действий и контексты) | привязки клавиш (не требовались) |
+| 9 материалы | `SOURCE_EVIDENCE` (цепочка API + 6 примеров) | единица `Density` не подписана |
+| 1 `RelayTransceiver` | `PARTIAL_SOURCE` | полный перечень префабов (упёрся в лимит 15) и атрибутов, включая значения класса по умолчанию |
+| 5 покрытие | `PARTIAL_SOURCE` | построение графа (заполнение `m_aRadiosInRange`) не читалось; только прямой текст в 3 файлах |
+| 6 рации | `PARTIAL_SOURCE` | мощность; второй трансивер R-148; трансиверы ANPRC-77; рации техники и стационара |
+| 8 radial-меню | `PARTIAL_SOURCE` | `SCR_VONMenu`/`SCR_VONRadialDisplay` и layout; своя запись — нужна compile fixture, runtime NOT_TESTED |
+| 2 звуковой граф | `OPEN_UNREADABLE` | `.acp`/`.sig` не открываются через `FileIO`; передано Audio Editor ассистенту владельца (agora #791); `Resource.Load`/`BaseContainer` без нового решения не используется |
 | 10 компиляция | **закрыт** (№003/004) | — |
