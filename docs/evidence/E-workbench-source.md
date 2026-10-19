@@ -414,3 +414,85 @@ module!», а exit = 0. Поэтому `WORKBENCH_COMPILE_PASS` засчитыв
 **Граница доказательства.** `ENFORCE_PARITY` seam: Enforce-код принимает те же решения, что host-эталон, на 103
 синтетических вызовах. Любой валидный вход — `BLOCKED_NO_ACTUATOR`: голос не доставляется и не глушится.
 Не проверены реальный трансивер и его число индексов, authority и Rpl, доставка, звук (`BLOCKED_NO_RUNTIME`, Э4T-f).
+
+## Э4 L2 final `3c295ce` — исполнение фикстуры дифракции на рельефе (2026-10-19)
+
+**Разрешение и границы** — как в разделе «Э3 final»: только тесты в Workbench через плагин, без Play, мира и
+сервера. Поставщика высот из мира нет: используются synthetic-поставщик и профили из векторов.
+
+**Target.**
+- Код codex: `c1b5fa4`, `b8d8e93`, `4ccba10`, `3c295ce`; `addons/RICON_Core` при прогоне == `3c295ce`
+  (последующий `c8aee13` codex меняет только документы).
+- Фикстура, генератор и раннер (claude): `a05cbd7`, `f208c61`; дерево `addons/`, `tools/`, `oracle/` == `f208c61`.
+- Требования: `REQ-L2-terrain.md` v0.6 (`c4f3b0a`).
+- Векторы: `l2_terrain_v1.json`, source `@c4f3b0a`, 45 случаев.
+- Workbench: engine 192142, game 1.8.0.13.
+
+**Команды** — те же формы, что в разделе «Э3 final»; раннер — `tools/RICON_TestRunner/run.ps1 -Name l2b`.
+Компиляция засчитана по логу: exit 0, «Script validation successful» и 0 строк `SCRIPT (E)`. Exit 0 сам по себе
+ничего не доказывает (см. раздел «Э4T-s final»).
+
+| Папка | Что | Итог | SHA-256 `console.log` |
+|---|---|---|---|
+| `ricon-validate-core-3c295ce-20261019-212920` | компиляция `RICON_Core` | exit 0, success, 0 `SCRIPT (E)`, 0 (W) по RICON; CRC `RICON_TerrainDiffractionModel.c` `e999988a` | `1f07ae867c7c0739711cc2c6073fc492be726ba54c04aec8e2993072b0ccbe3e` |
+| `ricon-validate-coretests-l2b-20261019-213610` | компиляция `RICON_CoreTests` | так же | `785b7100b92fac930fce598d32fb7d0a292151f3416f9f342de47c7ec20cd112` |
+| `ricon-tests-l2b-20261019-213628` | исполнение тестов | exit 0, строки ниже | `3fea5e9bbdafcc2280b4728b93c419d73c6041b190dbb3c605c414277ee7416b` |
+
+Строки раннера (дословно, выборка):
+```
+[RICON_TEST] lifecycle parity: traces 14/14, steps 209/209, negative controls caught 3/3, adapter-mapped steps 3
+[RICON_TestRunner] suite extension: PASS
+[RICON_TEST] von seam parity: cases 11/11, calls 103/103, negative controls caught 3/3, adapter-mapped calls 1
+[RICON_TEST] l2 parity: cases 45/45, negative controls caught 3/3, sampling 1, adapter 1, adapter-mapped inputs 3, tolerance 0.05 dB
+[RICON_TEST] l2 max |Enforce - oracle| = 0.000102997 dB
+[RICON_TEST] L2_ENFORCE_PARITY_PASS
+[RICON_TestRunner] done: PASS
+```
+
+**Файлы прогона (SHA-256):**
+
+| Файл | SHA-256 |
+|---|---|
+| `addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_TerrainDiffractionModel.c` | `a8996f6d7e7859b9644ef1e13b631d17ea4ad786e9663ca8a9df41ebbd4aaf51` |
+| `addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c` | `27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2` |
+| `addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c` | `8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5` |
+| `addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c` | `dfaad918d251206d35dd5dc5fc8371fd2a9b69a38d164e3121ffbcb8ca985c14` |
+| `oracle/vectors/l2_terrain_v1.json` | `91d095471c80ed4ada896fc545a63fa5355c42399829e24e2b98d204aad465a2` |
+| `addons/RICON_CoreTests/.../RICON_L2Fixtures.c` (сгенерирован) | `31c47fd01fa40cfe4c586f50578fe584773820932ce35767e950ff8ce05e0523` |
+| `addons/RICON_CoreTests/.../RICON_L2FixtureSupport.c` | `4ffb8fb58a9cd84e521cd0f4aa8d2232f5852857985c6b96b55305ed98253b81` |
+| `tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TestRunnerPlugin.c` | `6edc9477476b112b4d8e28fd934a45258570195d73f46092d35462f74787d8bf` |
+
+**Что сверяется.**
+- 45 векторов через обёртку `RICON_L2Run.Evaluate`:
+  - код результата — точно;
+  - `L`, `Lba`, `Lbs`, `Lsph` — с допуском 0.05 дБ (REQ §6; генератор не принимает другой допуск);
+  - ветки, случай §3.2 и флаг (19) — точно;
+  - профиль и конфиг после вызова сравниваются с копиями, снятыми до него.
+
+  Наибольшее фактическое отклонение float32 от host float64 — **0.000103 дБ**.
+- `ADAPTER_MAPPED` = 3:
+  - null-частота → NaN, в рантайме проверяется, что значение неконечное;
+  - конфиг без ключа → `null`;
+  - неизвестная поляризация → −1.
+- Негативные контроли: потеря сдвинута на 2 × допуск, неверная ветка, принят невалидный профиль. Все три провалились.
+- Правило поставщика REQ §6 — 7 ручных случаев:
+  - пропуск при пути < 2 м;
+  - профили из 3 и из 11/12 точек;
+  - отказ по числу точек и по d > 500 км.
+- Адаптер (вручную):
+  - два слоя `fspl`/`terrain_diffraction` с `MODEL_ID` и точными значениями;
+  - отказ поставщика или калькулятора → `TERRAIN_PROFILE_UNAVAILABLE = 16`, слои пусты, тот же reason через
+    `RICON_WirelessLinkEvaluator`;
+  - путь < 2 м → слой 0 без вызова (отказывающего) поставщика;
+  - ε = 1 → `CATALOG_VIOLATION`; 20 МГц → `OUT_OF_MODEL_DOMAIN`;
+  - детектор чистоты входов проверен на изменённой точке и на изменённом поле конфига.
+- Находка по ходу: допуск шага REQ v0.5 (`1 + 10⁻⁶`) рассчитан на float64. Эмуляция float32 показала: 12 из 17
+  расчётных векторов дали бы `PROFILE_STEP_TOO_LARGE`. Исправлено в REQ v0.6 и в коде `4ccba10`; регресс-тест
+  oracle эмулирует float32.
+
+**Граница доказательства.** `ENFORCE_PARITY` L2: Enforce-калькулятор и адаптер модели на синтетических профилях
+дают те же результаты, что host-эталон. Это **не** runtime. Не проверены (`BLOCKED_NO_RUNTIME`):
+- поставщик высот из мира (`BaseWorld.GetSurfaceY`) — его нет;
+- реализм потерь в игре;
+- значения грунта и шага сетки для карт Reforger;
+- производительность на 30/60 игроках.
