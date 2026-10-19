@@ -78,6 +78,12 @@ response fields (leaseId/state/reason, если применимо). Callback-`D
 `rateWindowMs`, `rateMaxRequests`. Каждый параметр MUST быть `> 0`; невалидный config даёт `NOT_READY`.
 Документ не задаёт production defaults до Э10/runtime budget.
 
+Capacity preflight (`LIMIT_REACHED`, приоритет 11): новый `CONNECTED` для player без live slot проверяет
+`maxPlayers` до allocation; live reconnect атомарно переиспользует свой slot. Первый current `PTT_START` проверяет
+`maxActiveLeases`, а любой новый PTT method без rate entry — `maxRateEntries`, до rate/owner/device checks. Capacity
+reject не расходует rate attempt; PTT-response кэшируется и сдвигает `lastRequestSeq`. Tombstone/terminal capacity не
+возвращает `LIMIT_REACHED`: oldest terminal record вытесняется по §9.
+
 Закрытый набор oracle-effects: `PLAYER_STATE_CHANGED`, `ENTITY_BOUND`, `ENTITY_UNBOUND`, `LEASE_GRANTED`,
 `LEASE_TERMINATED`, `VON_EXPIRY_INTENDED`, `SUBSCRIPTIONS_CLEARED`, `CARRIED_DEVICES_DETACHED`,
 `TOMBSTONE_WRITTEN`, `FULL_RESYNC_REQUIRED`. Effect record содержит только нужные stable IDs и новое состояние;
@@ -231,7 +237,7 @@ Effect order для одиночных переходов:
 - `ENTITY_UNBOUND` при отсутствии current binding также возвращает `STALE_ENTITY`; отдельный history старых entity не
   ведётся. Идемпотентность здесь означает отсутствие mutation/effects, а не обязательный код `DUPLICATE`.
 - `Disconnected` и live reconnect выполняют effects строго в порядке: (1) revoke active leases по `leaseId` по
-  возрастанию; (2) `SUBSCRIPTIONS_CLEARED` всегда; (3) `ENTITY_UNBOUND` только если binding есть, затем
+  возрастанию; (2) очистить internal rate state и выдать `SUBSCRIPTIONS_CLEARED` всегда; (3) `ENTITY_UNBOUND` только если binding есть, затем
   `CARRIED_DEVICES_DETACHED` всегда; (4) `PLAYER_STATE_CHANGED(oldGeneration=newGeneration=current, ...→DISCONNECTED)`;
   (5) записать bounded tombstone
   `(playerId, generation, connectionId, lastRequestSeq, expiresAtMs)`; (6) удалить live player state. Для каждого lease
@@ -277,7 +283,7 @@ state очищен, allocator нового epoch снова начинает с 
 | ID | Требование |
 |---|---|
 | REQ-LC-020 | Start MUST проверить current session/generation, RPC owner, active entity, device ownership/access, power/catalog/tuning и rate limit до создания lease. |
-| REQ-LC-021 | Один device MUST иметь не более одного active transmit lease. Новый start на занятое устройство, включая lease того же owner, даёт `DEVICE_BUSY`; только exact cached duplicate возвращает существующий lease. Policy MAY ограничить player/network concurrency; общей блокировки всей frequency нет по умолчанию. |
+| REQ-LC-021 | Один device MUST иметь не более одного active transmit lease. После успешного capacity preflight новый start на занятое устройство, включая lease того же owner, даёт `DEVICE_BUSY`; только exact cached duplicate возвращает существующий lease. Policy MAY ограничить player/network concurrency; общей блокировки всей frequency нет по умолчанию. |
 | REQ-LC-022 | Duplicate `(generation, requestSeq, canonicalFingerprint)` MUST быть идемпотентен: текущий cached ответ/lease state, без продления скрытым replay; тот же seq с другим fingerprint → `REQUEST_CONFLICT`. |
 | REQ-LC-023 | Stop текущего lease идемпотентен. Stop чужого/stale lease отклоняется без side effects. |
 | REQ-LC-024 | Renew MAY существовать только как явный policy; он повторно проверяет generation/owner/device и имеет bounded max lifetime. |
@@ -361,7 +367,8 @@ fixed window, keyed by `(authenticatedPlayerId, methodId)`. Config задаёт 
 
 1. `DUPLICATE`, `REQUEST_CONFLICT` и `STALE_REQUEST` возвращаются до limiter и не расходуют attempt.
 2. Для нового well-formed request с current session/generation окно начинается в `windowStartMs`; при
-   `nowMs - windowStartMs >= rateWindowMs` счётчик сбрасывается и новое окно начинается в `nowMs`.
+   `nowMs - windowStartMs >= rateWindowMs` счётчик сбрасывается и новое окно начинается в `nowMs`. Entry по времени
+   не удаляется: оно удаляется только с live state при disconnect/reconnect cleanup или epoch rotation.
 3. Если `count >= rateMaxRequests`, результат `RATE_LIMITED`; уже полный счётчик не увеличивается.
 4. Иначе `count++` выполняется до owner/device/catalog checks: forged/inactive/invalid request текущего authenticated
    owner расходует attempt и не может бесплатно нагружать нижние проверки.
@@ -410,8 +417,9 @@ fixed window, keyed by `(authenticatedPlayerId, methodId)`. Config задаёт 
 Deterministic capacity rules:
 
 - Вся TTL-cleanup выполняется только в `ObserveAndSweep`: tombstone удаляется при `nowMs >= expiresAtMs`, terminal
-  lease — при `nowMs >= terminalAtMs + terminalLeaseTtlMs`, rate entry с закончившимся окном MAY удаляться вместо
-  reset. Response cache TTL не имеет: он bounded только размером, очищается вместе с generation и вытесняет минимальный
+  lease — при `nowMs >= terminalAtMs + terminalLeaseTtlMs`. Rate entry по времени не удаляется, только сбрасывает
+  window по §6; disconnect/reconnect/rotation удаляет его вместе с live state. Response cache TTL не имеет: он bounded
+  только размером, очищается вместе с generation и вытесняет минимальный
   `requestSeq` при вставке.
 - `maxPlayers` считает live states, `maxActiveLeases` — только `ACTIVE`, `maxTerminalLeases` — сохранённые terminal
   lease records, `maxTombstones` — terminal generations, `maxRateEntries` — пары owner/method. Ни live player, ни
