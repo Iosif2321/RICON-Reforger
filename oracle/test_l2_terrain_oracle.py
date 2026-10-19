@@ -9,6 +9,7 @@ import itertools
 import json
 import math
 import random
+import struct
 import unittest
 from pathlib import Path
 
@@ -104,6 +105,37 @@ class L2TerrainOracleTest(unittest.TestCase):
             self.assertGreaterEqual(min(steps), 0.001 * (1 - 1e-9))
             self.assertLessEqual(max(steps), step * (1 + 1e-9))
         self.assertEqual(o.provider_sampling(500000.0, {"maxProfileStepKm": 0.002, "maxProfilePoints": 1000}),
+                         ("UNAVAILABLE", []))
+
+    def test_float32_rounded_profiles_keep_their_codes(self) -> None:
+        """REQ §2 v0.6 (agora #1366): with every distance rounded to float32 the step bounds still accept each OK
+        vector; the old 1 + 1e-6 factor rejected 12 of 17. Values stay float64 apart from the distances."""
+        to_f32 = lambda x: struct.unpack("f", struct.pack("f", x))[0]  # noqa: E731
+        for case in load()["cases"]:
+            if case["expect"]["code"] != "OK":
+                continue
+            rounded = copy.deepcopy(case["input"])
+            rounded["profile"] = [[to_f32(d), h] for d, h in rounded["profile"]]
+            self.assertEqual(o.l2(rounded)["code"], "OK", case["id"])
+        old_rule = 0  # float32 emulation of the v0.5 check: step > f32(f32(maxStep) * f32(1.000001))
+        for case in load()["cases"]:
+            if case["expect"]["code"] != "OK":
+                continue
+            ds = [to_f32(p[0]) for p in case["input"]["profile"]]
+            limit = to_f32(to_f32(case["input"]["config"]["maxProfileStepKm"]) * to_f32(1.000001))
+            old_rule += any(to_f32(b - a) > limit for a, b in zip(ds, ds[1:]))
+        self.assertEqual(old_rule, 12)  # the defect the new rule fixes (agora #1366 said 13: miscount)
+
+    def test_step_bounds_formula(self) -> None:
+        good = copy.deepcopy(ok_case(load(), "O01-single-peak")["input"])  # 2 km, step 0.1
+        allowed = 1e-6 * (0.1 + 2.0)
+        for excess, code in ((0.5 * allowed, "OK"), (2.0 * allowed, "PROFILE_STEP_TOO_LARGE")):
+            bad = copy.deepcopy(good)
+            bad["profile"] = [[0.0, 100.0], [0.1 + excess, 100.0]] + [[0.1 + excess + 0.1 * k, 100.0] for k in range(1, 19)]
+            bad["profile"].append([2.0 + excess, 100.0])
+            bad["profile"] = [[round(p[0], 15), p[1]] for p in bad["profile"]]
+            self.assertEqual(o.l2(bad)["code"], code, excess)
+        self.assertEqual(o.provider_sampling(500001.0, {"maxProfileStepKm": 10.0, "maxProfilePoints": 100000}),
                          ("UNAVAILABLE", []))
 
     def test_tampering_is_detected(self) -> None:

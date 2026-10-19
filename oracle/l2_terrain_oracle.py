@@ -23,7 +23,7 @@ MAX_PATH_KM = 500.0
 MIN_TERRAIN_M, MAX_TERRAIN_M = -1000.0, 10000.0
 MAX_ANTENNA_M = 10000.0
 J_THRESHOLD = -0.78                # eq (31), strict
-STEP_SLACK = 1.0 + 1e-6            # REQ §2: rounding of an evenly spaced profile is not a step violation
+STEP_ROUNDING_REL = 1e-6           # REQ §2 v0.6: step bounds widen by 1e-6*(bound + d), float32 rounding of d_i
 CODES = ("INVALID_CONFIG", "OUT_OF_DOMAIN_FREQUENCY", "INVALID_PROFILE", "PROFILE_STEP_TOO_LARGE",
          "INVALID_ANTENNA_HEIGHT", "NUMERIC_FAILURE", "OK")
 BRANCHES = ("LOS", "TRANS")
@@ -219,10 +219,13 @@ def validate(inp: Any) -> str | None:
             isinstance(p, list) and len(p) == 2 and is_number(p[0]) and is_number(p[1]) for p in profile):
         return "INVALID_PROFILE"
     ds = [p[0] for p in profile]
-    if ds[0] != 0 or any(b - a < MIN_SPACING_KM / STEP_SLACK for a, b in zip(ds, ds[1:])) or ds[-1] > MAX_PATH_KM \
+    total = ds[-1]
+    min_step = MIN_SPACING_KM - STEP_ROUNDING_REL * (MIN_SPACING_KM + total)
+    if ds[0] != 0 or not 0 < total <= MAX_PATH_KM or any(b - a < min_step for a, b in zip(ds, ds[1:])) \
             or not all(MIN_TERRAIN_M <= p[1] <= MAX_TERRAIN_M for p in profile):
         return "INVALID_PROFILE"
-    if any(b - a > cfg["maxProfileStepKm"] * STEP_SLACK for a, b in zip(ds, ds[1:])):
+    max_step = cfg["maxProfileStepKm"] + STEP_ROUNDING_REL * (cfg["maxProfileStepKm"] + total)
+    if any(b - a > max_step for a, b in zip(ds, ds[1:])):
         return "PROFILE_STEP_TOO_LARGE"
     if not all(in_domain(inp.get(k), MIN_ANTENNA_M, True, MAX_ANTENNA_M) for k in ("htg", "hrg")):
         return "INVALID_ANTENNA_HEIGHT"
@@ -235,6 +238,8 @@ def provider_sampling(horizontal_distance_m: float, cfg: dict[str, Any]) -> tupl
     d_km = horizontal_distance_m / 1000.0
     if d_km < 2 * MIN_SPACING_KM:
         return "SKIP", []
+    if d_km > MAX_PATH_KM:
+        return "UNAVAILABLE", []  # REQ §6 v0.6: refused before any allocation (codex b8d8e93)
     step = cfg["maxProfileStepKm"]
     n = max(3, math.ceil(d_km / step) + 1)
     if n > cfg["maxProfilePoints"]:

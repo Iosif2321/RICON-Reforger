@@ -27,8 +27,10 @@ class RICON_TestRunnerPlugin : WorkbenchPlugin
 		Print(TAG + "suite extension: " + Verdict(extension));
 		bool vonSeam = RICON_VoNSeamFixtures.RunAll();
 		Print(TAG + "suite von_seam: " + Verdict(vonSeam));
+		bool terrain = RICON_L2Fixtures.RunAll();
+		Print(TAG + "suite l2: " + Verdict(terrain));
 
-		bool ok = lifecycle && extension && vonSeam;
+		bool ok = lifecycle && extension && vonSeam && terrain;
 		Print(TAG + "done: " + Verdict(ok));
 		if (ok)
 			Workbench.Exit(0);

@@ -2,7 +2,7 @@
  "schema": "ricon.oracle.l2_terrain",
  "version": 1,
  "revision": 1,
- "source": "docs/req/REQ-L2-terrain.md@ccb2284",
+ "source": "docs/req/REQ-L2-terrain.md@c4f3b0a",
  "standard": "Rec. ITU-R P.526-16 (11/2025), sha256 7647c3cb3873dc0389a7007f487728359551ed82468a5677b7cd09430875f23d",
  "note": "TEST_ONLY config values; numbers are host float64 derivations (derive.py), not examples from the standard. enforceToleranceDb is the parity tolerance of REQ §6.",
  "toleranceDb": 1e-06,
