@@ -93,3 +93,38 @@ Host-side эталон на Python stdlib. Это **спецификация в 
 `quality = 0`, `LOST`. Причины — в глобальном порядке §9.1: контекст → пусто → hops → null-нога → endpoint →
 бюджет → начало → один проход «разрыв, затем петля» → конечная точка. Векторы с тегом `order` содержат два
 нарушения. Проверка: `python -I oracle/route_oracle.py --check oracle/vectors/route_v1.json` → `ROUTE_ORACLE_PASS`.
+
+## Жизненный цикл: `vectors/lifecycle_v1.json`
+
+Эталон host-модели жизненного цикла по `docs/req/REQ-lifecycle.md` (ревизия в поле `source`): подключение,
+регистрация, привязка тела, PTT lease, лимиты, очистка, время и ротация epoch. Это семантика модели, не runtime.
+
+| Файл | Автор | Что содержит |
+|---|---|---|
+| `vectors/lifecycle_v1.json` | claude | трассы: событие → ожидаемые `resultCode`, `effects` и поля ответа, выписаны вручную по REQ |
+| `lifecycle_oracle.py`, `test_lifecycle_oracle.py` | claude | исполнимая модель REQ и тесты (stdlib); тесты портят ожидания и проверяют, что раннер это ловит |
+| Enforce state machine Э3 | codex | реализация, независимая от этих файлов |
+
+Трасса — `{id, ct[], req[], note, steps[{event, expect}]}`. `event` — поля §1.2 (`type`, `nowMs`, …). `expect` —
+`resultCode`, упорядоченный `effects[{type, …}]` (поля — таблица §1.1) и для PTT: `leaseId`, `leaseState`,
+`terminalReason`; у request-`DUPLICATE` ещё `cachedResultCode`. Сравнение точное, включая порядок effects.
+Покрыты CT-LC-001…010; CT-LC-004 и CT-LC-009 — только в части host-модели (identity, resync-effect, отказ подделки);
+доставка снимков и owner-only транспорт — snapshot oracle и static contract.
+
+Решения эталона там, где REQ@e3f69c0 оставляет выбор (согласованы в agora #854 или вынесены на ревью):
+
+| # | Решение |
+|---|---|
+| L1 | rate entry удаляется только вместе с live state игрока (disconnect, reconnect, ротация), по времени — никогда (#854 F1) |
+| L2 | позиция 11 `LIMIT_REACHED`: `maxPlayers` (новый CONNECTED), нет места под rate entry, `maxActiveLeases` (PTT_START); проверяется до limiter и owner-проверок (#854 F2) |
+| L3 | INIT: структурная ошибка (нет ключа, не int32, каталог не canonical sorted) — `MALFORMED`; корректная структура с лимитом `≤ 0` — `NOT_READY` |
+| L4 | INIT у готового менеджера проходит observe/sweep, затем сравнивает `(sessionEpoch, config, catalog)` без `nowMs` |
+| L5 | CONNECTED без live state (в т.ч. после tombstone, даже с тем же `connectionId`) — новое подключение: `NONE`, `oldGeneration = 0` |
+| L6 | ENTITY_BOUND при `CONNECTED_UNREGISTERED` → `NOT_READY` раньше проверки generation (приоритет 3 < 6) |
+| L7 | `INACTIVE_ENTITY` применяется только к PTT_START; PTT_STOP разрешён в любом live-состоянии |
+| L8 | ENTITY_CHANGED: `from ≠ current` (в т.ч. повтор уже применённой смены) → `STALE_ENTITY`; `from = to = current` → `DUPLICATE` |
+| L9 | DISCONNECTED без live state: совпадение tombstone по generation и connectionId → `DUPLICATE`; иначе generation ≤ tombstone → `STALE_GENERATION`; иначе `NOT_READY` |
+| L10 | lease, отозванный аномалией времени, получает `terminalAtMs` = `nowMs` этого события |
+
+Проверка: `python -I oracle/lifecycle_oracle.py --check oracle/vectors/lifecycle_v1.json` → `LIFECYCLE_ORACLE_PASS`.
+Тесты всех эталонов: `python -m unittest discover -s oracle -p "test_*.py"`.
