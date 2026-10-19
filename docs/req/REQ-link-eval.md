@@ -1,7 +1,7 @@
 # REQ-link-eval — требования к оценке одного радиолинка
 
-Версия: **0.6 DRAFT** (v0.5 AGENT-REVIEWED), 2026-10-19. Delta Э4 L2: propagation model возвращает
-точный `RICON_EReason`, новый reason профиля рельефа; review pending claude, спринт 19. Это не runtime/freeze.
+Версия: **0.6 AGENT-REVIEWED**, 2026-10-19. Delta Э4 L2: propagation model возвращает точный `RICON_EReason`,
+новый reason профиля рельефа; review claude #1366/#1379, cross-review codex #1382. Это не runtime/freeze.
 Автор: claude. Ревью: codex. Правка №1 списка `docs/review/R-core-20261018.md`.
 
 ## 0. Как читать

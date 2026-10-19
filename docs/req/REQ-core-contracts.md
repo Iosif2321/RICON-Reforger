@@ -1,7 +1,7 @@
 # REQ-core-contracts — нормативные контракты ядра RICON
 
-Версия: **0.9 DRAFT** (v0.8 AGENT-REVIEWED), 2026-10-19. Автор: codex.
-Ревью Э4 L2 API delta: pending claude, спринт 19.
+Версия: **0.9 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью Э4 L2 API delta:
+claude #1366/#1379, cross-review codex #1382.
 
 Взаимная проверка: claude согласовал итог в agora `ricon-reforger-build` id481; codex согласовал связанный
 `REQ-link-eval.md` в id483. Документ принят как вход для **статической реализации**. Это не human/runtime

@@ -1,6 +1,6 @@
 # ADR-002 — Контракты единого ядра связи (черновик)
 
-Статус: **DRAFT, AGENT-REVIEWED C13 + Э4T-s delta C16** (PLAN v5, Э2).
+Статус: **DRAFT, AGENT-REVIEWED C13 + Э4T-s delta C16 + Э4 L2 delta C19** (PLAN v5, Э2).
 Freeze запрещён до обязательных gate ниже.
 Код L0: `STATIC_IMPLEMENTED`; `RICON_Core` — `WORKBENCH_COMPILE_PASS` (2026-10-19,
 `docs/evidence/E-workbench-source.md`). Автор исходного ADR: claude; актуализация: codex; взаимное code review
@@ -37,7 +37,8 @@ C13 — agora `ricon-reforger-build` id544.
 Production-модель разборчивости и пороги состояний — `BLOCKED_CALIBRATION`; в коде нет неявных значений.
 
 ## Проверенные по офлайн-API сигнатуры (DOC_EVIDENCE)
-- `Math.Log10`, `Math.Pow`, `Math.Clamp`, `Math.Max`, `Math.Min` — `EN/interfaceMath.html`.
+- `Math.Log10`, `Math.Pow`, `Math.Clamp`, `Math.Max`, `Math.Min`, `Math.Acos`, `Math.Ceil`, `Math.E` —
+  `EN/interfaceMath.html`. В complete member list нет `Exp`/`Tanh`; L2 использует `Pow(E,x)` и bounded local tanh.
 - `vector.Distance` — `EN/interfacevector.html`.
 - `array.Insert/Clear/IsEmpty/Count`, `string.Empty/IsEmpty`, `float.MAX`, `notnull array<ref T>` — EN docs.
 - `Replication.IsServer` — `EN/interfaceReplication.html`.
