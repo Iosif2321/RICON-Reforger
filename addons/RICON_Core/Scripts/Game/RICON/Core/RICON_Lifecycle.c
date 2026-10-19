@@ -338,10 +338,16 @@ class RICON_LifecyclePttRequest
 		fingerprint.m_iSessionEpoch = m_iSessionEpoch;
 		fingerprint.m_iGeneration = m_iGeneration;
 		fingerprint.m_iRequestSeq = m_iRequestSeq;
-		fingerprint.m_iDeviceId = m_iDeviceId;
-		fingerprint.m_iNetworkTypeId = m_iNetworkTypeId;
-		fingerprint.m_iChannelId = m_iChannelId;
-		fingerprint.m_iLeaseId = m_iLeaseId;
+		if (m_eMethod == RICON_ELifecycleMethod.PTT_START)
+		{
+			fingerprint.m_iDeviceId = m_iDeviceId;
+			fingerprint.m_iNetworkTypeId = m_iNetworkTypeId;
+			fingerprint.m_iChannelId = m_iChannelId;
+		}
+		else if (m_eMethod == RICON_ELifecycleMethod.PTT_STOP)
+		{
+			fingerprint.m_iLeaseId = m_iLeaseId;
+		}
 		return fingerprint;
 	}
 
@@ -698,11 +704,20 @@ class RICON_LifecycleStateMachine
 		RICON_LifecycleResult result = NewResult(RICON_ELifecycleResult.OK);
 		if (!m_bReady)
 			return SetCode(result, RICON_ELifecycleResult.NOT_READY);
-		if (nowMs < 0 || newEpoch <= m_iSessionEpoch)
+		if (nowMs < 0)
 			return SetCode(result, RICON_ELifecycleResult.MALFORMED);
-
-		if (!m_bTickAnomaly && !BeginEvent(nowMs, result))
-			return result;
+		if (m_bTickAnomaly)
+		{
+			if (newEpoch <= m_iSessionEpoch)
+				return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		}
+		else
+		{
+			if (!BeginEvent(nowMs, result))
+				return result;
+			if (newEpoch <= m_iSessionEpoch)
+				return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		}
 
 		array<int> activeIds = ActiveLeaseIds();
 		foreach (int leaseId : activeIds)
