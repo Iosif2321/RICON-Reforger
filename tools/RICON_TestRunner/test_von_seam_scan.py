@@ -18,9 +18,34 @@ FORBIDDEN = re.compile(r"\b(VoNComponent|SCR_VoNComponent|BaseTransceiver|RadioT
 
 
 def strip_comments(text: str) -> str:
-    """Comments may name the forbidden APIs (they explain the boundary); code may not."""
-    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
-    return re.sub(r"//[^\n]*", " ", text)
+    """Comments may name the forbidden APIs (they explain the boundary); code may not.
+
+    A small lexer, not regexes: "//" or "/*" inside a string literal must not hide the code after it. String
+    literals are kept, so a forbidden name used by string (reflection) is still reported. An unterminated block
+    comment hides nothing silently: the rest is kept and scanned."""
+    out, i, n = [], 0, len(text)
+    while i < n:
+        c = text[i]
+        if c == '"':
+            j = i + 1
+            while j < n and text[j] != '"' and text[j] != "\n":
+                j += 2 if text[j] == "\\" else 1
+            out.append(text[i:j + 1])
+            i = j + 1
+        elif text.startswith("//", i):
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+        elif text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            if j < 0:
+                out.append(text[i:])
+                break
+            out.append(" ")
+            i = j + 2
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
 
 
 def scan(text: str) -> list[str]:
@@ -39,6 +64,13 @@ class VoNSeamDependencyScanTest(unittest.TestCase):
 
     def test_comments_do_not_count(self) -> None:
         self.assertEqual(scan("// no BaseTransceiver here\n/* GetGame() */\nclass A {}\n"), [])
+
+    def test_comment_markers_inside_strings_hide_nothing(self) -> None:
+        self.assertEqual(scan('string s = "//"; GetGame();'), ["GetGame"])
+        self.assertEqual(scan('string s = "/*"; GetGame(); string e = "*/";'), ["GetGame"])
+        self.assertEqual(scan('string s = "a\\"//"; FileIO.OpenFile();'), ["FileIO"])
+        self.assertEqual(scan('typename t = "BaseTransceiver".ToType();'), ["BaseTransceiver"])
+        self.assertEqual(scan("/* unterminated GetWorld();"), ["GetWorld"])
 
 
 if __name__ == "__main__":
