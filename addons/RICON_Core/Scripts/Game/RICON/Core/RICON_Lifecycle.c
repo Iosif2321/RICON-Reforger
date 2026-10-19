@@ -1,5 +1,5 @@
-// Pure server-authority lifecycle state machine (REQ-lifecycle v0.3 @ 5993d9e).
-// Status: STATIC_IMPLEMENTED; recompile required after post-parity review. No Rpl, GameMode callbacks or VoN actuator.
+// Pure server-authority lifecycle state machine (REQ-lifecycle v0.3; see oracle vector source for revision).
+// Status: WORKBENCH_COMPILE_PASS + ENFORCE_PARITY; runtime not tested. No Rpl, callbacks or VoN actuator.
 
 enum RICON_ELifecycleResult
 {

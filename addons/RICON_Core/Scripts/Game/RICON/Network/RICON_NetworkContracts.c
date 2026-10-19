@@ -1,5 +1,5 @@
 // Network-level contracts: route validation, policy context, call-session and VoN seams (REQ-core §9).
-// Status: WORKBENCH_COMPILE_PASS @ ad24d51; runtime behavior is not tested.
+// Status: WORKBENCH_COMPILE_PASS; runtime behavior is not tested.
 
 //! Stable route failure reasons in the global validation order of REQ-core §9.1.
 enum RICON_ERouteReason
@@ -315,7 +315,7 @@ class RICON_VoNIntegration
 	{
 	}
 
-	void OnTransmitLeaseExpired(int talkerPlayerId, int deviceId, int leaseId)
+	void OnTransmitLeaseExpired(int playerId, int deviceId, int leaseId)
 	{
 	}
 }
