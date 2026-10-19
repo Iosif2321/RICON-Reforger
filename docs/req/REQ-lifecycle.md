@@ -83,6 +83,8 @@ Capacity preflight (`LIMIT_REACHED`, приоритет 11): новый `CONNECT
 `maxActiveLeases`, а любой новый PTT method без rate entry — `maxRateEntries`, до rate/owner/device checks. Capacity
 reject не расходует rate attempt; PTT-response кэшируется и сдвигает `lastRequestSeq`. Tombstone/terminal capacity не
 возвращает `LIMIT_REACHED`: oldest terminal record вытесняется по §9.
+Generation/lease allocator со значением `int.MAX` также даёт `LIMIT_REACHED` до любой mutation; продолжение возможно
+только после `ROTATE_EPOCH`.
 
 Закрытый набор oracle-effects: `PLAYER_STATE_CHANGED`, `ENTITY_BOUND`, `ENTITY_UNBOUND`, `LEASE_GRANTED`,
 `LEASE_TERMINATED`, `VON_EXPIRY_INTENDED`, `SUBSCRIPTIONS_CLEARED`, `CARRIED_DEVICES_DETACHED`,
@@ -139,6 +141,9 @@ owner/access, power и допустимые network/channel values; клиент
 Иная `schemaVersion` → `MALFORMED`; strings имеют bounded maximum из vector/config и сравниваются byte-exact.
 Первый valid `INIT` возвращает `OK`; byte-identical повтор того же epoch/config/catalog — `DUPLICATE`; любой другой
 `INIT` при готовом manager — `REQUEST_CONFLICT`. `INIT` не переинициализирует live state.
+Для первого INIT отсутствующее/не-int32 поле и не-canonical catalog дают `MALFORMED`; structurally valid config с
+любым limit `<= 0` даёт `NOT_READY`. Повтор INIT сравнивает `(sessionEpoch, config, catalog)` и намеренно исключает
+`nowMs`, который уже обработан clock boundary.
 
 Device catalog entry v1:
 
@@ -220,6 +225,8 @@ Effect order для одиночных переходов:
 
 - first `CONNECTED`: `PLAYER_STATE_CHANGED(oldGeneration=0, newGeneration=allocated, NONE→CONNECTED_UNREGISTERED)`,
   затем `FULL_RESYNC_REQUIRED(new generation)`;
+- если live state уже удалён (включая сохранённый tombstone), `CONNECTED` всегда считается новым: даже тот же
+  connectionId получает `fromState=NONE`, `oldGeneration=0` и новый global generation;
 - live reconnect: полный cleanup-block старой generation (§4.3), затем
   `PLAYER_STATE_CHANGED(oldGeneration=old, newGeneration=allocated, DISCONNECTED→CONNECTED_UNREGISTERED)` и
   `FULL_RESYNC_REQUIRED(new generation)`;
@@ -229,6 +236,9 @@ Effect order для одиночных переходов:
 - `ENTITY_CHANGED A→B`: terminal lease-pairs, `ENTITY_UNBOUND(A)`, `CARRIED_DEVICES_DETACHED`, `ENTITY_BOUND(B)`;
 - current `ENTITY_UNBOUND`: terminal lease-pairs, `ENTITY_UNBOUND`, `CARRIED_DEVICES_DETACHED`, затем
   `PLAYER_STATE_CHANGED(BOUND_INACTIVE)`.
+
+Для live player в `CONNECTED_UNREGISTERED` событие `ENTITY_BOUND` возвращает `NOT_READY` до сравнения generation,
+согласно глобальному приоритету §1.1.
 
 ### 4.3 Stale entity и terminal cleanup
 
@@ -310,6 +320,8 @@ state очищен, allocator нового epoch снова начинает с 
   lease — `UNKNOWN_LEASE`; известный lease другой session/generation/owner — `STALE_LEASE`. После удаления terminal
   record по `terminalLeaseTtlMs` новый stop даёт `UNKNOWN_LEASE`; exact request replay всё ещё MAY дать `DUPLICATE`,
   пока его отдельный response-cache entry не вытеснен.
+- `INACTIVE_ENTITY` применяется только к `PTT_START`; `PTT_STOP` разрешён в любом live player state, чтобы cleanup
+  оставался идемпотентным после entity transition.
 
 ### 5.3 Expiry/revoke
 
@@ -334,6 +346,8 @@ TTL истекает при `elapsedMs >= ttlMs`: равенство уже `EXP
 последнего принятого server tick, manager fail closed: все active leases переходят в `REVOKED/TICK_ANOMALY` по
 `leaseId` по возрастанию, каждый intended expiry effect записывается ровно один раз; новые mutable requests получают
 `TICK_ANOMALY` до ротации session epoch/full-resync.
+Lease, отозванный clock anomaly, получает `terminalAtMs = nowMs` именно аномального события, даже если это значение
+меньше предыдущего server tick; оно используется только для deterministic cleanup после recovery/rotation.
 
 Так как sweep идёт до event phase, `PTT_START` на устройстве с истёкшим lease сначала выдаёт terminal effect-pair,
 затем MAY выдать новый lease в том же event. `PTT_STOP` истёкшего lease после sweep возвращает `OK` +
