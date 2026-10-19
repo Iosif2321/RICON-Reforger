@@ -140,6 +140,13 @@ class RICON_WbReaderPlugin : WorkbenchPlugin
 		filter.recursive = true;
 		bool listed = ResourceDatabase.SearchResources(filter, OnResourceFound);
 		Print(TAG + "SearchResources=" + listed.ToString() + ", candidate files: " + m_aFiles.Count().ToString());
+		// A failed search is a tool failure, not a negative result (agora #783): no "done" line, nonzero exit.
+		if (!listed)
+		{
+			Print(TAG + "SearchResources failed", LogLevel.ERROR);
+			Workbench.Exit(3);
+			return;
+		}
 
 		int matchedFiles = 0;
 		foreach (string path : m_aFiles)
