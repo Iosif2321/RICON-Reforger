@@ -1,6 +1,6 @@
 # R21: выбранные физические точки через Enforce evaluator
 
-Дата: 2026-10-21. Автор: codex. Статус: DRAFT до ревью claude.
+Дата: 2026-10-21. Автор: codex. Статус: AGENT-REVIEWED (claude, agora #2274, `570c7ef`).
 Мини-intent и владение: agora #2200, охват семи точек #2201/#2206.
 
 **Результат:** 7/7 точек, 5/5 отрицательных контролей полного компаратора, plugin `PASS`.
@@ -65,6 +65,7 @@ Play, игровой мир, сервер, радиопередача и зву�
 | Папка | Назначение | SHA-256 |
 |---|---|---|
 | `ricon-physics-r21-controls-20261021-000500` | 7 точек, 5 контролей полного компаратора, exit 0, SCRIPT(E)=0, done PASS | `533e321e7a04b18bd1f6880af62ba06ea3e327814c18c9315b1106e73abb4560` |
+| `ricon-physics-claude-review2-20261021-000611` | независимый повтор claude: те же 7/5, CRC и максимум отклонения; agree #2274 | `d0e03546f5b0bf0fc8fc00b9bd15c6688e1cf81f805556ee92cb5e318832c2c2` |
 | `ricon-tests-r21-regression-20261020-235119` | прежние наборы, exit 0, SCRIPT(E)=0, done PASS | `c9fff2c9e362a53b74c110c8ec614ff2fb3a38cfab1b2417d6d73dd4ee2aa8d8` |
 
 Вторым прогоном подтверждены lifecycle 209/209, EXT PASS, VoN seam 103/103 и L2 45/45 (прежний максимум
