@@ -175,12 +175,30 @@ class DomainTest(unittest.TestCase):
         self.assertEqual(co.validate_scenario(sc), "durationMs (a whole number of steps)")
         sc["mobile"]["durationMs"] = 160
         self.assertIsNone(co.validate_scenario(sc))
-        self.assertEqual(co.table_span_m(sc), 19)            # last sample 16 m from x = 0, 18 m from x = −2
+        self.assertEqual(co.table_span_m(sc), 18)            # last sample 16 m from x = 0, 18 m from x = −2
         r = co.simulate(sc)
         self.assertEqual(r["handoverCount"], 0)
         table = co.build_table(sc)
+        self.assertEqual(len(table.values), 19)               # nodes 0…18, nothing beyond the drive (codex #2337)
+        self.assertAlmostEqual(table(18.0), table.values[18])  # the last whole node needs no neighbour
         with self.assertRaises(ValueError):                   # beyond the table: an error, never extrapolation
-            table(float(len(table.values)))
+            table(18.5)
+        with self.assertRaises(ValueError):
+            table(19.0)
+
+    def test_p526_path_limit_is_rejected_before_any_table(self) -> None:
+        """codex #2335/#2336: a drive whose span exceeds the 500 km L2 path limit is rejected by the validator;
+        no table is built (FSPL has no such limit)."""
+        sc = road()
+        sc["cells"][0]["xM"] = -100000.0
+        sc["mobile"].update(startXM=100000.0, speedMps=100.0, durationMs=3600000)
+        self.assertEqual(co.table_span_m(sc), 560000)
+        self.assertEqual(co.validate_scenario(sc), "drive beyond the 500 km path limit of the L2 provider")
+        sc["propagation"] = "FSPL"
+        self.assertIsNone(co.validate_scenario(sc))
+        sc["propagation"] = "P526_GENERAL"
+        sc["mobile"].update(startXM=0.0, speedMps=100.0, durationMs=3000000)  # 300 km: span 400 km from x = −100 km
+        self.assertIsNone(co.validate_scenario(sc))
         for bad in (0, -40, 40.0, True):
             sc["mobile"]["durationMs"] = bad
             self.assertIsNotNone(co.validate_scenario(sc))

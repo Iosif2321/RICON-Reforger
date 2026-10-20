@@ -67,13 +67,14 @@ def power_sum_dbm(powers_dbm: list[float]) -> float:
 
 class LossTable:
     """Loss on a 1 m grid with linear interpolation: the trajectory needs tens of thousands of distances, the L2
-    profile computation is slow. The interpolation error is checked by a test."""
+    profile computation is slow. The interpolation error is checked by a test. Nodes 0…max_m only, so the table never
+    asks the model for a distance beyond the drive (agora #2337)."""
 
     def __init__(self, propagation: str, f_mhz: float, h_bs: float, h_ms: float, ground: dict[str, Any],
                  terrain: dict[str, Any], max_m: int):
         self.step = 1.0
         self.values = []
-        for i in range(max_m + 2):
+        for i in range(max_m + 1):
             d = max(float(i), 1.0)
             if propagation == "FSPL":
                 self.values.append(lpo.fspl_db(math.hypot(d, h_bs - h_ms), f_mhz))
@@ -83,9 +84,11 @@ class LossTable:
     def __call__(self, d_m: float) -> float:
         d = max(d_m, 1.0)
         i = int(d)
-        if i + 1 >= len(self.values):
-            raise ValueError(f"distance {d_m} m beyond the loss table")  # never silently extrapolate
         frac = d - i
+        if i >= len(self.values) or (frac > 0.0 and i + 1 >= len(self.values)):
+            raise ValueError(f"distance {d_m} m beyond the loss table")  # never silently extrapolate
+        if frac == 0.0:
+            return self.values[i]                                        # the last node needs no neighbour
         return self.values[i] * (1.0 - frac) + self.values[i + 1] * frac
 
 
@@ -136,7 +139,7 @@ def table_span_m(sc: dict[str, Any]) -> int:
     ms = sc["mobile"]
     dt = sc["timeStepMs"] / 1000.0
     end = ms["startXM"] + ms["speedMps"] * (ms["durationMs"] // sc["timeStepMs"]) * dt
-    return int(math.ceil(max(abs(x - c["xM"]) for c in sc["cells"] for x in (ms["startXM"], end)))) + 1
+    return int(math.ceil(max(abs(x - c["xM"]) for c in sc["cells"] for x in (ms["startXM"], end))))
 
 
 def build_table(sc: dict[str, Any]) -> LossTable:
@@ -192,6 +195,9 @@ def validate_scenario(sc: Any) -> str | None:
         return "mobile"
     if isinstance(sc["timeStepMs"], int) and sc["timeStepMs"] > 0 and m["durationMs"] % sc["timeStepMs"]:
         return "durationMs (a whole number of steps)"
+    if sc["propagation"] == "P526_GENERAL" and isinstance(sc["timeStepMs"], int) and sc["timeStepMs"] > 0 \
+            and table_span_m(sc) > lpo.l2o.MAX_PATH_KM * 1000.0:
+        return "drive beyond the 500 km path limit of the L2 provider"  # agora #2335, decided before any table
     h = sc["handover"]
     if not lpo._keys(h, {"hysDb", "offDb", "ofnDb", "ofpDb", "timeToTriggerMs", "pingPongWindowS"}) \
             or not _num(h["hysDb"], 0.0, 15.0) or not _num(h["offDb"], -15.0, 15.0) or not _num(h["ofnDb"], -24.0, 24.0) \
