@@ -201,18 +201,19 @@ def validate_scenario(sc: Any) -> str | None:
             or isinstance(m["durationMs"], bool) or not isinstance(m["durationMs"], int) \
             or not 0 < m["durationMs"] <= 3600000:
         return "mobile"
-    if isinstance(sc["timeStepMs"], int) and sc["timeStepMs"] > 0 and m["durationMs"] % sc["timeStepMs"]:
+    if type(sc["timeStepMs"]) is not int or sc["timeStepMs"] not in (20, 40):  # 40.0 == 40 must not pass (#2355)
+        return "timeStepMs (int 20 or 40)"
+    if m["durationMs"] % sc["timeStepMs"]:
         return "durationMs (a whole number of steps)"
-    if sc["propagation"] == "P526_GENERAL" and isinstance(sc["timeStepMs"], int) and sc["timeStepMs"] > 0 \
-            and table_span_m(sc) > lpo.l2o.MAX_PATH_KM * 1000.0:
+    if sc["propagation"] == "P526_GENERAL" and table_span_m(sc) > lpo.l2o.MAX_PATH_KM * 1000.0:
         return "drive beyond the 500 km path limit of the L2 provider"  # agora #2335, decided before any table
     h = sc["handover"]
     if not lpo._keys(h, {"hysDb", "offDb", "ofnDb", "ofpDb", "timeToTriggerMs", "pingPongWindowS"}) \
             or not _num(h["hysDb"], 0.0, 15.0) or not _num(h["offDb"], -15.0, 15.0) or not _num(h["ofnDb"], -24.0, 24.0) \
-            or not _num(h["ofpDb"], -24.0, 24.0) or h["timeToTriggerMs"] not in TTT_MS \
-            or isinstance(h["timeToTriggerMs"], bool) or not _num(h["pingPongWindowS"], 0.0, 600.0):
+            or not _num(h["ofpDb"], -24.0, 24.0) or type(h["timeToTriggerMs"]) is not int \
+            or h["timeToTriggerMs"] not in TTT_MS or not _num(h["pingPongWindowS"], 0.0, 600.0):
         return "handover"
-    if sc["timeStepMs"] not in (20, 40) or isinstance(sc["timeStepMs"], bool) or h["timeToTriggerMs"] % sc["timeStepMs"]:
+    if h["timeToTriggerMs"] % sc["timeStepMs"]:
         return "timeStepMs (TTT must be a whole number of steps)"
     if not _num(sc["measurementErrorDb"], 0.0, 20.0) or isinstance(sc["measurementErrorSeed"], bool) \
             or not isinstance(sc["measurementErrorSeed"], int) or not 0 <= sc["measurementErrorSeed"] < 2 ** 31:

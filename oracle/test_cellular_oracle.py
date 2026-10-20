@@ -238,6 +238,10 @@ class DomainTest(unittest.TestCase):
             lambda s: s["mobile"].update(speedMps=float("nan")),
             lambda s: s.update(measurementErrorSeed=-1),
             lambda s: s.update(noiseEnvironment="quiet_rural"),
+            lambda s: s.update(timeStepMs=40.0),                          # codex #2355: float equal to 40
+            lambda s: s.update(timeStepMs=True),
+            lambda s: s["handover"].update(timeToTriggerMs=320.0),
+            lambda s: s["mobile"].update(durationMs=700000.0),
         ]
         for mutate in mutations:
             sc = road()
