@@ -51,6 +51,38 @@
 матрицу TX×RX с разными препятствиями у разных слушателей. Это ограничение представления; возможность
 другого механизма управления внутри мода и его безопасность ещё предстоит проверить на Э1r/Э4T-f.
 
+### Вычислимый пример ограничения одной дальности
+
+Два synthetic-профиля имеют одинаковую длину 1 км, частоту 50 МГц и антенны 1.5 м. При мощности 30 дБм,
+нулевых усилениях и явно тестовой чувствительности −68 дБм flat-путь даёт `P_rx=−65.976500475 дБм`,
+а холм высотой 100 м — `−70.233190198 дБм`: первый проходит порог, второй нет. Один радиус не различит эти
+приёмники. Ни −68 дБм, ни параметры грунта здесь не заявлены характеристиками реальной игровой рации/карты.
+
+Воспроизведение из корня проекта (`ORACLE`, не проверка движка):
+
+```python
+import sys
+sys.path.insert(0, "oracle")
+from l2_terrain_oracle import l2, provider_sampling
+from ricon_oracle import free_space_loss
+
+cfg = dict(earthRadiusKm=6371.0, kFactor=4/3, permittivity=15.0,
+           conductivitySm=.005, polarization="VERTICAL",
+           maxProfileStepKm=.1, maxProfilePoints=100000)
+code, ds = provider_sampling(1000, cfg)
+assert code == "OK"
+received = []
+for peak in (0, 100):
+    profile = [[x, peak * max(0, 1 - abs(x-.5)/.2)] for x in ds]
+    out = l2(dict(profile=profile, htg=1.5, hrg=1.5,
+                  frequencyMHz=50, config=cfg))
+    assert out["code"] == "OK"
+    rx = 30 - free_space_loss(1000, 50)["lossDb"] - out["L"]
+    received.append(rx >= -68)
+    print(peak, out["L"], rx, rx >= -68)
+assert received == [True, False]
+```
+
 ## Воспроизводимость
 
 В PowerShell для текущего процесса разрешено выполнение собственных скриптов. Виртуальный путь должен
