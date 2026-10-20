@@ -7,11 +7,9 @@
                     ур. (100)/(101), η = εr − j·18·10⁹·σ/f (стр. 40–41, сверено по изображению страницы);
 - `P526_GENERAL`  — FSPL + дифракция на профиле по P.526-16 §4.5 (`l2_terrain_oracle.l2`, тот же метод, что L2
                     в RICON);
-- `KNIFE_EDGE_4RAY` — вершина холма как острый клин над плоской землёй с отражением по обе стороны: 4 пары
-                    «источник/приёмник или их зеркальные образы», комплексное поле Френеля–Кирхгофа (модуль — ур. (30)),
-                    ν по ур. (26). Статус **RESEARCH** (agora #2203): метод сложения зеркальных путей взят не из
-                    первоисточника, в пределе «без препятствия» при низких антеннах не сводится к двум лучам (тест). Выводов
-                    по D-002 на ней не строим.
+Вне матрицы — `knife_edge_4ray`: неудачная попытка (RESEARCH, agora #2203, #2214). Острый клин над плоской землёй
+с отражением по обе стороны, 4 зеркальные пары, комплексное поле Френеля–Кирхгофа (модуль — ур. (30)). Первоисточника
+метода нет, а предел «без препятствия» на земле с потерями не выполняется (тест). В сценарии и выводы не входит.
 Шум — kTB, коэффициент шума системы f = fa + fr − 1 (P.372-17 ур. (5)) и медиана техногенного шума
 Fam = c − d·lg f (P.372-17 ур. (17), Table 1; область 0.3–250 МГц для city/residential/rural).
 Доступность — два отдельных критерия (agora #2132): `aboveSensitivity` (Prx ≥ kT0B + NF + требуемый SNR, как
@@ -47,7 +45,7 @@ MANMADE_NOISE = {                      # P.372-17 Table 1: (c, d) for Fam = c �
 MANMADE_DOMAIN_MHZ = (0.3, 250.0)      # P.372-17 §6.1.1, for the three categories above
 NOISE_ENVIRONMENTS = ("none",) + tuple(MANMADE_NOISE)
 POLARIZATIONS = ("HORIZONTAL", "VERTICAL")
-MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL", "KNIFE_EDGE_4RAY")
+MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL")
 SOURCE = "oracle/link_physics_oracle.py"
 STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (6)-(7b), (21), (22a-22e), (26), (30), (100), (101), §4.5",
              "Rec. ITU-R P.372-17 (08/2024): eq (5), (17), Table 1"]
@@ -302,9 +300,6 @@ def loss_function(model: str, sc: dict[str, Any]) -> Callable[[float], float]:
         return lambda d: two_ray_flat(d, h1, h2, f, ground)["lossDb"]
     if model == "P526_GENERAL":
         return lambda d: p526_general_db(d, h1, h2, f, ground, sc["terrain"])
-    if model == "KNIFE_EDGE_4RAY":  # the hill top as a knife edge (a cruder obstacle than the real wedge)
-        hill = sc["terrain"]["hill"]
-        return lambda d: knife_edge_4ray(d, h1, h2, f, ground, hill["centerKm"] * 1000.0, hill["heightM"])["lossDb"]
     raise ValueError(f"model {model!r}")
 
 
@@ -333,11 +328,6 @@ def model_applicability(model: str, sc: dict[str, Any], d_m: float) -> bool:
     if model == "TWO_RAY_FLAT":   # flat ground is meaningless beyond the radio horizon (P.526-16 eq 21)
         return d_m < radio_horizon_m(sc["txHeightM"], sc["rxHeightM"], sc["terrain"]["earthRadiusKm"] *
                                      sc["terrain"]["kFactor"])
-    if model == "KNIFE_EDGE_4RAY":  # receiver on flat ground beyond the hill foot; each side within the horizon of the top
-        hill = sc["terrain"]["hill"]
-        ae = sc["terrain"]["earthRadiusKm"] * sc["terrain"]["kFactor"]
-        edge = hill["centerKm"] * 1000.0
-        return d_m > (hill["centerKm"] + hill["halfWidthKm"]) * 1000.0             and edge < radio_horizon_m(sc["txHeightM"], hill["heightM"], ae)             and d_m - edge < radio_horizon_m(hill["heightM"], sc["rxHeightM"], ae)
     return True
 
 
@@ -457,8 +447,6 @@ def validate_scenario(sc: Any) -> str | None:
         return "models"
     if "TWO_RAY_FLAT" in sc["models"] and hill is not None:
         return "TWO_RAY_FLAT needs flat terrain"
-    if "KNIFE_EDGE_4RAY" in sc["models"] and hill is None:
-        return "KNIFE_EDGE_4RAY needs a hill"
     if not _keys(sc["grids"], set(sc["models"])):
         return "grids keys"
     for grid in sc["grids"].values():

@@ -198,6 +198,10 @@ class KnifeEdgeTest(unittest.TestCase):
             four = o.knife_edge_4ray(4000.0, h, h, 50.0, DRY, 2000.0, 0.01)
             diff = abs(four["lossDb"] - o.two_ray_flat(4000.0, h, h, 50.0, DRY)["lossDb"])
             self.assertTrue(low <= diff <= high, (h, diff))
+        # codex #2214: an edge of zero height midway, 1.5 m antennas, vertical polarization: 12.03 dB off at 1 km
+        four = o.knife_edge_4ray(1000.0, 1.5, 1.5, 50.0, DRY, 500.0, 0.0)
+        self.assertAlmostEqual(four["lossDb"] - o.two_ray_flat(1000.0, 1.5, 1.5, 50.0, DRY)["lossDb"], 12.026583,
+                               places=5)
 
     def test_no_ground_is_one_knife_edge(self) -> None:
         r = o.knife_edge_4ray(4000.0, 3.0, 3.0, 50.0, None, 2000.0, 60.0)
@@ -350,7 +354,7 @@ class InputDomainTest(unittest.TestCase):
             lambda s: s["terrain"].update(kFactor=0.0),
             lambda s: s.update(sampleDistancesM=[]),
             lambda s: s.update(models=["KNIFE_EDGE_4RAY"], grids={"KNIFE_EDGE_4RAY": {"minM": 100.0, "maxM": 1000.0,
-                                                                                      "ratio": 1.5}}),  # no hill
+                                                                                      "ratio": 1.5}}),  # not a model
         ]
         for mutate in cases:
             sc = bad(mutate)

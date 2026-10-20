@@ -686,8 +686,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -699,11 +698,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -1106,139 +1100,6 @@
          ]
         ],
         "outerLimitM": 10077.545761573363
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 105.77805653172675,
-        "rxPowerDbm": -75.77805653172675,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 44.21773057578099,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 27.84297826655174,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 18.32391656051908,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 111.78211828475065,
-        "rxPowerDbm": -81.78211828475065,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 38.213668822757086,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 21.838916513527835,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 12.319854807495176,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 129.29153154582195,
-        "rxPowerDbm": -99.29153154582195,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 20.704255561685784,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 4.329503252456533,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -5.189558453576126,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 148.9799421892271,
-        "rxPowerDbm": -118.9799421892271,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 1.015844918280635,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -15.358907390948616,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -24.877969096981275,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         18084.953848329867
-        ]
-       ],
-       "outerLimitM": 18084.953848329867
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          18084.953848329867
-         ]
-        ],
-        "outerLimitM": 18084.953848329867
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          7356.100829035533
-         ]
-        ],
-        "outerLimitM": 7356.100829035533
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          4485.174260470674
-         ]
-        ],
-        "outerLimitM": 4485.174260470674
        }
       }
      }
@@ -1918,8 +1779,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -1931,11 +1791,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -2338,139 +2193,6 @@
          ]
         ],
         "outerLimitM": 10591.601875756263
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 103.78985106177294,
-        "rxPowerDbm": -73.78985106177294,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 46.2059360457348,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 29.83118373650555,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 20.312122030472892,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 109.46195881478994,
-        "rxPowerDbm": -79.46195881478994,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 40.5338282927178,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 24.15907598348855,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 14.64001427745589,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 126.52988657562253,
-        "rxPowerDbm": -96.52988657562253,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 23.46590053188521,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 7.09114822265596,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -2.427913483376699,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 146.05663502429016,
-        "rxPowerDbm": -116.05663502429016,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 3.9391520832175786,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -12.435600226011672,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -21.95466193204433,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         21263.656917878157
-        ]
-       ],
-       "outerLimitM": 21263.656917878157
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          21263.656917878157
-         ]
-        ],
-        "outerLimitM": 21263.656917878157
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          8511.830865905758
-         ]
-        ],
-        "outerLimitM": 8511.830865905758
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          5092.220032237783
-         ]
-        ],
-        "outerLimitM": 5092.220032237783
        }
       }
      }
@@ -3150,8 +2872,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -3163,11 +2884,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -3570,139 +3286,6 @@
          ]
         ],
         "outerLimitM": 12795.809025635643
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 94.19110876738787,
-        "rxPowerDbm": -64.19110876738787,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 55.804678340119864,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 39.42992603089061,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 29.910864324857954,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.06597883141595,
-        "rxPowerDbm": -69.06597883141595,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 50.92980827609179,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 34.55505596686254,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 25.03599426082988,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 115.21770402083676,
-        "rxPowerDbm": -85.21770402083676,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 34.778083086670975,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 18.403330777441724,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 8.884269071409065,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 134.42955225544458,
-        "rxPowerDbm": -104.42955225544458,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 15.566234852063161,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": -0.80851745716609,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -10.327579163198749,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         41250.70024461929
-        ]
-       ],
-       "outerLimitM": 41250.70024461929
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          41250.70024461929
-         ]
-        ],
-        "outerLimitM": 41250.70024461929
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          16137.36314369791
-         ]
-        ],
-        "outerLimitM": 16137.36314369791
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          9378.3945779605
-         ]
-        ],
-        "outerLimitM": 9378.3945779605
        }
       }
      }
@@ -4382,8 +3965,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -4395,11 +3977,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -4802,139 +4379,6 @@
          ]
         ],
         "outerLimitM": 14562.824269783561
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 105.77805653172675,
-        "rxPowerDbm": -68.78835648836656,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 51.20743061914118,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 34.83267830991193,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 25.313616603879268,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 111.78211828475065,
-        "rxPowerDbm": -74.79241824139046,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 45.20336886611727,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 28.828616556888022,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 19.309554850855363,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 129.29153154582195,
-        "rxPowerDbm": -92.30183150246177,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 27.69395560504597,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 11.31920329581672,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 1.8001415897840616,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 148.9799421892271,
-        "rxPowerDbm": -111.99024214586692,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 8.005544961640823,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -8.369207347588429,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -17.888269053621087,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         26786.122717842874
-        ]
-       ],
-       "outerLimitM": 26786.122717842874
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          26786.122717842874
-         ]
-        ],
-        "outerLimitM": 26786.122717842874
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          10743.926733825083
-         ]
-        ],
-        "outerLimitM": 10743.926733825083
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          6434.003475936122
-         ]
-        ],
-        "outerLimitM": 6434.003475936122
        }
       }
      }
@@ -5614,8 +5058,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -5627,11 +5070,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -6034,139 +5472,6 @@
          ]
         ],
         "outerLimitM": 15305.674665382718
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 103.78985106177294,
-        "rxPowerDbm": -66.80015101841275,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 53.19563608909499,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 36.82088377986574,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 27.30182207383308,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 109.46195881478994,
-        "rxPowerDbm": -72.47225877142975,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 47.52352833607799,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 31.148776026848736,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 21.629714320816078,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 126.52988657562253,
-        "rxPowerDbm": -89.54018653226234,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 30.4556005752454,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 14.080848266016147,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 4.561786559983489,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 146.05663502429016,
-        "rxPowerDbm": -109.06693498092997,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 10.928852126577766,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": -5.445900182651485,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -14.964961888684144,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         31620.353130407762
-        ]
-       ],
-       "outerLimitM": 31620.353130407762
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          31620.353130407762
-         ]
-        ],
-        "outerLimitM": 31620.353130407762
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          12544.260014141355
-         ]
-        ],
-        "outerLimitM": 12544.260014141355
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          7415.15601894801
-         ]
-        ],
-        "outerLimitM": 7415.15601894801
        }
       }
      }
@@ -6846,8 +6151,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -6859,11 +6163,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -7266,139 +6565,6 @@
          ]
         ],
         "outerLimitM": 19051.216000189743
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 94.19110876738787,
-        "rxPowerDbm": -57.20140872402769,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 62.79437838348005,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 46.4196260742508,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 36.90056436821814,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.06597883141595,
-        "rxPowerDbm": -62.07627878805576,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 57.91950831945198,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 41.54475601022273,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 32.02569430419007,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 115.21770402083676,
-        "rxPowerDbm": -78.22800397747658,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 41.76778313003116,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 25.39303082080191,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 15.873969114769253,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 134.42955225544458,
-        "rxPowerDbm": -97.43985221208439,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 22.55593489542335,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 6.181182586194097,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -3.3378791198385613,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "AVAILABLE_TO_APPLICABILITY_END",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         46927.4893790414
-        ]
-       ],
-       "outerLimitM": null
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "AVAILABLE_TO_APPLICABILITY_END",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          46927.4893790414
-         ]
-        ],
-        "outerLimitM": null
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          24093.375063238203
-         ]
-        ],
-        "outerLimitM": 24093.375063238203
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          13974.15046451542
-         ]
-        ],
-        "outerLimitM": 13974.15046451542
        }
       }
      }
@@ -8078,8 +7244,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -8091,11 +7256,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -8498,139 +7658,6 @@
          ]
         ],
         "outerLimitM": 12174.773233061058
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 111.29946740401526,
-        "rxPowerDbm": -81.29946740401526,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 38.69631970349248,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 28.194796285223944,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 18.91647395728718,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 117.03749955775464,
-        "rxPowerDbm": -87.03749955775464,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 32.958287549753095,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 22.45676413148456,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 13.178441803547798,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 134.18803738656848,
-        "rxPowerDbm": -104.18803738656848,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 15.807749720939256,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 5.306226302670723,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -3.9720960252660404,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 153.7487468160696,
-        "rxPowerDbm": -123.7487468160696,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -3.7529597085618605,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -14.254483126830394,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -23.532805454767157,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         13807.545575100565
-        ]
-       ],
-       "outerLimitM": 13807.545575100565
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          13807.545575100565
-         ]
-        ],
-        "outerLimitM": 13807.545575100565
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          7725.337645746805
-         ]
-        ],
-        "outerLimitM": 7725.337645746805
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          4710.305957931197
-         ]
-        ],
-        "outerLimitM": 4710.305957931197
        }
       }
      }
@@ -9310,8 +8337,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -9323,11 +8349,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -9730,139 +8751,6 @@
          ]
         ],
         "outerLimitM": 12795.809025635643
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 107.94424255696015,
-        "rxPowerDbm": -77.94424255696015,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 42.05154455054759,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 31.550021132279056,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 22.271698804342293,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 113.34904338292189,
-        "rxPowerDbm": -83.34904338292189,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 36.646743724585846,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 26.145220306317313,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 16.86689797838055,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 130.0655528374675,
-        "rxPowerDbm": -100.0655528374675,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 19.930234270040245,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 9.428710851771712,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": 0.15038852383494827,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 149.46626615277484,
-        "rxPowerDbm": -119.46626615277484,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 0.5295209547329023,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -9.972002463535631,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -19.250324791472394,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         17498.1787218817
-        ]
-       ],
-       "outerLimitM": 17498.1787218817
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          17498.1787218817
-         ]
-        ],
-        "outerLimitM": 17498.1787218817
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          9683.20174414716
-         ]
-        ],
-        "outerLimitM": 9683.20174414716
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          5792.995029454096
-         ]
-        ],
-        "outerLimitM": 5792.995029454096
        }
       }
      }
@@ -10542,8 +9430,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -10555,11 +9442,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -10962,139 +9844,6 @@
          ]
         ],
         "outerLimitM": 15458.731412036544
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 95.15895685676387,
-        "rxPowerDbm": -65.15895685676387,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 54.83683025074387,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 44.33530683247534,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 35.056984504538576,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.88565127285759,
-        "rxPowerDbm": -69.88565127285759,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 50.11013583465015,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 39.60861241638162,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 30.330290088444855,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 116.04028113107282,
-        "rxPowerDbm": -86.04028113107282,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 33.95550597643492,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 23.453982558166388,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 14.175660230229624,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 135.258224444512,
-        "rxPowerDbm": -105.258224444512,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 14.737562662995742,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 4.236039244727209,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -5.042283083209554,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         39357.697524066396
-        ]
-       ],
-       "outerLimitM": 39357.697524066396
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          39357.697524066396
-         ]
-        ],
-        "outerLimitM": 39357.697524066396
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          21541.749119686934
-         ]
-        ],
-        "outerLimitM": 21541.749119686934
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          12682.938882545983
-         ]
-        ],
-        "outerLimitM": 12682.938882545983
        }
       }
      }
@@ -11774,8 +10523,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -11787,11 +10535,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -12194,139 +10937,6 @@
          ]
         ],
         "outerLimitM": 17419.28548917011
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 111.29946740401526,
-        "rxPowerDbm": -74.30976736065507,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 45.686019746852665,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 35.18449632858413,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 25.90617400064737,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 117.03749955775464,
-        "rxPowerDbm": -80.04779951439446,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 39.94798759311328,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 29.44646417484475,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 20.168141846907986,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 134.18803738656848,
-        "rxPowerDbm": -97.1983373432083,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 22.797449764299444,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 12.29592634603091,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 3.017604018094147,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 153.7487468160696,
-        "rxPowerDbm": -116.75904677270941,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 3.236740334798327,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -7.264783083470206,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -16.54310541140697,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         20450.735639616105
-        ]
-       ],
-       "outerLimitM": 20450.735639616105
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          20450.735639616105
-         ]
-        ],
-        "outerLimitM": 20450.735639616105
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          11351.08300426213
-         ]
-        ],
-        "outerLimitM": 11351.08300426213
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          6824.830384768115
-         ]
-        ],
-        "outerLimitM": 6824.830384768115
        }
       }
      }
@@ -13006,8 +11616,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -13019,11 +11628,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -13426,139 +12030,6 @@
          ]
         ],
         "outerLimitM": 18490.92255582567
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 107.94424255696015,
-        "rxPowerDbm": -70.95454251359996,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 49.04124459390778,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 38.539721175639244,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 29.26139884770248,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 113.34904338292189,
-        "rxPowerDbm": -76.3593433395617,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 43.636443767946034,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 33.1349203496775,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 23.856598021740737,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 130.0655528374675,
-        "rxPowerDbm": -93.0758527941073,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 26.919934313400432,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 16.4184108951319,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 7.140088567195136,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 149.46626615277484,
-        "rxPowerDbm": -112.47656610941465,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 7.51922099809309,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -2.9823024201754436,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -12.260624748112207,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         26020.857675693664
-        ]
-       ],
-       "outerLimitM": 26020.857675693664
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          26020.857675693664
-         ]
-        ],
-        "outerLimitM": 26020.857675693664
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          14342.056518120951
-         ]
-        ],
-        "outerLimitM": 14342.056518120951
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          8520.342696771662
-         ]
-        ],
-        "outerLimitM": 8520.342696771662
        }
       }
      }
@@ -14238,8 +12709,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -14251,11 +12721,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -14658,139 +13123,6 @@
          ]
         ],
         "outerLimitM": 23015.94456666225
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 95.15895685676387,
-        "rxPowerDbm": -58.16925681340368,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 61.82653029410406,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 51.32500687583553,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 42.046684547898764,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.88565127285759,
-        "rxPowerDbm": -62.8959512294974,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 57.09983587801034,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 46.598312459741805,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 37.31999013180504,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 116.04028113107282,
-        "rxPowerDbm": -79.05058108771263,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 40.94520601979511,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 30.443682601526575,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 21.165360273589812,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 135.258224444512,
-        "rxPowerDbm": -98.26852440115181,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 21.72726270635593,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 11.225739288087397,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 1.9474169601506333,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "AVAILABLE_TO_APPLICABILITY_END",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         46927.4893790414
-        ]
-       ],
-       "outerLimitM": null
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "AVAILABLE_TO_APPLICABILITY_END",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          46927.4893790414
-         ]
-        ],
-        "outerLimitM": null
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          32162.221078943
-         ]
-        ],
-        "outerLimitM": 32162.221078943
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          18898.042175944913
-         ]
-        ],
-        "outerLimitM": 18898.042175944913
        }
       }
      }
@@ -15470,8 +13802,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -15483,11 +13814,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -15890,139 +14216,6 @@
          ]
         ],
         "outerLimitM": 14275.879099876054
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 116.50584795733528,
-        "rxPowerDbm": -86.50584795733528,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 33.48993915017246,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 28.637458536850318,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 20.3578005043327,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 122.04351093405637,
-        "rxPowerDbm": -92.04351093405637,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 27.952276173451367,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 23.099795560129223,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 14.820137527611607,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 138.90025479127019,
-        "rxPowerDbm": -108.90025479127019,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 11.095532316237552,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 6.243051702915409,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -2.0366063296022077,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 158.34668756444725,
-        "rxPowerDbm": -128.34668756444725,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -8.350900456939513,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -13.203381070261656,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -21.483039102779273,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         10626.449576876901
-        ]
-       ],
-       "outerLimitM": 10626.449576876901
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          10626.449576876901
-         ]
-        ],
-        "outerLimitM": 10626.449576876901
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          8113.108170734196
-         ]
-        ],
-        "outerLimitM": 8113.108170734196
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          5163.976363387652
-         ]
-        ],
-        "outerLimitM": 5163.976363387652
        }
       }
      }
@@ -16702,8 +14895,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -16715,11 +14907,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -17122,139 +15309,6 @@
          ]
         ],
         "outerLimitM": 15004.092407982273
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 110.7614493411412,
-        "rxPowerDbm": -80.7614493411412,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 39.23433776636654,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 34.38185715304439,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 26.102199120526777,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 116.05407497650661,
-        "rxPowerDbm": -86.05407497650661,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 33.941712131001125,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 29.089231517678982,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 20.809573485161366,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 132.65465761186556,
-        "rxPowerDbm": -102.65465761186556,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 17.34112949564218,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 12.488648882320035,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 4.208990849802419,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 152.00584622102713,
-        "rxPowerDbm": -122.00584622102713,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -2.0100591135193895,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -6.862539726841533,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -15.14219775935915,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         15137.411374766281
-        ]
-       ],
-       "outerLimitM": 15137.411374766281
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          15137.411374766281
-         ]
-        ],
-        "outerLimitM": 15137.411374766281
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          11499.535722332243
-         ]
-        ],
-        "outerLimitM": 11499.535722332243
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          7232.165505798248
-         ]
-        ],
-        "outerLimitM": 7232.165505798248
        }
       }
      }
@@ -17934,8 +15988,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -17947,11 +16000,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -18354,139 +16402,6 @@
          ]
         ],
         "outerLimitM": 18490.92255582567
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 95.76214734822061,
-        "rxPowerDbm": -65.76214734822061,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 54.23363975928713,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 49.381159145964986,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 41.10150111344737,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.80616864647247,
-        "rxPowerDbm": -69.80616864647247,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 50.189618461035266,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 45.33713784771312,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 37.05747981519551,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 115.98259491728757,
-        "rxPowerDbm": -85.98259491728757,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 34.01319219022017,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 29.160711576898024,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 20.881053544380407,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 135.27743855086825,
-        "rxPowerDbm": -105.27743855086825,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 14.718348556639484,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 9.86586794331734,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": 1.5862099107997238,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         39279.100044876606
-        ]
-       ],
-       "outerLimitM": 39279.100044876606
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          39279.100044876606
-         ]
-        ],
-        "outerLimitM": 39279.100044876606
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          29750.06983385816
-         ]
-        ],
-        "outerLimitM": 29750.06983385816
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          18542.545005825144
-         ]
-        ],
-        "outerLimitM": 18542.545005825144
        }
       }
      }
@@ -19166,8 +17081,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -19179,11 +17093,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -19586,139 +17495,6 @@
          ]
         ],
         "outerLimitM": 20425.482174430133
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 116.50584795733528,
-        "rxPowerDbm": -79.51614791397509,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 40.47963919353265,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 35.627158580210505,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 27.34750054769289,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 122.04351093405637,
-        "rxPowerDbm": -85.05381089069618,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 34.941976216811554,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 30.08949560348941,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 21.809837570971794,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 138.90025479127019,
-        "rxPowerDbm": -101.91055474791,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 18.08523235959774,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 13.232751746275596,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 4.95309371375798,
-          "meetsSnr": false
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 158.34668756444725,
-        "rxPowerDbm": -121.35698752108706,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -1.3612004135793256,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": -6.213681026901469,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -14.493339059419085,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         15739.126834845669
-        ]
-       ],
-       "outerLimitM": 15739.126834845669
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          15739.126834845669
-         ]
-        ],
-        "outerLimitM": 15739.126834845669
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          11980.5700645186
-         ]
-        ],
-        "outerLimitM": 11980.5700645186
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          7557.319189100998
-         ]
-        ],
-        "outerLimitM": 7557.319189100998
        }
       }
      }
@@ -20398,8 +18174,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -20411,11 +18186,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -20818,139 +18588,6 @@
          ]
         ],
         "outerLimitM": 21682.060913899117
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 110.7614493411412,
-        "rxPowerDbm": -73.77174929778101,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 46.224037809726724,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 41.37155719640458,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 33.091899163886964,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 116.05407497650661,
-        "rxPowerDbm": -79.06437493314642,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 40.93141217436131,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 36.07893156103917,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 27.799273528521553,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 132.65465761186556,
-        "rxPowerDbm": -95.66495756850537,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 24.330829539002366,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 19.478348925680223,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 11.198690893162606,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 152.00584622102713,
-        "rxPowerDbm": -115.01614617766694,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 4.979640929840798,
-          "meetsSnr": false
-         },
-         "rural": {
-          "snrDb": 0.12716031651865478,
-          "meetsSnr": false
-         },
-         "city": {
-          "snrDb": -8.152497715998962,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         22510.252822407005
-        ]
-       ],
-       "outerLimitM": 22510.252822407005
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          22510.252822407005
-         ]
-        ],
-        "outerLimitM": 22510.252822407005
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          17083.426696290066
-         ]
-        ],
-        "outerLimitM": 17083.426696290066
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          10690.36788377026
-         ]
-        ],
-        "outerLimitM": 10690.36788377026
        }
       }
      }
@@ -21630,8 +19267,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -21643,11 +19279,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -22050,139 +19681,6 @@
          ]
         ],
         "outerLimitM": 27257.88514253194
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 95.76214734822061,
-        "rxPowerDbm": -58.77244730486042,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 61.22333980264732,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 56.370859189325174,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 48.09120115680756,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 99.80616864647247,
-        "rxPowerDbm": -62.816468603112284,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 57.179318504395454,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 52.32683789107331,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 44.047179858555694,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 115.98259491728757,
-        "rxPowerDbm": -78.99289487392738,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 41.002892233580354,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 36.15041162025821,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 27.870753587740595,
-          "meetsSnr": true
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 135.27743855086825,
-        "rxPowerDbm": -98.28773850750807,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 21.70804859999967,
-          "meetsSnr": true
-         },
-         "rural": {
-          "snrDb": 16.855567986677528,
-          "meetsSnr": true
-         },
-         "city": {
-          "snrDb": 8.575909954159911,
-          "meetsSnr": false
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "AVAILABLE_TO_APPLICABILITY_END",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         46927.4893790414
-        ]
-       ],
-       "outerLimitM": null
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "AVAILABLE_TO_APPLICABILITY_END",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          46927.4893790414
-         ]
-        ],
-        "outerLimitM": null
-       },
-       "rural": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          44417.39237581674
-         ]
-        ],
-        "outerLimitM": 44417.39237581674
-       },
-       "city": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          27629.069320177725
-         ]
-        ],
-        "outerLimitM": 27629.069320177725
        }
       }
      }
@@ -22780,8 +20278,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -22793,11 +20290,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -23138,117 +20630,6 @@
          ]
         ],
         "outerLimitM": 15004.092407982273
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 120.6182410274706,
-        "rxPowerDbm": -90.6182410274706,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 29.377546080037135,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 125.67727176379645,
-        "rxPowerDbm": -95.67727176379645,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 24.318515343711283,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 142.54639265685387,
-        "rxPowerDbm": -112.54639265685387,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 7.44939445065387,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 162.04605518271254,
-        "rxPowerDbm": -132.04605518271254,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -12.050268075204798,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         8675.019456491193
-        ]
-       ],
-       "outerLimitM": 8675.019456491193
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          8675.019456491193
-         ]
-        ],
-        "outerLimitM": 8675.019456491193
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
@@ -23852,8 +21233,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -23865,11 +21245,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -24210,117 +21585,6 @@
          ]
         ],
         "outerLimitM": 15613.318726156911
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 112.62792783018385,
-        "rxPowerDbm": -82.62792783018385,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 37.36785927732389,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 115.63724608625321,
-        "rxPowerDbm": -85.63724608625321,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 34.358541021254524,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 131.93457875966266,
-        "rxPowerDbm": -101.93457875966266,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 18.06120834784508,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 151.40881547600495,
-        "rxPowerDbm": -121.40881547600495,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -1.4130283684972085,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         15707.69573567858
-        ]
-       ],
-       "outerLimitM": 15707.69573567858
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          15707.69573567858
-         ]
-        ],
-        "outerLimitM": 15707.69573567858
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
@@ -24924,8 +22188,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -24937,11 +22200,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -25282,117 +22540,6 @@
          ]
         ],
         "outerLimitM": 18675.831781383924
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 114.10491016372586,
-        "rxPowerDbm": -84.10491016372586,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 35.890876943781876,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 117.93073585157416,
-        "rxPowerDbm": -87.93073585157416,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 32.06505125593358,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 123.04117336452629,
-        "rxPowerDbm": -93.04117336452629,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 26.95461374298145,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 141.90085711700596,
-        "rxPowerDbm": -111.90085711700596,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 8.094929990501782,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         26866.561471150668
-        ]
-       ],
-       "outerLimitM": 26866.561471150668
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          26866.561471150668
-         ]
-        ],
-        "outerLimitM": 26866.561471150668
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
@@ -25996,8 +23143,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -26009,11 +23155,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -26354,117 +23495,6 @@
          ]
         ],
         "outerLimitM": 22562.43953206769
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 38966.2765915583,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 120.6182410274706,
-        "rxPowerDbm": -83.62854098411042,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 36.36724612339732,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 125.67727176379645,
-        "rxPowerDbm": -88.68757172043627,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 31.30821538707147,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 142.54639265685387,
-        "rxPowerDbm": -105.55669261349368,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 14.439094494014057,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 162.04605518271254,
-        "rxPowerDbm": -125.05635513935235,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": -5.0605680318446105,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         12797.54298525517
-        ]
-       ],
-       "outerLimitM": 12797.54298525517
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          12797.54298525517
-         ]
-        ],
-        "outerLimitM": 12797.54298525517
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
@@ -27068,8 +24098,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -27081,11 +24110,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -27426,117 +24450,6 @@
          ]
         ],
         "outerLimitM": 23950.48421000645
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 41045.06406300774,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 112.62792783018385,
-        "rxPowerDbm": -75.63822778682366,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 44.357559320684075,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 115.63724608625321,
-        "rxPowerDbm": -78.64754604289303,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 41.34824106461471,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 131.93457875966266,
-        "rxPowerDbm": -94.94487871630247,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 25.05090839120527,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 151.40881547600495,
-        "rxPowerDbm": -114.41911543264476,
-        "aboveSensitivity": false,
-        "noise": {
-         "none": {
-          "snrDb": 5.576671674862979,
-          "meetsSnr": false
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         23311.65378720629
-        ]
-       ],
-       "outerLimitM": 23311.65378720629
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          23311.65378720629
-         ]
-        ],
-        "outerLimitM": 23311.65378720629
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
@@ -28140,8 +25053,7 @@
     ],
     "models": [
      "FSPL",
-     "P526_GENERAL",
-     "KNIFE_EDGE_4RAY"
+     "P526_GENERAL"
     ],
     "grids": {
      "FSPL": {
@@ -28153,11 +25065,6 @@
       "minM": 10.0,
       "maxM": 100000.0,
       "ratio": 1.01
-     },
-     "KNIFE_EDGE_4RAY": {
-      "minM": 10.0,
-      "maxM": 100000.0,
-      "ratio": 1.001
      }
     },
     "sampleDistancesM": [
@@ -28498,117 +25405,6 @@
          ]
         ],
         "outerLimitM": 29224.14228498092
-       },
-       "rural": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       },
-       "city": {
-        "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-       }
-      }
-     },
-     "KNIFE_EDGE_4RAY": {
-      "grid": {
-       "minM": 10.0,
-       "maxM": 100000.0,
-       "ratio": 1.001,
-       "nodes": 9215
-      },
-      "applicableUpToM": 46927.4893790414,
-      "samples": [
-       {
-        "distanceM": 3000.0,
-        "lossDb": 114.10491016372586,
-        "rxPowerDbm": -77.11521012036567,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 42.880576987142064,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 4000.0,
-        "lossDb": 117.93073585157416,
-        "rxPowerDbm": -80.94103580821397,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 39.05475129929377,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 10000.0,
-        "lossDb": 123.04117336452629,
-        "rxPowerDbm": -86.0514733211661,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 33.94431378634164,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       },
-       {
-        "distanceM": 30000.0,
-        "lossDb": 141.90085711700596,
-        "rxPowerDbm": -104.91115707364577,
-        "aboveSensitivity": true,
-        "noise": {
-         "none": {
-          "snrDb": 15.08463003386197,
-          "meetsSnr": true
-         },
-         "rural": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         },
-         "city": {
-          "status": "NOISE_OUT_OF_MODEL_DOMAIN"
-         }
-        }
-       }
-      ],
-      "aboveSensitivity": {
-       "status": "SAMPLED_ESTIMATE",
-       "intervalsM": [
-        [
-         2501.9468136825744,
-         40152.37449615216
-        ]
-       ],
-       "outerLimitM": 40152.37449615216
-      },
-      "meetsSnr": {
-       "none": {
-        "status": "SAMPLED_ESTIMATE",
-        "intervalsM": [
-         [
-          2501.9468136825744,
-          40152.37449615216
-         ]
-        ],
-        "outerLimitM": 40152.37449615216
        },
        "rural": {
         "status": "NOISE_OUT_OF_MODEL_DOMAIN"
