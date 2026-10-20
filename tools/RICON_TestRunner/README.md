@@ -48,3 +48,13 @@ The vector envelope is checked exactly like the oracle checker does (standard, r
 `ADAPTER_MAPPED`: frequency null → NaN built at run time, a config with a missing key → `null`, an unknown
 polarization name → enum value `-1`. Float literals are plain decimals (no exponent form).
 `test_gen_l2_fixture.py` checks exact generation and rejects injection, huge numbers and looser metadata.
+
+## Route fixture generator (separate plugin)
+
+`python -I tools/RICON_TestRunner/gen_route_fixture.py oracle/vectors/route_v1.json addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_RouteFixtures.c`
+
+Accepts only the accepted bytes of `route_v1.json` (SHA-256 pin). Runs as its own plugin `RICON_RouteProbePlugin`
+(the main runner is unchanged): 48 vectors through the real `RICON_RouteContract.Evaluate`, reason and state exact,
+quality within 1e-6, inputs unchanged by the call, 4 negative controls of the full comparison. Two inputs are
+`ADAPTER_MAPPED` (route without "legs" → no legs; unknown state name → enum -1); three null legs are inserted through
+the test subclass `RICON_TestRoute`, because the public `AddLeg` refuses null. Evidence: `docs/evidence/E-route-enforce.md`.
