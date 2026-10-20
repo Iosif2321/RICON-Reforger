@@ -1,4 +1,4 @@
-# От передатчика к слушателю: проверенная цепочка R20
+# От передатчика к слушателю: проверенная цепочка R20–R26
 
 Дата: 2026-10-20, дополнение 2026-10-21. Автор: codex. Статус: AGENT-REVIEWED: R20 — agora #2176 (claude с исполнением обоих примеров); R23 — #2423.
 Основание: Intent, PLAN v5, уточнение владельца agora #2020. Исходный Core: `3c295ce`.
@@ -19,11 +19,11 @@
 | Свободное пространство | `Propagation/RICON_PropagationModel.c:75` | `20 log10(4π max(d,λ)/λ)`, `λ=c/f`. Ограничение при `d<λ` — проектная защита формулы дальней зоны | ORACLE; используется в L2 adapter checks |
 | Рельеф | `Propagation/RICON_TerrainDiffractionModel.c:256`, `:796` | P.526-16 §4.5: Bullington + поправка сферической Земли; два слоя `fspl` и `terrain_diffraction`. Горизонтальная дистанция профиля отличается от 3D-дистанции FSPL | ENFORCE_PARITY 45/45 на synthetic-профилях |
 | Профиль мира | `Propagation/RICON_TerrainDiffractionModel.c:175`, `:192` | Базовый поставщик отказывает; есть synthetic-поставщик. Рабочего чтения высот `BaseWorld.GetSurfaceY` здесь нет | SOURCE; отказ → reason 16, пустые слои, проверено адаптером |
-| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | ENFORCE_PARITY выбранных 8 budget-векторов L0 R22 и 7 точек R21; не весь диапазон |
+| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 R22;7 точек R21;R24:336 P526 samples ×3среды=1008 расчётов (168 только REQ-fallback); не range-sweep и не весь диапазон |
 | Шум и SINR | `Propagation/RICON_LinkEvaluator.c:118`; `Propagation/RICON_NoiseModel.c:65` | `N0=kT0B`; `N=N0+10log10(f_a+f_r−1)`; мощности помех складываются в линейной шкале, затем `SINR=P_rx−(N+I)` | L0 ORACLE; область внешнего шума ограничена конфигом/REQ |
 | Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:64`, `:66` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ORACLE; речевая разборчивость NOT_CALIBRATED |
-| Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | SOURCE; route ORACLE, полный Enforce parity NOT_TESTED |
-| Доставка снимка | `Core/RICON_LinkSnapshot.c:161` | Версия, epoch, последовательность, TTL и запрос resync. Наличие pure receiver не доказывает работающие RPC/JIP | ORACLE; runtime NOT_TESTED |
+| Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | R25 ENFORCE_PARITY48/48;2 ADAPTER_MAPPED,3 null-leg TEST_SUBCLASS; FindRoute/перенос голоса не проверены |
+| Доставка снимка | `Core/RICON_LinkSnapshot.c:161` | Версия, epoch, последовательность, TTL и запрос resync. Наличие pure receiver не доказывает работающие RPC/JIP | R25 ENFORCE_PARITY43/46 и77шагов;3allocator BLOCKED_NO_AUTHORITY_CONTEXT; runtime NOT_TESTED |
 | Голосовая граница | `Network/RICON_NetworkContracts.c:350`, `:367` | Проверки снимка, binding, идентичности; любой допустимый вызов → `BLOCKED_NO_ACTUATOR`. Ни SetRange, ни mute, ни аудиограф здесь не вызываются | ENFORCE_PARITY 103/103 вызова |
 
 `valid=true` означает корректно рассчитанный бюджет, а не слышимый голос. `LOST` может быть корректным
@@ -38,7 +38,8 @@
 шум −94.101973 дБм, SINR −10.898027 дБ, Q=0.136732436, состояние WEAK, reason OK.
 Здесь `aboveSensitivity=true`, `meetsSnr=false`. WEAK не доказывает слышимость речи и не равнозначен выполнению
 требуемого SNR. Физический вывод «при таком SNR речи нет» без модели приёмника/модуляции/кодека и калибровки
-также не установлен (`E-web3-intelligibility.md` §5–6, REQ-LE-74). Полный L0 Enforce parity NOT_TESTED.
+также не установлен (`E-web3-intelligibility.md` §5–6, REQ-LE-74). L0 исполнен в R22:53 полных+4FSPL только потери;
+в R25 усилены guards NaN/±Infinity и сравнение неизменности входов, повторные L0/snapshot/route PASS.
 
 Воспроизведение кодовой семантики из корня проекта:
 
@@ -145,3 +146,6 @@ python -B -I oracle/l2_terrain_oracle.py --check oracle/vectors/l2_terrain_v1.js
 Дополнение R23: прямая речь прослежена отдельно в `docs/analysis/DIRECT_VOICE_RU.md`.
 Новый source-результат — управляющие вызовы PTT → DIRECT → native SetCapture. Индикатор active не подтверждает
 успех запроса захвата, native quality не является измерением слышимого звука. Дальность/акустика остаются OPEN.
+
+Дополнение R26: `docs/evidence/E-audio-api.md` — найден документированный кандидат AudioEditor.GetContainer,
+подготовлен ограниченный плагин (compile-only). Сам ACP на момент подготовки кандидата не прочитан.
