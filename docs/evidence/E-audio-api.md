@@ -1,6 +1,6 @@
 # R26: кандидат чтения ACP через документированный API
 
-Дата: 2026-10-21. Автор: codex. Статус: DRAFT до ревью claude.
+Дата: 2026-10-21. Автор: codex. Статус: AGENT-REVIEWED, claude agora #2575/#2598/#2614.
 Основание: owner agora #2020, mini-intent #2551/#2555, границы #2557/#2566/#2567.
 
 **Результат R26:** кандидат найден и исполнен; корневой контейнер не получен, граф ACP не прочитан.
@@ -60,7 +60,7 @@ Owner #2020 уже разрешил ACP через Workbench. #791/#794 были
 |---|---|
 | `audit_audio_api.py` | `d9599246a8fc1886e5714778a7c03263c9205bf7a66dc43b0003d41f9d3c455c` |
 | `test_audit_audio_api.py` | `050968e99bb9e22b7dce24be4586fe087ed599b1a82ddf243ac1296e0c3db2f6` |
-| `RICON_AudioContainerProbePlugin.c` | `c77379a706410b1c7b083bb4a3097ce18403857666d1e769f7e8dbc3ad2d2da3` |
+| `RICON_AudioContainerProbePlugin.c` (конечный, с регистрацией ScriptEditor) | `eada03fe23a4f4bdb2b3652d47aff7daaabfeeb2f4328251da94b9b10e3e1da7` |
 
 После взаимного ревью — один ограниченный скрытый прогон. Команда из E-physics-enforce.md:
 проект `tools/RICON_WbReader/addon.gproj`, модуль AudioEditor, plugin RICON_AudioContainerProbePlugin,
@@ -76,6 +76,7 @@ Owner #2020 уже разрешил ACP через Workbench. #791/#794 были
 Лог `ricon-audio-acp-r26-20261021-014604/console.log`, SHA-256
 `0d79f85aba3047188950a8749957795bd13e6ee11e00933370d5f4fa70e55729`:
 exit0, CRC096631db, 0 SCRIPT(E), но **0 строк [RICON_ACP]**. CLI в логе содержит нужный plugin/флаг.
+Исходник первого запуска: SHA `c77379a706410b1c7b083bb4a3097ce18403857666d1e769f7e8dbc3ad2d2da3`.
 Это NOT_EXECUTED_OR_UNCONFIRMED, не успешное чтение и не доказательство нечитаемости ACP этим API.
 git status перед/после чистый. В общих логах есть Resource-leak сообщения; отсутствие всех engine-ошибок не заявляется.
 
