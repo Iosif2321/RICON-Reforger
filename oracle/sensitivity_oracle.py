@@ -44,7 +44,17 @@ def pure_water(f_ghz: float, t_c: float) -> tuple[float, float, float, float, fl
 
 
 def soil_permittivity(f_ghz: float, t_c: float, soil: str, mv: float) -> tuple[float, float]:
-    """P.527-6 §5.2: real and imaginary part of the complex relative permittivity of soil (eq 58-70)."""
+    """P.527-6 §5.2: real and imaginary part of the complex relative permittivity of soil (eq 58-70).
+    Raises ValueError("SOIL_OUTSIDE_REAL_MODEL") when a base of the fractional powers in (59)/(60) is negative:
+    the formulas then continue into complex numbers (e.g. silty clay, mv 0.1, 0.1 GHz; codex #2666), which are
+    not ground constants."""
+    if soil not in SOILS:
+        raise ValueError(f"soil {soil!r}")
+    for name, v in (("f_ghz", f_ghz), ("t_c", t_c), ("mv", mv)):
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v):
+            raise ValueError(f"{name} {v!r}")
+    if f_ghz <= 0.0 or not 0.0 < mv < 1.0 or t_c <= -273.15:
+        raise ValueError("input out of range")
     s = SOILS[soil]
     rho_s, rho_b, psand, pclay = s["rho_s"], s["rho_b"], s["psand"], s["pclay"]
     es, e1, einf, f1, f2 = pure_water(f_ghz, t_c)
@@ -61,8 +71,15 @@ def soil_permittivity(f_ghz: float, t_c: float, soil: str, mv: float) -> tuple[f
     esm = (1.01 + 0.44 * rho_s) ** 2 - 0.062                                               # (61)
     b1 = 1.2748 - 0.00519 * psand - 0.00152 * pclay                                        # (62)
     b2 = 1.33797 - 0.00603 * psand - 0.00166 * pclay                                       # (63)
-    re = (1 + rho_b / rho_s * (esm ** alpha - 1) + mv ** b1 * efw1 ** alpha - mv) ** (1 / alpha)  # (59)
-    im = (mv ** b2 * efw2 ** alpha) ** (1 / alpha)                                                 # (60)
+    if efw1 < 0.0 or efw2 < 0.0:
+        raise ValueError("SOIL_OUTSIDE_REAL_MODEL")
+    base_re = 1 + rho_b / rho_s * (esm ** alpha - 1) + mv ** b1 * efw1 ** alpha - mv
+    if base_re <= 0.0:
+        raise ValueError("SOIL_OUTSIDE_REAL_MODEL")
+    re = base_re ** (1 / alpha)                                                            # (59)
+    im = (mv ** b2 * efw2 ** alpha) ** (1 / alpha)                                         # (60)
+    if not (isinstance(re, float) and isinstance(im, float) and math.isfinite(re) and math.isfinite(im)):
+        raise ValueError("SOIL_OUTSIDE_REAL_MODEL")
     return re, im
 
 
@@ -102,14 +119,21 @@ def step_sensitivity(d_km: float, center_km: float, half_km: float, height_m: fl
                      ground: dict[str, Any], steps: list[float], reference_step: float,
                      phases: int = 8) -> dict[str, Any]:
     """Worst |L(step, phase) − L(reference)| over vertex positions center + k·step/phases (k = 0…phases−1).
-    The reference uses the same vertex shift, so only the sampling differs."""
+    The reference uses the same vertex shift, so only the sampling differs. An empty sweep is refused rather
+    than reported as zero deviation (codex #2673)."""
+    if isinstance(phases, bool) or not isinstance(phases, int) or phases < 1:
+        raise ValueError(f"phases {phases!r}")
+    if not steps:
+        raise ValueError("no steps")
     out = []
     for step in steps:
-        worst, worst_phase = 0.0, 0
+        worst, worst_phase = -1.0, -1
         for k in range(phases):
             c = center_km + k * step / phases
             ref = l2_loss(d_km, reference_step, c, half_km, height_m, f_mhz, h_m, ground)
             dev = abs(l2_loss(d_km, step, c, half_km, height_m, f_mhz, h_m, ground) - ref)
+            if not math.isfinite(dev):
+                raise ValueError(f"non-finite deviation at step {step}, phase {k}")
             if dev > worst:
                 worst, worst_phase = dev, k
         out.append({"stepKm": step, "worstDeviationDb": worst, "worstPhase": worst_phase})

@@ -25,8 +25,38 @@ class SoilModelTest(unittest.TestCase):
             self.assertLessEqual(abs(im - im_read), tol, (soil, mv, f, im))
 
     def test_pure_water_static_permittivity(self) -> None:
-        """Static permittivity of pure water at 25 °C is about 78.4 (Malmberg and Maryott 1956), outside P.527."""
-        self.assertAlmostEqual(so.pure_water(1.0, 25.0)[0], 78.36, delta=0.3)
+        """Static permittivity of pure water at 25 °C is 78.30, measured below 100 kHz, better than 0.1 %
+        (Malmberg and Maryott 1956, J. Res. NBS 56(1), DOI 10.6028/jres.056.001; codex #2685), outside P.527."""
+        self.assertAlmostEqual(so.pure_water(1.0, 25.0)[0], 78.30, delta=0.08)
+
+    def test_refuses_complex_continuation(self) -> None:
+        """Silty clay at low moisture: εfw' < 0 and the fractional power in (59) would turn complex (codex #2666)."""
+        for t in (0.0, 23.0, 40.0):
+            for f in (0.03, 0.05, 0.088, 0.1, 0.4):
+                with self.assertRaisesRegex(ValueError, "SOIL_OUTSIDE_REAL_MODEL"):
+                    so.soil_permittivity(f, t, "silty_clay", 0.1)
+        with self.assertRaisesRegex(ValueError, "SOIL_OUTSIDE_REAL_MODEL"):
+            so.ground_p527(100.0, "silty_clay", 0.1)
+
+    def test_real_or_refused_on_grid(self) -> None:
+        for soil in so.SOILS:
+            for f in (0.03, 0.05, 0.088, 0.1, 0.4, 1.0):
+                for mv in (0.05, 0.1, 0.3, 0.5):
+                    for t in (0.0, 23.0, 40.0):
+                        try:
+                            re, im = so.soil_permittivity(f, t, soil, mv)
+                        except ValueError as e:
+                            self.assertEqual(str(e), "SOIL_OUTSIDE_REAL_MODEL")
+                            continue
+                        self.assertIs(type(re), float)
+                        self.assertIs(type(im), float)
+                        self.assertTrue(math.isfinite(re) and math.isfinite(im) and re > 1.0 and im >= 0.0)
+
+    def test_rejects_bad_inputs(self) -> None:
+        for args in ((0.1, 23.0, "peat", 0.3), (0.0, 23.0, "loam", 0.3), (0.1, 23.0, "loam", 0.0),
+                     (0.1, 23.0, "loam", 1.0), (math.nan, 23.0, "loam", 0.3), (0.1, 23.0, "loam", True)):
+            with self.assertRaises(ValueError, msg=args):
+                so.soil_permittivity(*args)
 
     def test_conductivity_factor_is_two_pi_eps0(self) -> None:
         """P.527-6 eq (3a) factor 0.05563 = 2π·ε0 per GHz (ε0 = 8.8541878128e-12 F/m)."""
@@ -55,6 +85,15 @@ class StepSweepTest(unittest.TestCase):
         g = dict(so.BASELINE_GROUND, polarization="VERTICAL")
         r = so.step_sensitivity(10.0, 2.0, 0.1, 60.0, 50.0, 3.0, g, [0.005], 0.005, phases=4)
         self.assertEqual(r["rows"][0]["worstDeviationDb"], 0.0)
+
+    def test_empty_sweep_is_refused(self) -> None:
+        """phases = 0 or -1 used to return worstDeviationDb = 0 without any computation (codex #2673)."""
+        g = dict(so.BASELINE_GROUND, polarization="VERTICAL")
+        for phases in (0, -1, True, 2.5):
+            with self.assertRaises(ValueError, msg=phases):
+                so.step_sensitivity(5.0, 2.0, 0.5, 60.0, 88.0, 1.5, g, [0.1], 0.002, phases=phases)
+        with self.assertRaises(ValueError):
+            so.step_sensitivity(5.0, 2.0, 0.5, 60.0, 88.0, 1.5, g, [], 0.002, phases=8)
 
     def test_reference_converged(self) -> None:
         for b in DATA["stepLoss"]["blocks"]:
