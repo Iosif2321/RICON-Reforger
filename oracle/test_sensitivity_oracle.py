@@ -52,6 +52,15 @@ class SoilModelTest(unittest.TestCase):
                         self.assertIs(type(im), float)
                         self.assertTrue(math.isfinite(re) and math.isfinite(im) and re > 1.0 and im >= 0.0)
 
+    def test_upper_scope_bound(self) -> None:
+        """P.527-6 covers frequencies up to 1 000 GHz: 1000 is accepted, above it refused (codex #2716)."""
+        so.soil_permittivity(1000.0, 23.0, "loam", 0.3)
+        for f in (1000.001, 2000.0):
+            with self.assertRaisesRegex(ValueError, "SOIL_ABOVE_SCOPE"):
+                so.soil_permittivity(f, 23.0, "loam", 0.3)
+        with self.assertRaisesRegex(ValueError, "SOIL_ABOVE_SCOPE"):
+            so.ground_p527(2_000_000.0, "loam", 0.3)
+
     def test_rejects_bad_inputs(self) -> None:
         for args in ((0.1, 23.0, "peat", 0.3), (0.0, 23.0, "loam", 0.3), (0.1, 23.0, "loam", 0.0),
                      (0.1, 23.0, "loam", 1.0), (math.nan, 23.0, "loam", 0.3), (0.1, 23.0, "loam", True)):

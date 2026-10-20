@@ -32,6 +32,7 @@ SOILS = {  # P.527-6 Table 2
     "silty_clay": {"psand": 5.02, "pclay": 47.38, "psilt": 47.60, "rho_s": 2.56, "rho_b": 1.4758},
 }
 FIGURE_MIN_GHZ = 0.1  # P.527-6 Fig. 14-16 start at 0.1 GHz
+MAX_GHZ = 1000.0  # P.527-6 scope: up to 1 000 GHz; Fig. 14-16 end there
 
 
 def pure_water(f_ghz: float, t_c: float) -> tuple[float, float, float, float, float]:
@@ -55,6 +56,8 @@ def soil_permittivity(f_ghz: float, t_c: float, soil: str, mv: float) -> tuple[f
             raise ValueError(f"{name} {v!r}")
     if f_ghz <= 0.0 or not 0.0 < mv < 1.0 or t_c <= -273.15:
         raise ValueError("input out of range")
+    if f_ghz > MAX_GHZ:  # above the scope of P.527-6 and the end of Fig. 14-16 (codex #2716)
+        raise ValueError("SOIL_ABOVE_SCOPE")
     s = SOILS[soil]
     rho_s, rho_b, psand, pclay = s["rho_s"], s["rho_b"], s["psand"], s["pclay"]
     es, e1, einf, f1, f2 = pure_water(f_ghz, t_c)
