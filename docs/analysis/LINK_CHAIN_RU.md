@@ -15,11 +15,11 @@
 | Звено | Файл и строки | Решение / формула | Что уже проверено |
 |---|---|---|---|
 | Каталог и выбор модели | `Core/RICON_CommsManagerComponent.c:120`, `:159`, `:224` | Регистрация, проверка зависимостей, выдача evaluator только после freeze. Это реестр, а не работающая система сбора координат и запуска расчётов | SOURCE; EXT fixtures исполнялись в Workbench |
-| Вход одного ребра | `Core/RICON_LinkTypes.c:42`, `:50`; `Propagation/RICON_LinkEvaluator.c:187` | Частота МГц, полоса Гц, мощности дБм; ровно один порог: чувствительность либо требуемый SINR. Невалидный вход возвращает причину, а не физическое LOST | SOURCE; L0 oracle; полного L0 Enforce parity ещё нет |
+| Вход одного ребра | `Core/RICON_LinkTypes.c:42`, `:50`; `Propagation/RICON_LinkEvaluator.c:187` | Частота МГц, полоса Гц, мощности дБм; ровно один порог: чувствительность либо требуемый SINR. Невалидный вход возвращает причину, а не физическое LOST | SOURCE; L0 ENFORCE_PARITY R22: 53 полных + 4 FSPL только lossDb, см. E-l0-enforce.md |
 | Свободное пространство | `Propagation/RICON_PropagationModel.c:75` | `20 log10(4π max(d,λ)/λ)`, `λ=c/f`. Ограничение при `d<λ` — проектная защита формулы дальней зоны | ORACLE; используется в L2 adapter checks |
 | Рельеф | `Propagation/RICON_TerrainDiffractionModel.c:256`, `:796` | P.526-16 §4.5: Bullington + поправка сферической Земли; два слоя `fspl` и `terrain_diffraction`. Горизонтальная дистанция профиля отличается от 3D-дистанции FSPL | ENFORCE_PARITY 45/45 на synthetic-профилях |
 | Профиль мира | `Propagation/RICON_TerrainDiffractionModel.c:175`, `:192` | Базовый поставщик отказывает; есть synthetic-поставщик. Рабочего чтения высот `BaseWorld.GetSurfaceY` здесь нет | SOURCE; отказ → reason 16, пустые слои, проверено адаптером |
-| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 ORACLE; полный Enforce parity NOT_TESTED |
+| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | ENFORCE_PARITY выбранных 8 budget-векторов L0 R22 и 7 точек R21; не весь диапазон |
 | Шум и SINR | `Propagation/RICON_LinkEvaluator.c:118`; `Propagation/RICON_NoiseModel.c:65` | `N0=kT0B`; `N=N0+10log10(f_a+f_r−1)`; мощности помех складываются в линейной шкале, затем `SINR=P_rx−(N+I)` | L0 ORACLE; область внешнего шума ограничена конфигом/REQ |
 | Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:64`, `:66` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ORACLE; речевая разборчивость NOT_CALIBRATED |
 | Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | SOURCE; route ORACLE, полный Enforce parity NOT_TESTED |
@@ -141,3 +141,7 @@ python -B -I oracle/l2_terrain_oracle.py --check oracle/vectors/l2_terrain_v1.js
 Это успешное чтение ресурсов. В общих логах также есть Steamworks RequestCurrentStats/resource-leak сообщения;
 проверку компиляции или runtime по этим запускам не заявляем. Неудачные/пустые поиски не приняты как отсутствие API.
 Следующий измерительный шаг описан в `docs/evidence/WB-order-link-quality.md`.
+
+Дополнение R23: прямая речь прослежена отдельно в `docs/analysis/DIRECT_VOICE_RU.md`.
+Новый source-результат — управляющие вызовы PTT → DIRECT → native SetCapture. Индикатор active не подтверждает
+успех запроса захвата, native quality не является измерением слышимого звука. Дальность/акустика остаются OPEN.
