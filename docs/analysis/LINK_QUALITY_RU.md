@@ -209,7 +209,7 @@
 |---|---|---|---|
 | D-001 | нет отражения от земли | ORACLE + WORKBENCH_STATIC | факт; выбор модели OPEN |
 | D-002 | холм уменьшает потери по §4.5 | ORACLE | OPEN, нет независимого источника |
-| D-003 | шум среды важнее модели потерь (в этой матрице) | ORACLE | наблюдение |
+| D-003 | шум среды заметно сокращает дальность УКВ (1.2–4.1 раза в матрице) | ORACLE | наблюдение |
 | D-004 | шум среды не даёт «потеряно» | ORACLE + ENFORCE_PARITY | вопрос владельцу #2294 |
 | D-005 | выше 250 МГц шум города занижен | ORACLE + ENFORCE_PARITY + DOC | правило REQ-LE-63 не выбрано |
 | D-006 | ванильная дальность — одно число на передатчик | WORKBENCH_STATIC + ORACLE | нужен опыт |
@@ -234,4 +234,4 @@ python -I oracle/link_physics_oracle.py --check oracle/vectors/link_probe_points
 python -I oracle/cellular_oracle.py --check oracle/vectors/cellular_scenarios_v1.json
 ```
 
-Workbench-проверки кода — команды в `docs/evidence/E-l0-enforce.md` и `docs/evidence/E-physics-enforce.md`.
+Workbench-проверки кода — команды в `docs/evidence/E-l0-enforce.md`, `docs/evidence/E-physics-enforce.md` и `docs/evidence/E-p526-matrix-enforce.md` (1008 точек матрицы).
