@@ -6,10 +6,13 @@ class RICON_RouteProbePlugin : WorkbenchPlugin
 	{
 		Print("[RICON_ROUTE] source=" + RICON_RouteFixtures.SOURCE_SHA);
 		RICON_RouteRun t = new RICON_RouteRun();
+		t.SelfCheckSnapshot();
 		RICON_RouteFixtures.Run(t);
-		PrintFormat("[RICON_ROUTE] cases=%1 quietPositive=%2 controls=%3 adapterMapped=%4 testSubclass=%5", t.m_iCases,
-			t.m_iQuietPositive, t.m_iControls, RICON_RouteFixtures.ADAPTER_MAPPED, RICON_RouteFixtures.TEST_SUBCLASS);
-		bool ok = t.m_bOk && t.m_iCases == 48 && t.m_iQuietPositive == 48 && t.m_iControls == 4;
+		PrintFormat("[RICON_ROUTE] cases=%1 quietPositive=%2 controls=%3 snapshotControls=%4 adapterMapped=%5 testSubclass=%6",
+			t.m_iCases, t.m_iQuietPositive, t.m_iControls, t.m_iSnapshotControls, RICON_RouteFixtures.ADAPTER_MAPPED,
+			RICON_RouteFixtures.TEST_SUBCLASS);
+		bool ok = t.m_bOk && t.m_iCases == 48 && t.m_iQuietPositive == 48 && t.m_iControls == 4
+			&& t.m_iSnapshotControls == 3;
 		if (ok)
 		{
 			Print("[RICON_ROUTE] done: PASS");

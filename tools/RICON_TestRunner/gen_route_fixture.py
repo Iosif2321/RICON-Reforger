@@ -99,6 +99,8 @@ def case(vector: dict, index: int, counts: dict) -> list[str]:
                     counts["adapter"] += 1
                 lines.append(f"\t\tRICON_LinkBudget b{n} = RICON_RouteRun.Budget({str(budget['valid']).lower()}, "
                              f"{number(budget['intelligibility'], f'{vid}: q')}, {state});")
+                if budget["intelligibility"] == "NaN":  # the special value must be real before Evaluate (#2505)
+                    lines.append(f'\t\tt.RequireNaN("{vid}", b{n}.m_fIntelligibility);')
             lines.append(f"\t\tRICON_RouteLeg l{n} = new RICON_RouteLeg({int32(leg['fromEndpointId'], 'from')}, "
                          f"{int32(leg['toEndpointId'], 'to')}, b{n});")
             lines.append(f'\t\tt.m_bOk = RICON_TestSupport.Expect(route.AddLeg(l{n}), "{vid}", "AddLeg") && t.m_bOk;')

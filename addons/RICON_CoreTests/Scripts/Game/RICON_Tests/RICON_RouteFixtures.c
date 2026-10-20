@@ -283,6 +283,7 @@ class RICON_RouteFixtures
 		RICON_RoutingContext context = RICON_RouteRun.Context(7, 1000, 4, 1, policy);
 		RICON_TestRoute route = new RICON_TestRoute(1, 2);
 		RICON_LinkBudget b0 = RICON_RouteRun.Budget(true, RICON_L2Run.NaN(), RICON_ELinkState.CLEAN);
+		t.RequireNaN("R-22", b0.m_fIntelligibility);
 		RICON_RouteLeg l0 = new RICON_RouteLeg(1, 2, b0);
 		t.m_bOk = RICON_TestSupport.Expect(route.AddLeg(l0), "R-22", "AddLeg") && t.m_bOk;
 		t.Check("R-22", route, context, RICON_ERouteReason.INVALID_BUDGET, 0.0, RICON_ELinkState.LOST);

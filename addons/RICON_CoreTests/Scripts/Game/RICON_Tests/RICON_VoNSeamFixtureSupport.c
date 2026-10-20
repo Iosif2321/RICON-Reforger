@@ -71,9 +71,10 @@ class RICON_VoNSeamRun
 	{
 		if (m_bFailed)
 			return;
+		// R25: `value != value` is true for ±Inf in Workbench too; classify NaN by arithmetic (RICON_RouteRun.FloatClass).
 		bool ok = !RICON_Num.IsFinite(value);
 		if (mustBeNaN)
-			ok = ok && value != value;
+			ok = ok && RICON_RouteRun.FloatClass(value) == 1;
 		if (ok)
 			return;
 		m_bFailed = true;
@@ -130,14 +131,14 @@ class RICON_VoNSeamRun
 		return copy;
 	}
 
-	//! NaN never equals itself, so quality counts as unchanged when both values are NaN.
+	//! Quality counts as unchanged when both are the same class (finite and equal, NaN, +Inf or -Inf). R25: the old
+	//! `x != x` test treated NaN and ±Inf alike in Workbench, so the class comes from RICON_RouteRun.FloatClass.
 	protected static bool SameSnapshot(RICON_LinkSnapshot a, RICON_LinkSnapshot b)
 	{
 		if (!a || !b)
 			return !a && !b;
 		// Short checks: Enforce rejects long boolean chains ("Formula too complex").
-		bool bothNaN = a.m_fQuality != a.m_fQuality && b.m_fQuality != b.m_fQuality;
-		if (a.m_fQuality != b.m_fQuality && !bothNaN)
+		if (!RICON_RouteRun.SameFloat(a.m_fQuality, b.m_fQuality))
 			return false;
 		if (a.m_iSchemaVersion != b.m_iSchemaVersion || a.m_iSessionEpoch != b.m_iSessionEpoch)
 			return false;
