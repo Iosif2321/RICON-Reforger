@@ -1,7 +1,7 @@
 {
  "schema": "ricon.oracle.cellular_scenarios",
  "version": 1,
- "revision": 2,
+ "revision": 3,
  "source": "oracle/cellular_oracle.py",
  "standards": [
   "3GPP TS 36.331 V19.4.0 §5.5.4.4 (event A3, TimeToTrigger)",
@@ -15,7 +15,7 @@
   "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
   "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
   "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
-  "loss interpolated linearly on a 1 m grid",
+  "loss interpolated linearly on a 1 m grid from 10 m; below 10 m the model itself; FSPL d_eff = max(d, lambda)",
   "fractionSamplesSinrOk = share of samples, both ends included, not a share of time"
  ],
  "relTolerance": 1e-09,

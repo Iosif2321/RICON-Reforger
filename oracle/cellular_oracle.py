@@ -70,21 +70,29 @@ class LossTable:
     profile computation is slow. The interpolation error is checked by a test. Nodes 0…max_m only, so the table never
     asks the model for a distance beyond the drive (agora #2337)."""
 
+    DIRECT_BELOW_M = 10.0  # near the cell the loss curves fast: evaluate the model itself (agora #2344, #2345)
+
     def __init__(self, propagation: str, f_mhz: float, h_bs: float, h_ms: float, ground: dict[str, Any],
                  terrain: dict[str, Any], max_m: int):
         self.step = 1.0
-        self.values = []
-        for i in range(max_m + 1):
-            d = max(float(i), 1.0)
-            if propagation == "FSPL":
-                self.values.append(lpo.fspl_db(math.hypot(d, h_bs - h_ms), f_mhz))
-            else:
-                self.values.append(lpo.p526_general_db(d, h_bs, h_ms, f_mhz, ground, terrain))
+        self.propagation, self.f_mhz, self.h_bs, self.h_ms = propagation, f_mhz, h_bs, h_ms
+        self.ground, self.terrain = ground, terrain
+        self.values = [self.model(float(i)) for i in range(max_m + 1)]
+
+    def model(self, d_m: float) -> float:
+        """FSPL with the near-field rule d_eff = max(d, λ) of REQ-LE-41 (as in Core), also for the P526 provider skip
+        below 2 m (REQ-L2 §6); P.526 §4.5 otherwise."""
+        if self.propagation == "FSPL" or d_m < 2.0:
+            return lpo.fspl_db(max(math.hypot(d_m, self.h_bs - self.h_ms), lpo.wavelength_m(self.f_mhz)), self.f_mhz)
+        return lpo.p526_general_db(d_m, self.h_bs, self.h_ms, self.f_mhz, self.ground, self.terrain)
 
     def __call__(self, d_m: float) -> float:
-        d = max(d_m, 1.0)
-        i = int(d)
-        frac = d - i
+        if not d_m >= 0.0:
+            raise ValueError(f"distance {d_m}")
+        if d_m < self.DIRECT_BELOW_M:
+            return self.model(d_m)
+        i = int(d_m)
+        frac = d_m - i
         if i >= len(self.values) or (frac > 0.0 and i + 1 >= len(self.values)):
             raise ValueError(f"distance {d_m} m beyond the loss table")  # never silently extrapolate
         if frac == 0.0:
@@ -218,7 +226,7 @@ ASSUMPTIONS = ["handover executes when A3 has held for TimeToTrigger (the standa
                "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
                "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
                "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
-               "loss interpolated linearly on a 1 m grid",
+               "loss interpolated linearly on a 1 m grid from 10 m; below 10 m the model itself; FSPL d_eff = max(d, lambda)",
                "fractionSamplesSinrOk = share of samples, both ends included, not a share of time"]
 
 

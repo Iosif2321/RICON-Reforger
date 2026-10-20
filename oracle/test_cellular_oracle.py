@@ -94,11 +94,31 @@ class A3Test(unittest.TestCase):
 
 class HandoverGeometryTest(unittest.TestCase):
     def test_loss_table_interpolation(self) -> None:
+        """Maximum over a seeded sample of 100 distances in 10…10 000 m, not a global error bound (codex #2344)."""
         table, rng, worst = Shared.get(), random.Random(7), 0.0
         for _ in range(100):
-            d = rng.uniform(1.0, 10000.0)
+            d = rng.uniform(10.0, 10000.0)
             worst = max(worst, abs(table(d) - lpo.p526_general_db(d, 30.0, 1.5, 900.0, GROUND, FLAT)))
         self.assertLess(worst, 0.005)
+
+    def test_near_cell_is_the_model_itself(self) -> None:
+        """codex #2345: equal heights 1.5 m, FSPL 900 MHz, cells at x 0 / 4 m. At 0.5 m the old table (clamped to
+        1 m) gave 31.533 dB against 25.512 dB. Below 10 m the model is evaluated directly, with d_eff = max(d, λ)."""
+        sc = road()
+        sc.update(propagation="FSPL", cells=[dict(c, heightM=1.5) for c in sc["cells"][:2]])
+        sc["cells"][1]["xM"] = 4.0
+        sc["cells"][0]["xM"] = 0.0
+        sc["mobile"].update(startXM=0.0, speedMps=0.0, durationMs=40)
+        self.assertIsNone(co.validate_scenario(sc))
+        table = co.build_table(sc)
+        self.assertAlmostEqual(table(0.5), lpo.fspl_db(0.5, 900.0), places=12)          # 25.512033497 dB
+        self.assertAlmostEqual(table(0.5), 25.512033497390245, places=9)
+        lam = lpo.wavelength_m(900.0)
+        self.assertAlmostEqual(table(0.0), lpo.fspl_db(lam, 900.0), places=12)          # REQ-LE-41 clamp
+        self.assertAlmostEqual(table(0.1), table(0.0), places=12)                        # still inside λ
+        self.assertAlmostEqual(table(9.99), lpo.fspl_db(9.99, 900.0), places=12)
+        with self.assertRaises(ValueError):
+            table(-1.0)
 
     def test_symmetric_midpoint(self) -> None:
         """Equal cells, no error, Hys 0, TTT 0: the first handover is the first sample past the midpoint."""
