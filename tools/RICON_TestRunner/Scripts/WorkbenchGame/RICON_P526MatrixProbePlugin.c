@@ -59,6 +59,8 @@ class RICON_P526MatrixProbePlugin : RICON_LinkPhysicsProbePlugin
 			m_iPhysicalSnr++;
 		else
 			m_iFallback++;
+		if (!checkMeets && m_iFallback == 1 && actual)
+			Reject(CompareSample(id, actual, loss, rx, sinr + 2 * DB_TOLERANCE, domain, above, meets, false, true));
 
 		if (m_iCases == 1 && actual)
 		{
@@ -89,7 +91,7 @@ class RICON_P526MatrixProbePlugin : RICON_LinkPhysicsProbePlugin
 		RICON_P526MatrixPoints.Run(this);
 		PrintFormat("[RICON_P526] cases=%1 quietPositive=%2 controls=%3 physicalSnr=%4 fallback=%5 maxDeviationDb=%6",
 			m_iCases, m_iQuietPositive, m_iControls, m_iPhysicalSnr, m_iFallback, s_fMaxDeviationDb.ToString(-1, 9));
-		bool ok = m_bOk && m_iCases == 1008 && m_iQuietPositive == 1008 && m_iControls == 8
+		bool ok = m_bOk && m_iCases == 1008 && m_iQuietPositive == 1008 && m_iControls == 9
 			&& m_iPhysicalSnr == 840 && m_iFallback == 168;
 		if (ok)
 		{

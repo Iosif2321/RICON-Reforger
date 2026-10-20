@@ -4,7 +4,7 @@
 Мини-intent/владение — agora #2445/#2447.
 
 **Результат:** 336 точек × 3 среды = 1008 расчётов настоящего Core, 1008 quiet-positive,
-8 отрицательных контролей полного компаратора, `done: PASS`.
+9 отрицательных контролей полного компаратора, `done: PASS`.
 Из них 840 сравниваются с SNR в области принятого эталона, 168 — только с программным fallback RICON.
 Это `ENFORCE_PARITY` перечисленных полей в выбранных точках. Дальности сеточного sweep,
 все значения между узлами, физическая калибровка раций и слышимость этим не проверены.
@@ -48,15 +48,26 @@ Two-ray в Core не добавлялась и здесь не исполняе�
 Каждая правильная строка проходит тот же компаратор ещё раз в quiet-режиме. В первой строке затем
 намеренно повреждаются ожидания: loss +0.1 дБ, Prx +0.1, SINR +0.1, domain, aboveSensitivity,
 meetsSnr, NaN в expected; отдельно NaN временно помещается в actual.totalLoss и после проверки восстанавливается.
-Все восемь повреждений обязаны быть отвергнуты. Quiet подавляет вывод/сбор максимума, но не сравнения.
+Все восемь повреждений обязаны быть отвергнуты. В первой строке UHF fallback дополнительно повреждается
+SINR-эталон на +0.1 дБ: тот же компаратор обязан отвергнуть и девятый случай при checkMeets=false.
+Quiet подавляет вывод/сбор максимума, но не сравнения.
 PASS требует всех 1008 положительных проверок и всех точных счётчиков, пустой прогон не проходит.
 
 ## Результат и воспроизводимость
 
-Лог: `Documents/My Games/ArmaReforgerWorkbench/logs/ricon-p526-matrix-r24-20261021-010321/console.log`,
-SHA-256 `57e54d5df5a2ceb369b3f121d464e9008ee014c6a2449f14290bfc05a852c393`.
-exit 0, SCRIPT(E)=0, строк FAIL нет, cases=1008, quietPositive=1008, controls=8,
+Конечный лог: `Documents/My Games/ArmaReforgerWorkbench/logs/ricon-p526-matrix-r24-fallback-20261021-011217/console.log`,
+SHA-256 `4a389fa4e39ae452cf08d5f3301230e0a594adff801b08dfe1756e5cbdfbf332`.
+SCRIPT(E)=0, строк FAIL нет, cases=1008, quietPositive=1008, controls=9,
 physicalSnr=840, fallback=168, done PASS. Play, мир и сервер не запускались.
+
+Предыдущая версия `4aab5f9` с восемью контролями прошла собственный и независимый прогоны:
+- `ricon-p526-matrix-r24-20261021-010321/console.log`,
+  SHA-256 `57e54d5df5a2ceb369b3f121d464e9008ee014c6a2449f14290bfc05a852c393`, exit 0;
+- claude: `ricon-p526-claude-review-20261021-010720/console.log`,
+  SHA-256 `1e4186807256fb69588b4fc9e9940692336dbd85d73c69d6e232cf784043cb39`, agree agora #2460.
+Оба: 1008/1008, controls=8, physicalSnr=840, fallback=168, done PASS; прежний probe SHA-256
+`22e4a31a15bcd67085d59e2ec0a6b8566236de2471c7b03a13159ea105dd3625`, CRC `9f6436d7`.
+Положительные ожидания, генератор и data-класс после этого не менялись.
 
 Внутренний максимум против float32-литералов ожиданий — **0.000018120 дБ**.
 Отдельный разбор **3024 actual** против исходного float64 JSON — **0.0000184858620376 дБ**
@@ -68,7 +79,7 @@ physicalSnr=840, fallback=168, done PASS. Play, мир и сервер не за
 |---|---|---|
 | `gen_p526_matrix.py` | `a1192e02f444eb37fd6399c34d84c539690c6c0c97a35dccd287d72c2e5505e3` | host |
 | `test_gen_p526_matrix.py` | `4035980361dee81f2c168f80d87d0ee2416b999ed4473e6d391066f43b99d89f` | host |
-| `RICON_P526MatrixProbePlugin.c` | `22e4a31a15bcd67085d59e2ec0a6b8566236de2471c7b03a13159ea105dd3625` | `9f6436d7` |
+| `RICON_P526MatrixProbePlugin.c` | `8d382cfb4f3938e616c7c03d5989a48f6cd432a2e6a07a058747d89928587539` | `f5e85280` |
 | `RICON_P526MatrixPoints.c` | `75b71b25b1ea7b301842d1b0a46d88098c8ddd4a49bffa0dee535ee5551bc551` | `3fb4fb58` |
 | прежний `RICON_LinkPhysicsProbePlugin.c` | `b2cf41a57f28d8249af89cbe9ef84e67832c19341d8bb81de0ca2f5f04be3eb7` | `25a9894f` |
 
