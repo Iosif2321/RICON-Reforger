@@ -10,8 +10,8 @@
   По стандарту A3 запускает только отчёт об измерениях; решение о хендовере принимает сеть, и стандарт его не
   задаёт. Здесь **допущение игровой модели**: хендовер выполняется сразу при срабатывании A3 (TEST_ONLY).
   Поэтому условие выхода из A3 в этой модели не используется.
-- Измерение M — полная принимаемая мощность в дБм (упрощение: не RSRP на ресурсный элемент; при одинаковых
-  полосе и мощности сот постоянный сдвиг сокращается в сравнении A3).
+- Измерение M — абстрактный TEST_ONLY прокси: полная принимаемая мощность в дБм. Это не RSRP (agora #2308); при одинаковых
+  полосе и мощности сот постоянный сдвиг сокращается в сравнении A3.
 - Ping-pong (в загруженных текстах 3GPP термина нет, `E-web2:150`): определение этой модели — хендовер A→B, за которым
   следует B→A не позже `pingPongWindowS`.
 - Флуктуации измерений: необязательная гауссова ошибка с seed (`random.Random`) — TEST_ONLY, не модель замираний.
@@ -41,6 +41,22 @@ STANDARDS = ["3GPP TS 36.331 V19.4.0 §5.5.4.4 (event A3, TimeToTrigger)", "Rec.
 def a3_entering(mn: float, mp: float, cfg: dict[str, Any], ocn: float = 0.0, ocp: float = 0.0) -> bool:
     """TS 36.331 §5.5.4.4 entering condition, strict: Mn + Ofn + Ocn − Hys > Mp + Ofp + Ocp + Off."""
     return mn + cfg["ofnDb"] + ocn - cfg["hysDb"] > mp + cfg["ofpDb"] + ocp + cfg["offDb"]
+
+
+def a3_step(timers: list[int], meas: list[float], serving: int, cfg: dict[str, Any], ttt_steps: int) -> int | None:
+    """One sample of the A3 + TimeToTrigger logic; `timers` (consecutive samples with the entering condition, one per
+    cell) is updated in place. A neighbour triggers when the condition has held on every sample of a window of
+    ttt_steps + 1 samples (that is, for at least TimeToTrigger); one false sample resets only that neighbour.
+    Returns the triggered neighbour with the strongest measurement, or None. TEST_ONLY policy: the caller hands over
+    on the trigger, which the standard does not prescribe (it only triggers a measurement report)."""
+    best = None
+    for i in range(len(meas)):
+        if i == serving:
+            continue
+        timers[i] = timers[i] + 1 if a3_entering(meas[i], meas[serving], cfg) else 0
+        if timers[i] > ttt_steps and (best is None or meas[i] > meas[best]):
+            best = i
+    return best
 
 
 def power_sum_dbm(powers_dbm: list[float]) -> float:
@@ -95,16 +111,7 @@ def simulate(sc: dict[str, Any], table: LossTable | None = None) -> dict[str, An
         if serving is None:
             serving = max(range(len(cells)), key=lambda i: meas[i])
         else:
-            best = None
-            for i in range(len(cells)):
-                if i == serving:
-                    continue
-                if a3_entering(meas[i], meas[serving], ho):
-                    timers[i] += 1
-                else:
-                    timers[i] = 0
-                if timers[i] > ttt_steps and (best is None or meas[i] > meas[best]):  # held through the whole TTT
-                    best = i
+            best = a3_step(timers, meas, serving, ho, ttt_steps)
             if best is not None:
                 events.append({"timeS": round(t, 6), "xM": x, "from": cells[serving]["id"], "to": cells[best]["id"]})
                 serving, timers = best, [0] * len(cells)
@@ -187,7 +194,7 @@ def validate_scenario(sc: Any) -> str | None:
 ROOT_KEYS = {"schema", "version", "revision", "source", "standards", "provenance", "note", "assumptions",
              "relTolerance", "scenarios"}
 ASSUMPTIONS = ["handover executes when A3 has held for TimeToTrigger (the standard only triggers a report)",
-               "measurement = total received power in dBm, not RSRP",
+               "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
                "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
                "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
                "loss interpolated linearly on a 1 m grid"]

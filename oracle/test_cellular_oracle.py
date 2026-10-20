@@ -58,6 +58,34 @@ class A3Test(unittest.TestCase):
         self.assertEqual(co.TTT_MS[-1], 5120)
         self.assertEqual(len(co.TTT_MS), 16)
 
+    def test_ttt_window_and_reset(self) -> None:
+        """agora #2308: the trigger needs ttt_steps + 1 consecutive samples with the condition; one false sample
+        resets the window of that neighbour only."""
+        def run(sequence, ttt_steps=3):
+            timers, fired = [0, 0, 0], []
+            for k, meas in enumerate(sequence):
+                hit = co.a3_step(timers, meas, 0, A3, ttt_steps)
+                if hit is not None:
+                    fired.append((k, hit))
+            return fired
+
+        good, bad = [-90.0, -85.0, -100.0], [-90.0, -95.0, -100.0]
+        self.assertEqual(run([good] * 4), [(3, 1)])                       # 4 samples = TTT of 3 steps
+        self.assertEqual(run([good] * 3), [])
+        self.assertEqual(run([good, good, good, bad, good, good, good, good]), [(7, 1)])  # reset at sample 3
+        self.assertEqual(run([good] * 4, ttt_steps=0)[:1], [(0, 1)])      # TTT 0: the first true sample
+
+    def test_ttt_per_neighbour_and_target_change(self) -> None:
+        """Each neighbour has its own window: a target that keeps changing never fills a window."""
+        timers = [0, 0, 0]
+        n1, n2 = [-90.0, -85.0, -95.0], [-90.0, -95.0, -85.0]
+        hits = [co.a3_step(timers, m, 0, A3, 2) for m in (n1, n2, n1, n2, n1, n2)]
+        self.assertEqual(hits, [None] * 6)
+        both = [-90.0, -85.0, -84.0]
+        timers = [0, 0, 0]
+        hits = [co.a3_step(timers, both, 0, A3, 2) for _ in range(3)]
+        self.assertEqual(hits, [None, None, 2])                           # the strongest of the triggered ones
+
     def test_power_sum(self) -> None:
         self.assertAlmostEqual(co.power_sum_dbm([-90.0, -90.0]), -90.0 + 10 * math.log10(2), places=12)
         self.assertAlmostEqual(co.power_sum_dbm([-90.0]), -90.0, places=12)

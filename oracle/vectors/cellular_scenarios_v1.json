@@ -12,7 +12,7 @@
  "note": "Snapshot of the oracle for regression and cross-checks; independent anchors are in test_cellular_oracle.py. Cells, powers, gains, bandwidth, noise figure, SINR threshold, measurement error and ping-pong window are TEST_ONLY assumptions, not network data.",
  "assumptions": [
   "handover executes when A3 has held for TimeToTrigger (the standard only triggers a report)",
-  "measurement = total received power in dBm, not RSRP",
+  "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
   "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
   "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
   "loss interpolated linearly on a 1 m grid"
