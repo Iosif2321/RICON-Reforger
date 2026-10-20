@@ -44,6 +44,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 3000.0,
     "fsplDb": 80.87986175928,
     "terrainDb": 37.437878543829385,
     "totalLossDb": 118.31774030310939,
@@ -89,6 +90,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 10000.0,
     "fsplDb": 91.33743666488675,
     "terrainDb": 49.477401956415406,
     "totalLossDb": 140.81483862130216,
@@ -138,6 +140,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 1000.0,
     "fsplDb": 61.99020831627662,
     "terrainDb": 25.341738877232046,
     "totalLossDb": 87.33194719350867,
@@ -187,6 +190,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 10000.0,
     "fsplDb": 81.99020831627662,
     "terrainDb": 31.82924312071158,
     "totalLossDb": 113.8194514369882,
@@ -236,6 +240,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 2000.8997975910738,
     "fsplDb": 72.45169011438247,
     "terrainDb": 8.71717015653934,
     "totalLossDb": 81.16886027092181,
@@ -281,6 +286,7 @@
     "layers": "P526_GENERAL"
    },
    "expect": {
+    "distanceM": 10000.0,
     "fsplDb": 104.48898304844262,
     "terrainDb": 15.532263560889504,
     "totalLossDb": 120.02124660933212,
@@ -326,6 +332,7 @@
     "layers": "FSPL"
    },
    "expect": {
+    "distanceM": 14141.308091433231,
     "fsplDb": 85.0,
     "terrainDb": null,
     "totalLossDb": 85.0,

@@ -520,6 +520,8 @@ def check_vector_file(data: dict[str, Any], evaluated: dict[str, Any] | None = N
 # fixture (REQ-LE-74/75): they check the code path, they are not a speech model.
 
 PROBE_LAYERS = ("FSPL", "P526_GENERAL")
+PROBE_SOURCE = "docs/req/REQ-link-eval.md (REQ-LE-40..75) + oracle/link_physics_oracle.py"
+PROBE_ID = re.compile(r"P[0-9]{2}")
 LINEAR_TEST = {"a": -15.0, "b": 15.0, "qClean": 0.8, "qDegraded": 0.5, "status": "TEST_ONLY"}
 
 
@@ -549,7 +551,8 @@ def req_budget(probe: dict[str, Any]) -> dict[str, Any]:
     else:
         q = min(1.0, max(0.0, (sinr - LINEAR_TEST["a"]) / (LINEAR_TEST["b"] - LINEAR_TEST["a"])))   # REQ-LE-74
         state = "CLEAN" if q >= LINEAR_TEST["qClean"] else "DEGRADED" if q >= LINEAR_TEST["qDegraded"] else "WEAK"
-    return {"fsplDb": fspl, "terrainDb": terrain, "totalLossDb": total, "rxPowerDbm": prx, "thermalNoiseDbm": n0,
+    return {"distanceM": d3, "fsplDb": fspl, "terrainDb": terrain, "totalLossDb": total, "rxPowerDbm": prx,
+            "thermalNoiseDbm": n0,
             "noiseDbm": noise, "noiseModelInDomain": in_domain, "sinrDb": sinr, "sensitivityDbm": sens,
             "intelligibility": q, "state": state}
 
@@ -571,10 +574,16 @@ def check_probe_file(data: dict[str, Any]) -> list[str]:
     if not _keys(data, {"schema", "version", "source", "fixture", "note", "relTolerance", "points"}) \
             or data["schema"] != "ricon.oracle.link_probe_points" or type(data["version"]) is not int \
             or data["version"] != 1 or data["fixture"] != LINEAR_TEST or data["relTolerance"] != 1e-9 \
+            or data["source"] != PROBE_SOURCE or not isinstance(data["note"], str) or not data["note"] \
             or not isinstance(data["points"], list) or not data["points"]:
         return ["envelope"]
+    ids = [p.get("id") if isinstance(p, dict) else None for p in data["points"]]
+    if len(set(map(str, ids))) != len(ids) or not all(isinstance(i, str) and PROBE_ID.fullmatch(i) for i in ids):
+        return ["point ids"]  # agora #2230
     for point in data["points"]:
-        if not _keys(point, {"id", "scenarioId", "note", "input", "expect"}) or not validate_probe(point["input"]):
+        if not _keys(point, {"id", "scenarioId", "note", "input", "expect"}) or not validate_probe(point["input"]) \
+                or not isinstance(point["scenarioId"], str) or not SCENARIO_ID.fullmatch(point["scenarioId"]) \
+                or not isinstance(point["note"], str) or not point["note"]:
             errors.append(f"{point.get('id')}: input")
             continue
         _close(req_budget(point["input"]), point["expect"], data["relTolerance"], point["id"], errors)

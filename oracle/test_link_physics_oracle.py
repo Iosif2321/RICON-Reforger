@@ -438,6 +438,21 @@ class ProbePointsTest(unittest.TestCase):
         bad = copy.deepcopy(self.data)
         bad["fixture"]["a"] = -20.0
         self.assertEqual(o.check_probe_file(bad), ["envelope"])
+        for key, value in (("source", None), ("source", "x"), ("note", ""), ("note", None)):  # agora #2230
+            bad = copy.deepcopy(self.data)
+            bad[key] = value
+            self.assertEqual(o.check_probe_file(bad), ["envelope"], key)
+        bad = copy.deepcopy(self.data)
+        bad["points"].append(copy.deepcopy(bad["points"][0]))
+        self.assertEqual(o.check_probe_file(bad), ["point ids"])
+        bad = copy.deepcopy(self.data)
+        bad["points"][4]["expect"]["distanceM"] += 0.01  # agora #2229: geometry separately from the dB tolerance
+        self.assertNotEqual(o.check_probe_file(bad), [])
+
+    def test_end_altitude_geometry(self) -> None:
+        """P05: receiver on the 60 m hill top at 2 km; the 3D distance carries the end altitudes (agora #2229)."""
+        p05 = next(p for p in self.data["points"] if p["id"] == "P05")
+        self.assertAlmostEqual(p05["expect"]["distanceM"], math.hypot(2000.0, 60.0), places=9)
 
 
 class VectorFileTest(unittest.TestCase):
