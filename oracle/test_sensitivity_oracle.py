@@ -156,5 +156,47 @@ class VectorFileTest(unittest.TestCase):
         self.assertEqual(errors, [])
 
 
+class AnchorFileTest(unittest.TestCase):
+    """R28 anchors (agora #2758) for the Enforce probe."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.data = json.loads(so.ANCHORS.read_text(encoding="utf-8"))
+        cls.cases = {c["id"]: c for c in cls.data["cases"]}
+
+    def test_recompute(self) -> None:
+        errors: list[str] = []
+        so.compare(json.loads(json.dumps(so.compute_anchors())), self.data, 1e-9, "$", errors)
+        self.assertEqual(errors, [])
+        self.assertEqual(len(self.cases), 16)
+
+    def test_geometry_by_hand(self) -> None:
+        """Node count = ceil(10 km / step) + 1; peak heights from the triangle: 60·(1 − |x − c|/w)."""
+        want = {"A09-hw30-s100-on-node": (101, 60.0), "A10-hw30-s100-missed": (101, 0.0),
+                "A11-hw30-s50-on-node": (201, 60.0), "A12-hw30-s50-phase3": (201, 60.0 * (1 - 0.01875 / 0.03)),
+                "A13-hw100-s100-400-h10": (101, 60.0 * (1 - 0.05 / 0.1)),
+                "A14-hw500-s100-worst": (101, 60.0 * (1 - 0.05 / 0.5)), "A16-hw30-s2-reference": (5001, 60.0)}
+        for cid, (n, peak) in want.items():
+            e = self.cases[cid]["expect"]
+            self.assertEqual(e["profilePointCount"], n, cid)
+            self.assertAlmostEqual(e["peakTerrainM"], peak, places=9, msg=cid)
+
+    def test_missed_hill_equals_flat_ground(self) -> None:
+        c = self.cases["A10-hw30-s100-missed"]
+        flat = so.l2_loss(10.0, 0.1, 2.0, 0.03, 0.0, 30.0, 1.5, dict(so.BASELINE_GROUND, polarization="VERTICAL"))
+        self.assertAlmostEqual(c["expect"]["L"], flat, places=9)
+
+    def test_on_node_close_to_reference(self) -> None:
+        ref = self.cases["A16-hw30-s2-reference"]["expect"]["L"]
+        for cid in ("A09-hw30-s100-on-node", "A11-hw30-s50-on-node"):
+            self.assertLess(abs(self.cases[cid]["expect"]["L"] - ref), 0.05, cid)
+
+    def test_flat_cases_have_flat_profile_and_vertical_beats_horizontal(self) -> None:
+        for v, h in (("A01-p527-dry-30-V", "A02-p527-dry-30-H"), ("A05-p527-clay-88-V", "A06-p527-clay-88-H")):
+            self.assertIsNone(self.cases[v]["input"]["hill"])
+            self.assertEqual(self.cases[v]["expect"]["peakTerrainM"], 0.0)
+            self.assertGreater(self.cases[h]["expect"]["L"], self.cases[v]["expect"]["L"])
+
+
 if __name__ == "__main__":
     unittest.main()

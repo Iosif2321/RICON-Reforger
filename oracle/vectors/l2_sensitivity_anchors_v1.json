@@ -1,0 +1,587 @@
+{
+ "schema": "ricon.oracle.l2_sensitivity_anchors",
+ "version": 1,
+ "revision": 1,
+ "source": "oracle/sensitivity_oracle.py (l2_terrain_oracle.l2 on provider_sampling profiles)",
+ "provenance": "ORACLE_SNAPSHOT",
+ "note": "R28 anchors for an Enforce probe (agora #2706, #2737, #2758). Profile: provider_sampling of pathKm at maxProfileStepKm, heights of the symmetric triangle hill (null = flat ground). Hills, heights and the matrix ground are TEST_ONLY; P.527 grounds below 0.1 GHz are BELOW_FIGURE_RANGE.",
+ "toleranceDb": 0.05,
+ "cases": [
+  {
+   "id": "A01-p527-dry-30-V",
+   "note": "P.527-6 dry soil, BELOW_FIGURE_RANGE",
+   "groundSource": "P527",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 3.762113290322435,
+     "conductivitySm": 0.009829979534419586,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 52.984249493341835,
+    "Lba": 12.497397915555577,
+    "Lbs": 12.497397915555577,
+    "Lsph": 52.984249493341835,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A02-p527-dry-30-H",
+   "note": "horizontal polarization",
+   "groundSource": "P527",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 3.762113290322435,
+     "conductivitySm": 0.009829979534419586,
+     "polarization": "HORIZONTAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 71.38118219622037,
+    "Lba": 12.497397915555577,
+    "Lbs": 12.497397915555577,
+    "Lsph": 71.38118219622037,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A03-fig24-B-30-V",
+   "note": "Fig. 24 wet ground",
+   "groundSource": "FIG24",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 30.0,
+     "conductivitySm": 0.01,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 40.48964259662578,
+    "Lba": 12.497397915555577,
+    "Lbs": 12.497397915555577,
+    "Lsph": 40.48964259662578,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A04-fig24-E-30-V",
+   "note": "Fig. 24 very dry ground, small eps",
+   "groundSource": "FIG24",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 3.0,
+     "conductivitySm": 0.0001,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 57.4396180841584,
+    "Lba": 12.497397915555577,
+    "Lbs": 12.497397915555577,
+    "Lsph": 57.43961808415839,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A05-p527-clay-88-V",
+   "note": "P.527-6 wet clay",
+   "groundSource": "P527",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 88.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 23.05313321227579,
+     "conductivitySm": 0.01090984938323776,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 52.44679689395747,
+    "Lba": 12.494850869212595,
+    "Lbs": 12.494850869212595,
+    "Lsph": 52.44679689395747,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A06-p527-clay-88-H",
+   "note": "wet clay, horizontal",
+   "groundSource": "P527",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 88.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 23.05313321227579,
+     "conductivitySm": 0.01090984938323776,
+     "polarization": "HORIZONTAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 62.31199779563731,
+    "Lba": 12.494850869212595,
+    "Lbs": 12.494850869212595,
+    "Lsph": 62.31199779563731,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A07-p527-mv30-400-V",
+   "note": "IN_FIGURE_RANGE",
+   "groundSource": "P527",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 400.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.070194268064137,
+     "conductivitySm": 0.04298450891906116,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 49.90337588373998,
+    "Lba": 12.4879209546304,
+    "Lbs": 12.4879209546304,
+    "Lsph": 49.90337588373999,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A08-matrix-50-H",
+   "note": "matrix ground, horizontal",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": null,
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 50.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "HORIZONTAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 67.0583401059969,
+    "Lba": 12.496357981909313,
+    "Lbs": 12.496357981909313,
+    "Lsph": 67.0583401059969,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A09-hw30-s100-on-node",
+   "note": "vertex on a profile node",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.0,
+     "halfWidthKm": 0.03,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 31.785291304308803,
+    "Lba": 20.295274307109473,
+    "Lbs": 9.350358920063659,
+    "Lsph": 20.84037591726299,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 60.0
+   }
+  },
+  {
+   "id": "A10-hw30-s100-missed",
+   "note": "vertex midway, nearest nodes 50 m away: hill missed",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.05,
+     "halfWidthKm": 0.03,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 46.229900886306694,
+    "Lba": 12.497397915555577,
+    "Lbs": 12.497397915555577,
+    "Lsph": 46.22990088630669,
+    "branchActual": "LOS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 0.0
+   }
+  },
+  {
+   "id": "A11-hw30-s50-on-node",
+   "note": "vertex on a node",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.0,
+     "halfWidthKm": 0.03,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.05,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 31.800671159697938,
+    "Lba": 20.295274307109473,
+    "Lbs": 9.348670525409798,
+    "Lsph": 20.854067377998263,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 201,
+    "peakTerrainM": 60.0
+   }
+  },
+  {
+   "id": "A12-hw30-s50-phase3",
+   "note": "nodes 18.75 m and 31.25 m from the vertex",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.01875,
+     "halfWidthKm": 0.03,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.05,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 40.03960486411805,
+    "Lba": 15.739950785550908,
+    "Lbs": 11.36204533773913,
+    "Lsph": 35.66169941630627,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 201,
+    "peakTerrainM": 22.50000000000035
+   }
+  },
+  {
+   "id": "A13-hw100-s100-400-h10",
+   "note": "worst phase; here the hill adds loss",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.05,
+     "halfWidthKm": 0.1,
+     "heightM": 60.0
+    },
+    "htg": 10.0,
+    "hrg": 10.0,
+    "frequencyMHz": 400.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 23.55645035265345,
+    "Lba": 22.030600287848152,
+    "Lbs": 3.686433340535658,
+    "Lsph": 5.212283405340957,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 30.000000000000107
+   }
+  },
+  {
+   "id": "A14-hw500-s100-worst",
+   "note": "worst phase of the matrix hill width",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.05,
+     "halfWidthKm": 0.5,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 32.610394442121134,
+    "Lba": 19.68696031660626,
+    "Lbs": 9.74047918466272,
+    "Lsph": 22.663913310177595,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 54.00000000000002
+   }
+  },
+  {
+   "id": "A15-hw1900-s100-shape",
+   "note": "wide hill: shape changes the loss",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.0,
+     "halfWidthKm": 1.9,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.1,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 35.4071846736376,
+    "Lba": 20.295274307109473,
+    "Lbs": 10.209030816361278,
+    "Lsph": 25.320941182889406,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 101,
+    "peakTerrainM": 60.0
+   }
+  },
+  {
+   "id": "A16-hw30-s2-reference",
+   "note": "reference step, 5001 points",
+   "groundSource": "MATRIX",
+   "input": {
+    "pathKm": 10.0,
+    "hill": {
+     "centerKm": 2.0,
+     "halfWidthKm": 0.03,
+     "heightM": 60.0
+    },
+    "htg": 1.5,
+    "hrg": 1.5,
+    "frequencyMHz": 30.0,
+    "config": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL",
+     "maxProfileStepKm": 0.002,
+     "maxProfilePoints": 100000
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "L": 31.808201225556015,
+    "Lba": 20.295274307109473,
+    "Lbs": 9.348215243466075,
+    "Lsph": 20.861142161912618,
+    "branchActual": "TRANS",
+    "branchSmooth": "LOS",
+    "sphCase": "INTERPOLATED",
+    "firstTermAccuracy": "NOT_MET",
+    "profilePointCount": 5001,
+    "peakTerrainM": 60.0
+   }
+  }
+ ]
+}

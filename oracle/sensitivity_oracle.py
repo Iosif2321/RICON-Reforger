@@ -294,10 +294,88 @@ def compare(a: Any, b: Any, tol: float, path: str, errors: list[str]) -> None:
         errors.append(f"{path}: type {type(a).__name__} != {type(b).__name__}")
 
 
+# ---------------------------------------------------------------------- R28 anchors for the Enforce probe
+
+ANCHORS = Path(__file__).resolve().parent / "vectors" / "l2_sensitivity_anchors_v1.json"
+ANCHOR_TOLERANCE_DB = 0.05  # as enforceToleranceDb of l2_terrain_v1 (float32 in Enforce)
+# (id, f_MHz, h_m, ground, pol, half_km or None (flat), step_km, phase k of 8, note); path 10 km, vertex 2 km + k·step/8
+ANCHOR_SPECS = [
+    ("A01-p527-dry-30-V", 30.0, 1.5, ("P527", "silty_loam", 0.07), "VERTICAL", None, 0.1, 0, "P.527-6 dry soil, BELOW_FIGURE_RANGE"),
+    ("A02-p527-dry-30-H", 30.0, 1.5, ("P527", "silty_loam", 0.07), "HORIZONTAL", None, 0.1, 0, "horizontal polarization"),
+    ("A03-fig24-B-30-V", 30.0, 1.5, ("FIG24", 30.0, 0.01), "VERTICAL", None, 0.1, 0, "Fig. 24 wet ground"),
+    ("A04-fig24-E-30-V", 30.0, 1.5, ("FIG24", 3.0, 0.0001), "VERTICAL", None, 0.1, 0, "Fig. 24 very dry ground, small eps"),
+    ("A05-p527-clay-88-V", 88.0, 1.5, ("P527", "silty_clay", 0.5), "VERTICAL", None, 0.1, 0, "P.527-6 wet clay"),
+    ("A06-p527-clay-88-H", 88.0, 1.5, ("P527", "silty_clay", 0.5), "HORIZONTAL", None, 0.1, 0, "wet clay, horizontal"),
+    ("A07-p527-mv30-400-V", 400.0, 1.5, ("P527", "silty_loam", 0.30), "VERTICAL", None, 0.1, 0, "IN_FIGURE_RANGE"),
+    ("A08-matrix-50-H", 50.0, 1.5, ("MATRIX",), "HORIZONTAL", None, 0.1, 0, "matrix ground, horizontal"),
+    ("A09-hw30-s100-on-node", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.03, 0.1, 0, "vertex on a profile node"),
+    ("A10-hw30-s100-missed", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.03, 0.1, 4, "vertex midway, nearest nodes 50 m away: hill missed"),
+    ("A11-hw30-s50-on-node", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.03, 0.05, 0, "vertex on a node"),
+    ("A12-hw30-s50-phase3", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.03, 0.05, 3, "nodes 18.75 m and 31.25 m from the vertex"),
+    ("A13-hw100-s100-400-h10", 400.0, 10.0, ("MATRIX",), "VERTICAL", 0.1, 0.1, 4, "worst phase; here the hill adds loss"),
+    ("A14-hw500-s100-worst", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.5, 0.1, 4, "worst phase of the matrix hill width"),
+    ("A15-hw1900-s100-shape", 30.0, 1.5, ("MATRIX",), "VERTICAL", 1.9, 0.1, 0, "wide hill: shape changes the loss"),
+    ("A16-hw30-s2-reference", 30.0, 1.5, ("MATRIX",), "VERTICAL", 0.03, 0.002, 0, "reference step, 5001 points"),
+]
+
+
+def anchor_ground(spec: tuple[Any, ...], f_mhz: float, pol: str) -> dict[str, Any]:
+    if spec[0] == "P527":
+        return as_scenario_ground(ground_p527(f_mhz, spec[1], spec[2], polarization=pol))
+    if spec[0] == "FIG24":
+        return {"permittivity": spec[1], "conductivitySm": spec[2], "polarization": pol}
+    return dict(BASELINE_GROUND, polarization=pol)
+
+
+def anchor_case(spec: tuple[Any, ...]) -> dict[str, Any]:
+    cid, f, h, gspec, pol, half, step, phase, note = spec
+    g = anchor_ground(gspec, f, pol)
+    cfg = {"earthRadiusKm": 6371.0, "kFactor": 4.0 / 3.0, **{k: g[k] for k in ("permittivity", "conductivitySm",
+                                                                              "polarization")},
+           "maxProfileStepKm": step, "maxProfilePoints": l2o.MAX_PROFILE_POINTS_CAP}
+    center = STEP_CENTER_KM + phase * step / PHASES
+    status, ds = l2o.provider_sampling(STEP_PATH_KM * 1000.0, cfg)
+    if status != "OK":
+        raise ValueError(status)
+    hill = {"centerKm": center, "halfWidthKm": half, "heightM": STEP_HILL_M} if half is not None else None
+    profile = triangular_profile(ds, center, half, STEP_HILL_M) if hill else [[x, 0.0] for x in ds]
+    r = l2o.l2({"profile": profile, "htg": h, "hrg": h, "frequencyMHz": f, "config": cfg})
+    if r["code"] != "OK":
+        raise ValueError(r["code"])
+    expect = dict(r, profilePointCount=len(ds), peakTerrainM=max(p[1] for p in profile))
+    return {"id": cid, "note": note, "groundSource": gspec[0],
+            "input": {"pathKm": STEP_PATH_KM, "hill": hill, "htg": h, "hrg": h, "frequencyMHz": f, "config": cfg},
+            "expect": expect}
+
+
+def compute_anchors() -> dict[str, Any]:
+    return {"schema": "ricon.oracle.l2_sensitivity_anchors", "version": 1, "revision": 1,
+            "source": "oracle/sensitivity_oracle.py (l2_terrain_oracle.l2 on provider_sampling profiles)",
+            "provenance": "ORACLE_SNAPSHOT",
+            "note": "R28 anchors for an Enforce probe (agora #2706, #2737, #2758). Profile: provider_sampling of "
+                    "pathKm at maxProfileStepKm, heights of the symmetric triangle hill (null = flat ground). Hills, "
+                    "heights and the matrix ground are TEST_ONLY; P.527 grounds below 0.1 GHz are BELOW_FIGURE_RANGE.",
+            "toleranceDb": ANCHOR_TOLERANCE_DB, "cases": [anchor_case(s) for s in ANCHOR_SPECS]}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--write", action="store_true", help="regenerate the vector file instead of checking it")
+    parser.add_argument("--anchors", action="store_true", help="work on the R28 anchor file only")
     args = parser.parse_args(argv)
+    if args.anchors:
+        anchors = compute_anchors()
+        if args.write:
+            ANCHORS.write_text(json.dumps(anchors, ensure_ascii=False, indent=1) + "\n", encoding="utf-8",
+                               newline="\n")
+            print(f"written {ANCHORS.name}")
+            return 0
+        errors = []
+        compare(anchors, json.loads(ANCHORS.read_text(encoding="utf-8")), 1e-9, "$", errors)
+        for e in errors[:50]:
+            print(e)
+        print("SENSITIVITY_ANCHORS_PASS" if not errors else f"SENSITIVITY_ANCHORS_FAIL ({len(errors)})")
+        return 0 if not errors else 1
     data = compute()
     if args.write:
         VECTORS.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")

@@ -315,3 +315,12 @@ Tie-breakers закреплены в REQ@5993d9e (agora #854–#868), запре
 - `--write` перезаписывает вектор.
 
 Все формы, высоты и радиопараметры — TEST_ONLY. Шаг не рекомендуется, выбор грунта для карт — OPEN (D-008).
+
+**Опорные точки для Enforce (спринт 28): `vectors/l2_sensitivity_anchors_v1.json`.** 16 точек L2 для probe codex
+(agora #2706, #2737, #2758):
+- A01–A08 — грунт и поляризация на ровной земле;
+- A09–A16 — шаг и фаза на треугольном холме: вершина на узле, пропущенная вершина, широкая форма, опорный шаг 2 м.
+
+Вход: параметры треугольника и полный конфиг. Профиль строится по `provider_sampling`. В ожиданиях — L, Lba, Lbs,
+Lsph, ветки, `profilePointCount` и `peakTerrainM`. Допуск 0.05 дБ, как `enforceToleranceDb` в `l2_terrain_v1`.
+Проверка `python oracle/sensitivity_oracle.py --anchors` — секунды, `--anchors --write` перезаписывает файл.
