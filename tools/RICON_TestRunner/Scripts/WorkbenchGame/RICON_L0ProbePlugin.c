@@ -4,7 +4,9 @@ class RICON_L0ProbePlugin : WorkbenchPlugin
 {
 	override void RunCommandline()
 	{
-		if (RICON_L0Fixtures.RunAll())
+		bool ok = RICON_L0Run.SpecialSelfCheck();
+		ok = RICON_L0Fixtures.RunAll() && ok;
+		if (ok)
 		{
 			Print("[RICON_L0] done: PASS");
 			Workbench.Exit(0);

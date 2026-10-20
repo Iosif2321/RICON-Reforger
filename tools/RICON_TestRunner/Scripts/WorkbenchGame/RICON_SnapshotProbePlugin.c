@@ -4,7 +4,9 @@ class RICON_SnapshotProbePlugin : WorkbenchPlugin
 {
 	override void RunCommandline()
 	{
-		if (RICON_SnapshotFixtures.RunAll())
+		bool ok = RICON_SnapshotRun.SpecialSelfCheck();
+		ok = RICON_SnapshotFixtures.RunAll() && ok;
+		if (ok)
 		{
 			Print("[RICON_SNAPSHOT] done: PASS");
 			Workbench.Exit(0);

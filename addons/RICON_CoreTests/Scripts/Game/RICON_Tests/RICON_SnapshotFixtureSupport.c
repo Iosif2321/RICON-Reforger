@@ -49,7 +49,30 @@ class RICON_SnapshotRun
 	{
 		Check(snapshot != null, "снимок с NaN существует");
 		if (snapshot)
-			Check(!RICON_Num.IsFinite(snapshot.m_fQuality) && snapshot.m_fQuality != snapshot.m_fQuality, "настоящий NaN");
+			Check(RICON_TestSupport.FloatClass(snapshot.m_fQuality) == 1, "настоящий NaN");
+	}
+
+	//! Полные снимки должны различать NaN/±Infinity; отдельный guard обязан отвергнуть Infinity вместо NaN.
+	static bool SpecialSelfCheck()
+	{
+		RICON_LinkSnapshot a = new RICON_LinkSnapshot();
+		RICON_LinkSnapshot b = new RICON_LinkSnapshot();
+		a.m_fQuality = RICON_L0Run.Special(0);
+		b.m_fQuality = RICON_L0Run.Special(0);
+		bool positive = RICON_SnapshotInput.Same(a, b);
+		RICON_SnapshotRun guard = new RICON_SnapshotRun("NaN-positive", true);
+		guard.RequireNaN(a);
+		positive = !guard.Failed() && positive;
+		int rejected;
+		b.m_fQuality = RICON_L0Run.Special(1);
+		if (!RICON_SnapshotInput.Same(a, b)) rejected++;
+		a.m_fQuality = RICON_L0Run.Special(-1);
+		if (!RICON_SnapshotInput.Same(a, b)) rejected++;
+		RICON_SnapshotRun wrong = new RICON_SnapshotRun("NaN-negative", true);
+		wrong.RequireNaN(b);
+		if (wrong.Failed()) rejected++;
+		PrintFormat("[RICON_SNAPSHOT] specialPositive=%1 specialControls=%2", positive, rejected);
+		return positive && rejected == 3;
 	}
 
 	void Compare(RICON_LinkSnapshot current, RICON_LinkSnapshot incoming, RICON_ESnapshotDecision expected)

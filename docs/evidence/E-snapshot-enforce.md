@@ -4,7 +4,7 @@
 Мини-intent: agora #2494/#2495; граница authority — #2498.
 
 **Результат:** 43 из 46 векторов, 77 шагов настоящего Core, 43 тихих положительных повтора,
-7 повреждённых ожиданий отвергнуты. `done: PASS`. Три allocator_trace не исполнялись:
+7 повреждённых ожиданий и 3 дополнительных контроля специальных значений отвергнуты. `done: PASS`. Три allocator_trace не исполнялись:
 `BLOCKED_NO_AUTHORITY_CONTEXT`. Снимки не доказывают доставку или слышимость голоса.
 
 ## Корпус и охват
@@ -20,8 +20,10 @@
   Тестовый наследник receiver только открывает количество/ключи защищённой карты для наблюдения;
   вычислительные методы не переопределяет. Имена параметров конструктора сохранены для inherited prototype.
 - TTL — только локальная видимость. Это не время серверной аренды, Rpl/JIP или работа сетевого транспорта.
-- CMP-16: настоящий NaN создаётся прежним `RICON_L0Run.Special(0)`; перед вызовом проверены IsFinite=false
-  и NaN!=NaN. Infinity в исполненной части этого корпуса нет.
+- CMP-16: NaN создаётся прежним `RICON_L0Run.Special(0)`; конечный guard использует общий
+  `RICON_TestSupport.FloatClass(value)==1`. Прежний guard IsFinite=false и value!=value не различал NaN/Infinity
+  в этой сборке Workbench; исправление и отдельный отрицательный контроль приведены ниже.
+  Infinity в исходной исполненной части корпуса нет, но он участвует в дополнительных контролях.
 - CMP-17: неизвестный строковый BROKEN отображён в недопустимый enum -1, `ADAPTER_MAPPED=1`.
   Это явное ограничение типизированного адаптера, не получение такой строки из настоящей сети.
 
@@ -58,6 +60,8 @@ NextLinkSequence; его доставка остаётся отдельной п
 решения, эффекты, количество слотов и visible. Seq и точный набор linkId проверены самим Enforce-компаратором;
 поштучные seq в raw-лог не экспортировались.
 
+Базовые исходники `b6ccc7a` до находки float-сравнений (конечная дельта ниже):
+
 | Файл | SHA-256 | Workbench CRC |
 |---|---|---|
 | `gen_snapshot_fixture.py` | `343cd18e113401b62ae6a901034d6daa0afa3dd5a1ec07c954e266cc1e2ca37a` | host |
@@ -84,3 +88,33 @@ Workbench — команда из `E-physics-enforce.md`, plugin `RICON_Snapshot
 blockedAllocator=3 adapterMapped=1 и done PASS. Play, мир, сервер и native VoN не вызываются.
 
 Открыто: allocator3, restart/collision epoch, транспорт, authority, Rpl/JIP, звук и несколько игроков.
+
+## Конечная дельта R25: NaN и Infinity
+
+Agora #2505/#2515/#2516/#2521/#2532. Независимый эксперимент маршрутов воспроизвёл особенность проверенных
+операторов этой сборки Windows Workbench: value!=value истинно и для ±Infinity. Поэтому IEEE-приём
+не доказывал вид специального значения. Core по-прежнему отвергает все nonfinite через IsFinite;
+его алгоритмы и исходный JSON не менялись. Исправлена достоверность тестового guard/сравнения входов.
+
+Классификатор и SameFloat находятся в общем `RICON_TestSupport` от claude, `f5e424e`:
+сначала IsFinite; только у nonfinite вычисляется 1/value — у Infinity результат конечен, у NaN нет.
+Направление Infinity различается по знаку. Строковое представление в алгоритме не используется.
+SnapshotInput.Same использует исправленный прежний SameSnapshot; RequireNaN теперь проверяет класс 1.
+Три дополнительных контроля проходят полное сравнение снимков/guard: NaN→+Infinity, −Infinity→+Infinity,
+Infinity вместо ожидаемого NaN. Равные NaN и настоящий NaN-guard положительно приняты.
+
+Конечный лог `ricon-snapshot-r25-20261021-013325/console.log`, SHA-256
+`fba22c4c5af4243af2410ae3e460477f5b66f43b849f2667dc259808942e765c`:
+exit 0, 0 SCRIPT(E)/FAIL, specialPositive=1 specialControls=3,
+cases=43 steps=77 quietPositive=43 controls=7 blockedAllocator=3 adapterMapped=1, done PASS.
+Повторный отдельный разбор всех 77 raw-шагов против исходного JSON — PASS.
+
+| Изменённый или общий файл | SHA-256 | CRC |
+|---|---|---|
+| `RICON_SnapshotFixtureSupport.c` | `751bec2d946f802bbd1cf50d356503abfe34244d857dc9bc82b14c15fec49209` | `930b4fd0` |
+| `RICON_SnapshotProbePlugin.c` | `8fd51f374b3a7ddb932593e3b9db2667059861876d42ff3b7273e5f72a1db108` | `79356e00` |
+| `RICON_TestSupport.c` @f5e424e | `d3741f72de00c5e7f67930551d58fbcd221e50e9ad045628d71ebca54448ae5e` | `e20579c3` |
+| `RICON_VoNSeamFixtureSupport.c` @f5e424e | `5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d` | `4e5fb58c` |
+
+Остальные исходники/CRC из базовой таблицы не менялись. Конечный PASS дополнительно требует
+specialPositive=1 specialControls=3 и новые CRC этой таблицы. Независимое ревью дельты: PENDING.

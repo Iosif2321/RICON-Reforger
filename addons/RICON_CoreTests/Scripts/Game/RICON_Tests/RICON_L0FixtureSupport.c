@@ -59,14 +59,14 @@ class RICON_L0Run
 
 	void RequireSpecial(float value, int sign)
 	{
-		bool correct = !RICON_Num.IsFinite(value);
+		int expectedClass = 1;
 		if (sign == 0)
-			correct = correct && value != value;
+			expectedClass = 1;
 		else if (sign > 0)
-			correct = correct && value > 0;
+			expectedClass = 2;
 		else
-			correct = correct && value < 0;
-		Check(correct, "тип NaN / Infinity после присваивания");
+			expectedClass = 3;
+		Check(RICON_TestSupport.FloatClass(value) == expectedClass, "тип NaN / Infinity после присваивания");
 	}
 
 	static RICON_NoiseModel Noise(string environmentId)
@@ -92,7 +92,38 @@ class RICON_L0Run
 
 	protected static bool SameFloat(float a, float b)
 	{
-		return a == b || (a != a && b != b);
+		return RICON_TestSupport.SameFloat(a, b);
+	}
+
+	//! Проверяет именно guard и сравнение целого query, которые ранее смешивали NaN и Infinity.
+	static bool SpecialSelfCheck()
+	{
+		array<float> values = {Special(0), Special(1), Special(-1)};
+		array<int> signs = {0, 1, -1};
+		int positive;
+		int rejected;
+		for (int i = 0; i < 3; i++)
+		{
+			RICON_L0Run guard = new RICON_L0Run("special-positive", true);
+			guard.RequireSpecial(values[i], signs[i]);
+			if (guard.IsPassed()) positive++;
+			RICON_L0Run wrongGuard = new RICON_L0Run("special-negative", true);
+			wrongGuard.RequireSpecial(values[(i + 1) % 3], signs[i]);
+			if (wrongGuard.IsFailed()) rejected++;
+			RICON_LinkQuery a = new RICON_LinkQuery();
+			RICON_LinkQuery b = new RICON_LinkQuery();
+			a.m_fFrequencyMHz = values[i];
+			b.m_fFrequencyMHz = values[i];
+			RICON_L0Run same = new RICON_L0Run("query-positive", true);
+			same.CheckSameQuery(a, b);
+			if (same.IsPassed()) positive++;
+			b.m_fFrequencyMHz = values[(i + 1) % 3];
+			RICON_L0Run changed = new RICON_L0Run("query-negative", true);
+			changed.CheckSameQuery(a, b);
+			if (changed.IsFailed()) rejected++;
+		}
+		PrintFormat("[RICON_L0] specialPositive=%1 specialControls=%2", positive, rejected);
+		return positive == 6 && rejected == 6;
 	}
 
 	protected void CheckSameQuery(RICON_LinkQuery a, RICON_LinkQuery b)
