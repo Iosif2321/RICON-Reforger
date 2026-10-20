@@ -1,7 +1,7 @@
 {
  "schema": "ricon.oracle.cellular_scenarios",
  "version": 1,
- "revision": 1,
+ "revision": 2,
  "source": "oracle/cellular_oracle.py",
  "standards": [
   "3GPP TS 36.331 V19.4.0 §5.5.4.4 (event A3, TimeToTrigger)",
@@ -15,7 +15,8 @@
   "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
   "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
   "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
-  "loss interpolated linearly on a 1 m grid"
+  "loss interpolated linearly on a 1 m grid",
+  "fractionSamplesSinrOk = share of samples, both ends included, not a share of time"
  ],
  "relTolerance": 1e-09,
  "scenarios": [
@@ -71,7 +72,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -102,7 +103,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9987455001636304,
+    "fractionSamplesSinrOk": 0.9987455685846741,
     "minSinrDb": -0.048410065037785444,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -160,7 +161,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -191,7 +192,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9984727828078979,
+    "fractionSamplesSinrOk": 0.9984728661030815,
     "minSinrDb": -0.11579093495804926,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -249,7 +250,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -280,7 +281,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9958546961928657,
+    "fractionSamplesSinrOk": 0.9958549222797928,
     "minSinrDb": -0.31794239058917384,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -338,7 +339,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -369,7 +370,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9607832442456637,
+    "fractionSamplesSinrOk": 0.9607853831469866,
     "minSinrDb": -3.0300047471721143,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -427,7 +428,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -458,7 +459,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9599105487073197,
+    "fractionSamplesSinrOk": 0.9599127352058904,
     "minSinrDb": -3.097960486922034,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -516,7 +517,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -547,7 +548,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9572924620922876,
+    "fractionSamplesSinrOk": 0.9572947913826015,
     "minSinrDb": -3.301984016847257,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -605,7 +606,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -9804,7 +9805,7 @@
     ],
     "handoverCount": 1530,
     "pingPongCount": 1520,
-    "fractionSinrOk": 0.941420311988655,
+    "fractionSamplesSinrOk": 0.9414235069539133,
     "minSinrDb": -18.365486821237454,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -9862,7 +9863,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -9893,7 +9894,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9617650267263008,
+    "fractionSamplesSinrOk": 0.96176711208072,
     "minSinrDb": -3.6084877125326216,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -9951,7 +9952,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -9982,7 +9983,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.8940220355623432,
+    "fractionSamplesSinrOk": 0.8940278156531224,
     "minSinrDb": -8.678985108471998,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -10040,7 +10041,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -14775,7 +14776,7 @@
     ],
     "handoverCount": 786,
     "pingPongCount": 775,
-    "fractionSinrOk": 0.956801570851969,
+    "fractionSamplesSinrOk": 0.9568039269157349,
     "minSinrDb": -16.37705388496161,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -14833,7 +14834,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -14864,7 +14865,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9419112032289735,
+    "fractionSamplesSinrOk": 0.9419143714207799,
     "minSinrDb": -5.396680764419614,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -14922,7 +14923,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -14953,7 +14954,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.8685502345369259,
+    "fractionSamplesSinrOk": 0.8685574038723752,
     "minSinrDb": -10.507014805374986,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15011,7 +15012,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -15042,7 +15043,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.31170676555492,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15100,7 +15101,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -15131,7 +15132,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.27792789158045,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15189,7 +15190,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -15220,7 +15221,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.17698825097435,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15278,7 +15279,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -15309,7 +15310,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.87843593449307,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15367,7 +15368,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -15398,7 +15399,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.84735628571026,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15456,7 +15457,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -15487,7 +15488,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.75445271040785,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -15545,7 +15546,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -24744,7 +24745,7 @@
     ],
     "handoverCount": 1530,
     "pingPongCount": 1520,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 61.40903326652386,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -24802,7 +24803,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -24833,7 +24834,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.61858115097121,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -24891,7 +24892,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 0.0,
@@ -24922,7 +24923,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 65.52483402982685,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -24980,7 +24981,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -29715,7 +29716,7 @@
     ],
     "handoverCount": 786,
     "pingPongCount": 775,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 62.16486874376591,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -29773,7 +29774,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -29804,7 +29805,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 66.83357556406837,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -29862,7 +29863,7 @@
      "startXM": -500.0,
      "speedMps": 15.0,
      "heightM": 1.5,
-     "durationS": 733.3333333333334
+     "durationMs": 733360
     },
     "handover": {
      "hysDb": 3.0,
@@ -29893,7 +29894,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 64.85860661780796,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -29951,7 +29952,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -29982,7 +29983,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9988001745200699,
+    "fractionSamplesSinrOk": 0.9988001745200699,
     "minSinrDb": -0.048410065037785444,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30040,7 +30041,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -30071,7 +30072,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9976003490401396,
+    "fractionSamplesSinrOk": 0.9976003490401396,
     "minSinrDb": -0.1831729157407267,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30129,7 +30130,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -30160,7 +30161,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9923647469458988,
+    "fractionSamplesSinrOk": 0.9923647469458988,
     "minSinrDb": -0.5875187611991564,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30218,7 +30219,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -30249,7 +30250,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9608420593368238,
+    "fractionSamplesSinrOk": 0.9608420593368238,
     "minSinrDb": -3.0215120642677604,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30307,7 +30308,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -30338,7 +30339,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9590968586387435,
+    "fractionSamplesSinrOk": 0.9590968586387435,
     "minSinrDb": -3.157442750400172,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30396,7 +30397,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -30427,7 +30428,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9538612565445026,
+    "fractionSamplesSinrOk": 0.9538612565445026,
     "minSinrDb": -3.565882570736477,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -30485,7 +30486,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -35052,7 +35053,7 @@
     ],
     "handoverCount": 758,
     "pingPongCount": 754,
-    "fractionSinrOk": 0.9410994764397905,
+    "fractionSamplesSinrOk": 0.9410994764397905,
     "minSinrDb": -15.302970235958703,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -35110,7 +35111,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -35141,7 +35142,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9696771378708552,
+    "fractionSamplesSinrOk": 0.9696771378708552,
     "minSinrDb": -4.17657365355204,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -35199,7 +35200,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -35230,7 +35231,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.8742364746945899,
+    "fractionSamplesSinrOk": 0.8742364746945899,
     "minSinrDb": -10.972841319257505,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -35288,7 +35289,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -37707,7 +37708,7 @@
     ],
     "handoverCount": 400,
     "pingPongCount": 395,
-    "fractionSinrOk": 0.956042757417103,
+    "fractionSamplesSinrOk": 0.956042757417103,
     "minSinrDb": -15.302970235958703,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -37765,7 +37766,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -37796,7 +37797,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.9260471204188482,
+    "fractionSamplesSinrOk": 0.9260471204188482,
     "minSinrDb": -6.334565885016957,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -37854,7 +37855,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -37885,7 +37886,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 0.8465314136125655,
+    "fractionSamplesSinrOk": 0.8465314136125655,
     "minSinrDb": -12.651531154292023,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -37943,7 +37944,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -37974,7 +37975,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.31170676555492,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38032,7 +38033,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -38063,7 +38064,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.24421536059776,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38121,7 +38122,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -38152,7 +38153,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 69.04332007647741,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38210,7 +38211,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -38241,7 +38242,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.88232490400361,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38299,7 +38300,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -38330,7 +38331,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.82020781059266,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38388,7 +38389,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -38419,7 +38420,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.635186954935,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -38477,7 +38478,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -43044,7 +43045,7 @@
     ],
     "handoverCount": 758,
     "pingPongCount": 754,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 62.60922541492097,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -43102,7 +43103,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -43133,7 +43134,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 67.3613198465678,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -43191,7 +43192,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 0.0,
@@ -43222,7 +43223,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 64.65711433823513,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -43280,7 +43281,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -45699,7 +45700,7 @@
     ],
     "handoverCount": 400,
     "pingPongCount": 395,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 62.60922541492097,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -45757,7 +45758,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -45788,7 +45789,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 66.44267858941684,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false
@@ -45846,7 +45847,7 @@
      "startXM": -500.0,
      "speedMps": 30.0,
      "heightM": 1.5,
-     "durationS": 366.6666666666667
+     "durationMs": 366680
     },
     "handover": {
      "hysDb": 3.0,
@@ -45877,7 +45878,7 @@
     ],
     "handoverCount": 2,
     "pingPongCount": 0,
-    "fractionSinrOk": 1.0,
+    "fractionSamplesSinrOk": 1.0,
     "minSinrDb": 63.80970261969071,
     "noiseDbm": -113.9648872375883,
     "noiseModelInDomain": false

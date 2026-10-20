@@ -83,6 +83,8 @@ class LossTable:
     def __call__(self, d_m: float) -> float:
         d = max(d_m, 1.0)
         i = int(d)
+        if i + 1 >= len(self.values):
+            raise ValueError(f"distance {d_m} m beyond the loss table")  # never silently extrapolate
         frac = d - i
         return self.values[i] * (1.0 - frac) + self.values[i + 1] * frac
 
@@ -97,7 +99,7 @@ def simulate(sc: dict[str, Any], table: LossTable | None = None) -> dict[str, An
         lpo.thermal_noise_dbm(radio["bandwidthHz"]) + radio["rxNoiseFigureDb"]               # REQ-LE-63 fallback
     rng = random.Random(sc["measurementErrorSeed"])
     dt = sc["timeStepMs"] / 1000.0
-    steps = int(round(ms["durationS"] / dt))
+    steps = ms["durationMs"] // sc["timeStepMs"]  # validated: a whole number of steps (agora #2330)
     ttt_steps = ho["timeToTriggerMs"] // sc["timeStepMs"]
     serving, timers = None, [0] * len(cells)
     events: list[dict[str, Any]] = []
@@ -123,15 +125,24 @@ def simulate(sc: dict[str, Any], table: LossTable | None = None) -> dict[str, An
     pp = sum(1 for a, b in zip(events, events[1:])
              if a["from"] == b["to"] and a["to"] == b["from"] and b["timeS"] - a["timeS"] <= ho["pingPongWindowS"])
     return {"handovers": events, "handoverCount": len(events), "pingPongCount": pp,
-            "fractionSinrOk": good / (steps + 1), "minSinrDb": sinr_min, "noiseDbm": n_dbm,
+            "fractionSamplesSinrOk": good / (steps + 1), "minSinrDb": sinr_min, "noiseDbm": n_dbm,
             "noiseModelInDomain": noise["inDomain"]}
+
+
+def table_span_m(sc: dict[str, Any]) -> int:
+    """Largest cell distance on the drive, from the first and the last simulated sample. durationMs is a whole number
+    of steps, so the last sample is exactly the end of the drive (agora #2328, #2330: an IndexError found by codex
+    when the duration was rounded to steps)."""
+    ms = sc["mobile"]
+    dt = sc["timeStepMs"] / 1000.0
+    end = ms["startXM"] + ms["speedMps"] * (ms["durationMs"] // sc["timeStepMs"]) * dt
+    return int(math.ceil(max(abs(x - c["xM"]) for c in sc["cells"] for x in (ms["startXM"], end)))) + 1
 
 
 def build_table(sc: dict[str, Any]) -> LossTable:
     ms = sc["mobile"]
-    span = max(abs(ms["startXM"] + s * ms["speedMps"] * ms["durationS"] - c["xM"]) for c in sc["cells"] for s in (0, 1))
     return LossTable(sc["propagation"], sc["frequencyMHz"], sc["cells"][0]["heightM"], ms["heightM"], sc["ground"],
-                     sc["terrain"], int(math.ceil(span)) + 1)
+                     sc["terrain"], table_span_m(sc))
 
 
 # ---------------------------------------------------------------------- closed domain and vectors
@@ -174,9 +185,13 @@ def validate_scenario(sc: Any) -> str | None:
             return "cell"
         ids.add(c["id"])
     m = sc["mobile"]
-    if not lpo._keys(m, {"startXM", "speedMps", "heightM", "durationS"}) or not _num(m["startXM"], -100000.0, 100000.0) \
-            or not _num(m["speedMps"], 0.0, 100.0) or not _num(m["heightM"], 0.5, 50.0) or not _num(m["durationS"], 0.04, 3600.0):
+    if not lpo._keys(m, {"startXM", "speedMps", "heightM", "durationMs"}) or not _num(m["startXM"], -100000.0, 100000.0) \
+            or not _num(m["speedMps"], 0.0, 100.0) or not _num(m["heightM"], 0.5, 50.0) \
+            or isinstance(m["durationMs"], bool) or not isinstance(m["durationMs"], int) \
+            or not 0 < m["durationMs"] <= 3600000:
         return "mobile"
+    if isinstance(sc["timeStepMs"], int) and sc["timeStepMs"] > 0 and m["durationMs"] % sc["timeStepMs"]:
+        return "durationMs (a whole number of steps)"
     h = sc["handover"]
     if not lpo._keys(h, {"hysDb", "offDb", "ofnDb", "ofpDb", "timeToTriggerMs", "pingPongWindowS"}) \
             or not _num(h["hysDb"], 0.0, 15.0) or not _num(h["offDb"], -15.0, 15.0) or not _num(h["ofnDb"], -24.0, 24.0) \
@@ -197,7 +212,8 @@ ASSUMPTIONS = ["handover executes when A3 has held for TimeToTrigger (the standa
                "measurement = abstract TEST_ONLY proxy (total received power in dBm), not RSRP",
                "ping-pong = A->B then B->A within pingPongWindowS (no 3GPP definition)",
                "measurement error: seeded Gaussian, TEST_ONLY, not a fading model",
-               "loss interpolated linearly on a 1 m grid"]
+               "loss interpolated linearly on a 1 m grid",
+               "fractionSamplesSinrOk = share of samples, both ends included, not a share of time"]
 
 
 def check_vector_file(data: Any) -> list[str]:
@@ -231,9 +247,8 @@ def check_vector_file(data: Any) -> list[str]:
 def table_key(sc: dict[str, Any]) -> str:
     """Scenarios that share geometry share one loss table (the span is included, so a longer drive rebuilds it)."""
     ms = sc["mobile"]
-    span = max(abs(ms["startXM"] + s * ms["speedMps"] * ms["durationS"] - c["xM"]) for c in sc["cells"] for s in (0, 1))
     return json.dumps([sc["propagation"], sc["frequencyMHz"], sc["cells"][0]["heightM"], ms["heightM"], sc["ground"],
-                       sc["terrain"], int(math.ceil(span)) + 1], sort_keys=True)
+                       sc["terrain"], table_span_m(sc)], sort_keys=True)
 
 
 def main(argv: list[str] | None = None) -> int:

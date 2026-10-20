@@ -25,7 +25,7 @@ def road(channels=(1, 1, 1), **over) -> dict:
           "noiseEnvironment": "rural", "radio": {"bandwidthHz": 200000.0, "rxNoiseFigureDb": 7.0, "sinrRequiredDb": 0.0},
           "cells": [{"id": f"{n}1", "xM": x, "heightM": 30.0, "txPowerDbm": 43.0, "gainDbi": 15.0, "channel": ch}
                     for n, x, ch in zip("ABC", (0.0, 5000.0, 10000.0), channels)],
-          "mobile": {"startXM": -500.0, "speedMps": 15.0, "heightM": 1.5, "durationS": 700.0},
+          "mobile": {"startXM": -500.0, "speedMps": 15.0, "heightM": 1.5, "durationMs": 700000},
           "handover": dict(A3), "timeStepMs": 40, "measurementErrorDb": 0.0, "measurementErrorSeed": 1}
     for key, value in over.items():
         if key in A3:
@@ -135,11 +135,14 @@ class HandoverGeometryTest(unittest.TestCase):
         three = co.simulate(road(channels=(1, 2, 3)), Shared.get())
         self.assertTrue(-1.0 < one["minSinrDb"] <= 0.0)
         self.assertGreater(three["minSinrDb"], one["minSinrDb"] + 10.0)
-        self.assertEqual(three["fractionSinrOk"], 1.0)
+        self.assertEqual(three["fractionSamplesSinrOk"], 1.0)
 
     def test_noise_out_of_domain_at_900_mhz(self) -> None:
         """D-005 again: P.372 man-made noise is defined to 250 MHz; at 900 MHz the reference kT0B + NF is used."""
-        r = co.simulate(road(durationS=0.04), Shared.get())
+        sc = road()
+        sc["mobile"]["durationMs"] = 40
+        self.assertIsNone(co.validate_scenario(sc))
+        r = co.simulate(sc, Shared.get())
         self.assertFalse(r["noiseModelInDomain"])
         self.assertAlmostEqual(r["noiseDbm"], lpo.thermal_noise_dbm(200000.0) + 7.0, places=12)
 
@@ -153,7 +156,7 @@ class HandoverGeometryTest(unittest.TestCase):
 
     def test_long_ttt_costs_sinr(self) -> None:
         """A late handover keeps the mobile on the weaker cell: the time with SINR ≥ 0 dB falls."""
-        f = [co.simulate(road(timeToTriggerMs=t, hysDb=3.0), Shared.get())["fractionSinrOk"] for t in (0, 320, 1280)]
+        f = [co.simulate(road(timeToTriggerMs=t, hysDb=3.0), Shared.get())["fractionSamplesSinrOk"] for t in (0, 320, 1280)]
         self.assertGreaterEqual(f[0], f[1])
         self.assertGreater(f[1], f[2])
 
@@ -161,6 +164,26 @@ class HandoverGeometryTest(unittest.TestCase):
 class DomainTest(unittest.TestCase):
     def test_valid(self) -> None:
         self.assertIsNone(co.validate_scenario(road()))
+
+    def test_duration_grid_regression(self) -> None:
+        """codex #2330: FSPL, two cells at x −1/−2 m, mobile from 0 at 100 m/s, step 40 ms. A duration of 140 ms
+        (3.5 steps) used to validate and then crash with IndexError; now it is rejected. 160 ms is 4 whole steps:
+        the last sample is x = 16 m and the loss table covers it."""
+        sc = road()
+        sc.update(propagation="FSPL", cells=[dict(sc["cells"][0], xM=-1.0), dict(sc["cells"][1], xM=-2.0)])
+        sc["mobile"].update(startXM=0.0, speedMps=100.0, durationMs=140)
+        self.assertEqual(co.validate_scenario(sc), "durationMs (a whole number of steps)")
+        sc["mobile"]["durationMs"] = 160
+        self.assertIsNone(co.validate_scenario(sc))
+        self.assertEqual(co.table_span_m(sc), 19)            # last sample 16 m from x = 0, 18 m from x = −2
+        r = co.simulate(sc)
+        self.assertEqual(r["handoverCount"], 0)
+        table = co.build_table(sc)
+        with self.assertRaises(ValueError):                   # beyond the table: an error, never extrapolation
+            table(float(len(table.values)))
+        for bad in (0, -40, 40.0, True):
+            sc["mobile"]["durationMs"] = bad
+            self.assertIsNotNone(co.validate_scenario(sc))
 
     def test_rejections(self) -> None:
         mutations = [
