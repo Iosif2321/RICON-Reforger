@@ -6,7 +6,10 @@
 - `TWO_RAY_FLAT`  — прямой луч и луч, отражённый от плоской земли; коэффициенты отражения — ITU-R P.526-16
                     ур. (100)/(101), η = εr − j·18·10⁹·σ/f (стр. 40–41, сверено по изображению страницы);
 - `P526_GENERAL`  — FSPL + дифракция на профиле по P.526-16 §4.5 (`l2_terrain_oracle.l2`, тот же метод, что L2
-                    в RICON).
+                    в RICON);
+- `KNIFE_EDGE_4RAY` — вершина холма как острый клин над плоской землёй с отражением по обе стороны: 4 пары
+                    «источник/приёмник или их зеркальные образы», комплексное поле Френеля–Кирхгофа (модуль — ур. (27)),
+                    ν по ур. (26). Это физическая проверка D-002, а не метод P.526.
 Шум — kTB, коэффициент шума системы f = fa + fr − 1 (P.372-17 ур. (5)) и медиана техногенного шума
 Fam = c − d·lg f (P.372-17 ур. (17), Table 1; область 0.3–250 МГц для city/residential/rural).
 Доступность — два отдельных критерия (agora #2132): `aboveSensitivity` (Prx ≥ kT0B + NF + требуемый SNR, как
@@ -42,9 +45,9 @@ MANMADE_NOISE = {                      # P.372-17 Table 1: (c, d) for Fam = c �
 MANMADE_DOMAIN_MHZ = (0.3, 250.0)      # P.372-17 §6.1.1, for the three categories above
 NOISE_ENVIRONMENTS = ("none",) + tuple(MANMADE_NOISE)
 POLARIZATIONS = ("HORIZONTAL", "VERTICAL")
-MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL")
+MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL", "KNIFE_EDGE_4RAY")
 SOURCE = "oracle/link_physics_oracle.py"
-STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (100), (101), §4.5",
+STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (26), (27), (100), (101), §4.5",
              "Rec. ITU-R P.372-17 (08/2024): eq (5), (17), Table 1"]
 SCENARIO_ID = re.compile(r"[A-Za-z0-9_.-]{1,64}")
 ROOT_KEYS = {"schema", "version", "revision", "source", "standards", "provenance", "note", "speechQuality", "snrState",
@@ -96,6 +99,94 @@ def two_ray_flat(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: dic
     excess = -20.0 * math.log10(gain) if gain > 0.0 else math.inf
     return {"lossDb": fspl_db(r1, f_mhz) + excess, "excessDb": excess, "pathDifferenceM": delta_r,
             "grazingRad": psi, "reflection": refl}
+
+
+# ---------------------------------------------------------------------- knife edge with ground reflections
+
+def fresnel_cs(x: float) -> tuple[float, float]:
+    """Fresnel integrals C(x) = ∫0^x cos(πt²/2) dt and S(x) = ∫0^x sin(πt²/2) dt (the convention of P.526-16
+    eq 7-8). Power series for |x| ≤ 2 (cancellation below ~1e-13); beyond, C + jS = ((1 + j)/2)·(1 − erfc(w)) with
+    w = (√π/2)(1 − j)x and erfc from its continued fraction (Abramowitz & Stegun 7.1.14), evaluated by the
+    modified Lentz method."""
+    if x < 0:
+        c, s = fresnel_cs(-x)
+        return -c, -s
+    if x <= 2.0:
+        # C = x·Σ (−1)^n z^(2n)/((2n)!(4n+1)), S = x·Σ (−1)^n z^(2n+1)/((2n+1)!(4n+3)), z = πx²/2
+        z = math.pi * x * x / 2.0
+        c = s = 0.0
+        a_n = 1.0  # (−1)^n z^(2n)/(2n)!
+        n = 0
+        while True:
+            tc = a_n * x / (4 * n + 1)
+            ts = a_n * z / (2 * n + 1) * x / (4 * n + 3)
+            c += tc
+            s += ts
+            if n > 2 and abs(tc) < 1e-17 and abs(ts) < 1e-17:
+                return c, s
+            a_n *= -z * z / ((2 * n + 1) * (2 * n + 2))
+            n += 1
+    w = math.sqrt(math.pi) / 2.0 * (1 - 1j) * x
+    tiny = 1e-300
+    f = w            # K = w + (1/2)/(w + 1/(w + (3/2)/(w + ...))): erfc(w) = exp(−w²)/(√π·K)
+    cc, dd = f, 0j
+    for n in range(1, 100000):
+        a = n / 2.0
+        dd = w + a * dd
+        dd = 1.0 / (dd if dd != 0 else tiny)
+        cc = w + a / (cc if cc != 0 else tiny)
+        delta = cc * dd
+        f *= delta
+        if abs(delta - 1.0) < 1e-16:
+            break
+    else:
+        raise ArithmeticError("Fresnel continued fraction did not converge")
+    erfc = cmath.exp(-w * w) / (math.sqrt(math.pi) * f)
+    cs = (1 + 1j) / 2.0 * (1.0 - erfc)
+    return cs.real, cs.imag
+
+
+def knife_edge_field(nu: float) -> complex:
+    """Field behind a single knife edge relative to free space (Fresnel–Kirchhoff):
+    ((1 + j)/2)·∫ν^∞ exp(−jπt²/2) dt; its magnitude in dB is −J(ν) of P.526-16 eq (27)."""
+    c, s = fresnel_cs(nu)
+    return (1 + 1j) / 2 * complex(0.5 - c, -(0.5 - s))
+
+
+def knife_edge_j27(nu: float) -> float:
+    """P.526-16 eq (27): J(ν) = −20 lg( sqrt((1 − C − S)² + (C − S)²) / 2 )."""
+    c, s = fresnel_cs(nu)
+    return -20.0 * math.log10(math.sqrt((1 - c - s) ** 2 + (c - s) ** 2) / 2.0)
+
+
+def knife_edge_4ray(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: dict[str, Any] | None,
+                    edge_m: float, edge_height_m: float) -> dict[str, Any]:
+    """One knife edge of height H at distance a from TX over flat ground, with a ground reflection allowed on each
+    side: 4 source/receiver image pairs (h1 or −h1, h2 or −h2), each diffracted by the edge with its own ν (P.526-16
+    eq 26) and summed coherently. R from eq (100)/(101) at the grazing angle towards the edge top. ground=None
+    disables reflections (pure single knife edge). A physics reference for D-002, not a P.526 method."""
+    a, b = edge_m, d_m - edge_m
+    lam = wavelength_m(f_mhz)
+    k = 2.0 * math.pi / lam
+    r0 = math.hypot(d_m, h1_m - h2_m)
+    if ground is None:
+        r_tx = r_rx = 0j
+    else:
+        r_tx = reflection_coefficient(math.atan2(h1_m + edge_height_m, a), f_mhz, ground["permittivity"],
+                                      ground["conductivitySm"], ground["polarization"])
+        r_rx = reflection_coefficient(math.atan2(h2_m + edge_height_m, b), f_mhz, ground["permittivity"],
+                                      ground["conductivitySm"], ground["polarization"])
+    total, nus = 0j, []
+    for zs, zr, refl in ((h1_m, h2_m, 1.0), (-h1_m, h2_m, r_tx), (h1_m, -h2_m, r_rx), (-h1_m, -h2_m, r_tx * r_rx)):
+        clearance = edge_height_m - (zs + (zr - zs) * a / d_m)
+        nu = clearance * math.sqrt(2.0 * d_m / (lam * a * b))                                    # (26)
+        r_ij = math.hypot(d_m, zr - zs)
+        extra = ((zr - zs) ** 2 - (h1_m - h2_m) ** 2) / (r_ij + r0)  # r_ij − r0 without cancellation
+        total += refl * (r0 / r_ij) * knife_edge_field(nu) * cmath.exp(-1j * k * extra)
+        nus.append(nu)
+    gain = abs(total)
+    excess = -20.0 * math.log10(gain) if gain > 0.0 else math.inf
+    return {"lossDb": fspl_db(r0, f_mhz) + excess, "excessDb": excess, "nu": nus}
 
 
 def radio_horizon_m(h1_m: float, h2_m: float, ae_km: float) -> float:
@@ -207,6 +298,9 @@ def loss_function(model: str, sc: dict[str, Any]) -> Callable[[float], float]:
         return lambda d: two_ray_flat(d, h1, h2, f, ground)["lossDb"]
     if model == "P526_GENERAL":
         return lambda d: p526_general_db(d, h1, h2, f, ground, sc["terrain"])
+    if model == "KNIFE_EDGE_4RAY":  # the hill top as a knife edge (a cruder obstacle than the real wedge)
+        hill = sc["terrain"]["hill"]
+        return lambda d: knife_edge_4ray(d, h1, h2, f, ground, hill["centerKm"] * 1000.0, hill["heightM"])["lossDb"]
     raise ValueError(f"model {model!r}")
 
 
@@ -235,11 +329,29 @@ def model_applicability(model: str, sc: dict[str, Any], d_m: float) -> bool:
     if model == "TWO_RAY_FLAT":   # flat ground is meaningless beyond the radio horizon (P.526-16 eq 21)
         return d_m < radio_horizon_m(sc["txHeightM"], sc["rxHeightM"], sc["terrain"]["earthRadiusKm"] *
                                      sc["terrain"]["kFactor"])
+    if model == "KNIFE_EDGE_4RAY":  # receiver on flat ground beyond the hill foot; each side within the horizon of the top
+        hill = sc["terrain"]["hill"]
+        ae = sc["terrain"]["earthRadiusKm"] * sc["terrain"]["kFactor"]
+        edge = hill["centerKm"] * 1000.0
+        return d_m > (hill["centerKm"] + hill["halfWidthKm"]) * 1000.0             and edge < radio_horizon_m(sc["txHeightM"], hill["heightM"], ae)             and d_m - edge < radio_horizon_m(hill["heightM"], sc["rxHeightM"], ae)
     return True
 
 
-def sample(model: str, sc: dict[str, Any], d_m: float, loss: Callable[[float], float]) -> dict[str, Any]:
-    point: dict[str, Any] = {"distanceM": d_m, "lossDb": loss(d_m)}
+def sample(model: str, sc: dict[str, Any], d_m: float, loss: Callable[[float], float],
+           noises: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """One distance with the whole budget (agora #2162 follow-up): loss, Prx, both criteria and SNR per environment."""
+    loss_db = loss(d_m)
+    radio = sc["radio"]
+    point: dict[str, Any] = {"distanceM": d_m, "lossDb": loss_db,
+                             "rxPowerDbm": budget(loss_db, radio, sensitivity_dbm(radio))["rxPowerDbm"],
+                             "aboveSensitivity": budget(loss_db, radio, sensitivity_dbm(radio))["aboveSensitivity"],
+                             "noise": {}}
+    for env, n in noises.items():
+        if not n["inDomain"]:
+            point["noise"][env] = {"status": "NOISE_OUT_OF_MODEL_DOMAIN"}
+            continue
+        b = budget(loss_db, radio, n["noiseDbm"])
+        point["noise"][env] = {"snrDb": b["snrDb"], "meetsSnr": b["meetsSnr"]}
     if model == "TWO_RAY_FLAT":
         point["curvaturePhaseErrorRad"] = curvature_phase_error_rad(
             d_m, sc["txHeightM"], sc["rxHeightM"], sc["frequencyMHz"],
@@ -262,7 +374,7 @@ def evaluate_scenario(sc: dict[str, Any]) -> dict[str, Any]:
         losses = [(d, loss(d)) for d in valid]
         entry: dict[str, Any] = {"grid": dict(sc["grids"][model], nodes=len(grid)),
                                  "applicableUpToM": valid[-1] if valid else None,
-                                 "samples": [sample(model, sc, d, loss) for d in sc["sampleDistancesM"]
+                                 "samples": [sample(model, sc, d, loss, noises) for d in sc["sampleDistancesM"]
                                              if model_applicability(model, sc, d)]}
         sens = sensitivity_dbm(radio)
         entry["aboveSensitivity"] = range_summary(
@@ -341,6 +453,8 @@ def validate_scenario(sc: Any) -> str | None:
         return "models"
     if "TWO_RAY_FLAT" in sc["models"] and hill is not None:
         return "TWO_RAY_FLAT needs flat terrain"
+    if "KNIFE_EDGE_4RAY" in sc["models"] and hill is None:
+        return "KNIFE_EDGE_4RAY needs a hill"
     if not _keys(sc["grids"], set(sc["models"])):
         return "grids keys"
     for grid in sc["grids"].values():

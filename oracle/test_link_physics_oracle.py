@@ -157,6 +157,61 @@ class TwoRayTest(unittest.TestCase):
                                delta=0.01)
 
 
+class KnifeEdgeTest(unittest.TestCase):
+    def test_fresnel_table_values(self) -> None:
+        """Abramowitz & Stegun Table 7.7 values, 10 digits."""
+        for x, c, s in ((1.0, 0.7798934004, 0.4382591474), (2.0, 0.4882534061, 0.3434156784),
+                        (3.0, 0.6057207893, 0.4963129990), (5.0, 0.5636311887, 0.4991913820)):
+            got = o.fresnel_cs(x)
+            self.assertAlmostEqual(got[0], c, places=9)
+            self.assertAlmostEqual(got[1], s, places=9)
+            self.assertEqual(o.fresnel_cs(-x), (-got[0], -got[1]))
+        c, s = o.fresnel_cs(1e4)
+        self.assertAlmostEqual(c, 0.5, places=4)
+        self.assertAlmostEqual(s, 0.5, places=4)
+
+    def test_fresnel_methods_join(self) -> None:
+        """Series up to 2, continued fraction beyond: the step at the join equals the slope dC/dx = cos(πx²/2)."""
+        dx = 1e-9
+        c1, s1 = o.fresnel_cs(2.0)
+        c2, s2 = o.fresnel_cs(2.0 + dx)
+        self.assertAlmostEqual((c2 - c1) / dx, math.cos(2 * math.pi), places=4)
+        self.assertAlmostEqual((s2 - s1) / dx, math.sin(2 * math.pi), places=4)
+
+    def test_knife_edge_field(self) -> None:
+        self.assertAlmostEqual(abs(o.knife_edge_field(0.0)), 0.5, places=12)                # grazing: −6.02 dB
+        self.assertAlmostEqual(abs(o.knife_edge_field(-60.0)), 1.0, places=2)               # clear path
+        for nu in (-0.7, 0.0, 0.8, 2.4, 7.0):
+            self.assertAlmostEqual(-20 * math.log10(abs(o.knife_edge_field(nu))), o.knife_edge_j27(nu), places=10)
+
+    def test_eq31_approximates_eq27(self) -> None:
+        """Eq (31), used by L2, stays within 0.124 dB of the exact eq (27) on ν ∈ [−0.7, 10]."""
+        worst = max(abs(o.knife_edge_j27(nu) - l2o.knife_edge_j(nu)) for nu in (-0.7 + i * 0.01 for i in range(1071)))
+        self.assertLess(worst, 0.124)
+        self.assertGreater(worst, 0.1)
+
+    def test_no_ground_is_one_knife_edge(self) -> None:
+        r = o.knife_edge_4ray(4000.0, 3.0, 3.0, 50.0, None, 2000.0, 60.0)
+        self.assertAlmostEqual(r["excessDb"], o.knife_edge_j27(r["nu"][0]), places=10)
+        nu = 57.0 * math.sqrt(2.0 * 4000.0 / (o.wavelength_m(50.0) * 2000.0 * 2000.0))     # eq (26), clearance 57 m
+        self.assertAlmostEqual(r["nu"][0], nu, places=12)
+
+    def test_obstacle_gain_is_smaller_than_p526(self) -> None:
+        """D-002 (agora #2198): 50 MHz, 3 m antennas, 60 m hill at 2 km, receiver at 4 km. The knife-edge reference
+        with ground reflections loses 3.09 dB LESS than flat ground (obstacle gain exists), but §4.5 gives 13.98 dB
+        less. A real rounded hill loses more than a knife edge, so the reference gain is an upper bound: §4.5 looks
+        optimistic by at least ~8 dB here. ORACLE level; no runtime or measurement behind it."""
+        flat = {"earthRadiusKm": 6371.0, "kFactor": 4 / 3, "profileStepKm": 0.1, "hill": None}
+        hill = dict(flat, hill={"centerKm": 2.0, "heightM": 60.0, "halfWidthKm": 0.5})
+        ref_gain = (o.two_ray_flat(4000.0, 3.0, 3.0, 50.0, DRY)["lossDb"]
+                    - o.knife_edge_4ray(4000.0, 3.0, 3.0, 50.0, DRY, 2000.0, 60.0)["lossDb"])
+        p526_gain = o.p526_general_db(4000.0, 3.0, 3.0, 50.0, DRY, flat) - o.p526_general_db(4000.0, 3.0, 3.0, 50.0,
+                                                                                              DRY, hill)
+        self.assertAlmostEqual(ref_gain, 3.0903, places=3)
+        self.assertAlmostEqual(p526_gain, 13.9777, places=3)
+        self.assertGreater(p526_gain - ref_gain, 8.0)
+
+
 class NoiseTest(unittest.TestCase):
     def test_thermal(self) -> None:
         self.assertAlmostEqual(o.thermal_noise_dbm(1.0), -173.975187, places=5)
@@ -286,6 +341,8 @@ class InputDomainTest(unittest.TestCase):
             lambda s: s["terrain"].update(hill={"centerKm": 1.0, "heightM": 10.0, "halfWidthKm": 0.1}),  # with two-ray
             lambda s: s["terrain"].update(kFactor=0.0),
             lambda s: s.update(sampleDistancesM=[]),
+            lambda s: s.update(models=["KNIFE_EDGE_4RAY"], grids={"KNIFE_EDGE_4RAY": {"minM": 100.0, "maxM": 1000.0,
+                                                                                      "ratio": 1.5}}),  # no hill
         ]
         for mutate in cases:
             sc = bad(mutate)
@@ -322,6 +379,15 @@ class VectorFileTest(unittest.TestCase):
     def test_vectors_pass(self) -> None:
         self.assertEqual(o.check_vector_file(self.data, self.evaluated), [])
         self.assertEqual(len(self.data["scenarios"]), 48)
+        self.assertEqual(self.data["revision"], 3)
+
+    def test_samples_carry_the_budget(self) -> None:
+        for sc in self.data["scenarios"]:
+            for entry in sc["expect"]["models"].values():
+                for point in entry["samples"]:
+                    self.assertEqual(set(point) - {"curvaturePhaseErrorRad"},
+                                     {"distanceM", "lossDb", "rxPowerDbm", "aboveSensitivity", "noise"})
+                    self.assertEqual(set(point["noise"]), set(sc["input"]["noiseEnvironments"]))
 
     def test_corruption_is_caught(self) -> None:
         bad = copy.deepcopy(self.data)
