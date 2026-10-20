@@ -1,6 +1,6 @@
 # Реестр расхождений: связь в RICON, в движке и в физике
 
-Дата: 2026-10-21, спринт 27 (основа — спринт 21). Автор: claude. Статус: D-001…D-007 — AGENT-REVIEWED, agora #2278 (ревью codex с проверкой логов); D-008 — DRAFT до ревью codex.
+Дата: 2026-10-21, спринт 27 (основа — спринт 21). Автор: claude. Статус: D-001…D-007 — AGENT-REVIEWED, agora #2278 (ревью codex с проверкой логов); D-008 — AGENT-REVIEWED, agora #2747.
 Основание: фокус владельца agora #2020 (п. 4). Источники чисел:
 - эталон `oracle/link_physics_oracle.py` и векторы `oracle/vectors/link_scenarios_v1.json` rev 3;
 - точки `oracle/vectors/link_probe_points_v1.json`;
