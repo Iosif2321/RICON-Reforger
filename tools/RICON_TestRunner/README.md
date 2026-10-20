@@ -17,6 +17,7 @@ Workbench plugin that executes the `RICON_CoreTests` fixtures. Not part of the m
 | lifecycle | `RICON_LifecycleFixtures.c`, generated from `oracle/vectors/lifecycle_v1.json` | every step of every trace: result code, PTT response fields, ordered effects (fields of REQ-lifecycle §1.1 per type); 3 negative controls must fail |
 | extension | `RICON_ExtFixtures.c` | `SelfCheck()` of EXT-1…5 (REQ-core §10) |
 | von_seam | `RICON_VoNSeamFixtures.c`, generated from `oracle/vectors/von_seam_v1.json` | every call: decision equals the oracle, snapshot and binding unchanged (REQ-von-seam §7); special floats are verified non-finite at run time; 3 negative controls must fail |
+| l2 | `RICON_L2Fixtures.c`, generated from `oracle/vectors/l2_terrain_v1.json`; `RICON_L2FixtureSupport.c` | every vector: result code exactly, L/Lba/Lbs/Lsph within the fixed 0.05 dB (REQ-L2 §6), branches, spherical case and eq. (19) flag exactly, profile and config unchanged by the call; 3 negative controls must fail; hand-written REQ §6 sampling cases and adapter checks (two layers with MODEL_ID, reason 16 through the evaluator, < 2 m bypass, config/domain mapping); the log prints the largest |Enforce − oracle| |
 
 ## Lifecycle fixture generator
 
@@ -37,3 +38,13 @@ Same trust boundary as the lifecycle generator (closed records, int32, closed na
 variables: in the first Workbench run a temporary passed straight as an argument was released during the call.
 `test_von_seam_scan.py` is CT-VON-S-010: the seam file references no engine VoN/radio, Rpl, world/entity or file API
 (comments excluded); a planted dependency is detected.
+
+## L2 terrain fixture generator
+
+`python -I tools/RICON_TestRunner/gen_l2_fixture.py oracle/vectors/l2_terrain_v1.json addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_L2Fixtures.c`
+
+The vector envelope is checked exactly like the oracle checker does (standard, revision, note, `toleranceDb ≤ 1e-3`,
+`enforceToleranceDb` exactly 0.05), so a vector file cannot loosen the parity tolerance. Three inputs are
+`ADAPTER_MAPPED`: frequency null → NaN built at run time, a config with a missing key → `null`, an unknown
+polarization name → enum value `-1`. Float literals are plain decimals (no exponent form).
+`test_gen_l2_fixture.py` checks exact generation and rejects injection, huge numbers and looser metadata.
