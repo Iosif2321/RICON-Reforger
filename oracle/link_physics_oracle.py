@@ -43,6 +43,9 @@ MANMADE_DOMAIN_MHZ = (0.3, 250.0)      # P.372-17 §6.1.1, for the three categor
 NOISE_ENVIRONMENTS = ("none",) + tuple(MANMADE_NOISE)
 POLARIZATIONS = ("HORIZONTAL", "VERTICAL")
 MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL")
+SOURCE = "oracle/link_physics_oracle.py"
+STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (100), (101), §4.5",
+             "Rec. ITU-R P.372-17 (08/2024): eq (5), (17), Table 1"]
 SCENARIO_ID = re.compile(r"[A-Za-z0-9_.-]{1,64}")
 ROOT_KEYS = {"schema", "version", "revision", "source", "standards", "provenance", "note", "speechQuality", "snrState",
              "relTolerance", "scenarios"}
@@ -369,7 +372,9 @@ def _close(a: Any, b: Any, tol: float, path: str, errors: list[str]) -> None:
         if type(a) is not type(b) or a != b:  # True is not 1 (agora #2138)
             errors.append(f"{path}: {a!r} != {b!r}")
     elif isinstance(a, (int, float)) and isinstance(b, (int, float)):
-        if not abs(a - b) <= tol * max(1.0, abs(b)):
+        if not (math.isfinite(a) and math.isfinite(b)):  # Inf <= Inf would pass (agora #2162)
+            errors.append(f"{path}: non-finite {a!r} / {b!r}")
+        elif not abs(a - b) <= tol * max(1.0, abs(b)):
             errors.append(f"{path}: {a!r} != {b!r}")
     else:
         errors.append(f"{path}: type {type(a).__name__} != {type(b).__name__}")
@@ -378,7 +383,11 @@ def _close(a: Any, b: Any, tol: float, path: str, errors: list[str]) -> None:
 def check_vector_file(data: dict[str, Any], evaluated: dict[str, Any] | None = None) -> list[str]:
     """`evaluated` (scenario id -> evaluate_scenario result) lets tests reuse one evaluation of the inputs."""
     errors: list[str] = []
-    if not _keys(data, ROOT_KEYS) or data["schema"] != "ricon.oracle.link_scenarios" or data["version"] != 1 \
+    if not _keys(data, ROOT_KEYS) or data["schema"] != "ricon.oracle.link_scenarios" \
+            or type(data["version"]) is not int or data["version"] != 1 \
+            or type(data["revision"]) is not int or data["revision"] < 1 \
+            or data["source"] != SOURCE or data["standards"] != STANDARDS \
+            or not isinstance(data["note"], str) or not data["note"] \
             or data["speechQuality"] != "NOT_CALIBRATED" or data["snrState"] != "DEFERRED" \
             or data["relTolerance"] != 1e-9 or data["provenance"] != "ORACLE_SNAPSHOT" \
             or not isinstance(data["scenarios"], list) or not data["scenarios"]:

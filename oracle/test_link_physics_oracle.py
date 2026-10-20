@@ -299,8 +299,10 @@ class InputDomainTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             o.loss_function("TYPO", scenario())
 
-    def test_bool_is_not_a_number_in_comparison(self) -> None:
-        for a, b in ((True, 1), (False, 0), (1, True), (None, 0)):
+    def test_bool_and_non_finite_never_match(self) -> None:
+        inf, nan = float("inf"), float("nan")
+        for a, b in ((True, 1), (False, 0), (1, True), (None, 0), (1.0, inf), (1.0, -inf), (inf, inf), (nan, nan),
+                     (1.0, nan)):
             errors: list = []
             o._close(a, b, 1e-9, "x", errors)
             self.assertNotEqual(errors, [])
@@ -327,6 +329,9 @@ class VectorFileTest(unittest.TestCase):
         sc["expect"]["models"]["TWO_RAY_FLAT"]["samples"][0]["lossDb"] += 0.01
         self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
         bad = copy.deepcopy(self.data)
+        bad["scenarios"][0]["expect"]["models"]["FSPL"]["samples"][0]["lossDb"] = float("inf")
+        self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
+        bad = copy.deepcopy(self.data)
         bad["scenarios"][0]["expect"]["models"]["FSPL"]["meetsSnr"]["none"]["status"] = "SAMPLED_ESTIMATE"
         self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
         bad = copy.deepcopy(self.data)
@@ -335,7 +340,10 @@ class VectorFileTest(unittest.TestCase):
 
     def test_envelope_is_closed(self) -> None:
         for key, value in (("relTolerance", 1.0), ("scenarios", []), ("speechQuality", "CALIBRATED"),
-                           ("snrState", "TEST_ONLY"), ("provenance", "CROSS_CHECKED"), ("extra", 1)):
+                           ("snrState", "TEST_ONLY"), ("provenance", "CROSS_CHECKED"), ("extra", 1),
+                           ("version", True), ("version", 1.0), ("revision", 0), ("revision", True),
+                           ("source", None), ("standards", ["Rec. ITU-R P.526-15"]), ("note", None),
+                           ("note", "")):  # agora #2162
             bad = copy.deepcopy(self.data)
             bad[key] = value
             self.assertEqual(o.check_vector_file(bad, self.evaluated), ["envelope"], key)
