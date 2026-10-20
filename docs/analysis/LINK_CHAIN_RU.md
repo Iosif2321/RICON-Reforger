@@ -19,9 +19,9 @@
 | Свободное пространство | `Propagation/RICON_PropagationModel.c:75` | `20 log10(4π max(d,λ)/λ)`, `λ=c/f`. Ограничение при `d<λ` — проектная защита формулы дальней зоны | ORACLE; используется в L2 adapter checks |
 | Рельеф | `Propagation/RICON_TerrainDiffractionModel.c:256`, `:796` | P.526-16 §4.5: Bullington + поправка сферической Земли; два слоя `fspl` и `terrain_diffraction`. Горизонтальная дистанция профиля отличается от 3D-дистанции FSPL | ENFORCE_PARITY 45/45 на synthetic-профилях |
 | Профиль мира | `Propagation/RICON_TerrainDiffractionModel.c:175`, `:192` | Базовый поставщик отказывает; есть synthetic-поставщик. Рабочего чтения высот `BaseWorld.GetSurfaceY` здесь нет | SOURCE; отказ → reason 16, пустые слои, проверено адаптером |
-| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:109` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 ORACLE; полный Enforce parity NOT_TESTED |
+| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 ORACLE; полный Enforce parity NOT_TESTED |
 | Шум и SINR | `Propagation/RICON_LinkEvaluator.c:118`; `Propagation/RICON_NoiseModel.c:65` | `N0=kT0B`; `N=N0+10log10(f_a+f_r−1)`; мощности помех складываются в линейной шкале, затем `SINR=P_rx−(N+I)` | L0 ORACLE; область внешнего шума ограничена конфигом/REQ |
-| Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:63` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ORACLE; речевая разборчивость NOT_CALIBRATED |
+| Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:64`, `:66` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ORACLE; речевая разборчивость NOT_CALIBRATED |
 | Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | SOURCE; route ORACLE, полный Enforce parity NOT_TESTED |
 | Доставка снимка | `Core/RICON_LinkSnapshot.c:161` | Версия, epoch, последовательность, TTL и запрос resync. Наличие pure receiver не доказывает работающие RPC/JIP | ORACLE; runtime NOT_TESTED |
 | Голосовая граница | `Network/RICON_NetworkContracts.c:350`, `:367` | Проверки снимка, binding, идентичности; любой допустимый вызов → `BLOCKED_NO_ACTUATOR`. Ни SetRange, ни mute, ни аудиограф здесь не вызываются | ENFORCE_PARITY 103/103 вызова |
@@ -30,6 +30,35 @@
 физическим результатом. Q из `linear_test` не является долей распознанных слов; её параметры не калиброваны.
 Для двухлучевой модели дальность может иметь провалы между доступными участками: одна бисекция без
 доказанной монотонности не устанавливает непрерывную зону приёма (agora #2072, #2083).
+
+Следствие для шума среды (кандидат D-004, agora #2164–2167): чувствительность при варианте required SINR
+считается по собственному шуму приёмника `kT0B+NF+required`, без внешнего шума. Поэтому внешний шум сам по себе
+не переводит результат в LOST; он меняет SINR и TEST_ONLY Q. Воспроизведённый L0 oracle-пример: город,
+30 МГц, B=25 кГц, NF=10 дБ, required=10 дБ, `P_rx=−105 дБм`: чувствительность −109.995787 дБм,
+шум −94.101973 дБм, SINR −10.898027 дБ, Q=0.136732436, состояние WEAK, reason OK.
+Здесь `aboveSensitivity=true`, `meetsSnr=false`. WEAK не доказывает слышимость речи и не равнозначен выполнению
+требуемого SNR. Физический вывод «при таком SNR речи нет» без модели приёмника/модуляции/кодека и калибровки
+также не установлен (`E-web3-intelligibility.md` §5–6, REQ-LE-74). Полный L0 Enforce parity NOT_TESTED.
+
+Воспроизведение кодовой семантики из корня проекта:
+
+```python
+import sys, json, copy
+from pathlib import Path
+sys.path.insert(0, "oracle")
+import ricon_oracle as r
+data = json.loads(Path("oracle/vectors/link_eval_v1.json").read_text())
+q = copy.deepcopy(next(v["input"] for v in data["vectors"] if v["kind"] == "budget"))
+q.update(txPos=[0, 0, 0], rxPos=[1000, 0, 0], frequencyMHz=30., bandwidthHz=25000.,
+         rxNoiseFigureDb=10., noiseEnvironmentId="city", hasRxSensitivity=False,
+         hasRequiredSinr=True, requiredSinrDb=10., hasInterference=False,
+         txGainDbi=0., rxGainDbi=0.)
+q["txPowerDbm"] = -105 + r.free_space_loss(1000, 30)["lossDb"]
+b = r.evaluate_budget(q, data["fixtures"]["linear_test"])
+assert b["valid"] and b["state"] == "WEAK" and b["reason"] == "OK"
+assert b["rxPowerDbm"] >= b["sensitivityDbm"] and b["sinrDb"] < 10
+print(b)
+```
 
 ## Ваниль: где видна граница движка
 
