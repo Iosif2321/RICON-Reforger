@@ -234,4 +234,4 @@ python -I oracle/link_physics_oracle.py --check oracle/vectors/link_probe_points
 python -I oracle/cellular_oracle.py --check oracle/vectors/cellular_scenarios_v1.json
 ```
 
-Workbench-проверки кода — команды в `docs/evidence/E-l0-enforce.md`, `docs/evidence/E-physics-enforce.md` и `docs/evidence/E-p526-matrix-enforce.md` (1008 точек матрицы).
+Workbench-проверки кода — команды в `docs/evidence/E-l0-enforce.md`, `docs/evidence/E-physics-enforce.md` и `docs/evidence/E-p526-matrix-enforce.md` (336 точек матрицы, 1008 вычислений).
