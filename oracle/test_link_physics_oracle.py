@@ -182,25 +182,33 @@ class KnifeEdgeTest(unittest.TestCase):
         self.assertAlmostEqual(abs(o.knife_edge_field(0.0)), 0.5, places=12)                # grazing: −6.02 dB
         self.assertAlmostEqual(abs(o.knife_edge_field(-60.0)), 1.0, places=2)               # clear path
         for nu in (-0.7, 0.0, 0.8, 2.4, 7.0):
-            self.assertAlmostEqual(-20 * math.log10(abs(o.knife_edge_field(nu))), o.knife_edge_j27(nu), places=10)
+            self.assertAlmostEqual(-20 * math.log10(abs(o.knife_edge_field(nu))), o.knife_edge_j30(nu), places=10)
 
     def test_eq31_approximates_eq27(self) -> None:
-        """Eq (31), used by L2, stays within 0.124 dB of the exact eq (27) on ν ∈ [−0.7, 10]."""
-        worst = max(abs(o.knife_edge_j27(nu) - l2o.knife_edge_j(nu)) for nu in (-0.7 + i * 0.01 for i in range(1071)))
+        """Eq (31), used by L2, stays within 0.124 dB of the exact eq (30) on ν ∈ [−0.7, 10]."""
+        worst = max(abs(o.knife_edge_j30(nu) - l2o.knife_edge_j(nu)) for nu in (-0.7 + i * 0.01 for i in range(1071)))
         self.assertLess(worst, 0.124)
         self.assertGreater(worst, 0.1)
 
+    def test_no_obstacle_limit_is_not_two_ray(self) -> None:
+        """agora #2203: the documented limitation of the RESEARCH model. A vanishing 1 cm edge should leave the
+        two-ray result. With 200 m antennas it does, within 1 dB; with 3 m antennas every path grazes the edge
+        (ν ≈ 0) and the loss moves by 7.5 dB, so the no-obstacle limit fails exactly where D-002 is asked."""
+        for h, low, high in ((200.0, 0.0, 1.0), (3.0, 7.0, 8.0)):
+            four = o.knife_edge_4ray(4000.0, h, h, 50.0, DRY, 2000.0, 0.01)
+            diff = abs(four["lossDb"] - o.two_ray_flat(4000.0, h, h, 50.0, DRY)["lossDb"])
+            self.assertTrue(low <= diff <= high, (h, diff))
+
     def test_no_ground_is_one_knife_edge(self) -> None:
         r = o.knife_edge_4ray(4000.0, 3.0, 3.0, 50.0, None, 2000.0, 60.0)
-        self.assertAlmostEqual(r["excessDb"], o.knife_edge_j27(r["nu"][0]), places=10)
+        self.assertAlmostEqual(r["excessDb"], o.knife_edge_j30(r["nu"][0]), places=10)
         nu = 57.0 * math.sqrt(2.0 * 4000.0 / (o.wavelength_m(50.0) * 2000.0 * 2000.0))     # eq (26), clearance 57 m
         self.assertAlmostEqual(r["nu"][0], nu, places=12)
 
-    def test_obstacle_gain_is_smaller_than_p526(self) -> None:
-        """D-002 (agora #2198): 50 MHz, 3 m antennas, 60 m hill at 2 km, receiver at 4 km. The knife-edge reference
-        with ground reflections loses 3.09 dB LESS than flat ground (obstacle gain exists), but §4.5 gives 13.98 dB
-        less. A real rounded hill loses more than a knife edge, so the reference gain is an upper bound: §4.5 looks
-        optimistic by at least ~8 dB here. ORACLE level; no runtime or measurement behind it."""
+    def test_obstacle_gain_characterisation(self) -> None:
+        """Characterisation for D-002 (agora #2198, #2203), not a conclusion: 50 MHz, 3 m antennas, 60 m hill at
+        2 km, receiver at 4 km. The RESEARCH 4-ray model gives 3.09 dB less loss than flat two-ray; §4.5 gives
+        13.98 dB less than its own flat result. The 4-ray model has no verified source, so D-002 stays OPEN."""
         flat = {"earthRadiusKm": 6371.0, "kFactor": 4 / 3, "profileStepKm": 0.1, "hill": None}
         hill = dict(flat, hill={"centerKm": 2.0, "heightM": 60.0, "halfWidthKm": 0.5})
         ref_gain = (o.two_ray_flat(4000.0, 3.0, 3.0, 50.0, DRY)["lossDb"]
@@ -363,6 +371,69 @@ class InputDomainTest(unittest.TestCase):
             errors: list = []
             o._close(a, b, 1e-9, "x", errors)
             self.assertNotEqual(errors, [])
+
+
+PROBES = Path(__file__).resolve().parent / "vectors" / "link_probe_points_v1.json"
+
+
+class ProbePointsTest(unittest.TestCase):
+    """Golden budgets for the Enforce probe of codex (agora #2201, #2206)."""
+
+    def setUp(self) -> None:
+        self.data = json.loads(PROBES.read_text(encoding="utf-8"))
+
+    def test_file_passes(self) -> None:
+        self.assertEqual(o.check_probe_file(self.data), [])
+        self.assertEqual([p["id"] for p in self.data["points"]], [f"P0{i}" for i in range(1, 8)])
+
+    def test_against_codex_l0_oracle(self) -> None:
+        """The free-space and noise part of every point equals codex's independent L0 oracle (ricon_oracle.py,
+        REQ-LE); the terrain layer only shifts Prx and SINR by terrainDb."""
+        import ricon_oracle as ro
+        fixture = {"a": -15.0, "b": 15.0, "qClean": 0.8, "qDegraded": 0.5}
+        for point in self.data["points"]:
+            p, e = point["input"], point["expect"]
+            hill = p["terrain"]["hill"] if p["layers"] == "P526_GENERAL" else None
+            z1 = o.hill_height_m(0.0, hill) + p["txHeightM"]
+            z2 = o.hill_height_m(p["distanceM"] / 1000.0, hill) + p["rxHeightM"]
+            r = p["radio"]
+            query = {"txPos": [0.0, z1, 0.0], "rxPos": [p["distanceM"], z2, 0.0], "frequencyMHz": p["frequencyMHz"],
+                     "bandwidthHz": r["bandwidthHz"], "txPowerDbm": r["txPowerDbm"], "txGainDbi": r["txGainDbi"],
+                     "rxGainDbi": r["rxGainDbi"], "rxNoiseFigureDb": r["rxNoiseFigureDb"], "hasRxSensitivity": False,
+                     "rxSensitivityDbm": 0.0, "hasRequiredSinr": True, "requiredSinrDb": r["snrRequiredDb"],
+                     "hasInterference": False, "interferenceDbm": 0.0, "noiseEnvironmentId": p["noiseEnvironment"],
+                     "bandId": "test_vhf", "modelId": "free_space", "intelligibilityModelId": "linear_test"}
+            b = ro.evaluate_budget(query, fixture)
+            shift = e["terrainDb"] or 0.0
+            self.assertAlmostEqual(b["layers"][0]["lossDb"], e["fsplDb"], places=9, msg=point["id"])
+            self.assertAlmostEqual(b["noiseDbm"], e["noiseDbm"], places=9, msg=point["id"])
+            self.assertEqual(b["noiseModelInDomain"], e["noiseModelInDomain"], point["id"])
+            self.assertAlmostEqual(b["sensitivityDbm"], e["sensitivityDbm"], places=9, msg=point["id"])
+            self.assertAlmostEqual(b["rxPowerDbm"] - shift, e["rxPowerDbm"], places=9, msg=point["id"])
+            if shift == 0.0:
+                self.assertEqual(b["state"], e["state"])
+                self.assertAlmostEqual(b["intelligibility"], e["intelligibility"], places=9)
+
+    def test_d004_and_d005_points(self) -> None:
+        by = {p["id"]: p["expect"] for p in self.data["points"]}
+        self.assertEqual(by["P07"]["state"], "WEAK")                      # D-004: SINR −10.9 dB is not LOST
+        self.assertAlmostEqual(by["P07"]["sinrDb"], -10.898027, places=5)
+        self.assertFalse(by["P06"]["noiseModelInDomain"])                 # D-005: 400 MHz rural → f_a = 1
+        self.assertAlmostEqual(by["P06"]["noiseDbm"], by["P06"]["thermalNoiseDbm"] + 10.0, places=9)
+
+    def test_corruption_is_caught(self) -> None:
+        bad = copy.deepcopy(self.data)
+        bad["points"][0]["expect"]["state"] = "WEAK"
+        self.assertNotEqual(o.check_probe_file(bad), [])
+        bad = copy.deepcopy(self.data)
+        bad["points"][1]["expect"]["sinrDb"] += 1e-6
+        self.assertNotEqual(o.check_probe_file(bad), [])
+        bad = copy.deepcopy(self.data)
+        bad["points"][0]["input"]["layers"] = "TWO_RAY_FLAT"
+        self.assertNotEqual(o.check_probe_file(bad), [])
+        bad = copy.deepcopy(self.data)
+        bad["fixture"]["a"] = -20.0
+        self.assertEqual(o.check_probe_file(bad), ["envelope"])
 
 
 class VectorFileTest(unittest.TestCase):

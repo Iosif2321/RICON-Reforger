@@ -1,0 +1,343 @@
+{
+ "schema": "ricon.oracle.link_probe_points",
+ "version": 1,
+ "source": "docs/req/REQ-link-eval.md (REQ-LE-40..75) + oracle/link_physics_oracle.py",
+ "fixture": {
+  "a": -15.0,
+  "b": 15.0,
+  "qClean": 0.8,
+  "qDegraded": 0.5,
+  "status": "TEST_ONLY"
+ },
+ "note": "Budgets written from the REQ text by claude, independent of RICON_LinkEvaluator.c. terrainDb is the P.526-16 §4.5 layer of l2_terrain_oracle. intelligibility/state come from the TEST_ONLY linear_test fixture: a code-path check, not a speech model (REQ-LE-74).",
+ "relTolerance": 1e-09,
+ "points": [
+  {
+   "id": "P01",
+   "scenarioId": "S-88MHz-5W-h3-flat",
+   "note": "flat profile, LOS branch",
+   "input": {
+    "frequencyMHz": 88.0,
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": null
+    },
+    "radio": {
+     "txPowerDbm": 36.98970004336019,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "rural",
+    "distanceM": 3000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 80.87986175928,
+    "terrainDb": 37.437878543829385,
+    "totalLossDb": 118.31774030310939,
+    "rxPowerDbm": -81.3280402597492,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -115.1433064941856,
+    "noiseModelInDomain": true,
+    "sinrDb": 33.81526623443639,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 1.0,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P02",
+   "scenarioId": "S-88MHz-5W-h3-flat",
+   "note": "flat profile, smooth-earth diffraction",
+   "input": {
+    "frequencyMHz": 88.0,
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": null
+    },
+    "radio": {
+     "txPowerDbm": 36.98970004336019,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "rural",
+    "distanceM": 10000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 91.33743666488675,
+    "terrainDb": 49.477401956415406,
+    "totalLossDb": 140.81483862130216,
+    "rxPowerDbm": -103.82513857794197,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -115.1433064941856,
+    "noiseModelInDomain": true,
+    "sinrDb": 11.318167916243624,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 0.8772722638747875,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P03",
+   "scenarioId": "S-30MHz-1W-h1.5-hill",
+   "note": "receiver before the hill",
+   "input": {
+    "frequencyMHz": 30.0,
+    "txHeightM": 1.5,
+    "rxHeightM": 1.5,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": {
+      "centerKm": 2.0,
+      "heightM": 60.0,
+      "halfWidthKm": 0.5
+     }
+    },
+    "radio": {
+     "txPowerDbm": 30.0,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "rural",
+    "distanceM": 1000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 61.99020831627662,
+    "terrainDb": 25.341738877232046,
+    "totalLossDb": 87.33194719350867,
+    "rxPowerDbm": -57.33194719350867,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -103.62103479827849,
+    "noiseModelInDomain": true,
+    "sinrDb": 46.28908760476982,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 1.0,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P04",
+   "scenarioId": "S-30MHz-1W-h1.5-hill",
+   "note": "receiver behind the hill (TRANS)",
+   "input": {
+    "frequencyMHz": 30.0,
+    "txHeightM": 1.5,
+    "rxHeightM": 1.5,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": {
+      "centerKm": 2.0,
+      "heightM": 60.0,
+      "halfWidthKm": 0.5
+     }
+    },
+    "radio": {
+     "txPowerDbm": 30.0,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "rural",
+    "distanceM": 10000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 81.99020831627662,
+    "terrainDb": 31.82924312071158,
+    "totalLossDb": 113.8194514369882,
+    "rxPowerDbm": -83.8194514369882,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -103.62103479827849,
+    "noiseModelInDomain": true,
+    "sinrDb": 19.801583361290284,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 1.0,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P05",
+   "scenarioId": "S-50MHz-5W-h3-hill",
+   "note": "receiver on the hill top: end altitude 60 m",
+   "input": {
+    "frequencyMHz": 50.0,
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": {
+      "centerKm": 2.0,
+      "heightM": 60.0,
+      "halfWidthKm": 0.5
+     }
+    },
+    "radio": {
+     "txPowerDbm": 36.98970004336019,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "city",
+    "distanceM": 2000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 72.45169011438247,
+    "terrainDb": 8.71717015653934,
+    "totalLossDb": 81.16886027092181,
+    "rxPowerDbm": -44.179160227561624,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -100.21594136130244,
+    "noiseModelInDomain": true,
+    "sinrDb": 56.03678113374082,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 1.0,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P06",
+   "scenarioId": "S-400MHz-5W-h10-flat",
+   "note": "noise model out of domain: f_a = 1, flag false (REQ-LE-63)",
+   "input": {
+    "frequencyMHz": 400.0,
+    "txHeightM": 10.0,
+    "rxHeightM": 10.0,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": null
+    },
+    "radio": {
+     "txPowerDbm": 36.98970004336019,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "rural",
+    "distanceM": 10000.0,
+    "layers": "P526_GENERAL"
+   },
+   "expect": {
+    "fsplDb": 104.48898304844262,
+    "terrainDb": 15.532263560889504,
+    "totalLossDb": 120.02124660933212,
+    "rxPowerDbm": -83.03154656597194,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -119.99578710750774,
+    "noiseModelInDomain": false,
+    "sinrDb": 36.9642405415358,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 1.0,
+    "state": "CLEAN"
+   }
+  },
+  {
+   "id": "P07",
+   "scenarioId": "S-30MHz-1W-h1.5-flat",
+   "note": "D-004: above sensitivity, SINR far below the required 10 dB, TEST_ONLY state WEAK",
+   "input": {
+    "frequencyMHz": 30.0,
+    "txHeightM": 1.5,
+    "rxHeightM": 1.5,
+    "ground": {
+     "permittivity": 15.0,
+     "conductivitySm": 0.005,
+     "polarization": "VERTICAL"
+    },
+    "terrain": {
+     "earthRadiusKm": 6371.0,
+     "kFactor": 1.3333333333333333,
+     "profileStepKm": 0.1,
+     "hill": null
+    },
+    "radio": {
+     "txPowerDbm": -20.0,
+     "txGainDbi": 0.0,
+     "rxGainDbi": 0.0,
+     "bandwidthHz": 25000.0,
+     "rxNoiseFigureDb": 10.0,
+     "snrRequiredDb": 10.0
+    },
+    "noiseEnvironment": "city",
+    "distanceM": 14141.308091433231,
+    "layers": "FSPL"
+   },
+   "expect": {
+    "fsplDb": 85.0,
+    "terrainDb": null,
+    "totalLossDb": 85.0,
+    "rxPowerDbm": -105.0,
+    "thermalNoiseDbm": -129.99578710750774,
+    "noiseDbm": -94.10197309224583,
+    "noiseModelInDomain": true,
+    "sinrDb": -10.898026907754172,
+    "sensitivityDbm": -109.99578710750774,
+    "intelligibility": 0.13673243640819427,
+    "state": "WEAK"
+   }
+  }
+ ]
+}

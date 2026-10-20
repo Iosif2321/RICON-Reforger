@@ -4,7 +4,7 @@
  "revision": 3,
  "source": "oracle/link_physics_oracle.py",
  "standards": [
-  "Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (26), (27), (100), (101), §4.5",
+  "Rec. ITU-R P.526-16 (11/2025): eq (2), (6)-(7b), (21), (22a-22e), (26), (30), (100), (101), §4.5",
   "Rec. ITU-R P.372-17 (08/2024): eq (5), (17), Table 1"
  ],
  "provenance": "ORACLE_SNAPSHOT",

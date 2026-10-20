@@ -8,8 +8,10 @@
 - `P526_GENERAL`  — FSPL + дифракция на профиле по P.526-16 §4.5 (`l2_terrain_oracle.l2`, тот же метод, что L2
                     в RICON);
 - `KNIFE_EDGE_4RAY` — вершина холма как острый клин над плоской землёй с отражением по обе стороны: 4 пары
-                    «источник/приёмник или их зеркальные образы», комплексное поле Френеля–Кирхгофа (модуль — ур. (27)),
-                    ν по ур. (26). Это физическая проверка D-002, а не метод P.526.
+                    «источник/приёмник или их зеркальные образы», комплексное поле Френеля–Кирхгофа (модуль — ур. (30)),
+                    ν по ур. (26). Статус **RESEARCH** (agora #2203): метод сложения зеркальных путей взят не из
+                    первоисточника, в пределе «без препятствия» при низких антеннах не сводится к двум лучам (тест). Выводов
+                    по D-002 на ней не строим.
 Шум — kTB, коэффициент шума системы f = fa + fr − 1 (P.372-17 ур. (5)) и медиана техногенного шума
 Fam = c − d·lg f (P.372-17 ур. (17), Table 1; область 0.3–250 МГц для city/residential/rural).
 Доступность — два отдельных критерия (agora #2132): `aboveSensitivity` (Prx ≥ kT0B + NF + требуемый SNR, как
@@ -47,7 +49,7 @@ NOISE_ENVIRONMENTS = ("none",) + tuple(MANMADE_NOISE)
 POLARIZATIONS = ("HORIZONTAL", "VERTICAL")
 MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL", "KNIFE_EDGE_4RAY")
 SOURCE = "oracle/link_physics_oracle.py"
-STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (26), (27), (100), (101), §4.5",
+STANDARDS = ["Rec. ITU-R P.526-16 (11/2025): eq (2), (6)-(7b), (21), (22a-22e), (26), (30), (100), (101), §4.5",
              "Rec. ITU-R P.372-17 (08/2024): eq (5), (17), Table 1"]
 SCENARIO_ID = re.compile(r"[A-Za-z0-9_.-]{1,64}")
 ROOT_KEYS = {"schema", "version", "revision", "source", "standards", "provenance", "note", "speechQuality", "snrState",
@@ -105,7 +107,7 @@ def two_ray_flat(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: dic
 
 def fresnel_cs(x: float) -> tuple[float, float]:
     """Fresnel integrals C(x) = ∫0^x cos(πt²/2) dt and S(x) = ∫0^x sin(πt²/2) dt (the convention of P.526-16
-    eq 7-8). Power series for |x| ≤ 2 (cancellation below ~1e-13); beyond, C + jS = ((1 + j)/2)·(1 − erfc(w)) with
+    eq 6-7b). Power series for |x| ≤ 2 (cancellation below ~1e-13); beyond, C + jS = ((1 + j)/2)·(1 − erfc(w)) with
     w = (√π/2)(1 − j)x and erfc from its continued fraction (Abramowitz & Stegun 7.1.14), evaluated by the
     modified Lentz method."""
     if x < 0:
@@ -148,13 +150,13 @@ def fresnel_cs(x: float) -> tuple[float, float]:
 
 def knife_edge_field(nu: float) -> complex:
     """Field behind a single knife edge relative to free space (Fresnel–Kirchhoff):
-    ((1 + j)/2)·∫ν^∞ exp(−jπt²/2) dt; its magnitude in dB is −J(ν) of P.526-16 eq (27)."""
+    ((1 + j)/2)·∫ν^∞ exp(−jπt²/2) dt; its magnitude in dB is −J(ν) of P.526-16 eq (30)."""
     c, s = fresnel_cs(nu)
     return (1 + 1j) / 2 * complex(0.5 - c, -(0.5 - s))
 
 
-def knife_edge_j27(nu: float) -> float:
-    """P.526-16 eq (27): J(ν) = −20 lg( sqrt((1 − C − S)² + (C − S)²) / 2 )."""
+def knife_edge_j30(nu: float) -> float:
+    """P.526-16 eq (30): J(ν) = −20 lg( sqrt((1 − C − S)² + (C − S)²) / 2 )."""
     c, s = fresnel_cs(nu)
     return -20.0 * math.log10(math.sqrt((1 - c - s) ** 2 + (c - s) ** 2) / 2.0)
 
@@ -164,7 +166,9 @@ def knife_edge_4ray(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: 
     """One knife edge of height H at distance a from TX over flat ground, with a ground reflection allowed on each
     side: 4 source/receiver image pairs (h1 or −h1, h2 or −h2), each diffracted by the edge with its own ν (P.526-16
     eq 26) and summed coherently. R from eq (100)/(101) at the grazing angle towards the edge top. ground=None
-    disables reflections (pure single knife edge). A physics reference for D-002, not a P.526 method."""
+    disables reflections (pure single knife edge). Not a P.526 method and RESEARCH only (agora #2203): the image
+    construction has no verified primary source here, and its no-obstacle limit fails for low antennas: a 1 cm edge
+    moves the 3 m / 50 MHz / 4 km loss by 7.5 dB against two-ray (with 200 m antennas the limit holds within 1 dB)."""
     a, b = edge_m, d_m - edge_m
     lam = wavelength_m(f_mhz)
     k = 2.0 * math.pi / lam
@@ -522,11 +526,80 @@ def check_vector_file(data: dict[str, Any], evaluated: dict[str, Any] | None = N
     return errors
 
 
+# ---------------------------------------------------------------------- probe points (agora #2201, #2206)
+# The budget of one link exactly as docs/req/REQ-link-eval.md defines it, for the Enforce probe of codex. Written from
+# the REQ text by claude, independently of RICON_LinkEvaluator.c. Q and the state use the TEST_ONLY `linear_test`
+# fixture (REQ-LE-74/75): they check the code path, they are not a speech model.
+
+PROBE_LAYERS = ("FSPL", "P526_GENERAL")
+LINEAR_TEST = {"a": -15.0, "b": 15.0, "qClean": 0.8, "qDegraded": 0.5, "status": "TEST_ONLY"}
+
+
+def req_budget(probe: dict[str, Any]) -> dict[str, Any]:
+    f, d = probe["frequencyMHz"], probe["distanceM"]
+    hill = probe["terrain"]["hill"] if probe["layers"] == "P526_GENERAL" else None
+    z1 = hill_height_m(0.0, hill) + probe["txHeightM"]
+    z2 = hill_height_m(d / 1000.0, hill) + probe["rxHeightM"]
+    d3 = math.hypot(d, z1 - z2)
+    fspl = fspl_db(max(d3, wavelength_m(f)), f)                                               # REQ-LE-40, 41
+    terrain = None
+    if probe["layers"] == "P526_GENERAL":
+        terrain = p526_general_db(d, probe["txHeightM"], probe["rxHeightM"], f, probe["ground"], probe["terrain"]) \
+            - slant_fspl_db(d, probe["txHeightM"], probe["rxHeightM"], f, hill)
+    total = fspl + (terrain or 0.0)
+    radio = probe["radio"]
+    prx = radio["txPowerDbm"] + radio["txGainDbi"] + radio["rxGainDbi"] - total                # REQ-LE-50
+    n0 = thermal_noise_dbm(radio["bandwidthHz"])                                               # REQ-LE-60
+    fam = manmade_noise_fam_db(probe["noiseEnvironment"], f)
+    in_domain = probe["noiseEnvironment"] == "none" or fam is not None                        # REQ-LE-63/64
+    fa = 1.0 if fam is None else 10.0 ** (fam / 10.0)
+    noise = n0 + 10.0 * math.log10(fa + 10.0 ** (radio["rxNoiseFigureDb"] / 10.0) - 1.0)        # REQ-LE-61
+    sinr = prx - noise                                                                         # REQ-LE-70
+    sens = n0 + radio["rxNoiseFigureDb"] + radio["snrRequiredDb"]                              # REQ-LE-71
+    if prx < sens:                                                                             # REQ-LE-72
+        q, state = 0.0, "LOST"
+    else:
+        q = min(1.0, max(0.0, (sinr - LINEAR_TEST["a"]) / (LINEAR_TEST["b"] - LINEAR_TEST["a"])))   # REQ-LE-74
+        state = "CLEAN" if q >= LINEAR_TEST["qClean"] else "DEGRADED" if q >= LINEAR_TEST["qDegraded"] else "WEAK"
+    return {"fsplDb": fspl, "terrainDb": terrain, "totalLossDb": total, "rxPowerDbm": prx, "thermalNoiseDbm": n0,
+            "noiseDbm": noise, "noiseModelInDomain": in_domain, "sinrDb": sinr, "sensitivityDbm": sens,
+            "intelligibility": q, "state": state}
+
+
+def validate_probe(probe: Any) -> bool:
+    """Closed probe input: the scenario domain of validate_scenario plus one distance, one environment, one layer set."""
+    if not _keys(probe, {"frequencyMHz", "txHeightM", "rxHeightM", "ground", "terrain", "radio", "noiseEnvironment",
+                         "distanceM", "layers"}) or probe["layers"] not in PROBE_LAYERS \
+            or probe["noiseEnvironment"] not in NOISE_ENVIRONMENTS or not _num(probe["distanceM"], 1.0, 500000.0):
+        return False
+    as_scenario = {key: probe[key] for key in ("frequencyMHz", "txHeightM", "rxHeightM", "ground", "terrain", "radio")}
+    as_scenario.update(noiseEnvironments=[probe["noiseEnvironment"]], models=["FSPL"],
+                       grids={"FSPL": {"minM": 1.0, "maxM": 10.0, "ratio": 2.0}}, sampleDistancesM=[probe["distanceM"]])
+    return validate_scenario(as_scenario) is None
+
+
+def check_probe_file(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if not _keys(data, {"schema", "version", "source", "fixture", "note", "relTolerance", "points"}) \
+            or data["schema"] != "ricon.oracle.link_probe_points" or type(data["version"]) is not int \
+            or data["version"] != 1 or data["fixture"] != LINEAR_TEST or data["relTolerance"] != 1e-9 \
+            or not isinstance(data["points"], list) or not data["points"]:
+        return ["envelope"]
+    for point in data["points"]:
+        if not _keys(point, {"id", "scenarioId", "note", "input", "expect"}) or not validate_probe(point["input"]):
+            errors.append(f"{point.get('id')}: input")
+            continue
+        _close(req_budget(point["input"]), point["expect"], data["relTolerance"], point["id"], errors)
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--check", type=Path, required=True)
     args = parser.parse_args(argv)
-    errors = check_vector_file(json.loads(args.check.read_text(encoding="utf-8")))
+    data = json.loads(args.check.read_text(encoding="utf-8"))
+    errors = check_probe_file(data) if data.get("schema") == "ricon.oracle.link_probe_points" \
+        else check_vector_file(data)
     for e in errors[:50]:
         print(e)
     print("LINK_PHYSICS_ORACLE_PASS" if not errors else f"LINK_PHYSICS_ORACLE_FAIL ({len(errors)})")
