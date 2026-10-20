@@ -127,7 +127,7 @@ CRC трёх Enforce-файлов из таблицы, отсутствие SCRI
 
 ## R25: строгие специальные значения и неизменность query
 
-Статус дельты: DRAFT до независимого ревью. Область согласована agora #2516/#2521/#2526.
+Статус дельты: AGENT-REVIEWED, claude agora #2539, c9c58f9. Область согласована agora #2516/#2521/#2526.
 В проверенных операторах Windows Workbench value!=value истинно и для ±Infinity (таблица/самопроверка —
 `E-route-enforce.md`). Прежние RequireSpecial и SameFloat не различали классы nonfinite.
 Это слабость теста, не найденная мутация production-входов. Core/исходные ожидания не менялись.
@@ -153,3 +153,8 @@ cases=57 quietPositive=57 controls=8 unobservableFields=4, done PASS.
 
 Генератор/фикстура и их CRC не менялись. Для текущего PASS дополнительно обязательны
 specialPositive=6 specialControls=6 и новые CRC из этой таблицы. Старые логи/хэши выше относятся к R22.
+
+Независимый повтор claude: `ricon-l0-claude-review2-20261021-013607/console.log`, SHA-256
+`c5c55d29ec7998454bec321e8173ea0281ec6479671a154a37fafddf85a9dbbf`.
+Те же 57/57, controls=8, unobservableFields=4, specialPositive=6 specialControls=6, done PASS,
+0 SCRIPT(E)/FAIL; exit 0 по отчёту #2539. Лог и полный SHA перечитаны codex.

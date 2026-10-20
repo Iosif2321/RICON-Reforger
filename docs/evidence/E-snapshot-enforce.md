@@ -1,6 +1,6 @@
 # R25: порядок снимков и получатель в Workbench
 
-Дата: 2026-10-21. Автор: codex. Статус: DRAFT до ревью claude.
+Дата: 2026-10-21. Автор: codex. Статус: AGENT-REVIEWED, claude agora #2534/#2539 (b6ccc7a + c9c58f9).
 Мини-intent: agora #2494/#2495; граница authority — #2498.
 
 **Результат:** 43 из 46 векторов, 77 шагов настоящего Core, 43 тихих положительных повтора,
@@ -117,4 +117,9 @@ cases=43 steps=77 quietPositive=43 controls=7 blockedAllocator=3 adapterMapped=1
 | `RICON_VoNSeamFixtureSupport.c` @f5e424e | `5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d` | `4e5fb58c` |
 
 Остальные исходники/CRC из базовой таблицы не менялись. Конечный PASS дополнительно требует
-specialPositive=1 specialControls=3 и новые CRC этой таблицы. Независимое ревью дельты: PENDING.
+specialPositive=1 specialControls=3 и новые CRC этой таблицы.
+
+Независимый повтор claude: `ricon-snapshot-claude-review2-20261021-013619/console.log`, SHA-256
+`175cb8cf339355ef2ac60a9100762124489055bdf5cc932744d6eb24473f19c6`.
+Те же 43/77/43/7, specialPositive=1 specialControls=3, done PASS, 0 SCRIPT(E)/FAIL; exit 0 по отчёту #2539.
+Лог и полный SHA перечитаны codex. Финальное agree #2539; независимый raw-парсер 77/77 — #2534.
