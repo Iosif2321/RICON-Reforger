@@ -245,6 +245,25 @@ class NoiseTest(unittest.TestCase):
         self.assertFalse(o.system_noise_dbm(25000.0, 6.0, "city", 250.01)["inDomain"])
         self.assertIsNone(o.system_noise_dbm(25000.0, 6.0, "city", 400.0)["noiseDbm"])
 
+    def test_d005_noise_rise_above_250_mhz(self) -> None:
+        """D-005 (sprint 23, docs/evidence/E-web3-itu-p372-p526.md): system noise rise over the f_a = 1 reference
+        when Fa is taken from P.372-17 Table 3 (indoor measurements, exact) or Fig. 3 curve A (graph read ±2 dB),
+        by eq (5) through system_noise_dbm. The quiet 'none' environment gives the reference kT0B + NF."""
+        def rise(fa_db: float, nf_db: float) -> float:
+            fa = 10.0 ** (fa_db / 10.0)
+            with_fa = lpo_noise(25000.0, nf_db, fa)
+            return with_fa - o.system_noise_dbm(25000.0, nf_db, "none", 425.0)["noiseDbm"]
+
+        def lpo_noise(b: float, nf: float, fa: float) -> float:   # eq (5), lossless antenna and line
+            return o.thermal_noise_dbm(b) + 10.0 * math.log10(fa + 10.0 ** (nf / 10.0) - 1.0)
+
+        table = {(16.0, 7.0): 9.42, (16.0, 10.0): 6.89, (3.0, 7.0): 0.79, (3.0, 10.0): 0.41, (14.0, 7.0): 7.64,
+                 (14.0, 10.0): 5.33, (12.0, 7.0): 5.98, (12.0, 10.0): 3.95, (8.0, 7.0): 3.14, (8.0, 10.0): 1.85,
+                 (10.0, 10.0): 2.79, (6.0, 7.0): 2.03, (10.0, 7.0): 4.46, (6.0, 10.0): 1.13}
+        for (fa_db, nf_db), expected in table.items():
+            self.assertAlmostEqual(rise(fa_db, nf_db), expected, delta=0.005, msg=(fa_db, nf_db))
+        self.assertAlmostEqual(76.8 - 27.7 * math.log10(400.0), 4.72, delta=0.005)  # eq (17) outside its domain
+
     def test_budget(self) -> None:
         radio = {"txPowerDbm": 37.0, "txGainDbi": 2.0, "rxGainDbi": 1.0, "bandwidthHz": 25000.0,
                  "rxNoiseFigureDb": 10.0, "snrRequiredDb": 10.0}

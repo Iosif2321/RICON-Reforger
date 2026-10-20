@@ -117,7 +117,7 @@ Fig. 39»): видно, где кривые нарисованы, но стан�
 Уровень — `STD_FIGURE_READ` для концов кривых.
 
 **Влияние на шум системы**, если вместо опорного `f_a = 1` (REQ-LE-63) взять эти Fa. Формула ур. (5),
-f = fa + fr − 1; скрипт `d005_noise_impact.py` в scratchpad, вывод:
+f = fa + fr − 1. Числа воспроизводит тест `oracle/test_link_physics_oracle.py::NoiseTest.test_d005_noise_rise_above_250_mhz` (допуск 0.005 дБ; запуск: `python -m unittest discover -s oracle -p "test_link_physics*.py"`):
 
 | Случай | Fa, дБ | Рост шума при NF 7 дБ | при NF 10 дБ |
 |---|---|---|---|
