@@ -181,6 +181,11 @@ class AnchorFileTest(unittest.TestCase):
             self.assertEqual(e["profilePointCount"], n, cid)
             self.assertAlmostEqual(e["peakTerrainM"], peak, places=9, msg=cid)
 
+    def test_unknown_ground_source_is_refused(self) -> None:
+        for spec in (("P527_typo", "silty_loam", 0.07), ("MATRIX", "extra"), ("matrix",), ()):
+            with self.assertRaises((ValueError, IndexError), msg=spec):
+                so.anchor_ground(spec, 30.0, "VERTICAL")
+
     def test_missed_hill_equals_flat_ground(self) -> None:
         c = self.cases["A10-hw30-s100-missed"]
         flat = so.l2_loss(10.0, 0.1, 2.0, 0.03, 0.0, 30.0, 1.5, dict(so.BASELINE_GROUND, polarization="VERTICAL"))

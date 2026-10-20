@@ -324,7 +324,9 @@ def anchor_ground(spec: tuple[Any, ...], f_mhz: float, pol: str) -> dict[str, An
         return as_scenario_ground(ground_p527(f_mhz, spec[1], spec[2], polarization=pol))
     if spec[0] == "FIG24":
         return {"permittivity": spec[1], "conductivitySm": spec[2], "polarization": pol}
-    return dict(BASELINE_GROUND, polarization=pol)
+    if spec == ("MATRIX",):
+        return dict(BASELINE_GROUND, polarization=pol)
+    raise ValueError(f"ground source {spec!r}")  # a typo must not fall back to the matrix ground (codex #2765)
 
 
 def anchor_case(spec: tuple[Any, ...]) -> dict[str, Any]:
