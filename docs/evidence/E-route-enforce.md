@@ -57,7 +57,8 @@
   «`x != x` ⇒ NaN» в Enforce не различает NaN и бесконечность.
 - Сначала я исправил проверку на `a != a && b != b`, как предложил codex в #2505. Самопроверка показала, что и
   этот вариант принимает NaN ↔ +Inf (прогоны `…012516`, `…012639`, `…012731` — FAIL).
-- Рабочий способ — арифметика: `1/±Inf = 0` конечно, `1/NaN` остаётся NaN (`RICON_RouteRun.FloatClass`).
+- Рабочий способ — арифметика: `1/±Inf = 0` конечно, `1/NaN` остаётся NaN (`RICON_TestSupport.FloatClass`,
+  общий помощник для всех тестов, codex #2516).
 - `RICON_Num.IsFinite` в Core (`v <= MAX && v >= −MAX`) работает, потому что `NaN <= MAX` ложно. В Core NaN
   отсекается `IsFinite` до проверок диапазонов, поэтому код этой находкой не затронут.
 - Тот же слабый приём был в моей seam-фикстуре (`RICON_VoNSeamFixtureSupport.c`, `RequireNonFinite` и
@@ -77,17 +78,20 @@
 | `ricon-route-r25-20261021-012639` | классификатор на `>`/`<` — NaN попал в +Inf, FAIL | `824c0aa67af7d4c843b759767a8f3054620a9cb2b5ca03bbcdf54bf52c4b98ab` |
 | `ricon-route-r25-20261021-012731` | классификатор на `<=`/`>=` и таблица сравнений — FAIL | `ec6af69a3fd13d05da589ed903be9cb4398eb048d823c31e5fc6db010e7181a3` |
 | `ricon-route-r25-debug-20261021-012804` | таблица со строками значений (`-nan(ind)`, `inf`) | `113e14f5a395ebea6b606952b9f8616462fcc76f39a8458c1cc933c3a95003ea` |
-| **`ricon-route-r25-20261021-012837`** | **итог:** 48/48, quietPositive 48, controls 4, snapshotControls 3, adapterMapped 2, testSubclass 3, SCRIPT(E) 0, `done: PASS` | `c0d6b4b4f5239274ee1666dc09b411839b22f174c88fc2449a3cee1fc067aca7` |
+| `ricon-route-r25-20261021-012837` | 48/48, quietPositive 48, controls 4, snapshotControls 3, adapterMapped 2, testSubclass 3, SCRIPT(E) 0, `done: PASS` | `c0d6b4b4f5239274ee1666dc09b411839b22f174c88fc2449a3cee1fc067aca7` |
 | `ricon-tests-r25-seam-floatclass-20261021-012938` | прежние наборы после правки seam: lifecycle 209/209, EXT, VoN seam 103/103, L2 45/45, SCRIPT(E) 0, PASS | `f17f2244809018ae75f8c178a12fc3c1da6f3dee646f3a6c6b153748cb00b185` |
+| **`ricon-route-r25-20261021-013150`** | **итог** после переноса классификатора в общий `RICON_TestSupport` (codex #2516): 48/48, quietPositive 48, controls 4, snapshotControls 3, SCRIPT(E) 0, `done: PASS` | `a2d5064156f8cd08979d873078a0e1cabb2182eda99ce29d4022eab5764d191a` |
+| **`ricon-tests-r25-shared-float-20261021-013207`** | **итог** прежних наборов: lifecycle 209/209, EXT, VoN seam 103/103, L2 45/45, SCRIPT(E) 0, PASS | `f7ee1efc46d13bb85bbdd35bf94a129e508e3b4598bd9a1df9dc37833a7a58b8` |
 
 | Файл | SHA-256 | CRC в Workbench |
 |---|---|---|
 | `tools/RICON_TestRunner/gen_route_fixture.py` | `40717d8a8283173af13bd19a40991aaa778502b978cb785c1630e1ee3cd3d9cc` | host |
 | `tools/RICON_TestRunner/test_gen_route_fixture.py` | `544b11a9343c204c8cf385a590f40c358de57f98e2a511c8e2bbff13fe4cf9d8` | host |
-| `addons/RICON_CoreTests/.../RICON_RouteFixtureSupport.c` | `524d2bd8c0f8acd91bae5c6b908899d1d1cb4d3d859dcc6d9a776b3af327e731` | `3b8b2b82` |
+| `addons/RICON_CoreTests/.../RICON_RouteFixtureSupport.c` | `293b7b530540471ff1217d036377ba4b996dfdda18958ca4ec7062dad481381b` | `411293c4` |
+| `addons/RICON_CoreTests/.../RICON_TestSupport.c` (общий `FloatClass`/`SameFloat`) | `d3741f72de00c5e7f67930551d58fbcd221e50e9ad045628d71ebca54448ae5e` | `e20579c3` |
 | `addons/RICON_CoreTests/.../RICON_RouteFixtures.c` (сгенерирован) | `4ae6ca89ae872ff06e09e85b1c30877fbd6b4d5a3eb4d28a0290f3118c5e2dd4` | `5859a7bf` |
 | `tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_RouteProbePlugin.c` | `3d9479e3890135de3afe832fdcd2bb916824b7eb291f14e66e79c314e9d618eb` | `384f589d` |
-| `addons/RICON_CoreTests/.../RICON_VoNSeamFixtureSupport.c` (правка R25) | `427c55c52cdf06232de87a50271e39e3e947b0f3843f641fe0bc74f90267c534` | — |
+| `addons/RICON_CoreTests/.../RICON_VoNSeamFixtureSupport.c` (правка R25) | `5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d` | — |
 
 Отдельный разбор лога (свой скрипт claude) против `expected` корпуса: 48 строк по 48 разным id, расхождений reason
 и state — 0, наибольшее |Δquality| = 2.4·10⁻⁸.

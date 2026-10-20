@@ -7,6 +7,29 @@ class RICON_TestSupport
 	static const string BAND_ID = "test_band";
 	static const string NOISE_ID = "none";
 
+	//! Workbench float comparisons are not IEEE (R25, measured; docs/evidence/E-route-enforce.md): a real NaN
+	//! ('-nan(ind)') compares exactly like +Inf — v>=0 and v>0 true, v<=0 and v<0 false, v==v false — and `x != x`
+	//! is true for every non-finite value. No comparison tells NaN from +Inf; arithmetic does: 1/±Inf = 0 is finite,
+	//! 1/NaN stays NaN. Classes: 0 finite, 1 NaN, 2 +Inf, 3 -Inf.
+	static int FloatClass(float value)
+	{
+		if (RICON_Num.IsFinite(value))
+			return 0;
+		float inverse = 1.0 / value;
+		if (!RICON_Num.IsFinite(inverse))
+			return 1;
+		if (value <= 0)
+			return 3;
+		return 2;
+	}
+
+	//! Same class, and equal when finite.
+	static bool SameFloat(float a, float b)
+	{
+		int ca = FloatClass(a);
+		return ca == FloatClass(b) && (ca != 0 || a == b);
+	}
+
 	//! Linear intelligibility fixture of REQ-LE-74 (TEST_ONLY).
 	static RICON_LinearTestIntelligibility NewTestIntelligibility()
 	{

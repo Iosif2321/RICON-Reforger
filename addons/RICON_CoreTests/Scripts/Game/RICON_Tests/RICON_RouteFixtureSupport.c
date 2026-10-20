@@ -61,7 +61,7 @@ class RICON_RouteInputSnapshot
 		}
 		for (int k = 0; k < m_aQualities.Count(); k++)
 		{
-			if (!RICON_RouteRun.SameFloat(m_aQualities[k], other.m_aQualities[k]))
+			if (!RICON_TestSupport.SameFloat(m_aQualities[k], other.m_aQualities[k]))
 				return false;
 		}
 		return true;
@@ -78,22 +78,6 @@ class RICON_RouteRun
 	int m_iTestSubclass;
 	bool m_bOk = true;
 
-	//! Workbench float comparisons are not IEEE (R25, measured; PrintComparisonTable logs it): a real NaN ('-nan(ind)')
-	//! compares exactly like +Inf — v>=0 and v>0 true, v<=0 and v<0 false, v==v false — and `x != x` is true for every
-	//! non-finite value. No comparison tells NaN from +Inf; arithmetic does: 1/±Inf = 0 is finite, 1/NaN stays NaN.
-	//! Classes: 0 finite, 1 NaN, 2 +Inf, 3 -Inf.
-	static int FloatClass(float value)
-	{
-		if (RICON_Num.IsFinite(value))
-			return 0;
-		float inverse = 1.0 / value;
-		if (!RICON_Num.IsFinite(inverse))
-			return 1;
-		if (value <= 0)
-			return 3;
-		return 2;
-	}
-
 	static void PrintComparisonTable()
 	{
 		float nan = RICON_L2Run.NaN();
@@ -106,12 +90,6 @@ class RICON_RouteRun
 			PrintFormat("[RICON_ROUTE] float %1: v<=0 %2, v>=0 %3, v<0 %4, v>0 %5, v==v %6, v!=v %7, IsFinite %8, str '%9'",
 				names[i], v <= 0, v >= 0, v < 0, v > 0, v == v, v != v, RICON_Num.IsFinite(v), v.ToString());
 		}
-	}
-
-	static bool SameFloat(float a, float b)
-	{
-		int ca = FloatClass(a);
-		return ca == FloatClass(b) && (ca != 0 || a == b);
 	}
 
 	static RICON_LinkBudget Budget(bool valid, float intelligibility, RICON_ELinkState state)
@@ -213,8 +191,8 @@ class RICON_RouteRun
 		m_bOk = RICON_TestSupport.Expect(nanA.Equals(nanB), "snapshot", "NaN = NaN") && m_bOk;
 		m_bOk = RICON_TestSupport.Expect(plusInf.Equals(SnapshotOf(inf)), "snapshot", "+Inf = +Inf") && m_bOk;
 		PrintComparisonTable();
-		m_bOk = RICON_TestSupport.Expect(FloatClass(nan) == 1 && FloatClass(inf) == 2 && FloatClass(-inf) == 3
-			&& FloatClass(0.5) == 0 && FloatClass(0) == 0 && FloatClass(-3.4e38) == 0, "snapshot", "классы float") && m_bOk;
+		m_bOk = RICON_TestSupport.Expect(RICON_TestSupport.FloatClass(nan) == 1 && RICON_TestSupport.FloatClass(inf) == 2 && RICON_TestSupport.FloatClass(-inf) == 3
+			&& RICON_TestSupport.FloatClass(0.5) == 0 && RICON_TestSupport.FloatClass(0) == 0 && RICON_TestSupport.FloatClass(-3.4e38) == 0, "snapshot", "классы float") && m_bOk;
 		if (!nanA.Equals(plusInf))
 			m_iSnapshotControls++;
 		if (!plusInf.Equals(minusInf))
@@ -226,6 +204,6 @@ class RICON_RouteRun
 	//! A special value of the corpus must really be what the JSON names before Evaluate sees it (codex #2505).
 	void RequireNaN(string id, float value)
 	{
-		m_bOk = RICON_TestSupport.Expect(FloatClass(value) == 1, id, "вход — настоящий NaN") && m_bOk;
+		m_bOk = RICON_TestSupport.Expect(RICON_TestSupport.FloatClass(value) == 1, id, "вход — настоящий NaN") && m_bOk;
 	}
 }
