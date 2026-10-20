@@ -1,5 +1,5 @@
 //! TOOL_ONLY, кандидат R26. Читать только метаданные указанного ACP после взаимного ревью механизма.
-[WorkbenchPluginAttribute(name: "RICON: метаданные ACP", description: "Ограниченное чтение корневых полей, без сохранения", wbModules: {"AudioEditor"})]
+[WorkbenchPluginAttribute(name: "RICON: метаданные ACP", description: "Ограниченное чтение корневых полей, без сохранения", wbModules: {"AudioEditor", "ScriptEditor"})]
 class RICON_AudioContainerProbePlugin : WorkbenchPlugin
 {
 	override void RunCommandline()

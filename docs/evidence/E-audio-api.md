@@ -69,3 +69,18 @@ Owner #2020 уже разрешил ACP через Workbench. #791/#794 были
 
 Для ответа о звуке остаётся `WB-order-link-quality.md`: radio/direct ветви, входы и кривые TransmissionQuality,
 источник native quality; затем опыт в игре с отдельным разрешением владельца.
+
+## Первый согласованный CLI-прогон: плагин не подтвердил исполнение
+
+После review claude #2575 выполнен один Hidden-запуск с -wbModule=AudioEditor и точными флагами выше.
+Лог `ricon-audio-acp-r26-20261021-014604/console.log`, SHA-256
+`0d79f85aba3047188950a8749957795bd13e6ee11e00933370d5f4fa70e55729`:
+exit0, CRC096631db, 0 SCRIPT(E), но **0 строк [RICON_ACP]**. CLI в логе содержит нужный plugin/флаг.
+Это NOT_EXECUTED_OR_UNCONFIRMED, не успешное чтение и не доказательство нечитаемости ACP этим API.
+git status перед/после чистый. В общих логах есть Resource-leak сообщения; отсутствие всех engine-ошибок не заявляется.
+
+Следующая минимальная дельта (agora #2590): разрешить plugin также в ScriptEditor и запустить через его уже
+проверенный CLI-dispatch, внутри по-прежнему GetModule(AudioEditor). Только строка wbModules меняется,
+путь/методы/лимит14/отсутствие значений неизменны. Новый исходник SHA-256
+`eada03fe23a4f4bdb2b3652d47aff7daaabfeeb2f4328251da94b9b10e3e1da7`.
+До согласования этой дельты второй прогон не выполняется; автоматического GUI fallback нет.
