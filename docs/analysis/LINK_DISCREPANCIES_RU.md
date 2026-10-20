@@ -253,7 +253,7 @@
 
 **Проверка.**
 - `python oracle/sensitivity_oracle.py` → `SENSITIVITY_ORACLE_PASS`: полный пересчёт векторов, около 5 мин.
-- `python -m unittest discover -s oracle -p "test_sensitivity_oracle.py"` → 13 тестов. Среди них сверка модели
+- `python -m unittest discover -s oracle -p "test_sensitivity_oracle.py"` → 18 тестов. Среди них сверка модели
   почвы с рисунками 14–16 P.527-6 и тест, что опорный грунт воспроизводит границы матрицы rev 3.
 - Источник грунтов — `docs/evidence/E-web6-p527-ground.md` (`STD_COPY`, Fig. 24 — `STD_FIGURE_READ`).
 
