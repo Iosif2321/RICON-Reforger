@@ -1,5 +1,5 @@
 //! TEST_ONLY: выбранные точки физики через настоящий evaluator; без мира, Play и серверов.
-//! Эталонные числа добавляются только из принятой ревизии link_scenarios_v1.json.
+//! Эталонные числа добавляются только из принятой ревизии link_probe_points_v1.json.
 [WorkbenchPluginAttribute(name: "RICON: проверка физических точек", description: "Чистый расчёт Core в Workbench", wbModules: {"ScriptEditor"})]
 class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 {
@@ -13,8 +13,17 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 			&& Math.AbsFloat(actual - expected) <= tolerance;
 	}
 
-	protected static bool CheckDb(string pointId, string field, float actual, float expected)
+	protected static bool Check(bool condition, string pointId, string field, bool quiet)
 	{
+		if (quiet)
+			return condition;
+		return RICON_TestSupport.Expect(condition, pointId, field);
+	}
+
+	protected static bool CheckDb(string pointId, string field, float actual, float expected, bool quiet)
+	{
+		if (quiet)
+			return Within(actual, expected, DB_TOLERANCE);
 		if (RICON_Num.IsFinite(actual) && RICON_Num.IsFinite(expected))
 			s_fMaxDeviationDb = Math.Max(s_fMaxDeviationDb, Math.AbsFloat(actual - expected));
 		PrintFormat("[RICON_PHYSICS] %1 %2: actual=%3 expected=%4", pointId, field,
@@ -77,51 +86,53 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 	}
 
 	protected static bool ComparePoint(string pointId, RICON_LinkBudget actual, RICON_LinkBudget expected,
-		string modelId)
+		string modelId, bool quiet = false)
 	{
-		if (!RICON_TestSupport.Expect(actual != null && expected != null, pointId, "бюджет существует"))
+		if (!Check(actual != null && expected != null, pointId, "бюджет существует", quiet))
 			return false;
-		PrintFormat("[RICON_PHYSICS] %1 valid=%2 reason=%3 distanceM=%4", pointId, actual.m_bValid,
-			typename.EnumToString(RICON_EReason, actual.m_eReason), actual.m_fDistanceM.ToString(-1, 9));
-		bool ok = RICON_TestSupport.Expect(actual.m_bValid && actual.m_eReason == RICON_EReason.OK,
-			pointId, "valid / reason");
-		ok = CheckDb(pointId, "totalLossDb", actual.m_fTotalLossDb, expected.m_fTotalLossDb) && ok;
-		ok = CheckDb(pointId, "rxPowerDbm", actual.m_fRxPowerDbm, expected.m_fRxPowerDbm) && ok;
-		ok = CheckDb(pointId, "thermalNoiseDbm", actual.m_fThermalNoiseDbm, expected.m_fThermalNoiseDbm) && ok;
-		ok = CheckDb(pointId, "noiseDbm", actual.m_fNoiseDbm, expected.m_fNoiseDbm) && ok;
-		ok = CheckDb(pointId, "sinrDb", actual.m_fSinrDb, expected.m_fSinrDb) && ok;
-		ok = CheckDb(pointId, "sensitivityDbm", actual.m_fSensitivityDbm, expected.m_fSensitivityDbm) && ok;
-		ok = RICON_TestSupport.Expect(Within(actual.m_fDistanceM, expected.m_fDistanceM, 0.001),
-			pointId, "3D distance, метры") && ok;
-		ok = RICON_TestSupport.Expect(actual.m_bNoiseModelInDomain == expected.m_bNoiseModelInDomain,
-			pointId, "noiseModelInDomain") && ok;
-		ok = RICON_TestSupport.Expect(actual.m_eState == expected.m_eState,
-			pointId, "TEST_ONLY state") && ok;
-		ok = RICON_TestSupport.Expect(Within(actual.m_fIntelligibility, expected.m_fIntelligibility, 0.000001),
-			pointId, "TEST_ONLY Q") && ok;
-		ok = RICON_TestSupport.Expect((actual.m_fRxPowerDbm >= actual.m_fSensitivityDbm)
+		if (!quiet)
+			PrintFormat("[RICON_PHYSICS] %1 valid=%2 reason=%3 distanceM=%4", pointId, actual.m_bValid,
+				typename.EnumToString(RICON_EReason, actual.m_eReason), actual.m_fDistanceM.ToString(-1, 9));
+		bool ok = Check(actual.m_bValid && actual.m_eReason == RICON_EReason.OK,
+			pointId, "valid / reason", quiet);
+		ok = CheckDb(pointId, "totalLossDb", actual.m_fTotalLossDb, expected.m_fTotalLossDb, quiet) && ok;
+		ok = CheckDb(pointId, "rxPowerDbm", actual.m_fRxPowerDbm, expected.m_fRxPowerDbm, quiet) && ok;
+		ok = CheckDb(pointId, "thermalNoiseDbm", actual.m_fThermalNoiseDbm, expected.m_fThermalNoiseDbm, quiet) && ok;
+		ok = CheckDb(pointId, "noiseDbm", actual.m_fNoiseDbm, expected.m_fNoiseDbm, quiet) && ok;
+		ok = CheckDb(pointId, "sinrDb", actual.m_fSinrDb, expected.m_fSinrDb, quiet) && ok;
+		ok = CheckDb(pointId, "sensitivityDbm", actual.m_fSensitivityDbm, expected.m_fSensitivityDbm, quiet) && ok;
+		ok = Check(Within(actual.m_fDistanceM, expected.m_fDistanceM, 0.001),
+			pointId, "3D distance, метры", quiet) && ok;
+		ok = Check(actual.m_bNoiseModelInDomain == expected.m_bNoiseModelInDomain,
+			pointId, "noiseModelInDomain", quiet) && ok;
+		ok = Check(actual.m_eState == expected.m_eState,
+			pointId, "TEST_ONLY state", quiet) && ok;
+		ok = Check(Within(actual.m_fIntelligibility, expected.m_fIntelligibility, 0.000001),
+			pointId, "TEST_ONLY Q", quiet) && ok;
+		ok = Check((actual.m_fRxPowerDbm >= actual.m_fSensitivityDbm)
 			== (expected.m_fRxPowerDbm >= expected.m_fSensitivityDbm),
-			pointId, "aboveSensitivity") && ok;
-		ok = RICON_TestSupport.Expect((actual.m_fSinrDb >= 10.0) == (expected.m_fSinrDb >= 10.0),
-			pointId, "meetsSnr") && ok;
-		ok = RICON_TestSupport.Expect(actual.m_aLayers.Count() == expected.m_aLayers.Count(),
-			pointId, "число слоёв") && ok;
+			pointId, "aboveSensitivity", quiet) && ok;
+		ok = Check((actual.m_fSinrDb >= 10.0) == (expected.m_fSinrDb >= 10.0),
+			pointId, "meetsSnr", quiet) && ok;
+		ok = Check(actual.m_aLayers.Count() == expected.m_aLayers.Count(),
+			pointId, "число слоёв", quiet) && ok;
 		if (actual.m_aLayers.Count() == expected.m_aLayers.Count())
 		{
 			for (int i = 0; i < expected.m_aLayers.Count(); i++)
 			{
 				RICON_LossLayer layer = actual.m_aLayers[i];
 				RICON_LossLayer anchor = expected.m_aLayers[i];
-				if (!RICON_TestSupport.Expect(layer != null && anchor != null, pointId, "слой существует"))
+				if (!Check(layer != null && anchor != null, pointId, "слой существует", quiet))
 					return false;
-				ok = RICON_TestSupport.Expect(layer.m_sLayerId == anchor.m_sLayerId && layer.m_sModelId == modelId,
-					pointId, "порядок / id слоёв") && ok;
-				ok = CheckDb(pointId, layer.m_sLayerId, layer.m_fLossDb, anchor.m_fLossDb) && ok;
+				ok = Check(layer.m_sLayerId == anchor.m_sLayerId && layer.m_sModelId == modelId,
+					pointId, "порядок / id слоёв", quiet) && ok;
+				ok = CheckDb(pointId, layer.m_sLayerId, layer.m_fLossDb, anchor.m_fLossDb, quiet) && ok;
 			}
 		}
-		PrintFormat("[RICON_PHYSICS] %1 state=%2 Q=%3 inDomain=%4", pointId,
-			typename.EnumToString(RICON_ELinkState, actual.m_eState), actual.m_fIntelligibility.ToString(-1, 9),
-			actual.m_bNoiseModelInDomain);
+		if (!quiet)
+			PrintFormat("[RICON_PHYSICS] %1 state=%2 Q=%3 inDomain=%4", pointId,
+				typename.EnumToString(RICON_ELinkState, actual.m_eState), actual.m_fIntelligibility.ToString(-1, 9),
+				actual.m_bNoiseModelInDomain);
 		return ok;
 	}
 
@@ -152,9 +163,13 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 37.437878543829385, modelId));
 		actual = EvaluatePoint(modelId, "rural", 88.0, 3000.0, 3.0, 36.98970004336019, 0.0);
 		ok = ComparePoint("P01", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P01", actual, expected, modelId, true), "P01", "quiet positive") && ok;
 		cases++;
-		if (actual && !Within(actual.m_fTotalLossDb, expected.m_fTotalLossDb + 2 * DB_TOLERANCE, DB_TOLERANCE))
+		float savedLoss = expected.m_fTotalLossDb;
+		expected.m_fTotalLossDb += 2 * DB_TOLERANCE;
+		if (!ComparePoint("X_loss", actual, expected, modelId, true))
 			controls++;
+		expected.m_fTotalLossDb = savedLoss;
 
 		modelId = RICON_TerrainDiffractionModel.MODEL_ID;
 		expected = new RICON_LinkBudget();
@@ -172,7 +187,13 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 49.477401956415406, modelId));
 		actual = EvaluatePoint(modelId, "rural", 88.0, 10000.0, 3.0, 36.98970004336019, 0.0);
 		ok = ComparePoint("P02", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P02", actual, expected, modelId, true), "P02", "quiet positive") && ok;
 		cases++;
+		string savedLayerId = expected.m_aLayers[0].m_sLayerId;
+		expected.m_aLayers[0].m_sLayerId = "wrong_layer";
+		if (!ComparePoint("X_layer_id", actual, expected, modelId, true))
+			controls++;
+		expected.m_aLayers[0].m_sLayerId = savedLayerId;
 
 		modelId = RICON_TerrainDiffractionModel.MODEL_ID;
 		expected = new RICON_LinkBudget();
@@ -190,7 +211,13 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 25.341738877232046, modelId));
 		actual = EvaluatePoint(modelId, "rural", 30.0, 1000.0, 1.5, 30.0, 60.0);
 		ok = ComparePoint("P03", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P03", actual, expected, modelId, true), "P03", "quiet positive") && ok;
 		cases++;
+		ref RICON_LossLayer savedLayer = expected.m_aLayers[1];
+		expected.m_aLayers.Remove(1);
+		if (!ComparePoint("X_layer_count", actual, expected, modelId, true))
+			controls++;
+		expected.m_aLayers.Insert(savedLayer);
 
 		modelId = RICON_TerrainDiffractionModel.MODEL_ID;
 		expected = new RICON_LinkBudget();
@@ -208,6 +235,7 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 31.82924312071158, modelId));
 		actual = EvaluatePoint(modelId, "rural", 30.0, 10000.0, 1.5, 30.0, 60.0);
 		ok = ComparePoint("P04", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P04", actual, expected, modelId, true), "P04", "quiet positive") && ok;
 		cases++;
 
 		modelId = RICON_TerrainDiffractionModel.MODEL_ID;
@@ -226,6 +254,7 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 8.71717015653934, modelId));
 		actual = EvaluatePoint(modelId, "city", 50.0, 2000.0, 3.0, 36.98970004336019, 60.0);
 		ok = ComparePoint("P05", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P05", actual, expected, modelId, true), "P05", "quiet positive") && ok;
 		cases++;
 
 		modelId = RICON_TerrainDiffractionModel.MODEL_ID;
@@ -244,7 +273,13 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("terrain_diffraction", 15.532263560889504, modelId));
 		actual = EvaluatePoint(modelId, "rural", 400.0, 10000.0, 10.0, 36.98970004336019, 0.0);
 		ok = ComparePoint("P06", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P06", actual, expected, modelId, true), "P06", "quiet positive") && ok;
 		cases++;
+		bool savedDomain = expected.m_bNoiseModelInDomain;
+		expected.m_bNoiseModelInDomain = true;
+		if (!ComparePoint("X_domain", actual, expected, modelId, true))
+			controls++;
+		expected.m_bNoiseModelInDomain = savedDomain;
 		RICON_LinkBudget receiverOnly = EvaluatePoint(modelId, "none", 400.0, 10000.0, 10.0, 36.98970004336019, 0.0);
 		ok = RICON_TestSupport.Expect(receiverOnly != null && receiverOnly.m_bNoiseModelInDomain, "P06", "fallback none") && ok;
 		if (receiverOnly && actual)
@@ -268,14 +303,18 @@ class RICON_LinkPhysicsProbePlugin : WorkbenchPlugin
 		expected.m_aLayers.Insert(new RICON_LossLayer("fspl", 85.0, modelId));
 		actual = EvaluatePoint(modelId, "city", 30.0, 14141.308091433231, 1.5, -20.0, 0.0);
 		ok = ComparePoint("P07", actual, expected, modelId) && ok;
+		ok = RICON_TestSupport.Expect(ComparePoint("P07", actual, expected, modelId, true), "P07", "quiet positive") && ok;
 		cases++;
+		RICON_ELinkState savedState = expected.m_eState;
+		expected.m_eState = RICON_ELinkState.CLEAN;
+		if (!ComparePoint("X_state", actual, expected, modelId, true))
+			controls++;
+		expected.m_eState = savedState;
 
 		float nonFinite = RICON_L2Run.NaN();
-		if (!Within(nonFinite, 0, DB_TOLERANCE))
-			controls++;
-		if (!Within(0, nonFinite, DB_TOLERANCE))
-			controls++;
-		ok = RICON_TestSupport.Expect(cases == 7 && controls == 3, "physics", "cases / controls") && ok;
+		ok = RICON_TestSupport.Expect(!Within(nonFinite, 0, DB_TOLERANCE)
+			&& !Within(0, nonFinite, DB_TOLERANCE), "physics", "NaN actual / expected") && ok;
+		ok = RICON_TestSupport.Expect(cases == 7 && controls == 5, "physics", "cases / controls") && ok;
 		PrintFormat("[RICON_PHYSICS] cases=%1 controls=%2 maxDeviationDb=%3", cases, controls, s_fMaxDeviationDb.ToString(-1, 9));
 		if (ok)
 		{
