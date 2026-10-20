@@ -1,7 +1,7 @@
 {
  "schema": "ricon.oracle.link_scenarios",
  "version": 1,
- "revision": 1,
+ "revision": 2,
  "source": "oracle/link_physics_oracle.py",
  "standards": [
   "Rec. ITU-R P.526-16 (11/2025): eq (2), (21), (22a-22e), (100), (101), §4.5",
@@ -10,6 +10,7 @@
  "provenance": "ORACLE_SNAPSHOT",
  "note": "Expectations are a snapshot of the oracle: they fix its numbers for regression and cross-checks; independent closed-form anchors are in test_link_physics_oracle.py. Scenario parameters (power, gains, bandwidth, noise figure, ground, SNR threshold, hill) are TEST_ONLY assumptions, not radio data. Ranges are sampled on the stated grid (SAMPLED_ESTIMATE): nulls between nodes may be missed.",
  "speechQuality": "NOT_CALIBRATED",
+ "snrState": "DEFERRED",
  "relTolerance": 1e-09,
  "scenarios": [
   {
@@ -109,7 +110,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -153,26 +164,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 55.308897576376616,
+        "lossDb": 55.30889757637661,
         "curvaturePhaseErrorRad": 5.5510359380964826e-06
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 94.43049127192538,
+        "lossDb": 94.43049127192549,
         "curvaturePhaseErrorRad": 5.524078851544152e-05
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 113.44697874549068,
+        "lossDb": 113.44697874549303,
         "curvaturePhaseErrorRad": 0.0001591873142609297
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 134.3380857719423,
+        "lossDb": 134.3380857719748,
         "curvaturePhaseErrorRad": 0.00028283701963188295
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         10088.257451936111
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -235,7 +256,17 @@
         "lossDb": 148.92531335380994
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         18862.590099197765
+        ]
+       ],
+       "outerLimitM": 18862.590099197765
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -366,7 +397,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -429,7 +470,17 @@
         "lossDb": 137.25356135828065
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         33259.799960963144
+        ]
+       ],
+       "outerLimitM": 33259.799960963144
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -562,7 +613,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -606,26 +667,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 50.10637507539804,
+        "lossDb": 50.10637507539805,
         "curvaturePhaseErrorRad": 1.1102344170000692e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 88.42750238369335,
+        "lossDb": 88.42750238369275,
         "curvaturePhaseErrorRad": 0.00011075387083444053
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 107.37646449165138,
+        "lossDb": 107.37646449164711,
         "curvaturePhaseErrorRad": 0.0003257265612179281
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 128.24361611152642,
+        "lossDb": 128.24361611154433,
         "curvaturePhaseErrorRad": 0.0008379678428218788
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -688,7 +759,17 @@
         "lossDb": 148.92531335380994
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         18862.590099197765
+        ]
+       ],
+       "outerLimitM": 18862.590099197765
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -819,7 +900,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -882,7 +973,17 @@
         "lossDb": 135.52762077836405
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         35659.00734215595
+        ]
+       ],
+       "outerLimitM": 35659.00734215595
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -1015,7 +1116,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -1064,21 +1175,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 76.84660720098208,
+        "lossDb": 76.84660720098256,
         "curvaturePhaseErrorRad": 0.00036981492165645666
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 95.48008205637589,
+        "lossDb": 95.48008205637126,
         "curvaturePhaseErrorRad": 0.0011029097136839117
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 116.23498517718187,
+        "lossDb": 116.23498517727822,
         "curvaturePhaseErrorRad": 0.003428578351041859
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -1141,7 +1262,17 @@
         "lossDb": 141.1632626036573
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         28083.826320235803
+        ]
+       ],
+       "outerLimitM": 28083.826320235803
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -1272,7 +1403,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -1335,7 +1476,17 @@
         "lossDb": 129.9200871285007
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         46187.55444539659
+        ]
+       ],
+       "outerLimitM": 46187.55444539659
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -1468,7 +1619,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -1512,26 +1673,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 55.308897576376616,
+        "lossDb": 55.30889757637661,
         "curvaturePhaseErrorRad": 5.5510359380964826e-06
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 94.43049127192538,
+        "lossDb": 94.43049127192549,
         "curvaturePhaseErrorRad": 5.524078851544152e-05
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 113.44697874549068,
+        "lossDb": 113.44697874549303,
         "curvaturePhaseErrorRad": 0.0001591873142609297
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 134.3380857719423,
+        "lossDb": 134.3380857719748,
         "curvaturePhaseErrorRad": 0.00028283701963188295
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         10088.257451936111
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -1594,7 +1765,17 @@
         "lossDb": 148.92531335380994
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         26988.00509161578
+        ]
+       ],
+       "outerLimitM": 26988.00509161578
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -1725,7 +1906,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -1788,7 +1979,17 @@
         "lossDb": 137.25356135828065
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         43945.873249263415
+        ]
+       ],
+       "outerLimitM": 43945.873249263415
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -1921,7 +2122,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -1965,26 +2176,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 50.10637507539804,
+        "lossDb": 50.10637507539805,
         "curvaturePhaseErrorRad": 1.1102344170000692e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 88.42750238369335,
+        "lossDb": 88.42750238369275,
         "curvaturePhaseErrorRad": 0.00011075387083444053
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 107.37646449165138,
+        "lossDb": 107.37646449164711,
         "curvaturePhaseErrorRad": 0.0003257265612179281
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 128.24361611152642,
+        "lossDb": 128.24361611154433,
         "curvaturePhaseErrorRad": 0.0008379678428218788
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -2047,7 +2268,17 @@
         "lossDb": 148.92531335380994
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         26988.00509161578
+        ]
+       ],
+       "outerLimitM": 26988.00509161578
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -2178,7 +2409,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -2241,7 +2482,17 @@
         "lossDb": 135.52762077836405
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         45277.477154589345
+        ]
+       ],
+       "outerLimitM": 45277.477154589345
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -2374,7 +2625,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -2423,21 +2684,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 76.84660720098208,
+        "lossDb": 76.84660720098256,
         "curvaturePhaseErrorRad": 0.00036981492165645666
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 95.48008205637589,
+        "lossDb": 95.48008205637126,
         "curvaturePhaseErrorRad": 0.0011029097136839117
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 116.23498517718187,
+        "lossDb": 116.23498517727822,
         "curvaturePhaseErrorRad": 0.003428578351041859
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -2500,7 +2771,17 @@
         "lossDb": 141.1632626036573
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         39389.72848034605
+        ]
+       ],
+       "outerLimitM": 39389.72848034605
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -2631,7 +2912,17 @@
         "lossDb": 91.53263341066987
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -2694,7 +2985,17 @@
         "lossDb": 129.9200871285007
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         58065.285356707245
+        ]
+       ],
+       "outerLimitM": 58065.285356707245
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -2827,7 +3128,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -2871,26 +3182,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 59.68605860785233,
+        "lossDb": 59.686058607852296,
         "curvaturePhaseErrorRad": 9.251726563494138e-06
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 98.80845633872595,
+        "lossDb": 98.80845633872656,
         "curvaturePhaseErrorRad": 9.20679808590692e-05
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 117.82509888621829,
+        "lossDb": 117.82509888623986,
         "curvaturePhaseErrorRad": 0.0002653121904348829
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 138.71626324320772,
+        "lossDb": 138.71626324350666,
         "curvaturePhaseErrorRad": 0.00047139503271980494
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         10088.257451936111
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -2953,7 +3274,17 @@
         "lossDb": 158.45750530469792
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         11469.187114505621
+        ]
+       ],
+       "outerLimitM": 11469.187114505621
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -3084,7 +3415,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -3147,7 +3488,17 @@
         "lossDb": 139.62366005390942
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         30109.66302035813
+        ]
+       ],
+       "outerLimitM": 30109.66302035813
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -3280,7 +3631,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -3324,26 +3685,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 54.20717131952924,
+        "lossDb": 54.207171319529266,
         "curvaturePhaseErrorRad": 1.8503906950001156e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 92.50991877540991,
+        "lossDb": 92.50991877540783,
         "curvaturePhaseErrorRad": 0.00018458978472406758
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 111.45889191117676,
+        "lossDb": 111.45889191116127,
         "curvaturePhaseErrorRad": 0.0005428776020298803
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 132.32609197427826,
+        "lossDb": 132.32609197434266,
         "curvaturePhaseErrorRad": 0.001396613071369798
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -3406,7 +3777,17 @@
         "lossDb": 158.45750530469792
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         11816.714953262257
+        ]
+       ],
+       "outerLimitM": 11816.714953262257
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -3537,7 +3918,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -3600,7 +3991,17 @@
         "lossDb": 137.91584939429907
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         32281.634164155083
+        ]
+       ],
+       "outerLimitM": 32281.634164155083
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -3733,7 +4134,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -3782,21 +4193,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 78.92407237858876,
+        "lossDb": 78.92407237858959,
         "curvaturePhaseErrorRad": 0.0006163582027607611
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 97.54411233758172,
+        "lossDb": 97.54411233757362,
         "curvaturePhaseErrorRad": 0.0018381828561398529
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 118.29729225537423,
+        "lossDb": 118.29729225554232,
         "curvaturePhaseErrorRad": 0.005714297251736432
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -3859,7 +4280,17 @@
         "lossDb": 141.70963883025115
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         27530.46399395726
+        ]
+       ],
+       "outerLimitM": 27530.46399395726
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -3990,7 +4421,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -4053,7 +4494,17 @@
         "lossDb": 132.37806123323202
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         41812.990508589435
+        ]
+       ],
+       "outerLimitM": 41812.990508589435
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -4186,7 +4637,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -4230,26 +4691,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 59.68605860785233,
+        "lossDb": 59.686058607852296,
         "curvaturePhaseErrorRad": 9.251726563494138e-06
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 98.80845633872595,
+        "lossDb": 98.80845633872656,
         "curvaturePhaseErrorRad": 9.20679808590692e-05
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 117.82509888621829,
+        "lossDb": 117.82509888623986,
         "curvaturePhaseErrorRad": 0.0002653121904348829
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 138.71626324320772,
+        "lossDb": 138.71626324350666,
         "curvaturePhaseErrorRad": 0.00047139503271980494
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         10088.257451936111
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -4312,7 +4783,17 @@
         "lossDb": 158.45750530469792
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         16739.590970027213
+        ]
+       ],
+       "outerLimitM": 16739.590970027213
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -4443,7 +4924,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -4506,7 +4997,17 @@
         "lossDb": 139.62366005390942
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         38999.731168659455
+        ]
+       ],
+       "outerLimitM": 38999.731168659455
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -4639,7 +5140,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -4683,26 +5194,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 54.20717131952924,
+        "lossDb": 54.207171319529266,
         "curvaturePhaseErrorRad": 1.8503906950001156e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 92.50991877540991,
+        "lossDb": 92.50991877540783,
         "curvaturePhaseErrorRad": 0.00018458978472406758
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 111.45889191117676,
+        "lossDb": 111.45889191116127,
         "curvaturePhaseErrorRad": 0.0005428776020298803
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 132.32609197427826,
+        "lossDb": 132.32609197434266,
         "curvaturePhaseErrorRad": 0.001396613071369798
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -4765,7 +5286,17 @@
         "lossDb": 158.45750530469792
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         16739.590970027213
+        ]
+       ],
+       "outerLimitM": 16739.590970027213
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -4896,7 +5427,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -4959,7 +5500,17 @@
         "lossDb": 137.91584939429907
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         41812.990508589435
+        ]
+       ],
+       "outerLimitM": 41812.990508589435
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5092,7 +5643,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -5141,21 +5702,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 78.92407237858876,
+        "lossDb": 78.92407237858959,
         "curvaturePhaseErrorRad": 0.0006163582027607611
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 97.54411233758172,
+        "lossDb": 97.54411233757362,
         "curvaturePhaseErrorRad": 0.0018381828561398529
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 118.29729225537423,
+        "lossDb": 118.29729225554232,
         "curvaturePhaseErrorRad": 0.005714297251736432
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -5218,7 +5789,17 @@
         "lossDb": 141.70963883025115
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         37852.75484412754
+        ]
+       ],
+       "outerLimitM": 37852.75484412754
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5349,7 +5930,17 @@
         "lossDb": 95.969608402997
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -5412,7 +6003,17 @@
         "lossDb": 132.37806123323202
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         53091.40280749209
+        ]
+       ],
+       "outerLimitM": 53091.40280749209
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5545,7 +6146,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -5589,26 +6200,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 64.28770132526239,
+        "lossDb": 64.28770132526228,
         "curvaturePhaseErrorRad": 1.628303875174968e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 103.4056420512191,
+        "lossDb": 103.4056420512214,
         "curvaturePhaseErrorRad": 0.00016203964631196177
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 122.4222413559183,
+        "lossDb": 122.42224135599741,
         "curvaturePhaseErrorRad": 0.00046694945516539374
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 143.31339993171952,
+        "lossDb": 143.31339993281324,
         "curvaturePhaseErrorRad": 0.0008296552575868566
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         8260.39206854956
+        ]
+       ],
+       "outerLimitM": 8260.39206854956
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5671,7 +6292,17 @@
         "lossDb": 169.11950381793343
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         6836.301395198159
+        ]
+       ],
+       "outerLimitM": 6836.301395198159
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5802,7 +6433,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -5865,7 +6506,17 @@
         "lossDb": 142.71940589598017
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         26720.797120411666
+        ]
+       ],
+       "outerLimitM": 26720.797120411666
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -5998,7 +6649,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -6042,26 +6703,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 58.089094407331125,
+        "lossDb": 58.089094407331196,
         "curvaturePhaseErrorRad": 3.256687623200203e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 96.33160862132196,
+        "lossDb": 96.33160862131635,
         "curvaturePhaseErrorRad": 0.00032487802111435887
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 115.27978466841945,
+        "lossDb": 115.27978466837806,
         "curvaturePhaseErrorRad": 0.0009554645795725891
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 136.14682540468812,
+        "lossDb": 136.14682540486044,
         "curvaturePhaseErrorRad": 0.0024580390056108442
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         12481.726439798287
+        ]
+       ],
+       "outerLimitM": 12481.726439798287
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -6124,7 +6795,17 @@
         "lossDb": 163.42432307082822
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         9588.439007423876
+        ]
+       ],
+       "outerLimitM": 9588.439007423876
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -6255,7 +6936,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -6318,7 +7009,17 @@
         "lossDb": 141.05371634702806
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         28648.311229272545
+        ]
+       ],
+       "outerLimitM": 28648.311229272545
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -6451,7 +7152,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -6500,21 +7211,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 80.08284717539696,
+        "lossDb": 80.08284717539807,
         "curvaturePhaseErrorRad": 0.0010847904368589394
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 98.66929697863365,
+        "lossDb": 98.66929697862285,
         "curvaturePhaseErrorRad": 0.0032352018268061405
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 119.41838171563202,
+        "lossDb": 119.41838171585616,
         "curvaturePhaseErrorRad": 0.010057163163056118
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -6577,7 +7298,17 @@
         "lossDb": 142.49559334603413
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         26720.797120411666
+        ]
+       ],
+       "outerLimitM": 26720.797120411666
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -6708,7 +7439,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -6771,7 +7512,17 @@
         "lossDb": 135.68223974641458
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         36375.75338973328
+        ]
+       ],
+       "outerLimitM": 36375.75338973328
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -6904,7 +7655,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -6948,26 +7709,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 64.28770132526239,
+        "lossDb": 64.28770132526228,
         "curvaturePhaseErrorRad": 1.628303875174968e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 103.4056420512191,
+        "lossDb": 103.4056420512214,
         "curvaturePhaseErrorRad": 0.00016203964631196177
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 122.4222413559183,
+        "lossDb": 122.42224135599741,
         "curvaturePhaseErrorRad": 0.00046694945516539374
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 143.31339993171952,
+        "lossDb": 143.31339993281324,
         "curvaturePhaseErrorRad": 0.0008296552575868566
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         10088.257451936111
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -7030,7 +7801,17 @@
         "lossDb": 169.11950381793343
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         9781.166631473096
+        ]
+       ],
+       "outerLimitM": 9781.166631473096
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -7161,7 +7942,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -7224,7 +8015,17 @@
         "lossDb": 142.71940589598017
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         34956.38402328786
+        ]
+       ],
+       "outerLimitM": 34956.38402328786
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -7357,7 +8158,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -7401,26 +8212,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 58.089094407331125,
+        "lossDb": 58.089094407331196,
         "curvaturePhaseErrorRad": 3.256687623200203e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 96.33160862132196,
+        "lossDb": 96.33160862131635,
         "curvaturePhaseErrorRad": 0.00032487802111435887
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 115.27978466841945,
+        "lossDb": 115.27978466837806,
         "curvaturePhaseErrorRad": 0.0009554645795725891
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 136.14682540468812,
+        "lossDb": 136.14682540486044,
         "curvaturePhaseErrorRad": 0.0024580390056108442
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -7483,7 +8304,17 @@
         "lossDb": 163.42432307082822
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         13315.370183270643
+        ]
+       ],
+       "outerLimitM": 13315.370183270643
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -7614,7 +8445,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -7677,7 +8518,17 @@
         "lossDb": 141.05371634702806
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         37477.975093195586
+        ]
+       ],
+       "outerLimitM": 37477.975093195586
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -7810,7 +8661,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -7859,21 +8720,31 @@
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 80.08284717539696,
+        "lossDb": 80.08284717539807,
         "curvaturePhaseErrorRad": 0.0010847904368589394
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 98.66929697863365,
+        "lossDb": 98.66929697862285,
         "curvaturePhaseErrorRad": 0.0032352018268061405
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 119.41838171563202,
+        "lossDb": 119.41838171585616,
         "curvaturePhaseErrorRad": 0.010057163163056118
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -7936,7 +8807,17 @@
         "lossDb": 142.49559334603413
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         36375.75338973328
+        ]
+       ],
+       "outerLimitM": 36375.75338973328
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8067,7 +8948,17 @@
         "lossDb": 100.87986175928
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -8130,7 +9021,17 @@
         "lossDb": 135.68223974641458
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         47587.08353264656
+        ]
+       ],
+       "outerLimitM": 47587.08353264656
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8263,7 +9164,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -8293,26 +9204,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 72.56914065559653,
+        "lossDb": 72.56914065559569,
         "curvaturePhaseErrorRad": 7.40138125079531e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 111.60646928545887,
+        "lossDb": 111.6064692854753,
         "curvaturePhaseErrorRad": 0.0007365438468725536
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 130.62178326354706,
+        "lossDb": 130.62178326411967,
         "curvaturePhaseErrorRad": 0.002122497523479063
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 151.51264476540115,
+        "lossDb": 151.5126447733207,
         "curvaturePhaseErrorRad": 0.0037711602617584395
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         5148.515366593258
+        ]
+       ],
+       "outerLimitM": 5148.515366593258
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8361,7 +9282,17 @@
         "lossDb": 179.03990709157586
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         4972.070069598672
+        ]
+       ],
+       "outerLimitM": 4972.070069598672
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8478,7 +9409,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -8527,7 +9468,17 @@
         "lossDb": 153.0778034795391
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         15004.092407982273
+        ]
+       ],
+       "outerLimitM": 15004.092407982273
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8646,7 +9597,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -8676,26 +9637,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 63.37418116375225,
+        "lossDb": 63.374181163752425,
         "curvaturePhaseErrorRad": 0.00014803125560000925
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 100.72833537683204,
+        "lossDb": 100.72833537681595,
         "curvaturePhaseErrorRad": 0.0014767182777925406
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 119.66749879579098,
+        "lossDb": 119.66749879567196,
         "curvaturePhaseErrorRad": 0.004343020816239042
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 140.53322013119566,
+        "lossDb": 140.53322013169074,
         "curvaturePhaseErrorRad": 0.011172904570958384
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         9692.884945891306
+        ]
+       ],
+       "outerLimitM": 9692.884945891306
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8744,7 +9715,17 @@
         "lossDb": 166.99110775602577
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         9399.508878956844
+        ]
+       ],
+       "outerLimitM": 9399.508878956844
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -8861,7 +9842,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -8910,7 +9901,17 @@
         "lossDb": 151.6787343355458
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         15613.318726156911
+        ]
+       ],
+       "outerLimitM": 15613.318726156911
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9029,7 +10030,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -9059,26 +10070,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 63.81850467402639,
+        "lossDb": 63.818504674026386,
         "curvaturePhaseErrorRad": 0.0004934459900316212
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 81.6953842794798,
+        "lossDb": 81.69538427948076,
         "curvaturePhaseErrorRad": 0.004930865622086089
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 99.39551780022072,
+        "lossDb": 99.39551780020841,
         "curvaturePhaseErrorRad": 0.014705462849118823
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 120.0459098308391,
+        "lossDb": 120.04590983110033,
         "curvaturePhaseErrorRad": 0.04571437801389146
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -9127,7 +10148,17 @@
         "lossDb": 145.9738285122649
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         23950.48421000645
+        ]
+       ],
+       "outerLimitM": 23950.48421000645
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9244,7 +10275,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -9293,7 +10334,17 @@
         "lossDb": 147.3770937000894
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         18675.831781383924
+        ]
+       ],
+       "outerLimitM": 18675.831781383924
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9412,7 +10463,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -9442,26 +10503,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 72.56914065559653,
+        "lossDb": 72.56914065559569,
         "curvaturePhaseErrorRad": 7.40138125079531e-05
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 111.60646928545887,
+        "lossDb": 111.6064692854753,
         "curvaturePhaseErrorRad": 0.0007365438468725536
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 130.62178326354706,
+        "lossDb": 130.62178326411967,
         "curvaturePhaseErrorRad": 0.002122497523479063
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 151.51264476540115,
+        "lossDb": 151.5126447733207,
         "curvaturePhaseErrorRad": 0.0037711602617584395
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         7702.207907697783
+        ]
+       ],
+       "outerLimitM": 7702.207907697783
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9510,7 +10581,17 @@
         "lossDb": 179.03990709157586
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         7043.448163774057
+        ]
+       ],
+       "outerLimitM": 7043.448163774057
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9627,7 +10708,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -9676,7 +10767,17 @@
         "lossDb": 153.0778034795391
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         22562.43953206769
+        ]
+       ],
+       "outerLimitM": 22562.43953206769
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -9795,7 +10896,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -9825,26 +10936,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 63.37418116375225,
+        "lossDb": 63.374181163752425,
         "curvaturePhaseErrorRad": 0.00014803125560000925
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 100.72833537683204,
+        "lossDb": 100.72833537681595,
         "curvaturePhaseErrorRad": 0.0014767182777925406
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 119.66749879579098,
+        "lossDb": 119.66749879567196,
         "curvaturePhaseErrorRad": 0.004343020816239042
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 140.53322013119566,
+        "lossDb": 140.53322013169074,
         "curvaturePhaseErrorRad": 0.011172904570958384
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         14270.560865408288
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -9893,7 +11014,17 @@
         "lossDb": 166.99110775602577
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         12795.809025635643
+        ]
+       ],
+       "outerLimitM": 12795.809025635643
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -10010,7 +11141,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -10059,7 +11200,17 @@
         "lossDb": 151.6787343355458
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         23950.48421000645
+        ]
+       ],
+       "outerLimitM": 23950.48421000645
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -10178,7 +11329,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -10208,26 +11369,36 @@
       "samples": [
        {
         "distanceM": 100.0,
-        "lossDb": 63.81850467402639,
+        "lossDb": 63.818504674026386,
         "curvaturePhaseErrorRad": 0.0004934459900316212
        },
        {
         "distanceM": 1000.0,
-        "lossDb": 81.6953842794798,
+        "lossDb": 81.69538427948076,
         "curvaturePhaseErrorRad": 0.004930865622086089
        },
        {
         "distanceM": 3000.0,
-        "lossDb": 99.39551780022072,
+        "lossDb": 99.39551780020841,
         "curvaturePhaseErrorRad": 0.014705462849118823
        },
        {
         "distanceM": 10000.0,
-        "lossDb": 120.0459098308391,
+        "lossDb": 120.04590983110033,
         "curvaturePhaseErrorRad": 0.04571437801389146
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_APPLICABILITY_END",
+       "intervalsM": [
+        [
+         10.0,
+         26046.878533369352
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_APPLICABILITY_END",
         "intervalsM": [
@@ -10276,7 +11447,17 @@
         "lossDb": 145.9738285122649
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         31022.015919538004
+        ]
+       ],
+       "outerLimitM": 31022.015919538004
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [
@@ -10393,7 +11574,17 @@
         "lossDb": 114.03140814283587
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "AVAILABLE_TO_GRID_END",
+       "intervalsM": [
+        [
+         10.0,
+         499906.41936731385
+        ]
+       ],
+       "outerLimitM": null
+      },
+      "meetsSnr": {
        "none": {
         "status": "AVAILABLE_TO_GRID_END",
         "intervalsM": [
@@ -10442,7 +11633,17 @@
         "lossDb": 147.3770937000894
        }
       ],
-      "range": {
+      "aboveSensitivity": {
+       "status": "SAMPLED_ESTIMATE",
+       "intervalsM": [
+        [
+         10.0,
+         29224.14228498092
+        ]
+       ],
+       "outerLimitM": 29224.14228498092
+      },
+      "meetsSnr": {
        "none": {
         "status": "SAMPLED_ESTIMATE",
         "intervalsM": [

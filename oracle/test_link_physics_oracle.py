@@ -108,6 +108,28 @@ class TwoRayTest(unittest.TestCase):
             nodes = (d_null / math.sqrt(ratio), d_null * math.sqrt(ratio))
             self.assertGreater(at_null - max(o.two_ray_flat(x, h, h, f, METAL_H)["lossDb"] for x in nodes), depth)
 
+    def test_codex_independent_anchors(self) -> None:
+        """agora #2110: codex's separate math/cmath computation from P.526-16 eq (100)/(101), not this code."""
+        brewster = {"permittivity": 4.0, "conductivitySm": 0.0, "polarization": "VERTICAL"}
+        r = o.two_ray_flat(6.0, 1.5, 1.5, 50.0, brewster)
+        self.assertAlmostEqual(abs(r["reflection"]), 0.0, places=12)
+        self.assertAlmostEqual(r["lossDb"], 21.9902083163, places=8)
+        dry_h = dict(DRY, polarization="HORIZONTAL")
+        r = o.two_ray_flat(1000.0, 1.5, 1.5, 50.0, dry_h)
+        self.assertAlmostEqual(r["reflection"].real, -0.998407526290, places=11)
+        self.assertAlmostEqual(r["reflection"].imag, 0.000101872121, places=11)
+        self.assertAlmostEqual(r["pathDifferenceM"], 0.00449998987505, places=13)
+        self.assertAlmostEqual(o.fspl_db(1000.0, 50.0), 66.4271833086, places=8)
+        self.assertAlmostEqual(r["lossDb"], 112.323938356, places=7)
+        self.assertAlmostEqual(o.two_ray_flat(1000.0, 1.5, 1.5, 400.0, dry_h)["lossDb"], 112.953024005, places=7)
+        self.assertAlmostEqual(o.fspl_db(100.0, 400.0), 64.4889830484, places=8)
+        self.assertAlmostEqual(o.two_ray_flat(100.0, 10.0, 10.0, 400.0, dry_h)["lossDb"], 59.8888003288, places=7)
+
+    def test_path_difference_without_cancellation(self) -> None:
+        """agora #2138: r2 − r1 loses digits on long paths; the oracle uses 4·h1·h2/(r1 + r2)."""
+        r = o.two_ray_flat(500000.0, 0.01, 0.01, 30.0, DRY)
+        self.assertAlmostEqual(r["pathDifferenceM"] / 4e-10, 1.0, places=9)
+
     def test_low_antennas_lose_far_more_than_free_space(self) -> None:
         """Over real ground with 1.5 m antennas the reflected ray cancels the direct one: at 3 km the two-ray loss
         exceeds FSPL by more than 20 dB at every band of the matrix. RICON models no ground reflection (agora #2095)."""
@@ -156,13 +178,26 @@ class NoiseTest(unittest.TestCase):
         self.assertFalse(o.system_noise_dbm(25000.0, 6.0, "city", 250.01)["inDomain"])
         self.assertIsNone(o.system_noise_dbm(25000.0, 6.0, "city", 400.0)["noiseDbm"])
 
-    def test_budget_labels(self) -> None:
-        radio = {"txPowerDbm": 37.0, "txGainDbi": 2.0, "rxGainDbi": 1.0, "snrRequiredDb": 10.0}
+    def test_budget(self) -> None:
+        radio = {"txPowerDbm": 37.0, "txGainDbi": 2.0, "rxGainDbi": 1.0, "bandwidthHz": 25000.0,
+                 "rxNoiseFigureDb": 10.0, "snrRequiredDb": 10.0}
         b = o.budget(150.0, radio, -120.0)
         self.assertAlmostEqual(b["rxPowerDbm"], -110.0)
         self.assertAlmostEqual(b["snrDb"], 10.0)
-        self.assertTrue(b["available"])
-        self.assertEqual((b["snrState"], b["speechQuality"]), ("TEST_ONLY", "NOT_CALIBRATED"))
+        self.assertTrue(b["meetsSnr"])
+
+    def test_sensitivity_and_snr_are_separate(self) -> None:
+        """codex #2132 item 2: Prx −105 dBm in city noise at 30 MHz is above the RICON-style sensitivity
+        (−109.995787 dBm) but its actual SNR is −10.898 dB."""
+        radio = {"txPowerDbm": 30.0, "txGainDbi": 0.0, "rxGainDbi": 0.0, "bandwidthHz": 25000.0,
+                 "rxNoiseFigureDb": 10.0, "snrRequiredDb": 10.0}
+        self.assertAlmostEqual(o.sensitivity_dbm(radio), -109.995787, places=5)
+        noise = o.system_noise_dbm(25000.0, 10.0, "city", 30.0)["noiseDbm"]
+        self.assertAlmostEqual(noise, -94.101973, places=5)
+        b = o.budget(135.0, radio, noise)
+        self.assertTrue(b["aboveSensitivity"])
+        self.assertFalse(b["meetsSnr"])
+        self.assertAlmostEqual(b["snrDb"], -10.898027, places=5)
 
 
 class RangeTest(unittest.TestCase):
@@ -186,6 +221,15 @@ class RangeTest(unittest.TestCase):
         self.assertAlmostEqual(loss, o.fspl_db(math.hypot(20000.0, 7.0), 88.0) + r["L"], places=9)
         self.assertAlmostEqual(r["L"], max(r["Lsph"], r["Lbs"]), places=9)  # STD_INVARIANT of REQ-L2 §7
 
+    def test_fspl_uses_real_end_altitudes(self) -> None:
+        """codex #2132 item 3 (30 MHz, 2 km): with the receiver on a 600 m hill top, FSPL follows the real altitude difference."""
+        hill = {"centerKm": 2.0, "heightM": 600.0, "halfWidthKm": 0.5}
+        self.assertAlmostEqual(o.slant_fspl_db(2000.0, 1.5, 1.5, 30.0, None), 68.010808, places=5)
+        self.assertAlmostEqual(o.slant_fspl_db(2000.0, 1.5, 1.5, 30.0, hill), 68.385073, places=5)
+        sc = scenario(hill=hill, models=["FSPL"])
+        sc["frequencyMHz"] = 30.0
+        self.assertAlmostEqual(o.loss_function("FSPL", sc)(2000.0), 68.385073, places=5)
+
     def test_hill_can_lower_the_p526_loss(self) -> None:
         """Characterisation, not a physics claim: with 3 m antennas at 50 MHz a 60 m hill midway gives a LOWER §4.5
         loss than flat ground (L 27.16 dB against 41.14 dB). Eq (62c,d) lowers the smooth surface under the
@@ -199,6 +243,67 @@ class RangeTest(unittest.TestCase):
         # with 10 m antennas the hill does add loss
         self.assertGreater(o.p526_general_db(4000.0, 10.0, 10.0, 50.0, DRY, hill),
                            o.p526_general_db(4000.0, 10.0, 10.0, 50.0, DRY, flat))
+
+
+def scenario(hill=None, models=None) -> dict:
+    models = models or ["FSPL", "TWO_RAY_FLAT", "P526_GENERAL"]
+    return {"frequencyMHz": 50.0, "txHeightM": 1.5, "rxHeightM": 1.5, "ground": dict(DRY),
+            "terrain": {"earthRadiusKm": 6371.0, "kFactor": 4 / 3, "profileStepKm": 0.1, "hill": hill},
+            "radio": {"txPowerDbm": 30.0, "txGainDbi": 0.0, "rxGainDbi": 0.0, "bandwidthHz": 25000.0,
+                      "rxNoiseFigureDb": 10.0, "snrRequiredDb": 10.0},
+            "noiseEnvironments": ["none"], "models": models,
+            "grids": {m: {"minM": 100.0, "maxM": 1000.0, "ratio": 1.5} for m in models},
+            "sampleDistancesM": [500.0]}
+
+
+class InputDomainTest(unittest.TestCase):
+    """agora #2132 item 1: a scenario outside the closed domain must never be evaluated silently."""
+
+    def test_valid(self) -> None:
+        self.assertIsNone(o.validate_scenario(scenario()))
+
+    def test_rejections(self) -> None:
+        def bad(mutate) -> dict:
+            sc = scenario()
+            mutate(sc)
+            return sc
+
+        cases = [
+            lambda s: s["models"].__setitem__(0, "TYPO"),
+            lambda s: s["ground"].update(polarization="TYPO"),
+            lambda s: s.update(models=[]),
+            lambda s: s.update(models=["FSPL", "FSPL"]),
+            lambda s: s.update(noiseEnvironments=["quiet_rural"]),
+            lambda s: s.update(extra=1),
+            lambda s: s["radio"].update(extra=1),
+            lambda s: s["radio"].update(txPowerDbm=True),
+            lambda s: s["radio"].update(txPowerDbm=float("nan")),
+            lambda s: s.update(frequencyMHz=10 ** 400),
+            lambda s: s.update(frequencyMHz=20.0),
+            lambda s: s["grids"]["FSPL"].update(ratio=1.0),
+            lambda s: s["grids"]["FSPL"].update(maxM=50.0),
+            lambda s: s["grids"].pop("FSPL"),
+            lambda s: s["terrain"].update(hill={"centerKm": 1.0, "heightM": 10.0, "halfWidthKm": 0.1}),  # with two-ray
+            lambda s: s["terrain"].update(kFactor=0.0),
+            lambda s: s.update(sampleDistancesM=[]),
+        ]
+        for mutate in cases:
+            sc = bad(mutate)
+            self.assertIsNotNone(o.validate_scenario(sc))
+            with self.assertRaises(ValueError):
+                o.evaluate_scenario(sc)
+
+    def test_unknown_names_raise(self) -> None:
+        with self.assertRaises(ValueError):
+            o.reflection_coefficient(0.1, 50.0, 15.0, 0.005, "TYPO")
+        with self.assertRaises(ValueError):
+            o.loss_function("TYPO", scenario())
+
+    def test_bool_is_not_a_number_in_comparison(self) -> None:
+        for a, b in ((True, 1), (False, 0), (1, True), (None, 0)):
+            errors: list = []
+            o._close(a, b, 1e-9, "x", errors)
+            self.assertNotEqual(errors, [])
 
 
 class VectorFileTest(unittest.TestCase):
@@ -222,19 +327,35 @@ class VectorFileTest(unittest.TestCase):
         sc["expect"]["models"]["TWO_RAY_FLAT"]["samples"][0]["lossDb"] += 0.01
         self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
         bad = copy.deepcopy(self.data)
-        bad["scenarios"][0]["expect"]["models"]["FSPL"]["range"]["none"]["status"] = "SAMPLED_ESTIMATE"
+        bad["scenarios"][0]["expect"]["models"]["FSPL"]["meetsSnr"]["none"]["status"] = "SAMPLED_ESTIMATE"
         self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
         bad = copy.deepcopy(self.data)
-        bad["relTolerance"] = 1.0
-        self.assertEqual(o.check_vector_file(bad, self.evaluated), ["envelope"])
+        bad["scenarios"][0]["expect"]["models"]["FSPL"]["aboveSensitivity"]["intervalsM"] = []
+        self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
+
+    def test_envelope_is_closed(self) -> None:
+        for key, value in (("relTolerance", 1.0), ("scenarios", []), ("speechQuality", "CALIBRATED"),
+                           ("snrState", "TEST_ONLY"), ("provenance", "CROSS_CHECKED"), ("extra", 1)):
+            bad = copy.deepcopy(self.data)
+            bad[key] = value
+            self.assertEqual(o.check_vector_file(bad, self.evaluated), ["envelope"], key)
+        bad = copy.deepcopy(self.data)
+        bad["scenarios"].append(copy.deepcopy(bad["scenarios"][0]))
+        self.assertEqual(o.check_vector_file(bad, self.evaluated), ["scenario ids"])
+        bad = copy.deepcopy(self.data)
+        bad["scenarios"][0]["input"]["models"] = ["TYPO"]
+        self.assertNotEqual(o.check_vector_file(bad, self.evaluated), [])
 
     def test_labels(self) -> None:
         self.assertEqual(self.data["speechQuality"], "NOT_CALIBRATED")
         for sc in self.data["scenarios"]:
             for entry in sc["expect"]["models"].values():
-                for r in entry["range"].values():
+                ranges = [entry["aboveSensitivity"]] + list(entry["meetsSnr"].values())
+                for r in ranges:
                     if r.get("outerLimitM") is not None:
                         self.assertEqual(r["status"], "SAMPLED_ESTIMATE")
+                # with no external noise both criteria coincide: noise = kT0B + NF
+                self.assertEqual(entry["aboveSensitivity"], entry["meetsSnr"]["none"])
 
 
 if __name__ == "__main__":

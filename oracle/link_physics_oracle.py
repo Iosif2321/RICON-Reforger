@@ -9,7 +9,9 @@
                     в RICON).
 Шум — kTB, коэффициент шума системы f = fa + fr − 1 (P.372-17 ур. (5)) и медиана техногенного шума
 Fam = c − d·lg f (P.372-17 ур. (17), Table 1; область 0.3–250 МГц для city/residential/rural).
-Порог SNR — параметр сценария (TEST_ONLY), а не модель речи: `speechQuality` всегда `NOT_CALIBRATED`.
+Доступность — два отдельных критерия (agora #2132): `aboveSensitivity` (Prx ≥ kT0B + NF + требуемый SNR, как
+чувствительность в RICON, без шума среды) и `meetsSnr` (SNR с шумом среды ≥ требуемого). Порог — параметр сценария
+(TEST_ONLY); состояния clean/degraded/lost не моделируются (`snrState = DEFERRED`), речь — `NOT_CALIBRATED`.
 
 Дальность ищется на геометрической сетке. Интервалы доступности и `outerLimitM` — оценки по выборке
 (`SAMPLED_ESTIMATE`) с указанным шагом: между узлами возможны неучтённые провалы (agora #2072, #2083).
@@ -21,6 +23,7 @@ import argparse
 import cmath
 import json
 import math
+import re
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -40,6 +43,9 @@ MANMADE_DOMAIN_MHZ = (0.3, 250.0)      # P.372-17 §6.1.1, for the three categor
 NOISE_ENVIRONMENTS = ("none",) + tuple(MANMADE_NOISE)
 POLARIZATIONS = ("HORIZONTAL", "VERTICAL")
 MODELS = ("FSPL", "TWO_RAY_FLAT", "P526_GENERAL")
+SCENARIO_ID = re.compile(r"[A-Za-z0-9_.-]{1,64}")
+ROOT_KEYS = {"schema", "version", "revision", "source", "standards", "provenance", "note", "speechQuality", "snrState",
+             "relTolerance", "scenarios"}
 
 
 def wavelength_m(f_mhz: float) -> float:
@@ -64,6 +70,8 @@ def complex_permittivity(f_mhz: float, eps_r: float, sigma_sm: float) -> complex
 def reflection_coefficient(psi_rad: float, f_mhz: float, eps_r: float, sigma_sm: float, polarization: str) -> complex:
     """P.526-16 eq (100) (perpendicular E, i.e. horizontal polarization over ground) and eq (101) (parallel E,
     vertical polarization); psi is the grazing angle."""
+    if polarization not in POLARIZATIONS:
+        raise ValueError(f"polarization {polarization!r}")
     eta = complex_permittivity(f_mhz, eps_r, sigma_sm)
     s, root = math.sin(psi_rad), cmath.sqrt(eta - math.cos(psi_rad) ** 2)
     if polarization == "HORIZONTAL":
@@ -80,9 +88,10 @@ def two_ray_flat(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: dic
     psi = math.atan2(h1_m + h2_m, d_m)
     refl = reflection_coefficient(psi, f_mhz, ground["permittivity"], ground["conductivitySm"], ground["polarization"])
     k = 2.0 * math.pi / wavelength_m(f_mhz)
-    gain = abs(1.0 + refl * (r1 / r2) * cmath.exp(-1j * k * (r2 - r1)))
+    delta_r = 4.0 * h1_m * h2_m / (r1 + r2)  # = r2 − r1 without cancellation (agora #2138)
+    gain = abs(1.0 + refl * (r1 / r2) * cmath.exp(-1j * k * delta_r))
     excess = -20.0 * math.log10(gain) if gain > 0.0 else math.inf
-    return {"lossDb": fspl_db(r1, f_mhz) + excess, "excessDb": excess, "pathDifferenceM": r2 - r1,
+    return {"lossDb": fspl_db(r1, f_mhz) + excess, "excessDb": excess, "pathDifferenceM": delta_r,
             "grazingRad": psi, "reflection": refl}
 
 
@@ -93,7 +102,8 @@ def radio_horizon_m(h1_m: float, h2_m: float, ae_km: float) -> float:
 
 def curvature_phase_error_rad(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ae_km: float) -> float | None:
     """k·|Δr_flat − Δr_curved| with heights above the tangent plane at the reflection point of P.526-16 eq (22a-22e)
-    and Δr ≈ 2·h1·h2/d. A number for the applicability discussion, not a threshold (agora #2095).
+    and Δr ≈ 2·h1·h2/d. Only a comparison of the path phase: divergence, the grazing angle and R also change over
+    a curved earth, so this is not a validation of the flat model, nor a threshold (agora #2095, #2111).
     None when a reduced height is not positive (no reflection point above the curved earth)."""
     ae = ae_km * 1000.0
     m = d_m ** 2 / (4.0 * ae * (h1_m + h2_m))                                                         # (22e)
@@ -137,11 +147,18 @@ def system_noise_dbm(bandwidth_hz: float, rx_noise_figure_db: float, environment
             "famDb": fam}
 
 
+def sensitivity_dbm(radio: dict[str, Any]) -> float:
+    """Receiver sensitivity as RICON defines it: kT0B + NF + required SNR, without external noise (agora #2130)."""
+    return thermal_noise_dbm(radio["bandwidthHz"]) + radio["rxNoiseFigureDb"] + radio["snrRequiredDb"]
+
+
 def budget(loss_db: float, radio: dict[str, Any], noise_dbm: float) -> dict[str, Any]:
+    """Two separate criteria (agora #2132): `aboveSensitivity` ignores the environment, `meetsSnr` uses the actual
+    system noise. A clean/degraded/lost state is not modelled here (DEFERRED); speech quality is NOT_CALIBRATED."""
     prx = radio["txPowerDbm"] + radio["txGainDbi"] + radio["rxGainDbi"] - loss_db
     snr = prx - noise_dbm
-    return {"rxPowerDbm": prx, "snrDb": snr, "available": snr >= radio["snrRequiredDb"],
-            "snrState": "TEST_ONLY", "speechQuality": "NOT_CALIBRATED"}
+    return {"rxPowerDbm": prx, "snrDb": snr, "aboveSensitivity": prx >= sensitivity_dbm(radio),
+            "meetsSnr": snr >= radio["snrRequiredDb"]}
 
 
 # ---------------------------------------------------------------------- scenarios
@@ -153,31 +170,41 @@ def hill_height_m(x_km: float, hill: dict[str, Any] | None) -> float:
     return max(0.0, hill["heightM"] * (1.0 - abs(x_km - hill["centerKm"]) / hill["halfWidthKm"]))
 
 
+def slant_fspl_db(d_m: float, h1_m: float, h2_m: float, f_mhz: float, hill: dict[str, Any] | None) -> float:
+    """FSPL between the antennas at their real altitudes: ground height under each end plus the antenna height
+    (agora #2132 item 3)."""
+    z1, z2 = hill_height_m(0.0, hill) + h1_m, hill_height_m(d_m / 1000.0, hill) + h2_m
+    return fspl_db(math.hypot(d_m, z1 - z2), f_mhz)
+
+
 def p526_general_db(d_m: float, h1_m: float, h2_m: float, f_mhz: float, ground: dict[str, Any],
                     terrain: dict[str, Any]) -> float:
     cfg = {"earthRadiusKm": terrain["earthRadiusKm"], "kFactor": terrain["kFactor"],
            "permittivity": ground["permittivity"], "conductivitySm": ground["conductivitySm"],
            "polarization": ground["polarization"], "maxProfileStepKm": terrain["profileStepKm"],
            "maxProfilePoints": l2o.MAX_PROFILE_POINTS_CAP}
+    hill = terrain["hill"]
     status, ds = l2o.provider_sampling(d_m, cfg)
     if status == "SKIP":
-        return fspl_db(math.hypot(d_m, h1_m - h2_m), f_mhz)
+        return slant_fspl_db(d_m, h1_m, h2_m, f_mhz, hill)
     if status != "OK":
         raise ValueError("profile unavailable")
-    result = l2o.l2({"profile": [[x, hill_height_m(x, terrain.get("hill"))] for x in ds], "htg": h1_m, "hrg": h2_m,
+    result = l2o.l2({"profile": [[x, hill_height_m(x, hill)] for x in ds], "htg": h1_m, "hrg": h2_m,
                      "frequencyMHz": f_mhz, "config": cfg})
     if result["code"] != "OK":
         raise ValueError(result["code"])
-    return fspl_db(math.hypot(d_m, h1_m - h2_m), f_mhz) + result["L"]
+    return slant_fspl_db(d_m, h1_m, h2_m, f_mhz, hill) + result["L"]
 
 
 def loss_function(model: str, sc: dict[str, Any]) -> Callable[[float], float]:
     f, h1, h2, ground = sc["frequencyMHz"], sc["txHeightM"], sc["rxHeightM"], sc["ground"]
     if model == "FSPL":
-        return lambda d: fspl_db(math.hypot(d, h1 - h2), f)
+        return lambda d: slant_fspl_db(d, h1, h2, f, sc["terrain"]["hill"])
     if model == "TWO_RAY_FLAT":
         return lambda d: two_ray_flat(d, h1, h2, f, ground)["lossDb"]
-    return lambda d: p526_general_db(d, h1, h2, f, ground, sc["terrain"])
+    if model == "P526_GENERAL":
+        return lambda d: p526_general_db(d, h1, h2, f, ground, sc["terrain"])
+    raise ValueError(f"model {model!r}")
 
 
 def geometric_grid(grid: dict[str, Any]) -> list[float]:
@@ -218,6 +245,9 @@ def sample(model: str, sc: dict[str, Any], d_m: float, loss: Callable[[float], f
 
 
 def evaluate_scenario(sc: dict[str, Any]) -> dict[str, Any]:
+    reason = validate_scenario(sc)
+    if reason is not None:
+        raise ValueError(f"scenario input: {reason}")
     radio = sc["radio"]
     noises = {env: system_noise_dbm(radio["bandwidthHz"], radio["rxNoiseFigureDb"], env, sc["frequencyMHz"])
               for env in sc["noiseEnvironments"]}
@@ -230,25 +260,94 @@ def evaluate_scenario(sc: dict[str, Any]) -> dict[str, Any]:
         entry: dict[str, Any] = {"grid": dict(sc["grids"][model], nodes=len(grid)),
                                  "applicableUpToM": valid[-1] if valid else None,
                                  "samples": [sample(model, sc, d, loss) for d in sc["sampleDistancesM"]
-                                             if model_applicability(model, sc, d)],
-                                 "range": {}}
+                                             if model_applicability(model, sc, d)]}
+        sens = sensitivity_dbm(radio)
+        entry["aboveSensitivity"] = range_summary(
+            [(d, budget(l, radio, sens)["aboveSensitivity"]) for d, l in losses], valid, grid)
+        entry["meetsSnr"] = {}
         for env, n in noises.items():
             if not n["inDomain"]:
-                entry["range"][env] = {"status": "NOISE_OUT_OF_MODEL_DOMAIN"}
+                entry["meetsSnr"][env] = {"status": "NOISE_OUT_OF_MODEL_DOMAIN"}
                 continue
-            flags = [(d, budget(l, radio, n["noiseDbm"])["available"]) for d, l in losses]
-            runs = availability(flags)
-            last_ok = runs[-1][1] if runs else None
-            if last_ok is None:
-                outer, status = None, "NOT_AVAILABLE_ON_GRID"
-            elif last_ok == valid[-1]:
-                outer = None
-                status = "AVAILABLE_TO_GRID_END" if valid[-1] == grid[-1] else "AVAILABLE_TO_APPLICABILITY_END"
-            else:
-                outer, status = last_ok, "SAMPLED_ESTIMATE"
-            entry["range"][env] = {"status": status, "intervalsM": runs, "outerLimitM": outer}
+            entry["meetsSnr"][env] = range_summary(
+                [(d, budget(l, radio, n["noiseDbm"])["meetsSnr"]) for d, l in losses], valid, grid)
         out["models"][model] = entry
     return out
+
+
+def range_summary(flags: list[tuple[float, bool]], valid: list[float], grid: list[float]) -> dict[str, Any]:
+    runs = availability(flags)
+    last_ok = runs[-1][1] if runs else None
+    if last_ok is None:
+        outer, status = None, "NOT_AVAILABLE_ON_GRID"
+    elif last_ok == valid[-1]:
+        outer = None
+        status = "AVAILABLE_TO_GRID_END" if valid[-1] == grid[-1] else "AVAILABLE_TO_APPLICABILITY_END"
+    else:
+        outer, status = last_ok, "SAMPLED_ESTIMATE"
+    return {"status": status, "intervalsM": runs, "outerLimitM": outer}
+
+
+# ---------------------------------------------------------------------- closed input domain (agora #2132 item 1)
+
+def _num(value: Any, low: float, high: float, low_open: bool = False) -> bool:
+    return l2o.is_number(value) and (value > low if low_open else value >= low) and value <= high
+
+
+def _keys(value: Any, keys: set[str]) -> bool:
+    return isinstance(value, dict) and set(value) == keys
+
+
+def _names(value: Any, allowed: tuple[str, ...]) -> bool:
+    return isinstance(value, list) and len(value) >= 1 and len(set(map(str, value))) == len(value) \
+        and all(isinstance(v, str) and v in allowed for v in value)
+
+
+def validate_scenario(sc: Any) -> str | None:
+    """Reason a scenario input is outside the closed domain, or None."""
+    if not _keys(sc, {"frequencyMHz", "txHeightM", "rxHeightM", "ground", "terrain", "radio", "noiseEnvironments",
+                      "models", "grids", "sampleDistancesM"}):
+        return "scenario keys"
+    if not _num(sc["frequencyMHz"], l2o.MIN_FREQUENCY_MHZ, 6000.0):
+        return "frequencyMHz"
+    if not (_num(sc["txHeightM"], l2o.MIN_ANTENNA_M, 1000.0) and _num(sc["rxHeightM"], l2o.MIN_ANTENNA_M, 1000.0)):
+        return "antenna height"
+    g = sc["ground"]
+    if not _keys(g, {"permittivity", "conductivitySm", "polarization"}) or not _num(g["permittivity"], 1.0, 1000.0, True) \
+            or not _num(g["conductivitySm"], 0.0, 1000.0) or g["polarization"] not in POLARIZATIONS:
+        return "ground"
+    t = sc["terrain"]
+    if not _keys(t, {"earthRadiusKm", "kFactor", "profileStepKm", "hill"}):
+        return "terrain keys"
+    for key, cfg_key in (("earthRadiusKm", "earthRadiusKm"), ("kFactor", "kFactor"), ("profileStepKm", "maxProfileStepKm")):
+        if not l2o.in_domain(t[key], *l2o.CONFIG_DOMAIN[cfg_key]):
+            return f"terrain {key}"
+    hill = t["hill"]
+    if hill is not None and (not _keys(hill, {"centerKm", "heightM", "halfWidthKm"}) or not _num(hill["centerKm"], 0.0, 500.0)
+                             or not _num(hill["heightM"], 0.0, 9000.0) or not _num(hill["halfWidthKm"], 0.0, 100.0, True)):
+        return "hill"
+    r = sc["radio"]
+    if not _keys(r, {"txPowerDbm", "txGainDbi", "rxGainDbi", "bandwidthHz", "rxNoiseFigureDb", "snrRequiredDb"}) \
+            or not _num(r["txPowerDbm"], -30.0, 70.0) or not _num(r["txGainDbi"], -30.0, 40.0) \
+            or not _num(r["rxGainDbi"], -30.0, 40.0) or not _num(r["bandwidthHz"], 1.0, 1e8) \
+            or not _num(r["rxNoiseFigureDb"], 0.0, 40.0) or not _num(r["snrRequiredDb"], -30.0, 60.0):
+        return "radio"
+    if not _names(sc["noiseEnvironments"], NOISE_ENVIRONMENTS):
+        return "noiseEnvironments"
+    if not _names(sc["models"], MODELS):
+        return "models"
+    if "TWO_RAY_FLAT" in sc["models"] and hill is not None:
+        return "TWO_RAY_FLAT needs flat terrain"
+    if not _keys(sc["grids"], set(sc["models"])):
+        return "grids keys"
+    for grid in sc["grids"].values():
+        if not _keys(grid, {"minM", "maxM", "ratio"}) or not _num(grid["minM"], 1.0, 500000.0) \
+                or not _num(grid["maxM"], grid["minM"], 500000.0, True) or not _num(grid["ratio"], 1.0001, 10.0):
+            return "grid"
+    s = sc["sampleDistancesM"]
+    if not isinstance(s, list) or not 1 <= len(s) <= 20 or not all(_num(d, 1.0, 500000.0) for d in s):
+        return "sampleDistancesM"
+    return None
 
 
 # ---------------------------------------------------------------------- vectors
@@ -267,7 +366,7 @@ def _close(a: Any, b: Any, tol: float, path: str, errors: list[str]) -> None:
         for i, (x, y) in enumerate(zip(a, b)):
             _close(x, y, tol, f"{path}[{i}]", errors)
     elif isinstance(a, bool) or isinstance(b, bool) or a is None or b is None or isinstance(a, str):
-        if a != b:
+        if type(a) is not type(b) or a != b:  # True is not 1 (agora #2138)
             errors.append(f"{path}: {a!r} != {b!r}")
     elif isinstance(a, (int, float)) and isinstance(b, (int, float)):
         if not abs(a - b) <= tol * max(1.0, abs(b)):
@@ -279,10 +378,22 @@ def _close(a: Any, b: Any, tol: float, path: str, errors: list[str]) -> None:
 def check_vector_file(data: dict[str, Any], evaluated: dict[str, Any] | None = None) -> list[str]:
     """`evaluated` (scenario id -> evaluate_scenario result) lets tests reuse one evaluation of the inputs."""
     errors: list[str] = []
-    if data.get("schema") != "ricon.oracle.link_scenarios" or data.get("version") != 1 \
-            or data.get("speechQuality") != "NOT_CALIBRATED" or data.get("relTolerance") != 1e-9:
+    if not _keys(data, ROOT_KEYS) or data["schema"] != "ricon.oracle.link_scenarios" or data["version"] != 1 \
+            or data["speechQuality"] != "NOT_CALIBRATED" or data["snrState"] != "DEFERRED" \
+            or data["relTolerance"] != 1e-9 or data["provenance"] != "ORACLE_SNAPSHOT" \
+            or not isinstance(data["scenarios"], list) or not data["scenarios"]:
         return ["envelope"]
+    ids = [sc.get("id") if isinstance(sc, dict) else None for sc in data["scenarios"]]
+    if len(set(map(str, ids))) != len(ids) or not all(isinstance(i, str) and SCENARIO_ID.fullmatch(i) for i in ids):
+        return ["scenario ids"]
     for sc in data["scenarios"]:
+        if not _keys(sc, {"id", "input", "expect"}):
+            errors.append(f"{sc['id']}: keys")
+            continue
+        reason = validate_scenario(sc["input"])
+        if reason is not None:
+            errors.append(f"{sc['id']}: input {reason}")
+            continue
         actual = evaluated[sc["id"]] if evaluated is not None else evaluate_scenario(sc["input"])
         _close(actual, sc["expect"], data["relTolerance"], sc["id"], errors)
     return errors
