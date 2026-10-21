@@ -29,6 +29,9 @@ Snapshot receiver, менеджер, lifecycle, S3 и RF-формулы не м�
 `input`: nowMs, sessionEpoch, ttlMs, qualityDelta, limits, bindings (`RICON_TransmissionBinding` S3),
 pairResult (`RICON_PairServiceResult`). Это данные **одного** серверного такта; источник доверия — вызывающий
 сервер, а не клиент. S3b проверяет согласованность проекции, не пересчитывает S3/S2 или бюджет.
+Один авторитетный реестр владеет пространством linkId данного manager/epoch; параллельные реестры с
+одинаковыми id не допускаются. Как и S3, этот этап ограничен одним контекстом/полосой. Вызов содержит
+полный текущий набор пар этой службы, а не фрагмент: иначе отсутствующие пары были бы завершены.
 
 | Поле | Домен |
 |---|---|
@@ -40,6 +43,7 @@ pairResult (`RICON_PairServiceResult`). Это данные **одного** с�
 | limits.maxPairs, limits.maxActiveLinks | int 1..65536 |
 
 MAX = 2147483647. Все флаги — bool. Целые не принимают bool или дробное число.
+Числа с плавающей точкой имеют домен Enforce float32; конечное Python-число больше float.MAX не допустимо.
 Поля binding и их домены — REQ-PS-01 целиком; неактивные и старые epoch допустимы как данные S3.
 
 **REQ-LP-02.** Реестр — объект значений:
@@ -54,7 +58,8 @@ MAX = 2147483647. Все флаги — bool. Целые не принимают
 Запись хранит ключ `(leaseId, rxDeviceId, rxTransceiverIndex, rxPlayerId)`, txPlayerId, txDeviceId,
 txTransceiverIndex и последние **выданные** linkId, linkSeq, state, quality, ttlMs, publishedAtMs.
 Домены id/index — S3; linkId 1..highWater; seq 1..MAX−1; Q конечное [0,1], допустимый state;
-LOST требует Q=0; ttl>0; 0≤publishedAt≤lastTick. Если lastTick=−1, entries обязаны быть пусты.
+LOST требует Q=0; ttl>0; 0≤publishedAt≤lastTick. Если lastTick=−1, entries обязаны быть пусты и
+needsFullResync=true.
 Отсутствующие/завершённые связи удаляются, highWater не уменьшается. Начальное состояние создаёт вызывающий код.
 
 ## 2. Предварительная проверка
@@ -81,7 +86,7 @@ requiresFullResync=false и глубокая копия исходного regis
 | OK (12) | партия успешно сформирована |
 
 callCode S3 должен быть известным enum NULL_INPUT..OK. Пара: ключевые поля в доменах S3,
-pairCode 1..9, hasDeviceCode/hasBudget/valid bool, deviceCode известный enum S2 (0..11), reason enum 0..16,
+pairCode 1..9, hasDeviceCode/hasBudget/valid bool, deviceCode известный enum S2 (0..9), reason enum 0..16,
 state enum LOST..CLEAN, конечные sinrDb и Q∈[0,1]. hasBudget эквивалентен EVALUATED;
 hasDeviceCode эквивалентен DEVICE_QUERY или EVALUATED. Для EVALUATED deviceCode=READY;
 для DEVICE_QUERY deviceCode≠READY. В остальных случаях deviceCode=NULL_INPUT.
