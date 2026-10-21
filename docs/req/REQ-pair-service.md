@@ -5,6 +5,9 @@
 Ревью codex: #3185, #3187 (учтены в v0.2: generation и epoch слушателя, будущий issuedAt, домены, таблица
 трансиверов). Опирается на `REQ-radio-device-adapter.md` v0.2 (S2), `REQ-lifecycle.md`, `REQ-core-contracts.md`,
 `REQ-link-eval.md`.
+Корпус `oracle/vectors/pair_service_v1.json` rev1 (72 случая) заморожен 2026-10-21 (codex #3201, claude #3205),
+SHA-256 `fcc9cefa1b8bb46374b67883c239ffc8c6c00343da49a6bf008cf679cac178e1`. До freeze codex пересчитал его своим
+checker'ом из этого REQ, не читая эталон: 72/72, расхождений нет (#3200).
 
 Это requirements-артефакт. Он не доказывает поведение в игре: ни одна строка не проверена в мире или по сети.
 

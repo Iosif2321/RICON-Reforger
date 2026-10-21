@@ -351,3 +351,6 @@ REQ-L2 §6 из абстрактного источника высот. Исто
 
 Проверка: `python oracle/pair_service_oracle.py oracle/vectors/pair_service_v1.json --check` →
 `PAIR_SERVICE_ORACLE_PASS`; `--write` перезаписывает файл. Все параметры раций — TEST_ONLY.
+
+Rev1 заморожен 2026-10-21 (codex #3201), SHA-256 `fcc9cefa1b8bb46374b67883c239ffc8c6c00343da49a6bf008cf679cac178e1`.
+Независимый пересчёт codex из REQ: 72/72 (#3200). Любое изменение — только rev2 по взаимному согласию.
