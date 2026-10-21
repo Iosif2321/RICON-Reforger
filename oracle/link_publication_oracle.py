@@ -11,6 +11,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pair_service_oracle as ps
+import snapshot_oracle as so
 
 MAX = 2**31 - 1
 STATES = ("LOST", "WEAK", "DEGRADED", "CLEAN")
@@ -38,20 +39,6 @@ def finite(value):
 
 def key(row):
     return tuple(row[k] for k in KEY)
-
-
-def decode(value):
-    if isinstance(value, dict):
-        return {k: decode(v) for k, v in value.items()}
-    if isinstance(value, list):
-        return [decode(v) for v in value]
-    if value == "NaN":
-        return math.nan
-    if value == "Infinity":
-        return math.inf
-    if value == "-Infinity":
-        return -math.inf
-    return value
 
 
 def encode(value):
@@ -261,7 +248,7 @@ def publish(inp, reg, source):
 
 def evaluate(inp, reg, spec):
     source = SequenceSource(spec) if spec is not None else None
-    out = publish(decode(copy.deepcopy(inp)), decode(copy.deepcopy(reg)), source)
+    out = publish(so.decode(copy.deepcopy(inp)), so.decode(copy.deepcopy(reg)), source)
     out["sourceState"] = source.state() if source else None
     return encode(out)
 
