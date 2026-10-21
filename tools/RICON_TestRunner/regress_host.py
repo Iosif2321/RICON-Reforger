@@ -36,6 +36,7 @@ run("von_seam", [str(O / "von_seam_oracle.py"), "--check", str(V / "von_seam_v1.
 run("cellular", [str(O / "cellular_oracle.py"), "--check", str(V / "cellular_scenarios_v1.json")])
 run("world_profile", [str(O / "world_profile_oracle.py"), "--check", str(V / "world_profile_v1.json")], "PASS")
 run("radio_device", [str(O / "radio_device_oracle.py"), "--check", str(V / "radio_device_v1.json")], "PASS")
+run("pair_service", [str(O / "pair_service_oracle.py"), "--check", str(V / "pair_service_v1.json")], "PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
 run("p527 checker (codex)", ["-I", str(T / "check_p527_complex.py")], "PASS")
