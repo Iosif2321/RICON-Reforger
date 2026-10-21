@@ -324,3 +324,17 @@ Tie-breakers закреплены в REQ@5993d9e (agora #854–#868), запре
 Вход: параметры треугольника и полный конфиг. Профиль строится по `provider_sampling`. В ожиданиях — L, Lba, Lbs,
 Lsph, ветки, `profilePointCount` и `peakTerrainM`. Допуск 0.05 дБ, как `enforceToleranceDb` в `l2_terrain_v1`.
 Проверка `python oracle/sensitivity_oracle.py --anchors` — секунды, `--anchors --write` перезаписывает файл.
+
+## Профиль из мира: `vectors/world_profile_v1.json` (оболочка S1, agora #2946)
+
+Эталон `world_profile_oracle.py` по `docs/req/REQ-L2-world-profile.md` v0.2: поставщик профиля строит сетку
+REQ-L2 §6 из абстрактного источника высот. Источник — синтетическая формула (плоскость и гауссовы холмы),
+отказ задаётся номером обращения (`failAtCall`, `nanAtCall`). Вода — NOT_MODELLED, мир не читается.
+
+- `level = "model"` (W01–W22) — модель целиком: причина, слои `fspl` и `terrain_diffraction`, профиль, `htg`,
+  `hrg`, число обращений к источнику;
+- `level = "provider"` (P01–P17) — прямой вызов поставщика на границах входа: null query/config/источник,
+  невалидный config, нечисловые `x`, `y`, `z` у обоих концов (в JSON строками `"NaN"`, `"+Inf"`, `"-Inf"`).
+
+Проверка: `python oracle/world_profile_oracle.py --check oracle/vectors/world_profile_v1.json` →
+`WORLD_PROFILE_ORACLE_PASS`; `--write` перезаписывает файл. Все высоты и параметры — TEST_ONLY.
