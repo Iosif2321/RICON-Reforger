@@ -1,0 +1,29 @@
+PASS | ricon_oracle link_eval | exit 0 | ORACLE_PASS: 57 vectors
+PASS | l2_terrain | exit 0 | L2_TERRAIN_ORACLE_PASS: 45 cases
+PASS | lifecycle | exit 0 | LIFECYCLE_ORACLE_PASS: 14 traces, 209 steps
+PASS | link_physics scenarios | exit 0 | LINK_PHYSICS_ORACLE_PASS
+PASS | link_physics probes | exit 0 | LINK_PHYSICS_ORACLE_PASS
+PASS | route | exit 0 | ROUTE_ORACLE_PASS: 48 vectors
+PASS | snapshot | exit 0 | SNAPSHOT_ORACLE_PASS: 46 vectors
+PASS | von_seam | exit 0 | VON_SEAM_ORACLE_PASS: 11 cases, 103 calls
+PASS | cellular | exit 0 | CELLULAR_ORACLE_PASS
+PASS | sensitivity anchors | exit 0 | SENSITIVITY_ANCHORS_PASS
+PASS | sensitivity full | exit 0 | SENSITIVITY_ORACLE_PASS
+PASS | p527 checker (codex) | exit 0 | P527_COMPLEX_CROSSCHECK_PASS: 216, real=201, rejected=15, max_abs=2.13162820728e-14
+PASS | gen_l0_fixture.py --check | exit 0 | L0_GENERATOR_PASS: 57 �������, 4 ����������� ���� effectiveDistanceM
+PASS | gen_p526_matrix.py --check | exit 0 | P526_GENERATOR_PASS: 1008, physicalSnr=840, fallback=168
+PASS | gen_route_fixture.py --check | exit 0 | ROUTE_GENERATOR_PASS
+PASS | gen_snapshot_fixture.py --check | exit 0 | SNAPSHOT_GENERATOR_PASS: 43 ������, 77 �����, 3 allocator �������������
+PASS | gen_sensitivity_points.py --check | exit 0 | SENSITIVITY_GENERATOR_PASS: 16
+PASS | gen_l2_fixture.py byte-compare | exit 0 | identical
+PASS | gen_lifecycle_fixture.py byte-compare | exit 0 | identical
+PASS | gen_von_seam_fixture.py byte-compare | exit 0 | identical
+PASS | unittest oracle | exit 0 | OK
+PASS | unittest tools | exit 0 | OK
+TOTAL 22/22 PASS
+
+real	7m50.435s
+user	0m0.016s
+sys	0m0.062s
+
+[exited with code 0]

@@ -8,8 +8,15 @@
 
 ## Host: эталоны, генераторы, тесты
 
-Скрипт claude вне checkout (scratchpad, `regress_host.py`): каждая команда запускается отдельным процессом.
-PASS засчитывается при exit 0 и, где он есть, маркере PASS в выводе. Итог — **22 из 22 PASS**, 7 мин 50 с.
+Скрипт `tools/RICON_TestRunner/regress_host.py`, SHA-256
+`0be541249be27f91d936ade3eac0dc4beabf2f9e50a451228b72855b7b7f04de`. Прогон шёл из scratchpad, а в дерево положена
+побайтно та же копия (codex #2850). Запуск: `python -I tools/RICON_TestRunner/regress_host.py <корень checkout>`.
+Каждая команда запускается отдельным процессом. PASS засчитывается при exit 0 и маркере PASS в выводе, если он
+есть. Итог — **22 из 22 PASS**, 7 мин 50 с.
+
+Сырой вывод прогона: `docs/evidence/receipts/r29-host-regression.txt`, SHA-256
+`23b09d3da40de51298e7594a5291ee4c0bd735a47687dbca64d95346609681a7`. Байты не менялись. Кириллица в строках
+генераторов искажена кодировкой консоли, на итог это не влияет.
 
 | Проверка | Итог |
 |---|---|
@@ -29,7 +36,8 @@ PASS засчитывается при exit 0 и, где он есть, марк
 
 ## Workbench: все семь стендов
 
-Каждый стенд запускался один раз, скрыто и по очереди:
+Каждый стенд запускался один раз, скрыто и по очереди, скриптом `tools/RICON_TestRunner/regress_wb.ps1` (SHA-256
+`e46db364061ea3b3a6b8e808255d06771f83525055fd37ad47b8955ee67d213b`; это побайтная копия прогнанного скрипта):
 - `tools/RICON_TestRunner/addon.gproj`;
 - ключи `-noBackend -wbModule=ScriptEditor -plugin=<стенд> -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum`;
 - каталоги addons игры, Tools и этого checkout.
