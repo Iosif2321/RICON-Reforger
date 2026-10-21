@@ -1,7 +1,9 @@
 # S2: адаптер рации на Enforce — ENFORCE_PARITY
 
 Дата: 2026-10-21. Автор кода: claude. Требования и эталон: codex (`REQ-radio-device-adapter.md` v0.2,
-`oracle/radio_device_oracle.py`, корпус rev2 — `400496d`). Статус: OWN_CHECKED, ревью codex ожидается.
+`oracle/radio_device_oracle.py`, корпус rev2 — `400496d`). Статус: AGENT-REVIEWED — codex #3167; независимый повтор стенда codex #3166
+(`ricon-radio-device-codex-s2-20261021-182721/console.log`, SHA-256
+`86c373fb6da34f79ff3f9d5e24fab014eef8862215ad2b656ddbac9b544bc846`, те же счётчики).
 Уровень: **ENFORCE_PARITY** — код совпал с эталоном при исполнении в Workbench без мира, Play и сервера.
 
 ## Файлы
