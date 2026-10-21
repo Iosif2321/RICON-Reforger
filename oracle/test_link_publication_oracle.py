@@ -160,6 +160,40 @@ class LinkPublicationTest(unittest.TestCase):
         self.assertEqual(len(out["snapshots"]), len(eligible))
         self.assertTrue(eligible)
 
+    def test_input_permutations_preserve_all_keys_and_ids(self):
+        inp, reg, spec = lp.baseline()
+        inp["bindings"] += [lp.binding(lease=12, tx=103, player=3)]
+        inp["pairResult"]["pairs"] = [lp.pair(lease=b["leaseId"], tx=b["txDeviceId"], rx=200+i,
+                                              player=20+i, index=i % 2)
+                                             for b in inp["bindings"] for i in range(5)]
+        first = lp.evaluate(inp, reg, spec)
+        self.assertEqual([s["linkId"] for s in first["snapshots"]], list(range(1, 11)))
+        rnd = random.Random(902)
+        for _ in range(20):
+            rnd.shuffle(inp["bindings"]); rnd.shuffle(inp["pairResult"]["pairs"])
+            self.assertEqual(lp.evaluate(inp, reg, spec), first)
+        inp["nowMs"] = 600
+        expected = lp.evaluate(inp, first["registry"], first["sourceState"])
+        self.assertEqual(len(expected["snapshots"]), 10)
+        for _ in range(20):
+            r = copy.deepcopy(first["registry"])
+            rnd.shuffle(r["entries"]); rnd.shuffle(inp["pairResult"]["pairs"])
+            self.assertEqual(lp.evaluate(inp, r, first["sourceState"]), expected)
+
+    def test_priority_and_strict_scalar_domains(self):
+        inp, reg, spec = lp.baseline()
+        inp["limits"]["maxPairs"] = 0
+        inp["qualityDelta"] = "NaN"
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_LIMITS")
+        inp, reg, spec = lp.baseline()
+        inp["pairResult"]["callCode"] = "INVALID_ELEMENT"
+        inp["bindings"] *= 2
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "DUPLICATE")
+        for field, value in (("nowMs", True), ("ttlMs", 0.5), ("qualityDelta", False)):
+            inp, reg, spec = lp.baseline()
+            inp[field] = value
+            self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
+
 
 if __name__ == "__main__":
     unittest.main()
