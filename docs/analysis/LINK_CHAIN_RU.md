@@ -1,6 +1,7 @@
-# От передатчика к слушателю: проверенная цепочка R20–R26
+# От передатчика к слушателю: проверенная цепочка R20–R30
 
 Дата: 2026-10-20, дополнение 2026-10-21. Автор: codex. Статус: AGENT-REVIEWED: R20 — agora #2176 (claude с исполнением обоих примеров); R23 — #2423; дополнение R26 — #2614.
+Синхронизация уровней R30 по agora #2898 — DRAFT до ревью claude.
 Основание: Intent, PLAN v5, уточнение владельца agora #2020. Исходный Core: `3c295ce`.
 
 Результат проверки: RICON вычисляет радиобюджет, состояние и допустимость снимка. Подключения этого решения
@@ -16,14 +17,14 @@
 |---|---|---|---|
 | Каталог и выбор модели | `Core/RICON_CommsManagerComponent.c:120`, `:159`, `:224` | Регистрация, проверка зависимостей, выдача evaluator только после freeze. Это реестр, а не работающая система сбора координат и запуска расчётов | SOURCE; EXT fixtures исполнялись в Workbench |
 | Вход одного ребра | `Core/RICON_LinkTypes.c:42`, `:50`; `Propagation/RICON_LinkEvaluator.c:187` | Частота МГц, полоса Гц, мощности дБм; ровно один порог: чувствительность либо требуемый SINR. Невалидный вход возвращает причину, а не физическое LOST | SOURCE; L0 ENFORCE_PARITY R22: 53 полных + 4 FSPL только lossDb, см. E-l0-enforce.md |
-| Свободное пространство | `Propagation/RICON_PropagationModel.c:75` | `20 log10(4π max(d,λ)/λ)`, `λ=c/f`. Ограничение при `d<λ` — проектная защита формулы дальней зоны | ORACLE; используется в L2 adapter checks |
-| Рельеф | `Propagation/RICON_TerrainDiffractionModel.c:256`, `:796` | P.526-16 §4.5: Bullington + поправка сферической Земли; два слоя `fspl` и `terrain_diffraction`. Горизонтальная дистанция профиля отличается от 3D-дистанции FSPL | ENFORCE_PARITY 45/45 на synthetic-профилях |
+| Свободное пространство | `Propagation/RICON_PropagationModel.c:75` | `20 log10(4π max(d,λ)/λ)`, `λ=c/f`. Ограничение при `d<λ` — проектная защита формулы дальней зоны | ENFORCE_PARITY: потери в 4 FSPL-векторах L0 R22; поле effectiveDistanceM не наблюдаемо. Также используется в проверенных бюджетах/адаптере |
+| Рельеф | `Propagation/RICON_TerrainDiffractionModel.c:256`, `:796` | P.526-16 §4.5: Bullington + поправка сферической Земли; два слоя `fspl` и `terrain_diffraction`. Горизонтальная дистанция профиля отличается от 3D-дистанции FSPL | ENFORCE_PARITY: L2 45/45; R24 — 336 точек × 3 среды = 1008 вычислений; R28 — 16 опорных точек грунта, поляризации и фазы. Только synthetic-профили, не свип дальностей |
 | Профиль мира | `Propagation/RICON_TerrainDiffractionModel.c:175`, `:192` | Базовый поставщик отказывает; есть synthetic-поставщик. Рабочего чтения высот `BaseWorld.GetSurfaceY` здесь нет | SOURCE; отказ → reason 16, пустые слои, проверено адаптером |
-| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 R22;7 точек R21;R24:336 P526 samples ×3среды=1008 расчётов (168 только REQ-fallback); не range-sweep и не весь диапазон |
-| Шум и SINR | `Propagation/RICON_LinkEvaluator.c:118`; `Propagation/RICON_NoiseModel.c:65` | `N0=kT0B`; `N=N0+10log10(f_a+f_r−1)`; мощности помех складываются в линейной шкале, затем `SINR=P_rx−(N+I)` | L0 ORACLE; область внешнего шума ограничена конфигом/REQ |
-| Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:64`, `:66` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ORACLE; речевая разборчивость NOT_CALIBRATED |
-| Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | R25 ENFORCE_PARITY48/48;2 ADAPTER_MAPPED,3 null-leg TEST_SUBCLASS; FindRoute/перенос голоса не проверены |
-| Доставка снимка | `Core/RICON_LinkSnapshot.c:161` | Версия, epoch, последовательность, TTL и запрос resync. Наличие pure receiver не доказывает работающие RPC/JIP | R25 ENFORCE_PARITY43/46 и77шагов;3allocator BLOCKED_NO_AUTHORITY_CONTEXT; runtime NOT_TESTED |
+| Мощность приёмника | `Propagation/RICON_LinkEvaluator.c:115` | `P_rx=P_tx+G_tx+G_rx−ΣL` | L0 R22; 7 точек R21; R24: 336 P526 samples × 3 среды = 1008 расчётов (168 только REQ-fallback); не range-sweep и не весь диапазон |
+| Шум и SINR | `Propagation/RICON_LinkEvaluator.c:118`; `Propagation/RICON_NoiseModel.c:65` | `N0=kT0B`; `N=N0+10log10(f_a+f_r−1)`; мощности помех складываются в линейной шкале, затем `SINR=P_rx−(N+I)` | ENFORCE_PARITY L0 R22: 3 thermal_noise, 8 system_noise и 8 бюджетов; область шума сверена точно. На 400 МГц R24 проверяет 168 случаев REQ-fallback, а не физический шум UHF |
+| Приём и состояние | `Propagation/RICON_LinkEvaluator.c:138`, `:145`; `Propagation/RICON_IntelligibilityModel.c:64`, `:66` | Сначала `P_rx < sensitivity → LOST`; иначе TEST_ONLY кривая SINR→Q и пороги WEAK/DEGRADED/CLEAN. При равенстве чувствительности приём проходит эту проверку | ENFORCE_PARITY L0 R22: 7 случаев linear_test и поля 8 бюджетов; речевая разборчивость NOT_CALIBRATED |
+| Несколько ног | `Network/RICON_NetworkContracts.c:119`, `:174` | Проверка структуры маршрута; качество = минимум Q ног, состояние = худшее. Это контракт маршрута, а не перенос аудио ретранслятором | R25 ENFORCE_PARITY 48/48; 2 ADAPTER_MAPPED, 3 null-leg TEST_SUBCLASS; FindRoute/перенос голоса не проверены |
+| Доставка снимка | `Core/RICON_LinkSnapshot.c:161` | Версия, epoch, последовательность, TTL и запрос resync. Наличие pure receiver не доказывает работающие RPC/JIP | R25 ENFORCE_PARITY: 43 из 46 случаев, 77 шагов; 3 allocator BLOCKED_NO_AUTHORITY_CONTEXT; runtime NOT_TESTED |
 | Голосовая граница | `Network/RICON_NetworkContracts.c:350`, `:367` | Проверки снимка, binding, идентичности; любой допустимый вызов → `BLOCKED_NO_ACTUATOR`. Ни SetRange, ни mute, ни аудиограф здесь не вызываются | ENFORCE_PARITY 103/103 вызова |
 
 `valid=true` означает корректно рассчитанный бюджет, а не слышимый голос. `LOST` может быть корректным
@@ -130,6 +131,12 @@ python -B -I oracle/l2_terrain_oracle.py --check oracle/vectors/l2_terrain_v1.js
 
 Последние три команды на исходном R19: 61/61, 17/17 и 45 cases PASS. Полные логи reader лежат вне репозитория
 в `Documents/My Games/ArmaReforgerWorkbench/logs/<папка>/console.log`; это WORKBENCH_STATIC.
+
+Текущая регрессия R29 тех же трёх host-команд: **154 oracle-теста, 34 теста инструментов и 45 L2 cases PASS**
+(`docs/evidence/E-final-regression.md`). Это новые счётчики, а не повторное описание исходного R19.
+Workbench-проверки перечисленных полей: `E-l0-enforce.md`, `E-p526-matrix-enforce.md` и
+`E-sensitivity-enforce.md` в `docs/evidence/`; итоговая серия R29 и независимые повторы — `E-final-regression.md`.
+Сводка не повышает WORKBENCH_STATIC ванили до runtime и не проверяет передачу или слышимость голоса.
 
 | Папка | SHA-256 console.log |
 |---|---|
