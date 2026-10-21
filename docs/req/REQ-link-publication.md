@@ -182,6 +182,19 @@ requiresFullResync=false, реестр не продвигается. Никак
 input, registry, сценарий fake source (epoch, seq по linkId, failAt/rotateAt/invalidAt), ожидаемые
 callCode, snapshots, новый registry, sequenceCalls, epochReads, requiresFullResync и состояние fake source.
 Цепочки между тактами дополнительно проверяются unit-тестами. Все времена/Q/идентичности — TEST_ONLY.
+
+Точная семантика **TEST_ONLY fake**, чтобы пересчёт не зависел от чтения кода эталона:
+- Начальная epoch берётся из `source.epoch`, карта seq — `source.sequences` (ключ — десятичный linkId).
+  Отсутствующий linkId имеет seq=0. Счётчики вызовов/чтений первоначально 0. GetSessionEpoch увеличивает
+  только счётчик чтений и возвращает текущую epoch.
+- Next сначала увеличивает счётчик вызовов. При совпадении с `failAt` возвращает false/0/false,
+  карту и epoch не меняет. Иначе при совпадении с `rotateAt` **или** текущем seq≥MAX−1 очищает всю карту,
+  берёт `rotatedEpoch`, а если его нет — epoch+1 (после MAX−1 → 1); текущий seq становится 0, rotated=true.
+- Затем seq=current+1; если номер вызова равен `invalidAt`, seq заменяется `invalidSeq` (по умолчанию MAX).
+  Полученный seq сохраняется в карте для linkId, возвращается true/seq/rotated. Неуказанные номера инъекций
+  равны 0 и не срабатывают. `sourceState` — конечные epoch и карта, без счётчиков и параметров инъекции.
+- Это описание только тестового double. Production использует существующий manager и не реализует эти инъекции.
+
 Числа Q в корпусе представлены точно в float32; рядом с порогами используются двоично точные доли.
 Ошибки JSON-типа, недостижимые в сильно типизированном Enforce (например, int в bool-поле), проверяются
 host unit-тестами, а не выдаются за native parity. C37 UNKNOWN enum кодируется в Enforce как −1;
