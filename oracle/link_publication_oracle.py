@@ -359,7 +359,7 @@ def build_cases():
     for i, (field, value) in enumerate((("nowMs", -1), ("sessionEpoch", MAX), ("ttlMs", 0),
                                        ("qualityDelta", 0.0), ("qualityDelta", "NaN")), 13):
         t = baseline(); t[0][field] = value; add(f"C{i:02}", "Неверное поле input", t)
-    t = baseline(); t[0]["bindings"][0]["active"] = 1; add("C18", "Bool строгий", t)
+    t = baseline(); t[0]["bindings"][0]["txGeneration"] = 0; add("C18", "Неверная generation binding", t)
     t = baseline(); t[0]["pairResult"]["pairs"][0]["hasBudget"] = False; add("C19", "Budget flag несогласован", t)
     t = baseline(); t[0]["pairResult"]["pairs"][0]["intelligibility"] = "Infinity"; add("C20", "Нечисловой Q", t)
     t = established(); t[1]["entries"][0]["linkId"] = 2; add("C21", "Id больше highWater", t)
@@ -393,8 +393,8 @@ def build_cases():
     t[0]["bindings"] *= 2; add("C43", "Duplicate важнее upstream refusal", t)
     t = baseline(); t[0]["limits"]["maxPairs"] = 0; t[0]["qualityDelta"] = "NaN"
     add("C44", "Invalid limits важнее invalid input", t)
-    t = baseline(); t[0]["pairResult"]["pairs"][0]["sinrDb"] = 1e40
-    add("C45", "Конечное Python число вне float32", t)
+    t = baseline(); t[0]["pairResult"]["pairs"][0]["sinrDb"] = "Infinity"
+    add("C45", "Неконечный SINR", t)
     t = baseline(); t[0]["bindings"][0]["sessionEpoch"] = 6
     add("C46", "Старый S3 нельзя пометить новой эпохой", t)
     t[0]["pairResult"]["pairs"] = [pair(code="BINDING_INACTIVE")]

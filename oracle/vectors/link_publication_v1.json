@@ -6151,7 +6151,7 @@
   },
   {
    "id": "C18",
-   "title": "Bool строгий",
+   "title": "Неверная generation binding",
    "input": {
     "nowMs": 100,
     "sessionEpoch": 7,
@@ -6167,12 +6167,12 @@
       "leaseId": 11,
       "sessionEpoch": 7,
       "txPlayerId": 1,
-      "txGeneration": 1,
+      "txGeneration": 0,
       "txDeviceId": 101,
       "txTransceiverIndex": 0,
       "networkTypeId": 1,
       "channelId": 1,
-      "active": 1,
+      "active": true,
       "issuedAtMs": 0,
       "ttlMs": 10000
      }
@@ -8794,7 +8794,7 @@
   },
   {
    "id": "C45",
-   "title": "Конечное Python число вне float32",
+   "title": "Неконечный SINR",
    "input": {
     "nowMs": 100,
     "sessionEpoch": 7,
@@ -8839,7 +8839,7 @@
        "reason": "OK",
        "state": "CLEAN",
        "intelligibility": 0.75,
-       "sinrDb": 1e+40
+       "sinrDb": "Infinity"
       }
      ]
     }

@@ -183,6 +183,9 @@ input, registry, сценарий fake source (epoch, seq по linkId, failAt/ro
 callCode, snapshots, новый registry, sequenceCalls, epochReads, requiresFullResync и состояние fake source.
 Цепочки между тактами дополнительно проверяются unit-тестами. Все времена/Q/идентичности — TEST_ONLY.
 Числа Q в корпусе представлены точно в float32; рядом с порогами используются двоично точные доли.
+Ошибки JSON-типа, недостижимые в сильно типизированном Enforce (например, int в bool-поле), проверяются
+host unit-тестами, а не выдаются за native parity. C37 UNKNOWN enum кодируется в Enforce как −1;
+это явно невалидное значение той же enum-границы, без подмены поля или ожидаемого кода.
 Коды/ключи/поля snapshot/state/counters сравниваются точно; Q допускает 1e−6 при сравнении Enforce,
 но ветвление по qualityDelta — строго, без tolerance.
 

@@ -199,6 +199,12 @@ class LinkPublicationTest(unittest.TestCase):
             inp, reg, spec = lp.baseline()
             inp[field] = value
             self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
+        inp, reg, spec = lp.baseline()
+        inp["bindings"][0]["active"] = 1
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
+        inp, reg, spec = lp.baseline()
+        inp["pairResult"]["pairs"][0]["sinrDb"] = 1e40
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
 
 
 if __name__ == "__main__":
