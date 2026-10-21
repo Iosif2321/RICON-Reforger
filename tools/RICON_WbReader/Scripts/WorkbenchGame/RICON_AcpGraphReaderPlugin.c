@@ -1,11 +1,51 @@
 //! TOOL_ONLY, R27: только чтение одного узла графа von.acp через BaseContainerTools, без сохранения и правок.
-//! Узел выбирается путём индексов детей (-riconAcpNode=2.0.1), поля — окном с -riconAcpVar=N.
-//! Не больше 15 строк вывода за запуск, как у WbReader. Ресурс не сохраняется и не меняется.
+//! Узел выбирается путём индексов детей (-riconAcpNode=2.0.1), окно полей или детей — с -riconAcpVar=N.
+//! Каждая строка проходит Emit: управляющие символы экранируются, длина ограничена, строк не больше 15.
+//! -riconAcpSelfTest=yes проверяет форматирование без загрузки ресурса.
 [WorkbenchPluginAttribute(name: "RICON: узел графа ACP", description: "Ограниченное чтение одного узла von.acp", wbModules: {"ScriptEditor"})]
 class RICON_AcpGraphReaderPlugin : WorkbenchPlugin
 {
 	static const ResourceName VON_ACP = "{B4C3941EC8B2AD20}Sounds/VON/von.acp";
-	static const int MAX_VAR_LINES = 12;
+	static const int MAX_ITEM_LINES = 12;
+	static const int MAX_LINES = 15;
+	static const int MAX_LINE_CHARS = 256;
+	protected int m_iLines;
+
+	//! Одна физическая строка: CR, LF, tab, обратная косая и прочие управляющие символы экранируются,
+	//! после MAX_LINE_CHARS символов вывод обрезается с явной меткой.
+	static string Escape(string text)
+	{
+		string result;
+		int length = text.Length();
+		for (int i = 0; i < length; i++)
+		{
+			if (result.Length() >= MAX_LINE_CHARS)
+				return result + "...[cut " + (length - i).ToString() + "]";
+			int code = text.ToAscii(i);
+			if (code == 10)
+				result += "\\n";
+			else if (code == 13)
+				result += "\\r";
+			else if (code == 9)
+				result += "\\t";
+			else if (code == 92)
+				result += "\\\\";
+			else if (code >= 0 && code < 32)
+				result += "\\x" + code.ToString();
+			else
+				result += text.Get(i);
+		}
+		return result;
+	}
+
+	protected bool Emit(string line)
+	{
+		if (m_iLines >= MAX_LINES)
+			return false;
+		m_iLines++;
+		Print("[RICON_ACP27] " + Escape(line));
+		return true;
+	}
 
 	protected static string Value(BaseContainer node, int index)
 	{
@@ -70,34 +110,60 @@ class RICON_AcpGraphReaderPlugin : WorkbenchPlugin
 			{
 				BaseContainerList list = node.GetObjectArray(name);
 				if (list)
-					return text + " count=" + list.Count();
+					return text + " count=" + list.Count().ToString();
 				break;
 			}
 		}
 		return text;
 	}
 
+	//! Проверка Escape без ресурса: многострочный, табулированный и длинный ввод.
+	protected bool SelfTest()
+	{
+		string multi = Escape("a\nb\rc\td\\e");
+		string longText;
+		for (int i = 0; i < 300; i++)
+			longText += "x";
+		string cut = Escape(longText + "\n");
+		bool ok = multi == "a\\nb\\rc\\td\\\\e" && !cut.Contains("\n")
+			&& cut.Length() <= MAX_LINE_CHARS + 16 && cut.Contains("...[cut 45]");
+		Emit("selftest multi=" + multi);
+		Emit("selftest cutLength=" + cut.Length().ToString() + " ok=" + ok.ToString());
+		return ok;
+	}
+
+	protected void Finish(string message, int code)
+	{
+		Emit(message);
+		Workbench.Exit(code);
+	}
+
 	override void RunCommandline()
 	{
-		string enabled;
-		if (!System.GetCLIParam("riconAcpRead", enabled) || enabled != "yes")
+		string mode;
+		if (System.GetCLIParam("riconAcpSelfTest", mode) && mode == "yes")
 		{
-			Print("[RICON_ACP27] BLOCKED: явный режим чтения не указан");
-			Workbench.Exit(6);
+			if (SelfTest())
+				Finish("done: SELFTEST, ресурс не загружался", 0);
+			else
+				Finish("FAIL: selftest", 5);
+			return;
+		}
+		if (!System.GetCLIParam("riconAcpRead", mode) || mode != "yes")
+		{
+			Finish("BLOCKED: явный режим чтения не указан", 6);
 			return;
 		}
 		Resource resource = BaseContainerTools.LoadContainer(VON_ACP);
 		if (!resource || !resource.IsValid() || !resource.GetResource())
 		{
-			Print("[RICON_ACP27] INCOMPLETE: ресурс не загружен");
-			Workbench.Exit(4);
+			Finish("INCOMPLETE: ресурс не загружен", 4);
 			return;
 		}
 		BaseContainer node = resource.GetResource().ToBaseContainer();
 		if (!node)
 		{
-			Print("[RICON_ACP27] INCOMPLETE: корневой контейнер не получен");
-			Workbench.Exit(4);
+			Finish("INCOMPLETE: корневой контейнер не получен", 4);
 			return;
 		}
 		string path;
@@ -107,37 +173,42 @@ class RICON_AcpGraphReaderPlugin : WorkbenchPlugin
 		foreach (string step : steps)
 		{
 			int childIndex = step.ToInt(-1);
-			if (childIndex < 0 || childIndex >= node.GetNumChildren())
+			BaseContainer next;
+			if (childIndex >= 0 && childIndex < node.GetNumChildren())
+				next = node.GetChild(childIndex);
+			if (!next)
 			{
-				PrintFormat("[RICON_ACP27] FAIL: нет ребёнка %1 у %2", step, node.GetClassName());
-				Workbench.Exit(3);
+				Finish("FAIL: нет ребёнка " + step + " у " + node.GetClassName(), 3);
 				return;
 			}
-			node = node.GetChild(childIndex);
+			node = next;
 		}
 		string firstText;
 		System.GetCLIParam("riconAcpVar", firstText);
 		int first = Math.Max(0, firstText.ToInt(0));
 		int vars = node.GetNumVars();
-		PrintFormat("[RICON_ACP27] node=\"%1\" class=%2 name=\"%3\" vars=%4 children=%5 varFrom=%6", path,
-			node.GetClassName(), node.GetName(), vars, node.GetNumChildren(), first);
+		int children = node.GetNumChildren();
+		Emit("node=\"" + path + "\" class=" + node.GetClassName() + " name=\"" + node.GetName() + "\" vars=" + vars.ToString()
+			+ " children=" + children.ToString() + " from=" + first.ToString());
 		string show;
 		System.GetCLIParam("riconAcpShow", show);
 		if (show == "children")
 		{
-			for (int c = first; c < node.GetNumChildren() && c < first + MAX_VAR_LINES; c++)
+			for (int c = first; c < children && c < first + MAX_ITEM_LINES; c++)
 			{
 				BaseContainer child = node.GetChild(c);
-				PrintFormat("[RICON_ACP27] child %1 class=%2 name=\"%3\" vars=%4 children=%5", c, child.GetClassName(),
-					child.GetName(), child.GetNumVars(), child.GetNumChildren());
+				if (!child)
+					Emit("child " + c.ToString() + " null");
+				else
+					Emit("child " + c.ToString() + " class=" + child.GetClassName() + " name=\"" + child.GetName()
+						+ "\" vars=" + child.GetNumVars().ToString() + " children=" + child.GetNumChildren().ToString());
 			}
 		}
 		else
 		{
-			for (int k = first; k < vars && k < first + MAX_VAR_LINES; k++)
-				PrintFormat("[RICON_ACP27] var %1 %2 = %3", k, node.GetVarName(k), Value(node, k));
+			for (int k = first; k < vars && k < first + MAX_ITEM_LINES; k++)
+				Emit("var " + k.ToString() + " " + node.GetVarName(k) + " = " + Value(node, k));
 		}
-		Print("[RICON_ACP27] done: READ_ONLY, ресурс не сохранялся");
-		Workbench.Exit(0);
+		Finish("done: READ_ONLY, ресурс не сохранялся", 0);
 	}
 }
