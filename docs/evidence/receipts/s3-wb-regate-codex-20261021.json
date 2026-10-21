@@ -1,0 +1,99 @@
+{
+    "originalReceipt":  "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-s3-wb-codex-20261021.txt",
+    "originalReceiptSha256":  "5c7a7232e3b18f473d22694b1766db6dc403f4e30b8fbc301eed32df7d5a8020",
+    "originalGate":  "9/10; false positive NUMERIC_FAILURE",
+    "checkedPattern":  "\\[RICON_[^\\]]+\\].*(?\u003c![A-Za-z])FAIL(?![A-Za-z])",
+    "records":  [
+                    {
+                        "plugin":  "RICON_TestRunnerPlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_TestRunnerPlugin\\console.log",
+                        "sha256":  "e097714fe18a5f8c09d728ac3cedccd912571f163baab7ef8679848eda13e645"
+                    },
+                    {
+                        "plugin":  "RICON_L0ProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_L0ProbePlugin\\console.log",
+                        "sha256":  "c0a8c91b2a5fb00e51f890c0399b6b8ee6bdfec85fbdc92556d4d7deeac39ab2"
+                    },
+                    {
+                        "plugin":  "RICON_LinkPhysicsProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_LinkPhysicsProbePlugin\\console.log",
+                        "sha256":  "fd7c461af78e00eb8d97fa99771f481258c065ad1fefe8c8563d905738d7cae5"
+                    },
+                    {
+                        "plugin":  "RICON_P526MatrixProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_P526MatrixProbePlugin\\console.log",
+                        "sha256":  "7ffed17fb5c3db5685c9d72168095231d8f7fbb791683db189fd531cb62fabff"
+                    },
+                    {
+                        "plugin":  "RICON_RouteProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_RouteProbePlugin\\console.log",
+                        "sha256":  "6d9ed0b47e787753cef2413786cad90825f16f9bf6fc624cc2e892dfd551b875"
+                    },
+                    {
+                        "plugin":  "RICON_SnapshotProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_SnapshotProbePlugin\\console.log",
+                        "sha256":  "0e8c66bbbf2b7572f88aa960e2d89fcb37536a4d0ab2182682d5b0416588537b"
+                    },
+                    {
+                        "plugin":  "RICON_SensitivityProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_SensitivityProbePlugin\\console.log",
+                        "sha256":  "6eb7df3b6a83affa1cc227965eda4b38473ddde439ec1c86683e6d7e7ca4b763"
+                    },
+                    {
+                        "plugin":  "RICON_WorldProfileProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_WorldProfileProbePlugin\\console.log",
+                        "sha256":  "93383f1c7b42c0dd00f5cdb86ac71195894524ab0f2de1e7355876479dbeb64d"
+                    },
+                    {
+                        "plugin":  "RICON_RadioDeviceProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_RadioDeviceProbePlugin\\console.log",
+                        "sha256":  "c3f54d0fd01b9e9dc4fa423d40b9e6e9cfd2b08775231e0e13d00c01ad454bfe"
+                    },
+                    {
+                        "plugin":  "RICON_PairServiceProbePlugin",
+                        "processExit":  0,
+                        "donePass":  1,
+                        "scriptErrors":  0,
+                        "failMarkers":  0,
+                        "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-r29-claude-20261021-212445-RICON_PairServiceProbePlugin\\console.log",
+                        "sha256":  "afae2789d04bc059fe7b15055367840145208a8c8a322d2eb832b29587ae2c7c"
+                    }
+                ],
+    "result":  "10/10 PASS; same raw logs and recorded process exits"
+}
