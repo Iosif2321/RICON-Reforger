@@ -54,6 +54,21 @@ class LinkPublicationTest(unittest.TestCase):
         self.assertEqual(out["snapshots"][0]["quality"], 0.625)
         self.assertEqual(out["snapshots"][0]["linkSeq"], 2)
 
+    def test_float32_threshold_and_input_rounding(self):
+        inp, reg, spec = lp.established()
+        inp["qualityDelta"] = 1.0
+        reg["entries"][0]["quality"] = 2.0**-26
+        inp["pairResult"]["pairs"][0]["intelligibility"] = 1.0
+        self.assertEqual(lp.evaluate(inp, reg, spec)["sequenceCalls"], 1)
+        inp["qualityDelta"] = 0.1
+        reg["entries"][0]["quality"] = 0.2
+        inp["pairResult"]["pairs"][0]["intelligibility"] = 0.3
+        out = lp.evaluate(inp, reg, spec)
+        self.assertEqual(out["sequenceCalls"], 1)
+        self.assertEqual(out["snapshots"][0]["quality"], 0.30000001192092896)
+        inp["qualityDelta"] = 1e-50
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
+
     def test_terminal_then_new_ptt_never_reuses_id(self):
         inp, reg, spec = lp.established()
         inp["bindings"], inp["pairResult"]["pairs"] = [], []

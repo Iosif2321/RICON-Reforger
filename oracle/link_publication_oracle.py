@@ -104,7 +104,7 @@ def classify(inp, reg):
         target["state"] = p["state"] if valid else "LOST"
         target["quality"] = p["intelligibility"] if valid else 0.0
         due = e is None or terminal or reg["needsFullResync"] or target["state"] != e["state"] \
-            or abs(target["quality"] - e["quality"]) >= inp["qualityDelta"] or inp["ttlMs"] != e["ttlMs"] \
+            or abs(ps.rd.f32(target["quality"] - e["quality"])) >= inp["qualityDelta"] or inp["ttlMs"] != e["ttlMs"] \
             or inp["nowMs"] - e["publishedAtMs"] >= inp["ttlMs"] // 2 + inp["ttlMs"] % 2
         plan.append((target, e, terminal, due))
     return plan
@@ -248,7 +248,21 @@ def publish(inp, reg, source):
 
 def evaluate(inp, reg, spec):
     source = SequenceSource(spec) if spec is not None else None
-    out = publish(so.decode(copy.deepcopy(inp)), so.decode(copy.deepcopy(reg)), source)
+    inp, reg = so.decode(inp), so.decode(reg)
+    targets = []
+    if type(inp) is dict:
+        targets.append((inp, ("qualityDelta",)))
+        result = inp.get("pairResult")
+        if type(result) is dict and type(result.get("pairs")) is list:
+            targets += [(row, ("intelligibility", "sinrDb")) for row in result["pairs"]]
+    if type(reg) is dict and type(reg.get("entries")) is list:
+        targets += [(row, ("quality",)) for row in reg["entries"]]
+    for row, names in targets:
+        if type(row) is dict:
+            for name in names:
+                if type(row.get(name)) in (int, float):
+                    row[name] = ps.rd.f32(row[name])
+    out = publish(inp, reg, source)
     out["sourceState"] = source.state() if source else None
     return encode(out)
 
@@ -302,6 +316,12 @@ def build_cases():
     t[0]["pairResult"]["pairs"][0]["intelligibility"] = 0.625; add("Q02", "Равенство порогу Q", t)
     t = established(); t[0]["pairResult"]["pairs"][0]["state"] = "DEGRADED"; add("Q03", "Смена state", t)
     t = established(); t[0]["ttlMs"] = 999; add("Q04", "Смена TTL", t)
+    t = established(); t[1]["entries"][0]["quality"] = 2.0**-26
+    t[0]["pairResult"]["pairs"][0]["intelligibility"] = t[0]["qualityDelta"] = 1.0
+    add("Q05", "Разность float32 округляется к самому порогу", t)
+    t = established(); t[1]["entries"][0]["quality"] = 0.2
+    t[0]["pairResult"]["pairs"][0]["intelligibility"] = 0.3; t[0]["qualityDelta"] = 0.1
+    add("Q06", "Десятичные JSON-числа сначала округляются к float32", t)
     for ident, now in (("T01", 599), ("T02", 600)):
         t = established(); t[0]["nowMs"] = now; add(ident, "Граница половины TTL", t)
     for ident, now in (("T03", 600), ("T04", 601)):
@@ -414,7 +434,7 @@ def build_cases():
 
 def document():
     return {"schema": "ricon.link_publication", "version": 1, "revision": 1,
-            "status": "DRAFT", "source": "docs/req/REQ-link-publication.md v0.1",
+            "status": "DRAFT", "source": "docs/req/REQ-link-publication.md v0.2",
             "note": "TEST_ONLY: формирование данных, без сети/мира/звука. Независимый пересчёт и freeze ещё не выполнены.",
             "enforceTolerance": {"quality": 1e-6}, "cases": build_cases()}
 

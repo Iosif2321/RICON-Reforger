@@ -3,7 +3,7 @@
  "version": 1,
  "revision": 1,
  "status": "DRAFT",
- "source": "docs/req/REQ-link-publication.md v0.1",
+ "source": "docs/req/REQ-link-publication.md v0.2",
  "note": "TEST_ONLY: формирование данных, без сети/мира/звука. Независимый пересчёт и freeze ещё не выполнены.",
  "enforceTolerance": {
   "quality": 1e-06
@@ -1213,6 +1213,270 @@
        "linkId": 1,
        "linkSeq": 2,
        "ttlMs": 999,
+       "publishedAtMs": 101
+      }
+     ]
+    },
+    "sequenceCalls": 1,
+    "epochReads": 2,
+    "requiresFullResync": false,
+    "sourceState": {
+     "epoch": 7,
+     "sequences": {
+      "1": 2
+     }
+    }
+   }
+  },
+  {
+   "id": "Q05",
+   "title": "Разность float32 округляется к самому порогу",
+   "input": {
+    "nowMs": 101,
+    "sessionEpoch": 7,
+    "ttlMs": 1000,
+    "qualityDelta": 1.0,
+    "limits": {
+     "maxBindings": 8,
+     "maxPairs": 32,
+     "maxActiveLinks": 16
+    },
+    "bindings": [
+     {
+      "leaseId": 11,
+      "sessionEpoch": 7,
+      "txPlayerId": 1,
+      "txGeneration": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "networkTypeId": 1,
+      "channelId": 1,
+      "active": true,
+      "issuedAtMs": 0,
+      "ttlMs": 10000
+     }
+    ],
+    "pairResult": {
+     "callCode": "OK",
+     "s2Calls": 1,
+     "evaluatorCalls": 1,
+     "pairs": [
+      {
+       "leaseId": 11,
+       "txDeviceId": 101,
+       "rxPlayerId": 2,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "pairCode": "EVALUATED",
+       "hasDeviceCode": true,
+       "deviceCode": "READY",
+       "hasBudget": true,
+       "valid": true,
+       "reason": "OK",
+       "state": "CLEAN",
+       "intelligibility": 1.0,
+       "sinrDb": 16.0
+      }
+     ]
+    }
+   },
+   "registry": {
+    "sessionEpoch": 7,
+    "highWaterLinkId": 1,
+    "lastTickMs": 100,
+    "needsFullResync": false,
+    "entries": [
+     {
+      "leaseId": 11,
+      "rxDeviceId": 202,
+      "rxTransceiverIndex": 0,
+      "rxPlayerId": 2,
+      "txPlayerId": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "state": "CLEAN",
+      "quality": 1.4901161193847656e-08,
+      "linkId": 1,
+      "linkSeq": 1,
+      "ttlMs": 1000,
+      "publishedAtMs": 100
+     }
+    ]
+   },
+   "source": {
+    "epoch": 7,
+    "sequences": {
+     "1": 1
+    }
+   },
+   "expect": {
+    "callCode": "OK",
+    "snapshots": [
+     {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 1,
+      "linkSeq": 2,
+      "ttlMs": 1000,
+      "routeId": 1,
+      "routeNodeCount": 2,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "state": "CLEAN",
+      "quality": 1.0
+     }
+    ],
+    "registry": {
+     "sessionEpoch": 7,
+     "highWaterLinkId": 1,
+     "lastTickMs": 101,
+     "needsFullResync": false,
+     "entries": [
+      {
+       "leaseId": 11,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "rxPlayerId": 2,
+       "txPlayerId": 1,
+       "txDeviceId": 101,
+       "txTransceiverIndex": 0,
+       "state": "CLEAN",
+       "quality": 1.0,
+       "linkId": 1,
+       "linkSeq": 2,
+       "ttlMs": 1000,
+       "publishedAtMs": 101
+      }
+     ]
+    },
+    "sequenceCalls": 1,
+    "epochReads": 2,
+    "requiresFullResync": false,
+    "sourceState": {
+     "epoch": 7,
+     "sequences": {
+      "1": 2
+     }
+    }
+   }
+  },
+  {
+   "id": "Q06",
+   "title": "Десятичные JSON-числа сначала округляются к float32",
+   "input": {
+    "nowMs": 101,
+    "sessionEpoch": 7,
+    "ttlMs": 1000,
+    "qualityDelta": 0.1,
+    "limits": {
+     "maxBindings": 8,
+     "maxPairs": 32,
+     "maxActiveLinks": 16
+    },
+    "bindings": [
+     {
+      "leaseId": 11,
+      "sessionEpoch": 7,
+      "txPlayerId": 1,
+      "txGeneration": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "networkTypeId": 1,
+      "channelId": 1,
+      "active": true,
+      "issuedAtMs": 0,
+      "ttlMs": 10000
+     }
+    ],
+    "pairResult": {
+     "callCode": "OK",
+     "s2Calls": 1,
+     "evaluatorCalls": 1,
+     "pairs": [
+      {
+       "leaseId": 11,
+       "txDeviceId": 101,
+       "rxPlayerId": 2,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "pairCode": "EVALUATED",
+       "hasDeviceCode": true,
+       "deviceCode": "READY",
+       "hasBudget": true,
+       "valid": true,
+       "reason": "OK",
+       "state": "CLEAN",
+       "intelligibility": 0.3,
+       "sinrDb": 16.0
+      }
+     ]
+    }
+   },
+   "registry": {
+    "sessionEpoch": 7,
+    "highWaterLinkId": 1,
+    "lastTickMs": 100,
+    "needsFullResync": false,
+    "entries": [
+     {
+      "leaseId": 11,
+      "rxDeviceId": 202,
+      "rxTransceiverIndex": 0,
+      "rxPlayerId": 2,
+      "txPlayerId": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "state": "CLEAN",
+      "quality": 0.2,
+      "linkId": 1,
+      "linkSeq": 1,
+      "ttlMs": 1000,
+      "publishedAtMs": 100
+     }
+    ]
+   },
+   "source": {
+    "epoch": 7,
+    "sequences": {
+     "1": 1
+    }
+   },
+   "expect": {
+    "callCode": "OK",
+    "snapshots": [
+     {
+      "schemaVersion": 1,
+      "sessionEpoch": 7,
+      "linkId": 1,
+      "linkSeq": 2,
+      "ttlMs": 1000,
+      "routeId": 1,
+      "routeNodeCount": 2,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "state": "CLEAN",
+      "quality": 0.30000001192092896
+     }
+    ],
+    "registry": {
+     "sessionEpoch": 7,
+     "highWaterLinkId": 1,
+     "lastTickMs": 101,
+     "needsFullResync": false,
+     "entries": [
+      {
+       "leaseId": 11,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "rxPlayerId": 2,
+       "txPlayerId": 1,
+       "txDeviceId": 101,
+       "txTransceiverIndex": 0,
+       "state": "CLEAN",
+       "quality": 0.30000001192092896,
+       "linkId": 1,
+       "linkSeq": 2,
+       "ttlMs": 1000,
        "publishedAtMs": 101
       }
      ]
