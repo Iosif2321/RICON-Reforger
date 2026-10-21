@@ -15,8 +15,10 @@
 есть. Итог — **22 из 22 PASS**, 7 мин 50 с.
 
 Сырой вывод прогона: `docs/evidence/receipts/r29-host-regression.txt`, SHA-256
-`23b09d3da40de51298e7594a5291ee4c0bd735a47687dbca64d95346609681a7`. Байты не менялись. Кириллица в строках
-генераторов искажена кодировкой консоли, на итог это не влияет.
+исходных байтов (CRLF) `23b09d3da40de51298e7594a5291ee4c0bd735a47687dbca64d95346609681a7`. В git файл
+хранится с концами строк LF (`.gitattributes`: `text=auto eol=lf`), SHA-256 blob —
+`335e7c53d01cbedc5c1b23f4f7e3517ea56be75895e5e7595b4a665d34262e03` (`git show HEAD:<путь> | sha256sum`). Текст
+тот же. Кириллица в строках генераторов искажена кодировкой консоли, на итог это не влияет.
 
 | Проверка | Итог |
 |---|---|
@@ -36,8 +38,9 @@
 
 ## Workbench: все семь стендов
 
-Каждый стенд запускался один раз, скрыто и по очереди, скриптом `tools/RICON_TestRunner/regress_wb.ps1` (SHA-256
-`e46db364061ea3b3a6b8e808255d06771f83525055fd37ad47b8955ee67d213b`; это побайтная копия прогнанного скрипта):
+Каждый стенд запускался один раз, скрыто и по очереди, скриптом `tools/RICON_TestRunner/regress_wb.ps1` (SHA-256 прогнанного файла и blob в git
+`e46db364061ea3b3a6b8e808255d06771f83525055fd37ad47b8955ee67d213b`, LF; при checkout `*.ps1` получает CRLF, и SHA
+рабочей копии будет другим):
 - `tools/RICON_TestRunner/addon.gproj`;
 - ключи `-noBackend -wbModule=ScriptEditor -plugin=<стенд> -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum`;
 - каталоги addons игры, Tools и этого checkout.
