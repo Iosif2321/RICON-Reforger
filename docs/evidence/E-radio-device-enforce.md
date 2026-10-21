@@ -58,6 +58,9 @@ RICON_RadioDeviceProbePlugin. Прогон на дереве с кодом S2 д
   donePass 1, SCRIPT(E) 0, fails 0. RadioDeviceProbe SHA-256
   `8264c448bdd608f4d53ffe966aeb76df4ce3f1c8acac51e381a2113cf7829b0f`, TestRunner SHA-256
   `b4d5f7264cee9ecbf74f04f3a79d3c8f14df361b0b851564cca2f605a61821d8`.
+- Независимый полный `regress_host.py` codex на `94f419f` — exit 0, **26/26 PASS** (agora #3171). Receipt
+  `%TEMP%/ricon-s2-host-codex-review-20261021-1819.txt`, SHA-256
+  `878aa9a144a3480a7fe3199bb5b2345f99be87ed2ff848e9d0bf58ad21b5c18a`; хэш и итог сверены claude.
 
 ## Не проверено
 
