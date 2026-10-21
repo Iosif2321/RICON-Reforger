@@ -418,6 +418,7 @@ class RICON_PairServiceRun
 		if (id == "P01" && matched && immutable)
 		{
 			Controls(second, expected);
+			Require(SameResult(second, expected), "pair controls", "после контролей исходный результат восстановлен");
 			PrintPairs(second);
 			Permutation(input, expected);
 		}

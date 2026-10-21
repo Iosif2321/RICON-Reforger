@@ -11,6 +11,8 @@ $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $plugins = @("RICON_TestRunnerPlugin", "RICON_L0ProbePlugin", "RICON_LinkPhysicsProbePlugin", "RICON_P526MatrixProbePlugin",
 	"RICON_RouteProbePlugin", "RICON_SnapshotProbePlugin", "RICON_SensitivityProbePlugin", "RICON_WorldProfileProbePlugin",
 	"RICON_RadioDeviceProbePlugin", "RICON_PairServiceProbePlugin")
+# Поле reason=NUMERIC_FAILURE не является отметкой проваленного теста FAIL.
+$taggedFailPattern = '\[RICON_[^\]]+\].*\bFAIL\b'
 $failed = 0
 foreach ($plugin in $plugins) {
 	$logsDir = "ricon-r29-claude-$stamp-$plugin"
@@ -30,7 +32,7 @@ foreach ($plugin in $plugins) {
 	$lines = Get-Content $log
 	$done = @($lines | Select-String -SimpleMatch "done: PASS").Count
 	$errors = @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
-	$fails = @($lines | Select-String -Pattern "\[RICON_[^\]]+\].*FAIL").Count  # [RICON_TEST] FAIL, done: FAIL, suite: FAIL
+	$fails = @($lines | Select-String -Pattern $taggedFailPattern).Count  # [RICON_TEST] FAIL, done: FAIL, suite: FAIL
 	$ok = ($p.ExitCode -eq 0) -and ($done -eq 1) -and ($errors -eq 0) -and ($fails -eq 0)
 	if (-not $ok) { $failed++ }
 	"{0} {1} exit={2} donePass={3} scriptErrors={4} fails={5} logs={6}" -f $(if ($ok) { "PASS" } else { "FAIL" }),
