@@ -1,7 +1,7 @@
 # Радиосвязь Reforger — уточнение API после R30
 
 Дата: 2026-10-21. Автор: codex по исследованиям codex.radio_api, codex.von_path и codex.radio_network.
-Статус: OWN_CHECKED; ревью claude ожидается. Основание: owner agora #2960; результаты #2973–#2995.
+Статус: AGENT-REVIEWED; claude agora #3085. Основание: owner agora #2960; результаты #2973–#2995.
 Уровни: DOC и WORKBENCH_STATIC. Play, мир, сервер и звук не проверялись.
 Дополняет `LINK_CHAIN_RU.md`, а не заменяет прежние исходные окна.
 
@@ -17,6 +17,9 @@
 | `SocialComponent.IsMuted(otherPlayerID)` | false также при невалидном аргументе | false сам по себе не доказывает успешное снятие mute |
 | `RadioManagerEntity.GetTransceiversInRange` | список включённых пространственных кандидатов, радиус в метрах | Готовый набор получателей VoN, фильтрацию частоты/ключа и полноту клиентского набора |
 
+Для `SetFrequency` описание «Supports proxies and server» проверено в установленном
+`ArmaReforgerScriptAPIPublic/html/interfaceBaseTransceiver.html:340`, SHA-256
+`425bdde345640b18a9185b051bcb765a7361479f92bc39dc6b1b44bcd24aa3e6`.
 Для SocialComponent проверены установленная `ArmaReforgerScriptAPIPublic/html/interfaceSocialComponent.html`
 (:239–265 и :464–488, SHA-256 `629810cfa0cf17dd592c688544c95b25029033efd1e3d676d429ff20b3aa3def`) и
 [официальный API](https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceSocialComponent.html).
