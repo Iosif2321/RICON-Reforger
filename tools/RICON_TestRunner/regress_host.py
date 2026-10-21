@@ -1,4 +1,5 @@
-"""R29 host regression (claude): every oracle CLI, every fixture generator (byte compare) and every unit test."""
+"""R29 host regression (claude): every oracle CLI, every fixture generator (byte compare) and every unit test.
+Exit 1 when any check fails (added after the receipted run, codex #2859)."""
 import importlib.util
 import subprocess
 import sys
@@ -64,3 +65,4 @@ run("unittest tools", ["-m", "unittest", "discover", "-s", "tools/RICON_TestRunn
 for label, ok, code, tail in results:
     print(f"{'PASS' if ok else 'FAIL'} | {label} | exit {code} | {tail}")
 print(f"TOTAL {sum(r[1] for r in results)}/{len(results)} PASS")
+sys.exit(0 if results and all(r[1] for r in results) else 1)  # gate (codex #2859)

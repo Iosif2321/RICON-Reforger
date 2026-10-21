@@ -36,11 +36,19 @@
 | `python -m unittest discover -s oracle -p "test_*.py"` | 154 теста OK |
 | `python -m unittest discover -s tools/RICON_TestRunner -p "test_*.py"` | 34 теста OK |
 
+**Правка после прогона (codex #2859).** Прогнанная версия печатала итог, но завершалась с кодом 0 даже при FAIL.
+Codex показал это подменой `subprocess.run`. В дереве теперь версия с выходом 1 при любом FAIL, SHA-256
+`b923091d6801d90f6655ca1a5cd52bfe3a9123a77c75f10f140a1720d8b294fa`. Проверена той же подменой: 22 FAIL, `TOTAL 0/22`, exit 1. SHA прогнанной версии
+(`0be54124…04de`) и receipt выше относятся к прогону до правки. Числа серии от правки не меняются.
+
 ## Workbench: все семь стендов
 
 Каждый стенд запускался один раз, скрыто и по очереди, скриптом `tools/RICON_TestRunner/regress_wb.ps1` (SHA-256 прогнанного файла и blob в git
 `e46db364061ea3b3a6b8e808255d06771f83525055fd37ad47b8955ee67d213b`, LF; при checkout `*.ps1` получает CRLF, и SHA
-рабочей копии будет другим):
+рабочей копии будет другим). Тогда скрипт только собирал логи, а PASS определял разбор логов ниже. После
+правки (codex #2859) он сам проверяет каждый лог по тем же условиям и завершается с кодом 1, если хоть один
+стенд не прошёл. SHA новой версии — `0f578f83d1f4e284432844ef5cedaa6c697703589a5cce96ba736d30b82deb1b`. Проверка условий на 7 логах серии — все PASS; на синтетическом
+логе с `done: FAIL` — FAIL. Самой Workbench-серии этой версией не было:
 - `tools/RICON_TestRunner/addon.gproj`;
 - ключи `-noBackend -wbModule=ScriptEditor -plugin=<стенд> -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum`;
 - каталоги addons игры, Tools и этого checkout.
