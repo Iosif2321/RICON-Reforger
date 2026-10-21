@@ -114,21 +114,20 @@ class RICON_SensitivityProbePlugin : RICON_LinkPhysicsProbePlugin
 			actual.ToString(-1, 9), expected.ToString(-1, 9));
 	}
 
-	//! Ожидания приходят из golden JSON; здесь строится только заданный синтетический вход.
-	void CheckPoint(string id, float distanceM, float frequencyMHz, float antennaHeightM,
+	protected RICON_L2Result EvaluateProfile(string id, float distanceM, float frequencyMHz, float antennaHeightM,
 		float centerKm, float halfWidthKm, float hillHeightM, RICON_TerrainDiffractionConfig config,
-		RICON_L2Result expected, int expectedCount, float expectedPeak)
+		out int count, out float peak)
 	{
-		m_iCases++;
+		count = 0;
+		peak = 0;
 		RICON_TerrainSamplingResult sampling = RICON_TerrainProfileSampling.BuildDistances(distanceM, config);
 		if (!RICON_TestSupport.Expect(sampling && sampling.m_eCode == RICON_ETerrainSamplingCode.OK,
 			id, "построение сетки"))
 		{
 			m_bOk = false;
-			return;
+			return null;
 		}
 		RICON_TerrainProfile profile = new RICON_TerrainProfile();
-		float peak = 0;
 		foreach (float position : sampling.m_aDistanceKm)
 		{
 			float height = hillHeightM * Math.Max(0, 1.0 - Math.AbsFloat(position - centerKm) / halfWidthKm);
@@ -138,7 +137,20 @@ class RICON_SensitivityProbePlugin : RICON_LinkPhysicsProbePlugin
 		RICON_L2Run purity = new RICON_L2Run(id);
 		RICON_L2Result actual = purity.Evaluate(profile, antennaHeightM, antennaHeightM, frequencyMHz, config);
 		m_bOk = RICON_TestSupport.Expect(!purity.IsFailed(), id, "неизменность входов") && m_bOk;
-		int count = profile.m_aDistanceKm.Count();
+		count = profile.m_aDistanceKm.Count();
+		return actual;
+	}
+
+	//! Ожидания приходят из golden JSON; положительный и повреждённый входы проходят один путь.
+	void CheckPoint(string id, float distanceM, float frequencyMHz, float antennaHeightM,
+		float centerKm, float halfWidthKm, float hillHeightM, RICON_TerrainDiffractionConfig config,
+		RICON_L2Result expected, int expectedCount, float expectedPeak)
+	{
+		m_iCases++;
+		int count;
+		float peak;
+		RICON_L2Result actual = EvaluateProfile(id, distanceM, frequencyMHz, antennaHeightM,
+			centerKm, halfWidthKm, hillHeightM, config, count, peak);
 		m_bOk = Compare(id, actual, expected, count, peak, expectedCount, expectedPeak) && m_bOk;
 		if (Compare(id, actual, expected, count, peak, expectedCount, expectedPeak, true))
 			m_iQuietPositive++;
@@ -159,6 +171,26 @@ class RICON_SensitivityProbePlugin : RICON_LinkPhysicsProbePlugin
 			typename.EnumToString(RICON_EFirstTermAccuracy, actual.m_eFirstTermAccuracy));
 		if (m_iCases == 1)
 			Controls(id, actual, expected, count, peak);
+		if (id == "A12-hw30-s50-phase3")
+		{
+			int shiftedCount;
+			float shiftedPeak;
+			float shiftedCenter = centerKm + config.m_fMaxProfileStepKm / 8;
+			RICON_L2Result shifted = EvaluateProfile("CTRL_PHASE", distanceM, frequencyMHz, antennaHeightM,
+				shiftedCenter, halfWidthKm, hillHeightM, config, shiftedCount, shiftedPeak);
+			bool changed = shifted && shifted.m_eCode == RICON_EL2ResultCode.OK;
+			if (changed)
+			{
+				changed = shiftedCount == expectedCount && RICON_Num.IsFinite(shifted.m_fLossDb)
+					&& RICON_Num.IsFinite(shiftedPeak) && Math.AbsFloat(shifted.m_fLossDb - expected.m_fLossDb) > DB_TOLERANCE
+					&& Math.AbsFloat(shiftedPeak - expectedPeak) > PEAK_TOLERANCE_M;
+				TraceNumber("CTRL_PHASE", "L", shifted.m_fLossDb, expected.m_fLossDb);
+				TraceNumber("CTRL_PHASE", "peakM", shiftedPeak, expectedPeak);
+				PrintFormat("[RICON_SENS] CTRL_PHASE centerKm=%1 points=%2", shiftedCenter.ToString(-1, 9), shiftedCount);
+			}
+			m_bOk = RICON_TestSupport.Expect(changed, id, "фаза изменила потери и пик при той же сетке") && m_bOk;
+			Reject("input phase", Compare(id, shifted, expected, shiftedCount, shiftedPeak, expectedCount, expectedPeak, true));
+		}
 	}
 
 	override void RunCommandline()
@@ -172,7 +204,7 @@ class RICON_SensitivityProbePlugin : RICON_LinkPhysicsProbePlugin
 		RICON_SensitivityPoints.Run(this);
 		PrintFormat("[RICON_SENS] cases=%1 quietPositive=%2 controls=%3 maxDeviationDb=%4", m_iCases,
 			m_iQuietPositive, m_iControls, RICON_L2Run.s_fMaxDeviationDb.ToString(-1, 9));
-		if (m_bOk && m_iCases == 16 && m_iQuietPositive == 16 && m_iControls == 15)
+		if (m_bOk && m_iCases == 16 && m_iQuietPositive == 16 && m_iControls == 16)
 		{
 			Print("[RICON_SENS] done: PASS");
 			Workbench.Exit(0);
