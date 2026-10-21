@@ -30,7 +30,7 @@ class RadioDeviceTest(unittest.TestCase):
 
     def test_checker_rejects_changes_in_input_output_header_and_types(self):
         data = rd.document()
-        for path, value in ((["revision"], 2), (["cases", 0, "expect", "query", "txPowerDbm"], 30.0),
+        for path, value in ((["revision"], data["revision"] + 1), (["cases", 0, "expect", "query", "txPowerDbm"], 30.0),
                             (["cases", 0, "input", "txObservation", "deviceId"], True)):
             bad = copy.deepcopy(data)
             target = bad
@@ -130,6 +130,19 @@ class RadioDeviceTest(unittest.TestCase):
         first["query"]["txPowerDbm"] = -99.0
         self.assertEqual(data, before)
         self.assertEqual(second["query"], rd.expected_baseline())
+
+    def test_same_endpoint_is_left_for_s3_pair_selection(self):
+        data = rd.baseline()
+        data["rxObservation"] = copy.deepcopy(data["txObservation"])
+        data["rxProfile"] = copy.deepcopy(data["txProfile"])
+        before = copy.deepcopy(data)
+        result = rd.evaluate(data)
+        self.assertEqual(result["code"], "READY")
+        self.assertEqual(result["query"]["txPos"], result["query"]["rxPos"])
+        self.assertEqual(result["query"]["bandwidthHz"], 25000.0)
+        self.assertEqual(result["query"]["rxNoiseFigureDb"], 12.0)
+        self.assertEqual(result["query"]["requiredSinrDb"], 14.0)
+        self.assertEqual(data, before)
 
     def test_all_corpus_outputs_are_finite_and_inputs_unchanged(self):
         for case in rd.build_cases():

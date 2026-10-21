@@ -1,8 +1,8 @@
 {
  "schema": "ricon.radio_device",
  "version": 1,
- "revision": 1,
- "source": "docs/req/REQ-radio-device-adapter.md v0.1",
+ "revision": 2,
+ "source": "docs/req/REQ-radio-device-adapter.md v0.2",
  "floatSemantics": "IEEE754 binary32 на входе; только выбор полей",
  "note": "TEST_ONLY/ASSUMED. Native радио, актуальный authority binding и доставка голоса не проверены.",
  "cases": [
@@ -5332,6 +5332,109 @@
    "expect": {
     "code": "CHANNEL_MISMATCH",
     "query": null
+   }
+  },
+  {
+   "id": "R68",
+   "note": "Один и тот же endpoint: отбор пар принадлежит S3",
+   "input": {
+    "txObservation": {
+     "deviceId": 1,
+     "transceiverIndex": 0,
+     "powered": true,
+     "tuningValue": 50000,
+     "networkKey": "test_net",
+     "antennaPos": [
+      0.0,
+      101.5,
+      0.0
+     ]
+    },
+    "txProfile": {
+     "profileId": "test_tx_1",
+     "deviceId": 1,
+     "transceiverIndex": 0,
+     "provenance": "TEST_ONLY",
+     "expectedTuningValue": 50000,
+     "frequencyMHz": 50.0,
+     "rxBandwidthHz": 25000.0,
+     "txPowerDbm": 37.0,
+     "txGainDbi": 2.0,
+     "rxGainDbi": 7.0,
+     "rxNoiseFigureDb": 12.0,
+     "hasRxSensitivity": false,
+     "rxSensitivityDbm": 0.0,
+     "hasRequiredSinr": true,
+     "requiredSinrDb": 14.0
+    },
+    "rxObservation": {
+     "deviceId": 1,
+     "transceiverIndex": 0,
+     "powered": true,
+     "tuningValue": 50000,
+     "networkKey": "test_net",
+     "antennaPos": [
+      0.0,
+      101.5,
+      0.0
+     ]
+    },
+    "rxProfile": {
+     "profileId": "test_tx_1",
+     "deviceId": 1,
+     "transceiverIndex": 0,
+     "provenance": "TEST_ONLY",
+     "expectedTuningValue": 50000,
+     "frequencyMHz": 50.0,
+     "rxBandwidthHz": 25000.0,
+     "txPowerDbm": 37.0,
+     "txGainDbi": 2.0,
+     "rxGainDbi": 7.0,
+     "rxNoiseFigureDb": 12.0,
+     "hasRxSensitivity": false,
+     "rxSensitivityDbm": 0.0,
+     "hasRequiredSinr": true,
+     "requiredSinrDb": 14.0
+    },
+    "context": {
+     "bandId": "test_vhf",
+     "modelId": "terrain_diffraction_p526_16",
+     "noiseEnvironmentId": "none",
+     "intelligibilityModelId": "linear_test",
+     "hasInterference": false,
+     "interferenceDbm": 0.0
+    }
+   },
+   "expect": {
+    "code": "READY",
+    "query": {
+     "txPos": [
+      0.0,
+      101.5,
+      0.0
+     ],
+     "rxPos": [
+      0.0,
+      101.5,
+      0.0
+     ],
+     "frequencyMHz": 50.0,
+     "bandwidthHz": 25000.0,
+     "txPowerDbm": 37.0,
+     "txGainDbi": 2.0,
+     "rxGainDbi": 7.0,
+     "rxNoiseFigureDb": 12.0,
+     "hasRxSensitivity": false,
+     "rxSensitivityDbm": 0.0,
+     "hasRequiredSinr": true,
+     "requiredSinrDb": 14.0,
+     "hasInterference": false,
+     "interferenceDbm": 0.0,
+     "bandId": "test_vhf",
+     "modelId": "terrain_diffraction_p526_16",
+     "noiseEnvironmentId": "none",
+     "intelligibilityModelId": "linear_test"
+    }
    }
   }
  ]

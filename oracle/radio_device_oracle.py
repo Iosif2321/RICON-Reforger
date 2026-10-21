@@ -239,6 +239,10 @@ def build_cases():
         ("Настройка раньше канала", ((("txObservation", "tuningValue"), 1), (("rxProfile", "frequencyMHz"), 51.0)), "TUNING_MISMATCH"),
         ("Канал раньше ключа", ((("rxProfile", "frequencyMHz"), 51.0), (("rxObservation", "networkKey"), "other")), "CHANNEL_MISMATCH")):
         add(note, edits, code)
+    add("Один и тот же endpoint: отбор пар принадлежит S3",
+        ((("rxObservation",), b["txObservation"]), (("rxProfile",), b["txProfile"])),
+        query_edits={"rxPos": [0.0, 101.5, 0.0], "bandwidthHz": 25000.0, "rxGainDbi": 7.0,
+                     "rxNoiseFigureDb": 12.0, "requiredSinrDb": 14.0})
     return cases
 
 
@@ -252,8 +256,8 @@ def document():
         actual = evaluate(case["input"])
         if canonical(actual) != canonical(case["expect"]):
             raise AssertionError(f"{case['id']}: эталон не совпал с отдельно заданным ожиданием: {actual}")
-    return {"schema": "ricon.radio_device", "version": 1, "revision": 1,
-            "source": "docs/req/REQ-radio-device-adapter.md v0.1",
+    return {"schema": "ricon.radio_device", "version": 1, "revision": 2,
+            "source": "docs/req/REQ-radio-device-adapter.md v0.2",
             "floatSemantics": "IEEE754 binary32 на входе; только выбор полей",
             "note": "TEST_ONLY/ASSUMED. Native радио, актуальный authority binding и доставка голоса не проверены.", "cases": cases}
 
