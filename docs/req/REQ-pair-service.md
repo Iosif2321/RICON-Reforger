@@ -1,8 +1,10 @@
 # REQ-pair-service — серверная служба пар (S3)
 
-Версия: **0.1 DRAFT**, 2026-10-21. Автор: claude. Основание: owner agora #2937 («ядро и оболочки»),
+Версия: **0.2 DRAFT**, 2026-10-21. Автор: claude. Основание: owner agora #2937 («ядро и оболочки»),
 #2936 (качество зависит от отправителя и приёмника). План и разделение работ: agora #3172, #3178, #3179, #3180.
-Опирается на `REQ-radio-device-adapter.md` v0.2 (S2), `REQ-lifecycle.md`, `REQ-core-contracts.md`, `REQ-link-eval.md`.
+Ревью codex: #3185, #3187 (учтены в v0.2: generation и epoch слушателя, будущий issuedAt, домены, таблица
+трансиверов). Опирается на `REQ-radio-device-adapter.md` v0.2 (S2), `REQ-lifecycle.md`, `REQ-core-contracts.md`,
+`REQ-link-eval.md`.
 
 Это requirements-артефакт. Он не доказывает поведение в игре: ни одна строка не проверена в мире или по сети.
 
@@ -18,80 +20,101 @@
 - **Ограничения:** без сети, RPC, JIP, клиентов, звука, actuator, таймера тиков и discovery настоящих раций.
   Без linkId, linkSeq и снимков — это S3b (§7).
 
-## 1. Происхождение входов и доверие
+## 1. Входы, происхождение и домены
 
 Все входы строит сервер. Служба не принимает клиентских значений и не проверяет, откуда пришли объекты.
+Все целые — int32, флаги — bool, без неявных преобразований.
 
 **REQ-PS-01. `RICON_TransmissionBinding` — граница, а не экспорт lifecycle.** `RICON_LifecycleLease`
 (`RICON_Lifecycle.c:391–402`) не хранит сеть, канал и индекс трансивера (codex #3178). Поэтому вход службы —
 отдельный DTO, который будущий серверный код заполняет из PTT-запроса, **принятого** lifecycle, и из выданного
 lease. В S3 этот код не пишется; векторы задают DTO явно.
 
-| Поле | Смысл |
+| Поле | Домен | Смысл |
+|---|---|---|
+| leaseId | 1 … int.MAX | id lease; lifecycle выдаёт и int.MAX (`RICON_Lifecycle.c:804, 856`) |
+| sessionEpoch | 1 … int.MAX | epoch, в которой выдан lease |
+| txPlayerId | 1 … int.MAX | говорящий игрок |
+| txGeneration | 1 … int.MAX | его generation на момент выдачи |
+| txDeviceId | 1 … int.MAX−1 | рация отправителя (домен S2) |
+| txTransceiverIndex | 0 … int.MAX−1 | трансивер отправителя (домен S2) |
+| networkTypeId, channelId | 1 … int.MAX | сеть и канал из принятого PTT-запроса |
+| active | bool | lease в состоянии ACTIVE по данным lifecycle |
+| issuedAtMs | 0 … int.MAX | время выдачи, ms |
+| ttlMs | 1 … int.MAX | срок, ms |
+
+**REQ-PS-02. Слушатель `RICON_PairListener`** — какой игрок слушает какой трансивер какой рации:
+
+| Поле | Домен |
 |---|---|
-| leaseId | id выданного lease, 1 … int.MAX−1 |
-| sessionEpoch | epoch, в которой выдан lease |
-| txPlayerId, txGeneration | говорящий игрок и его generation на момент выдачи |
-| txDeviceId, txTransceiverIndex | рация и трансивер отправителя |
-| networkTypeId, channelId | сеть и канал из принятого PTT-запроса, > 0 |
-| active | lease в состоянии ACTIVE по данным lifecycle |
-| issuedAtMs, ttlMs | время выдачи и срок, ms; ttlMs > 0 |
+| playerId | 1 … int.MAX |
+| generation | 1 … int.MAX — generation игрока, для которой записан слушатель |
+| sessionEpoch | 1 … int.MAX — epoch записи |
+| deviceId | 1 … int.MAX−1 |
+| transceiverIndex | 0 … int.MAX−1 |
 
-**REQ-PS-02. Состояние сервера на момент вызова** передаётся явно:
+**REQ-PS-03. Состояние сервера на момент вызова:**
 
-- `nowMs` и текущая `sessionEpoch` сервера;
-- таблица игроков: `playerId → (state, generation)` (`RICON_EPlayerLifecycleState`);
-- таблица устройств: `deviceId → (RICON_LifecycleDevice, RICON_RadioObservation, RICON_RadioRfProfile)`;
-- слушатели: `(playerId, deviceId, transceiverIndex)` — какой игрок слушает какой трансивер какой рации;
-- `RICON_RadioQueryContext` S2 и один `RICON_LinkEvaluator` для его `bandId`;
-- лимиты `RICON_PairServiceLimits`: maxBindings, maxDevices, maxPlayers, maxListeners, maxPairs — все > 0.
+- `nowMs` (0 … int.MAX) и текущая `sessionEpoch` сервера (1 … int.MAX);
+- игроки `RICON_PairPlayer`: playerId (1 … int.MAX), generation (1 … int.MAX), state — одно из значений
+  `RICON_EPlayerLifecycleState`;
+- рации: `RICON_LifecycleDevice`, ключ — его deviceId; `IsValid()` обязано быть истинным;
+- трансиверы `RICON_PairEndpoint`: пара (`RICON_RadioObservation`, `RICON_RadioRfProfile`) S2. Ключ — deviceId и
+  transceiverIndex **наблюдения**; так одна рация может иметь несколько трансиверов в одном вызове (codex #3187);
+- `RICON_RadioQueryContext` S2 и один evaluator — объект базового класса `RICON_LinkEvaluator`
+  (`RICON_LinkEvaluator.c:5`), в векторах — `RICON_WirelessLinkEvaluator`. Одна полоса и один контекст на вызов —
+  явная граница;
+- лимиты `RICON_PairServiceLimits`: maxBindings, maxListeners, maxPlayers, maxDevices, maxEndpoints — каждый
+  1 … 4096; maxPairs — 1 … 65536. Тогда `bindings × listeners` ≤ 4096² помещается в int32.
 
 ## 2. Отказ всего вызова (preflight)
 
-**REQ-PS-03.** До первого обращения к S2 или evaluator вызов проверяет вход целиком. При любом отказе результат —
+**REQ-PS-04.** До первого обращения к S2 или evaluator вызов проверяет вход целиком. При любом отказе результат —
 код вызова и **пустой** список пар; S2 и evaluator не вызываются. Порядок нормативный, срабатывает первый
 применимый код:
 
 | Код вызова | Условие |
 |---|---|
 | NULL_INPUT | отсутствует любой массив, контекст, evaluator или лимиты |
-| INVALID_LIMITS | любой лимит ≤ 0 |
+| INVALID_LIMITS | любой лимит вне домена §1 |
 | LIMIT_EXCEEDED | длина любого массива больше своего лимита, либо `bindings × listeners > maxPairs` |
-| INVALID_ELEMENT | null-элемент; домен поля из §1 нарушен; запись устройства с null-частью; `RICON_LifecycleDevice.IsValid()` ложно |
-| DUPLICATE | повтор leaseId; повтор txDeviceId среди bindings; повтор playerId в таблице игроков; повтор deviceId в таблице устройств; повтор тройки слушателя |
+| INVALID_ELEMENT | null-элемент; `nowMs` или текущая epoch вне домена; поле binding, слушателя или игрока вне домена; `RICON_LifecycleDevice.IsValid()` ложно; у трансивера null-часть или ключ (deviceId, transceiverIndex наблюдения) вне домена S2 |
+| DUPLICATE | повтор leaseId; повтор txDeviceId среди bindings; повтор playerId среди игроков; повтор deviceId среди раций; повтор (deviceId, transceiverIndex) среди трансиверов; повтор слушателя (playerId, deviceId, transceiverIndex) |
 | OK | вход принят; пар ровно `bindings × listeners` |
 
 Лимит пар считается до фильтров: число кандидатов известно заранее, работа ограничена сверху. Обрезки нет.
+Домены полей S2 внутри трансивера (координаты, RF-поля) preflight не проверяет: это делает сборщик S2 на шаге 8.
 
 ## 3. Код пары
 
-**REQ-PS-04.** Каждая пара (binding, listener) получает ровно один код. Порядок нормативный:
+**REQ-PS-05.** Каждая пара (binding, listener) получает ровно один код. Порядок нормативный:
 
 | № | Код пары | Первая применимая причина |
 |---|---|---|
-| 1 | BINDING_INACTIVE | `active` ложно; `sessionEpoch` binding ≠ текущей; `nowMs ≥ issuedAtMs + ttlMs` (сумма в int64, без переполнения) |
-| 2 | TX_PLAYER_INVALID | говорящего нет в таблице; его state не BOUND_ACTIVE; generation ≠ txGeneration |
-| 3 | TX_DEVICE_INVALID | рации отправителя нет в таблице; `!CanAccess(txPlayerId)`; `!Allows(networkTypeId, channelId)` |
+| 1 | BINDING_INACTIVE | `active` ложно; epoch binding ≠ текущей; `nowMs < issuedAtMs`; `nowMs − issuedAtMs ≥ ttlMs` |
+| 2 | TX_PLAYER_INVALID | говорящего нет среди игроков; его state не BOUND_ACTIVE; его generation ≠ txGeneration |
+| 3 | TX_DEVICE_INVALID | рации отправителя нет; трансивера (txDeviceId, txTransceiverIndex) нет; `!CanAccess(txPlayerId)`; `!Allows(networkTypeId, channelId)` |
 | 4 | SELF_PAIR | deviceId слушателя равен txDeviceId (любой индекс трансивера) |
-| 5 | RX_PLAYER_INVALID | слушателя нет в таблице; state не BOUND_ACTIVE |
-| 6 | RX_DEVICE_INVALID | рации слушателя нет в таблице; `!CanAccess(rxPlayerId)`; `!Allows(networkTypeId, channelId)` |
-| 7 | STATE_MISMATCH | у любой стороны: наблюдение S2 не той рации или трансивера (deviceId, index не равны binding/слушателю); питание lifecycle ≠ питанию наблюдения |
+| 5 | RX_PLAYER_INVALID | epoch слушателя ≠ текущей; слушателя нет среди игроков; его state не BOUND_ACTIVE; его generation ≠ generation слушателя |
+| 6 | RX_DEVICE_INVALID | рации слушателя нет; трансивера (deviceId, transceiverIndex) нет; `!CanAccess(playerId)`; `!Allows(networkTypeId, channelId)` |
+| 7 | STATE_MISMATCH | у любой стороны питание рации в lifecycle ≠ питанию наблюдения S2 |
 | 8 | DEVICE_QUERY | S2 Build вернул не READY; код S2 сохраняется в паре |
 | 9 | EVALUATED | S2 READY; бюджет посчитан evaluator |
 
-Generation слушателя не проверяется: в слушателе её нет, а state берётся из той же таблицы. Это упрощение
-v0.1 (вопрос §8).
+Шаг 1: разность `nowMs − issuedAtMs` вычисляется только при `nowMs ≥ issuedAtMs`, оба значения ≥ 0, поэтому
+переполнения int32 нет. Сумма `issuedAtMs + ttlMs` не используется.
 
-**REQ-PS-05. S2 вызывается так:** TX — наблюдение и профиль рации отправителя, RX — рации слушателя, контекст —
-общий. Сборщик S2 по-прежнему проверяет питание, настройку, частоту и ключ. Служба этих правил не дублирует.
+**REQ-PS-06. S2 вызывается так:** TX — наблюдение и профиль трансивера отправителя, RX — трансивера слушателя,
+контекст — общий. Сборщик S2 по-прежнему проверяет домены, профиль, питание, настройку, частоту и ключ. Служба этих
+правил не дублирует.
 
-**REQ-PS-06. Бюджет** — результат существующего `evaluator.Evaluate(query)` без изменений: `valid`, `reason`,
+**REQ-PS-07. Бюджет** — результат существующего `evaluator.Evaluate(query)` без изменений: `valid`, `reason`,
 `state`, `intelligibility`, `sinrDb`. EVALUATED с невалидным бюджетом — нормальный исход: холм, дальность или модель
 могли отказать. Служба его не скрывает и не превращает в другой код.
 
 ## 4. Выход
 
-**REQ-PS-07.** Список из `bindings × listeners` записей при OK. Порядок по ключу:
+**REQ-PS-08.** Список из `bindings × listeners` записей при OK. Порядок по ключу:
 `(leaseId, rxDeviceId, rxTransceiverIndex, rxPlayerId)`, все по возрастанию. Входной порядок на выход не влияет.
 
 | Поле записи | Значение |
@@ -107,7 +130,7 @@ v0.1 (вопрос §8).
 
 ## 5. Детерминизм и стоимость
 
-**REQ-PS-08.** Одинаковый вход в любом порядке элементов массивов даёт одинаковый выход. S2 вызывается не больше
+**REQ-PS-09.** Одинаковый вход в любом порядке элементов массивов даёт одинаковый выход. S2 вызывается не больше
 одного раза на пару и только при коде ≥ 8; evaluator — только для READY. Эталон считает эти вызовы, векторы их
 фиксируют: стоимость — часть контракта (нагрузка 30/60, PLAN Э10).
 
@@ -121,12 +144,15 @@ v0.1 (вопрос §8).
 | CT-PS-001 | 2 binding × 3 слушателя: полный список, порядок, бюджеты; перестановка входа не меняет выход |
 | CT-PS-002 | каждый код вызова §2 по отдельности и несколько нарушений сразу; при отказе 0 вызовов S2 и evaluator |
 | CT-PS-003 | каждый код пары §3 по отдельности и несколько причин сразу |
-| CT-PS-004 | TTL: `nowMs = issuedAtMs + ttlMs − 1` активен, `= issuedAtMs + ttlMs` нет; большие значения без переполнения int32 |
+| CT-PS-004 | время: `nowMs = issuedAtMs − 1` и `= issuedAtMs + ttlMs` неактивны, `= issuedAtMs + ttlMs − 1` активен; issuedAtMs и ttlMs у int.MAX |
 | CT-PS-005 | SELF_PAIR при другом индексе трансивера той же рации |
-| CT-PS-006 | DEVICE_QUERY для каждого не-READY кода S2, достижимого после фильтров службы |
-| CT-PS-007 | EVALUATED с невалидным бюджетом (слишком далеко или вне модели) остаётся EVALUATED |
-| CT-PS-008 | асимметрия: обмен ролями двух раций меняет бюджет согласно их профилям |
-| CT-PS-009 | счётчики вызовов S2 и evaluator совпадают с числом пар на шагах 8–9 |
+| CT-PS-006 | два слушателя на двух трансиверах одной рации в одном вызове |
+| CT-PS-007 | устаревший слушатель: другая generation или epoch → RX_PLAYER_INVALID |
+| CT-PS-008 | DEVICE_QUERY для каждого не-READY кода S2, достижимого после фильтров службы |
+| CT-PS-009 | EVALUATED с невалидным бюджетом (слишком далеко или вне модели) остаётся EVALUATED |
+| CT-PS-010 | асимметрия: обмен ролями двух раций меняет бюджет согласно их профилям |
+| CT-PS-011 | счётчики вызовов S2 и evaluator совпадают с числом пар на шагах 8–9 |
+| CT-PS-012 | leaseId = int.MAX принимается; границы лимитов 4096 и 65536 |
 
 Приёмка S3: согласованный корпус, независимый код, Enforce parity с отрицательными контролями, общая регрессия.
 
@@ -139,6 +165,5 @@ linkId для логической пары talker → listener → network, lin
 ## 8. Открытые вопросы
 
 - Взаимные помехи нескольких передач на одном канале и захват канала. В S3 помеха задаётся только контекстом.
-- Generation слушателя (REQ-PS-04, шаг 5): нужен ли явный generation в записи слушателя, как у binding.
-- Один контекст и один evaluator на вызов: разные полосы в одном вызове пока не поддерживаются.
+- Одна полоса и один контекст на вызов — граница S3; несколько полос — позже.
 - Стоимость при 30/60 игроках — Э10, runtime.
