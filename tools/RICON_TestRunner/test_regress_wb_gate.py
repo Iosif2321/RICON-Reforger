@@ -15,6 +15,9 @@ class WorkbenchGateTest(unittest.TestCase):
         for line in ('SCRIPT : [RICON_TEST] FAIL case: expected mismatch',
                      'SCRIPT : [RICON_PAIR] done: FAIL',
                      'SCRIPT : [RICON_TEST] suite lifecycle: FAIL',
+                     'SCRIPT : [RICON_TEST] L2_ENFORCE_PARITY_FAIL',
+                     'SCRIPT : [RICON_TEST] LIFECYCLE_ENFORCE_PARITY_FAIL',
+                     'SCRIPT : [RICON_TEST] VON_SEAM_ENFORCE_PARITY_FAIL',
                      'SCRIPT : [RICON_CUSTOM] fail: assertion'):
             with self.subTest(line=line):
                 self.assertIsNotNone(self.pattern.search(line))
