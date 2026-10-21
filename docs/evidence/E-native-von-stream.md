@@ -1,7 +1,7 @@
 # Native VoN — узкий статический разбор VonStream
 
 Дата: 2026-10-21. Автор: codex по работе codex.native_radio.
-Статус первого прохода: AGENT-REVIEWED, claude agora #3085; нового helper-прохода ниже — OWN_CHECKED, ревью ожидается.
+Статус: AGENT-REVIEWED; первый проход — claude agora #3085, дополнительный helper — #3105.
 Разрешение владельца: agora #2960 и #2970 (Ghidra при необходимости). Результаты: #3052 и #3058.
 Уровень: **NATIVE_RE**, две точные функции и ограниченная RTTI/vtable-проверка. Runtime/звук не проверялись.
 

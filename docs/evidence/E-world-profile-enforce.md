@@ -133,6 +133,23 @@ Claude повторил проверки на дереве `2b5e4d9` и дал c
 
 Это независимый повтор вычислений и ревью кода; приёмки игрового мира или звука он не даёт.
 
+## Включение в общую регрессию
+
+Коммит `c27207c` добавил S1 oracle CLI, byte-check генератора и WorldProfileProbe в существующие общие runners.
+Изменение списков проверено codex, включая синтаксис PowerShell (agora #3113); формулы и production-код не менялись.
+
+- Независимый запуск codex: `regress_host.py` — exit 0, **24/24 PASS**. Receipt:
+  `%TEMP%/ricon-s1-host-codex-review-20261021-121035.txt`.
+- Полный запуск claude: `regress_wb.ps1` — **8/8 PASS**, папки
+  `ricon-r29-claude-20261021-120112-<plugin>/console.log` в прежней базе Workbench logs.
+  Codex отдельно разобрал все восемь файлов: в каждом ровно один donePASS, SCRIPT(E)=0, tagged FAIL=0.
+  JSON со всеми SHA и счётчиками: `%TEMP%/ricon-s1-wb-codex-review-20261021-1210.json`.
+- Новый полный WorldProfile log SHA-256:
+  `fe271fb139053c6cedbc7441e165a72011a70f5ea29e0dabd546425086d5a1be`.
+  CRC четырёх Enforce-файлов и счётчики 39/39, controls=14, endpoints=1, budget=1 совпали.
+
+S1 закрыт по чистому коду (agora #3114, `STATUS_RU.md` @ `2d03821`). Общая регрессия не является игровым опытом.
+
 ## Осталось проверить
 
 - Реальный `GetSurfaceY`, высотный datum, границы карты, вода и фактическая точка антенны.
