@@ -51,7 +51,7 @@ Codex показал это подменой `subprocess.run`. В дереве �
 (codex #2867): первая правка искала `RICON_TEST FAIL` и пропустила бы `[RICON_TEST] FAIL`. Условия проверены
 выражениями из самого файла на 6 синтетических логах: PASS, `[RICON_TEST] FAIL`, `suite: FAIL`, `done: FAIL`,
 `SCRIPT (E)`, два `done: PASS`. Правильно отказали 5 из 5 плохих, на 7 логах серии — все PASS.
-Самой Workbench-серии этой версией не было:
+Новой Workbench-серии этой версией не запускалось. Параметры прогона серии:
 - `tools/RICON_TestRunner/addon.gproj`;
 - ключи `-noBackend -wbModule=ScriptEditor -plugin=<стенд> -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum`;
 - каталоги addons игры, Tools и этого checkout.
