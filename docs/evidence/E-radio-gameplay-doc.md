@@ -165,9 +165,11 @@
 
 ## Q4. Дальность, качество сигнала, глушение, антенны/релеи в SCR
 
-**Глушение** — в SCR-docs нет: поиск `jam|interferenc` по всем `interface*.html` пуст. DOC (отсутствие).
+**Глушение** — поиск `jam|interferenc` по всем `interface*.html` пуст. Это наблюдение по сигнатурам и описаниям
+в HTML; тела скриптов и native-код не проверены, поэтому отсутствие алгоритма помех не доказано. DOC (поиск).
 
-**Качество** нигде не вычисляется в SCR, а приходит входным `float quality`:
+**Качество** в проверенных API приходит входным `float quality`; вычисления quality в сигнатурах и описаниях
+HTML не найдено (тела скриптов не читались):
 - `SCR_VonDisplay.OnReceive(...)` `:133`;
 - `SCR_NameTagData.OnReceivedVON(playerId, receiver, frequency, quality)` `:212`;
 - `SCR_CampaignRadioMsg.OnDelivery(BaseTransceiver receiver, int freq, float quality)` `:132` и `SCR_TaskRadioMsg.OnDelivery` `:132`;
@@ -260,7 +262,8 @@
 
 1. Числа: частоты фракций, пулы групп и задач (`Min/Max/Offset`), шаг тюнинга, диапазоны по моделям радио — всё это в префабах и конфигах, не в docs.
 2. Значения перечислений `ERadioType`, `EFreqUnit`, `SCR_EVONAutoTuneFrequency/Role`, `SCR_ERadioCoverageStatus`, `EGadgetType.RADIO*`.
-3. Как движок считает `quality` (расстояние, мощность, рельеф) и есть ли какие-либо помехи; глушения в скриптах нет.
+3. Как движок считает `quality` (расстояние, мощность, рельеф) и есть ли какие-либо помехи. Поиск `jam|interferenc`
+   в HTML пуст, но тела скриптов и native-код не проверены.
 4. Фильтрует ли движок приём голоса по ключу шифрования (фракционный ключ). Скрипт только сопоставляет ключи в автотюне и в графе покрытия.
 5. Что меняет `ChangeRadioSettings(SCR_Faction)` на антенне и базе: ключ, частоту или дальность.
 6. Влияет ли покрытие Conflict (`SCR_CoverageRadioComponent`, `RELAY_BASE_RADIUS`, `GetRelayRadioRange`) на голосовую связь игроков или только на игровую логику (HQ-трафик, сервисы, спавн, подсказки).
