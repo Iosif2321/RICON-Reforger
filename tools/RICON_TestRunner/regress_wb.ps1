@@ -1,6 +1,7 @@
 # R29 Workbench regression (claude): each RICON probe plugin once, hidden, no world/Play/server.
 # Gate (added after the receipted run, codex #2859): a probe passes only with exit 0, exactly one "done: PASS",
-# no "SCRIPT (E)" and no "RICON_TEST FAIL"/"done: FAIL" lines; the script exits 1 if any probe fails.
+# no "SCRIPT (E)" and no tagged FAIL line ("[RICON_TEST] FAIL", "done: FAIL", "suite x: FAIL", codex #2867);
+# the script exits 1 if any probe fails.
 $steam = "C:\Program Files (x86)\Steam\steamapps\common"
 $wb = "$steam\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe"
 $repo = Split-Path (Split-Path $PSScriptRoot)
@@ -28,7 +29,7 @@ foreach ($plugin in $plugins) {
 	$lines = Get-Content $log
 	$done = @($lines | Select-String -SimpleMatch "done: PASS").Count
 	$errors = @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
-	$fails = @($lines | Select-String -Pattern "RICON_TEST FAIL|done: FAIL").Count
+	$fails = @($lines | Select-String -Pattern "\[RICON_[^\]]+\].*FAIL").Count  # [RICON_TEST] FAIL, done: FAIL, suite: FAIL
 	$ok = ($p.ExitCode -eq 0) -and ($done -eq 1) -and ($errors -eq 0) -and ($fails -eq 0)
 	if (-not $ok) { $failed++ }
 	"{0} {1} exit={2} donePass={3} scriptErrors={4} fails={5} logs={6}" -f $(if ($ok) { "PASS" } else { "FAIL" }),

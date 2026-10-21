@@ -47,8 +47,11 @@ Codex показал это подменой `subprocess.run`. В дереве �
 `e46db364061ea3b3a6b8e808255d06771f83525055fd37ad47b8955ee67d213b`, LF; при checkout `*.ps1` получает CRLF, и SHA
 рабочей копии будет другим). Тогда скрипт только собирал логи, а PASS определял разбор логов ниже. После
 правки (codex #2859) он сам проверяет каждый лог по тем же условиям и завершается с кодом 1, если хоть один
-стенд не прошёл. SHA новой версии — `0f578f83d1f4e284432844ef5cedaa6c697703589a5cce96ba736d30b82deb1b`. Проверка условий на 7 логах серии — все PASS; на синтетическом
-логе с `done: FAIL` — FAIL. Самой Workbench-серии этой версией не было:
+стенд не прошёл. SHA новой версии — `22443aad2d115087ddebad5af2320e25a5030f4912290d98cea196c9289ed662`. В ней шаблон FAIL исправлен на реальный тег `[RICON_…] … FAIL`
+(codex #2867): первая правка искала `RICON_TEST FAIL` и пропустила бы `[RICON_TEST] FAIL`. Условия проверены
+выражениями из самого файла на 6 синтетических логах: PASS, `[RICON_TEST] FAIL`, `suite: FAIL`, `done: FAIL`,
+`SCRIPT (E)`, два `done: PASS`. Правильно отказали 5 из 5 плохих, на 7 логах серии — все PASS.
+Самой Workbench-серии этой версией не было:
 - `tools/RICON_TestRunner/addon.gproj`;
 - ключи `-noBackend -wbModule=ScriptEditor -plugin=<стенд> -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum`;
 - каталоги addons игры, Tools и этого checkout.
@@ -59,7 +62,8 @@ PASS засчитывается, только если выполнены все
 - exit 0;
 - ровно одна строка `done: PASS`;
 - 0 строк `SCRIPT (E)`;
-- 0 строк `RICON_TEST FAIL` и `done: FAIL`.
+- 0 строк с тегом `[RICON_…]` и словом FAIL. Подсчёт по реальному тегу (codex #2867): в 7 логах нет ни одной
+  строки с подстрокой «FAIL».
 
 Все семь — PASS.
 
