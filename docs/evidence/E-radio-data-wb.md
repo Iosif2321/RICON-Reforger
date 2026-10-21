@@ -104,7 +104,8 @@ R-107M — rd05; RF-10 — rd09; ключи — rd12; частоты — rd13; �
   Возможно, так поиск отвечает на пустой результат, но это не установлено.
 - По всем 196 `.conf` под `Sounds/` строки `TransmissionQuality` нет (rd21). Все кандидаты открыты, поэтому результат отрицательный и валидный.
   Поиск `quality`/`distance`/`frequency` в `.conf` не делался — не хватило бюджета.
-- **UNKNOWN:** граф von.acp (куда подключён TransmissionQuality, кривые). Нужен Audio Editor (WB-order-link-quality.md). Отдельно этим занимается codex.native_radio.
+- **UNKNOWN:** граф von.acp (куда подключён TransmissionQuality, кривые). Нужен Audio Editor (WB-order-link-quality.md) — ветка claude. Отдельное native-исследование codex.native_radio
+читает код движка, а не ACP (E-native-von-stream.md, codex #3092).
 
 ## 5. Частоты и ключи фракций
 
