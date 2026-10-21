@@ -311,7 +311,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.write:
         Path(args.write).write_text(json.dumps(document(), ensure_ascii=False, indent=1, allow_nan=False) + "\n",
-                                    encoding="utf-8")
+                                    encoding="utf-8", newline="\n")  # LF on every OS: blob SHA = file SHA
         print(f"written {args.write}")
         return 0
     data = json.loads(Path(args.check).read_text(encoding="utf-8"))
