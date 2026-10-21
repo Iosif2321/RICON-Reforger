@@ -35,6 +35,7 @@ run("snapshot", [str(O / "snapshot_oracle.py"), "--check", str(V / "snapshot_v1.
 run("von_seam", [str(O / "von_seam_oracle.py"), "--check", str(V / "von_seam_v1.json")])
 run("cellular", [str(O / "cellular_oracle.py"), "--check", str(V / "cellular_scenarios_v1.json")])
 run("world_profile", [str(O / "world_profile_oracle.py"), "--check", str(V / "world_profile_v1.json")], "PASS")
+run("radio_device", [str(O / "radio_device_oracle.py"), "--check", str(V / "radio_device_v1.json")], "PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
 run("p527 checker (codex)", ["-I", str(T / "check_p527_complex.py")], "PASS")
@@ -47,7 +48,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_sensitivity_points.py", V / "l2_sensitivity_anchors_v1.json",
                        WG / "RICON_SensitivityPoints.c"),
                       ("gen_world_profile_fixture.py", V / "world_profile_v1.json",
-                       TESTS / "RICON_WorldProfileFixtures.c")):
+                       TESTS / "RICON_WorldProfileFixtures.c"),
+                      ("gen_radio_device_fixture.py", V / "radio_device_v1.json",
+                       TESTS / "RICON_RadioDeviceFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes

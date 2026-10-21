@@ -9,7 +9,8 @@ $gp = Join-Path $PSScriptRoot "addon.gproj"
 $addons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons,$repo\addons"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $plugins = @("RICON_TestRunnerPlugin", "RICON_L0ProbePlugin", "RICON_LinkPhysicsProbePlugin", "RICON_P526MatrixProbePlugin",
-	"RICON_RouteProbePlugin", "RICON_SnapshotProbePlugin", "RICON_SensitivityProbePlugin", "RICON_WorldProfileProbePlugin")
+	"RICON_RouteProbePlugin", "RICON_SnapshotProbePlugin", "RICON_SensitivityProbePlugin", "RICON_WorldProfileProbePlugin",
+	"RICON_RadioDeviceProbePlugin")
 $failed = 0
 foreach ($plugin in $plugins) {
 	$logsDir = "ricon-r29-claude-$stamp-$plugin"
