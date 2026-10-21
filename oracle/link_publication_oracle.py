@@ -156,7 +156,8 @@ def preflight(inp, reg, has_source):
     bm = {b["leaseId"]: b for b in arrays[0]}
     for p in arrays[1]:
         b = bm.get(p["leaseId"])
-        if b is None or b["txDeviceId"] != p["txDeviceId"]:
+        if b is None or b["txDeviceId"] != p["txDeviceId"] \
+                or (p["pairCode"] != "BINDING_INACTIVE" and b["sessionEpoch"] != inp["sessionEpoch"]):
             return "IDENTITY_MISMATCH"
     if reg["sessionEpoch"] == inp["sessionEpoch"]:
         pm = {key(p): p for p in arrays[1]}
@@ -394,9 +395,14 @@ def build_cases():
     add("C44", "Invalid limits важнее invalid input", t)
     t = baseline(); t[0]["pairResult"]["pairs"][0]["sinrDb"] = 1e40
     add("C45", "Конечное Python число вне float32", t)
+    t = baseline(); t[0]["bindings"][0]["sessionEpoch"] = 6
+    add("C46", "Старый S3 нельзя пометить новой эпохой", t)
+    t[0]["pairResult"]["pairs"] = [pair(code="BINDING_INACTIVE")]
+    add("C47", "Старая эпоха допустима для неактивного binding", t)
     t = baseline(); t[1]["highWaterLinkId"] = MAX-1; add("E01", "Последний linkId MAX допустим", t)
     t = established(); t[2]["epoch"] = 8; add("E02", "Источник уже сменил эпоху", t)
     t = established(); t[0]["sessionEpoch"] = t[2]["epoch"] = 8; t[0]["nowMs"] = 0
+    t[0]["bindings"][0]["sessionEpoch"] = 8
     add("E03", "Внешняя смена эпохи допускает новое время", t)
     t = baseline(); t[2]["epoch"] = 0; add("E04", "Неавторитетный/null adapter", t)
     t = baseline(); t[0]["pairResult"]["pairs"] += [pair(index=1)]; t[2]["rotateAt"] = 2

@@ -8875,6 +8875,170 @@
    }
   },
   {
+   "id": "C46",
+   "title": "Старый S3 нельзя пометить новой эпохой",
+   "input": {
+    "nowMs": 100,
+    "sessionEpoch": 7,
+    "ttlMs": 1000,
+    "qualityDelta": 0.125,
+    "limits": {
+     "maxBindings": 8,
+     "maxPairs": 32,
+     "maxActiveLinks": 16
+    },
+    "bindings": [
+     {
+      "leaseId": 11,
+      "sessionEpoch": 6,
+      "txPlayerId": 1,
+      "txGeneration": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "networkTypeId": 1,
+      "channelId": 1,
+      "active": true,
+      "issuedAtMs": 0,
+      "ttlMs": 10000
+     }
+    ],
+    "pairResult": {
+     "callCode": "OK",
+     "s2Calls": 1,
+     "evaluatorCalls": 1,
+     "pairs": [
+      {
+       "leaseId": 11,
+       "txDeviceId": 101,
+       "rxPlayerId": 2,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "pairCode": "EVALUATED",
+       "hasDeviceCode": true,
+       "deviceCode": "READY",
+       "hasBudget": true,
+       "valid": true,
+       "reason": "OK",
+       "state": "CLEAN",
+       "intelligibility": 0.75,
+       "sinrDb": 16.0
+      }
+     ]
+    }
+   },
+   "registry": {
+    "sessionEpoch": 7,
+    "highWaterLinkId": 0,
+    "lastTickMs": -1,
+    "needsFullResync": true,
+    "entries": []
+   },
+   "source": {
+    "epoch": 7,
+    "sequences": {}
+   },
+   "expect": {
+    "callCode": "IDENTITY_MISMATCH",
+    "snapshots": [],
+    "registry": {
+     "sessionEpoch": 7,
+     "highWaterLinkId": 0,
+     "lastTickMs": -1,
+     "needsFullResync": true,
+     "entries": []
+    },
+    "sequenceCalls": 0,
+    "epochReads": 0,
+    "requiresFullResync": false,
+    "sourceState": {
+     "epoch": 7,
+     "sequences": {}
+    }
+   }
+  },
+  {
+   "id": "C47",
+   "title": "Старая эпоха допустима для неактивного binding",
+   "input": {
+    "nowMs": 100,
+    "sessionEpoch": 7,
+    "ttlMs": 1000,
+    "qualityDelta": 0.125,
+    "limits": {
+     "maxBindings": 8,
+     "maxPairs": 32,
+     "maxActiveLinks": 16
+    },
+    "bindings": [
+     {
+      "leaseId": 11,
+      "sessionEpoch": 6,
+      "txPlayerId": 1,
+      "txGeneration": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "networkTypeId": 1,
+      "channelId": 1,
+      "active": true,
+      "issuedAtMs": 0,
+      "ttlMs": 10000
+     }
+    ],
+    "pairResult": {
+     "callCode": "OK",
+     "s2Calls": 1,
+     "evaluatorCalls": 1,
+     "pairs": [
+      {
+       "leaseId": 11,
+       "txDeviceId": 101,
+       "rxPlayerId": 2,
+       "rxDeviceId": 202,
+       "rxTransceiverIndex": 0,
+       "pairCode": "BINDING_INACTIVE",
+       "hasDeviceCode": false,
+       "deviceCode": "NULL_INPUT",
+       "hasBudget": false,
+       "valid": false,
+       "reason": "NUMERIC_FAILURE",
+       "state": "LOST",
+       "intelligibility": 0.0,
+       "sinrDb": 0.0
+      }
+     ]
+    }
+   },
+   "registry": {
+    "sessionEpoch": 7,
+    "highWaterLinkId": 0,
+    "lastTickMs": -1,
+    "needsFullResync": true,
+    "entries": []
+   },
+   "source": {
+    "epoch": 7,
+    "sequences": {}
+   },
+   "expect": {
+    "callCode": "OK",
+    "snapshots": [],
+    "registry": {
+     "sessionEpoch": 7,
+     "highWaterLinkId": 0,
+     "lastTickMs": 100,
+     "needsFullResync": false,
+     "entries": []
+    },
+    "sequenceCalls": 0,
+    "epochReads": 1,
+    "requiresFullResync": true,
+    "sourceState": {
+     "epoch": 7,
+     "sequences": {}
+    }
+   }
+  },
+  {
    "id": "E01",
    "title": "Последний linkId MAX допустим",
    "input": {
@@ -9106,7 +9270,7 @@
     "bindings": [
      {
       "leaseId": 11,
-      "sessionEpoch": 7,
+      "sessionEpoch": 8,
       "txPlayerId": 1,
       "txGeneration": 1,
       "txDeviceId": 101,

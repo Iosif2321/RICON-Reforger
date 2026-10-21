@@ -106,6 +106,7 @@ class LinkPublicationTest(unittest.TestCase):
         self.assertEqual(out["registry"], lp.empty_registry(8))
         self.assertEqual(out["sourceState"], {"epoch": 8, "sequences": {"2": 1}})
         inp["sessionEpoch"] = 8
+        inp["bindings"][0]["sessionEpoch"] = 8
         out = lp.evaluate(inp, out["registry"], out["sourceState"])
         self.assertEqual(out["callCode"], "OK")
         self.assertTrue(out["requiresFullResync"])
@@ -152,6 +153,7 @@ class LinkPublicationTest(unittest.TestCase):
         path = Path(__file__).with_name("vectors") / "pair_service_v1.json"
         c = json.loads(path.read_text(encoding="utf-8"))["cases"][0]
         inp, reg, spec = lp.baseline()
+        inp["sessionEpoch"] = reg["sessionEpoch"] = spec["epoch"] = c["input"]["sessionEpoch"]
         inp["bindings"] = copy.deepcopy(c["input"]["bindings"])
         inp["pairResult"] = copy.deepcopy(c["expect"])
         out = lp.evaluate(inp, reg, spec)
@@ -159,6 +161,10 @@ class LinkPublicationTest(unittest.TestCase):
         eligible = [p for p in c["expect"]["pairs"] if p["pairCode"] == "EVALUATED" and p["valid"]]
         self.assertEqual(len(out["snapshots"]), len(eligible))
         self.assertTrue(eligible)
+        inp["sessionEpoch"] += 1
+        reg["sessionEpoch"] += 1
+        spec["epoch"] += 1
+        self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "IDENTITY_MISMATCH")
 
     def test_input_permutations_preserve_all_keys_and_ids(self):
         inp, reg, spec = lp.baseline()

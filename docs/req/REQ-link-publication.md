@@ -78,7 +78,7 @@ requiresFullResync=false и глубокая копия исходного regis
 | INVALID_REGISTRY (4) | поле/элемент registry вне §1 или null entry |
 | DUPLICATE (5) | повтор leaseId или txDeviceId в bindings; повтор ключа пары; повтор ключа или linkId в entries |
 | UPSTREAM_REFUSED (6) | pairResult.callCode != OK; известный код S3, но весь такт S3 отказал |
-| IDENTITY_MISMATCH (7) | пара не найдена по leaseId; txDeviceId не совпал с binding; у существующего ключа сменились txPlayerId/txDeviceId/txIndex |
+| IDENTITY_MISMATCH (7) | пара не найдена по leaseId; txDeviceId не совпал с binding; при pairCode≠BINDING_INACTIVE epoch binding не равна input.epoch; у существующего ключа сменились txPlayerId/txDeviceId/txIndex |
 | CLOCK_ROLLBACK (8) | registry.epoch=input.epoch и lastTick≥0 и nowMs<lastTick |
 | ACTIVE_LIMIT (9) | число сохраняемых и новых связей после §3 больше maxActiveLinks |
 | ID_EXHAUSTED (10) | новым связям не хватает MAX−highWater id; wrap/reuse запрещены |
@@ -94,6 +94,8 @@ hasDeviceCode эквивалентен DEVICE_QUERY или EVALUATED. Для EVA
 При наличии: valid эквивалентен reason=OK; invalid требует LOST/Q=0/sinr=0; LOST всегда Q=0.
 Счётчики S3 s2Calls/evaluatorCalls — int 0..MAX; S3b их не использует и не пересчитывает.
 Неизвестный enum/структурный дефект имеет INVALID_ELEMENT даже при отказе upstream.
+После ротации недостаточно заменить input.sessionEpoch: требуется пересчитать S3 и передать актуальные bindings.
+Старые binding допустимы только у BINDING_INACTIVE, чтобы выдать завершающий LOST.
 
 Для ACTIVE_LIMIT и ID_EXHAUSTED учитываются правила §3, а при другой registry.epoch старый реестр
 считается пустым, highWater=0. До epoch-reset из §5 смена метаданных старого ключа и CLOCK_ROLLBACK
