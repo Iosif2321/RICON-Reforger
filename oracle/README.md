@@ -338,3 +338,16 @@ REQ-L2 §6 из абстрактного источника высот. Исто
 
 Проверка: `python oracle/world_profile_oracle.py --check oracle/vectors/world_profile_v1.json` →
 `WORLD_PROFILE_ORACLE_PASS`; `--write` перезаписывает файл. Все высоты и параметры — TEST_ONLY.
+
+## Служба пар: `vectors/pair_service_v1.json` (S3, agora #3172)
+
+Эталон `pair_service_oracle.py` по `docs/req/REQ-pair-service.md` v0.2. Один вызов: активные передачи
+(binding DTO) × слушатели. Сначала отказ всего вызова (C01–C30), затем код каждой пары по нормативному порядку
+(B01–B27), сборка запроса S2 (`radio_device_oracle.evaluate`, S01–S09) и бюджет свободного пространства
+(`ricon_oracle.evaluate_budget`, E01–E04). P01 — базовая сцена 2×3, P02 — та же сцена с переставленными массивами.
+
+В ожидании каждого случая — код вызова, все пары по ключу `(leaseId, rxDeviceId, rxTransceiverIndex, rxPlayerId)`
+и счётчики вызовов S2 и evaluator. Допуск Enforce: SINR 0.05 дБ, Q 0.002; состояния выбраны далеко от порогов.
+
+Проверка: `python oracle/pair_service_oracle.py oracle/vectors/pair_service_v1.json --check` →
+`PAIR_SERVICE_ORACLE_PASS`; `--write` перезаписывает файл. Все параметры раций — TEST_ONLY.
