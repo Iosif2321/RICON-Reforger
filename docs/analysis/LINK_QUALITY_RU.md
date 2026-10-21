@@ -222,7 +222,7 @@ ITU-R P.527-6 (`docs/evidence/E-web6-p527-ground.md`):
 - Рекомендации шага здесь нет: это измерение на синтетических формах. Реальный шаг зависит от поставщика высот
   из мира, а его ещё нет.
 
-## Где RICON совпадает с физикой и с требованиями
+## Где код RICON совпадает с эталоном и требованиями
 
 | Что | Уровень | Где |
 |---|---|---|
@@ -232,10 +232,13 @@ ITU-R P.527-6 (`docs/evidence/E-web6-p527-ground.md`):
 | Оценщик связи с L2 и моделями шума на 7 точках | `ENFORCE_PARITY` | `docs/evidence/E-physics-enforce.md` |
 | Проверка маршрута (цепочка ног, худшее состояние, минимум качества) — 48 векторов | `ENFORCE_PARITY` | `docs/evidence/E-route-enforce.md` |
 | Порядок и приём снимков связи — 43 из 46 векторов (3 выдачи номеров не исполнены без контекста сервера) | `ENFORCE_PARITY` | `docs/evidence/E-snapshot-enforce.md` |
-| Модель рельефа §4.5 на ровной земле против two-ray: −7…+5 дБ в 12 точках (сравнение двух моделей) | `ORACLE` | реестр, D-001 |
+| 16 опорных точек: грунты P.527-6 и Fig. 24, горизонтальная поляризация, фазы вершины холма | `ENFORCE_PARITY` | `docs/evidence/E-sensitivity-enforce.md` |
+| Модель рельефа §4.5 на ровной земле против two-ray: −7…+5 дБ в 12 точках (сравнение двух моделей, не совпадение) | `ORACLE` | реестр, D-001 |
 
-Это доказывает, что код считает по требованиям. Это **не** доказывает, что требования описывают реальную связь в
-игре: высот рельефа из мира нет, параметры грунта и раций не измерены.
+Это доказывает, что код считает по требованиям, а требования — по выбранным стандартам ITU. Это **не**
+доказывает, что эти модели описывают реальную связь в игре: измерений нет, высот рельефа из мира нет, параметры
+грунта и раций не измерены. Все строки таблицы проверены итоговой регрессией спринта 29
+(`docs/evidence/E-final-regression.md`).
 
 ## Прямой голос
 
@@ -297,7 +300,7 @@ ITU-R P.527-6 (`docs/evidence/E-web6-p527-ground.md`):
 | D-002 | холм уменьшает потери по §4.5 | ORACLE | OPEN, независимый источник не найден (спринт 26) |
 | D-003 | шум среды заметно сокращает дальность УКВ (1.2–4.1 раза в матрице) | ORACLE | наблюдение |
 | D-004 | шум среды не даёт «потеряно» | ORACLE + ENFORCE_PARITY | вопрос владельцу #2294 |
-| D-005 | выше 250 МГц шум города занижен | ORACLE + ENFORCE_PARITY + DOC | правило REQ-LE-63 не выбрано |
+| D-005 | выше 250 МГц RICON берёт опорный шум; по данным P.372-17 расчётный шум города выше него на 3–9 дБ (400–425 МГц, NF 7–10 дБ) | ORACLE + ENFORCE_PARITY + DOC | правило REQ-LE-63 не выбрано |
 | D-006 | ванильная дальность — одно число на передатчик | WORKBENCH_STATIC + ORACLE | нужен опыт |
 | D-007 | сотовой связи в RICON нет | WORKBENCH_STATIC + ORACLE | этапы Э8a/Э8b |
 | D-008 | грунт, поляризация и шаг профиля не заданы по умолчанию, а выбор меняет дальность | WORKBENCH_STATIC + ORACLE + ENFORCE_PARITY (16 точек) | выбор для карт OPEN (спринт 27) |
@@ -319,6 +322,13 @@ python -m unittest discover -s oracle -p "test_*.py"
 python -I oracle/link_physics_oracle.py --check oracle/vectors/link_scenarios_v1.json
 python -I oracle/link_physics_oracle.py --check oracle/vectors/link_probe_points_v1.json
 python -I oracle/cellular_oracle.py --check oracle/vectors/cellular_scenarios_v1.json
+python -I oracle/sensitivity_oracle.py            # около 5 мин
+python -I oracle/sensitivity_oracle.py --anchors
+python -I tools/RICON_TestRunner/regress_host.py .   # все проверки выше одним прогоном, exit 1 при любом FAIL
 ```
 
-Workbench-проверки кода — команды в `docs/evidence/E-l0-enforce.md`, `docs/evidence/E-physics-enforce.md` и `docs/evidence/E-p526-matrix-enforce.md` (336 точек матрицы, 1008 вычислений).
+Workbench-проверки кода:
+- все 7 стендов одним прогоном: `tools/RICON_TestRunner/regress_wb.ps1`, exit 1 при любом FAIL;
+- команды по отдельности — в `docs/evidence/E-l0-enforce.md`, `E-physics-enforce.md`, `E-p526-matrix-enforce.md`,
+  `E-route-enforce.md`, `E-snapshot-enforce.md`, `E-sensitivity-enforce.md`;
+- итог последнего прогона — `docs/evidence/E-final-regression.md`.
