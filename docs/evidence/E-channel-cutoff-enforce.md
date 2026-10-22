@@ -1,6 +1,8 @@
 # P1: Enforce-оценка отсечки полезного вклада совпадает с замороженным корпусом
 
-Дата: 2026-10-22. Автор кода и стенда: claude. Статус: OWN_CHECKED, ждёт независимого ревью codex.
+Дата: 2026-10-22. Автор кода и стенда: claude. Статус: AGENT-REVIEWED — codex прочитал исходник и повторил пробник
+(agora #3402; `ricon-cutoff-codex-20261022-224631`, SHA `8776128f…1339`; receipts `p1-native-run-codex-20261022.json`,
+`p1-log-recheck-codex-own.json`, max ΔU 1.97·10⁻⁶ дБ; `b616dc9`, `E-channel-cutoff.md`).
 Уровень: `ENFORCE_PARITY` (исполнено в Workbench без мира, Play и сервера), не runtime и не калибровка.
 Основание: REQ-channel-cutoff v0.1 AGENT-REVIEWED (`623f094`), корпус `channel_cutoff_v1.json` заморожен по LF SHA
 `b4ff545d34de7859aae3d71678689a727c835c57f46d429df1a722d492c654d8` (agora #3348, #3361, #3370). До кода claude
