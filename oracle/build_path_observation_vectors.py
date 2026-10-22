@@ -21,7 +21,7 @@ def air(x, y=2.0, z=0.0):
     return {"position": [x, y, z], "medium": "AIR", "depthM": 0}
 
 
-def wet(x, depth, y=-1.0, z=0.0):
+def wet(x, depth, y=2.0, z=0.0):
     return {"position": [x, y, z], "medium": "WATER", "depthM": depth}
 
 
@@ -67,7 +67,7 @@ CASES = [
     ("O10", "Покрытие без семейства", mutate(BASE, lambda b: b["coverage"].pop("VEHICLE"))),
     ("O11", "Нулевая длина пути", obs(air(5), air(5))),
     ("O12", "Глубина у антенны в воздухе", mutate(BASE, lambda b: b["tx"].update(depthM=1))),
-    ("O13", "Отрицательная глубина", obs(wet(0, -0.5), air(1000))),
+    ("O13", "Отрицательная глубина", obs(wet(0, -0.5), air(1000), segments=[seg("WATER", 0, 0.5, "sea")])),
     ("O14", "Одинаковый start: порядок семейств и побайтный ключ", SAME_START),
     ("O15", "Нарушен порядок семейств при одинаковом start",
      mutate(SAME_START, lambda b: b["segments"].insert(0, b["segments"].pop(3)))),
@@ -78,35 +78,40 @@ CASES = [
     ("O20", "Координата вне binary32", mutate(BASE, lambda b: b["rx"]["position"].__setitem__(0, 1e39))),
     ("O21", "Касание сегментов одного объекта допустимо",
      obs(air(0), air(100), segments=[seg("STRUCTURE", 10, 20, "h"), seg("STRUCTURE", 20, 30, "h")])),
-    ("O22", "WATER-сегмент у самой антенны недопустим", mutate(BASE, lambda b: b["segments"].append(seg("WATER", 0, 3, "pond")))),
     ("O23", "Недопустимые символы ключа", mutate(BASE, lambda b: b["segments"].append(seg("STRUCTURE", 1, 2, 'x"); injected(')))),
     ("O24", "binary32 до проверки: 16777216 и 16777217 совпадают, сегмент пуст",
      obs(air(0, 2.0), air(20000000, 2.0), segments=[seg("STRUCTURE", 16777216, 16777217, "long")])),
-    ("W01", "Антенна на 0.5 м под водой", obs(wet(0, 0.5), air(1000))),
-    ("W02", "Приёмник на 2 м под водой", obs(air(0), wet(1000, 2.0))),
-    ("W03", "Оба конца в воде", obs(wet(0, 1.0), wet(800, 1.5))),
+    ("W01", "Антенна TX в воде, 0.5 м воды по пути", obs(wet(0, 0.5), air(1000), segments=[seg("WATER", 0, 0.5, "sea")])),
+    ("W02", "Антенна RX в воде, 2 м воды", obs(air(0), wet(1000, 2.0), segments=[seg("WATER", 998, 1000, "lake.1")])),
+    ("W03", "Оба конца в воде, вода у каждого конца", obs(wet(0, 1.0), wet(800, 1.5),
+     segments=[seg("WATER", 0, 4, "sea"), seg("WATER", 790, 800, "lake.1")])),
     ("W04", "Водный отрезок посреди пути", POND),
-    ("W05", "Погружённый конец и водный отрезок", mutate(POND, lambda b: b.update(tx=wet(0, 0.7)))),
-    ("W06", "Антенна у самой поверхности воды", obs(wet(0, 0.0), air(1000))),
-    ("W07", "Покрытие воды неполное", obs(wet(0, 1.0), air(1000), coverage=dict(COMPLETE, WATER="PARTIAL"))),
-    ("W08", "Среда конца неизвестна", obs(dict(air(0), medium="UNKNOWN"), air(1000))),
-    ("W09", "Оба в воздухе, но вода не наблюдалась", obs(air(0), air(1000), coverage=dict(COMPLETE, WATER="NOT_OBSERVED"))),
-    ("W10", "Частота выше 1000 ГГц", obs(wet(0, 1.0), air(1000), f=1.5e6)),
-    ("W11", "30 МГц", obs(wet(0, 0.5), air(1000), f=30.0)),
-    ("W12", "2 ГГц, 0.3 м", obs(wet(0, 0.3), air(1000), f=2000.0)),
-    ("W13", "450 МГц, 10 м", obs(wet(0, 10.0), air(1000), f=450.0)),
-    ("W14", "Переполнение binary32 по выходу", obs(wet(0, 3.0e38), air(1000))),
-    ("W15", "Наблюдение неверно — слой тоже отказывает", mutate(obs(wet(0, 1), air(1000)), lambda b: b.update(extra=1))),
+    ("W05", "Прямая подводная связь [0, L]", obs(wet(0, 3.0), wet(5, 3.0), segments=[seg("WATER", 0, 5, "lake.1")])),
+    ("W06", "Перекрытие разных водных объектов сливается", obs(air(0), air(1000),
+     segments=[seg("WATER", 10, 20, "a.pond"), seg("WATER", 15, 25, "b.pond")])),
+    ("W07", "Касание сегментов одного водного объекта сливается", obs(air(0), air(1000),
+     segments=[seg("WATER", 10, 20, "a.pond"), seg("WATER", 20, 30, "a.pond")])),
+    ("W08", "Касание разных водных объектов сливается у конца", obs(wet(0, 1.0), air(1000),
+     segments=[seg("WATER", 0, 6, "a.sea"), seg("WATER", 6, 9, "b.bay")])),
+    ("W09", "Конец в воде без водного интервала", obs(wet(0, 1.0), air(1000))),
+    ("W10", "Водный интервал у конца, а конец в воздухе", obs(air(0), air(1000), segments=[seg("WATER", 0, 3, "pond")])),
+    ("W11", "Покрытие воды неполное", obs(air(0), air(1000), coverage=dict(COMPLETE, WATER="PARTIAL"))),
+    ("W12", "Среда конца неизвестна", obs(dict(air(0), medium="UNKNOWN"), air(1000))),
+    ("W13", "Частота выше 1000 ГГц", mutate(POND, lambda b: b.update(frequencyMHz=1.5e6))),
+    ("W14", "30 МГц", mutate(POND, lambda b: b.update(frequencyMHz=30.0))),
+    ("W15", "2 ГГц", mutate(POND, lambda b: b.update(frequencyMHz=2000.0))),
+    ("W16", "Переполнение binary32 по выходу", obs(air(0), air(3.0e38),
+     segments=[seg("WATER", 0.5e37, 3.0e37, "ocean")])),
+    ("W17", "Наблюдение неверно — слой тоже отказывает", mutate(POND, lambda b: b.update(extra=1))),
 ]
 PROFILE_CASES = [
-    ("W16", "Температура выше области", obs(wet(0, 1.0), air(1000)), {"tempC": 41, "salinityPpt": 0.5}),
-    ("W17", "Солёность выше области", obs(wet(0, 1.0), air(1000)), {"tempC": 15, "salinityPpt": 40.5}),
-    ("W18", "Границы области T=−4, S=40 включены", obs(wet(0, 1.0), air(1000)), {"tempC": -4, "salinityPpt": 40}),
-    ("W19", "Неверная структура профиля", obs(wet(0, 1.0), air(1000)), {"tempC": 15}),
-    ("W20", "Профиль без воды на пути не нужен", BASE, {"tempC": 99, "salinityPpt": 0.5}),
-    ("W21", "Солёный профиль: морская вода 35 ‰", obs(wet(0, 0.5), air(1000)), {"tempC": 20, "salinityPpt": 35}),
-    ("W22", "Чистая вода S=0", obs(wet(0, 0.5), air(1000)), {"tempC": 20, "salinityPpt": 0}),
-    ("W23", "|n| < 3: выход по вертикали вне области", obs(wet(0, 0.5), air(1000), f=900000.0), {"tempC": 20, "salinityPpt": 0}),
+    ("W18", "Температура выше области", POND, {"tempC": 41, "salinityPpt": 0.5}),
+    ("W19", "Солёность выше области", POND, {"tempC": 15, "salinityPpt": 40.5}),
+    ("W20", "Границы области T=−4, S=40 включены", POND, {"tempC": -4, "salinityPpt": 40}),
+    ("W21", "Неверная структура профиля", POND, {"tempC": 15}),
+    ("W22", "Без воды на пути профиль не проверяется на область", BASE, {"tempC": 99, "salinityPpt": 0.5}),
+    ("W23", "Солёный профиль 35 ‰", POND, {"tempC": 20, "salinityPpt": 35}),
+    ("W24", "Чистая вода S=0", POND, {"tempC": 20, "salinityPpt": 0}),
 ]
 
 

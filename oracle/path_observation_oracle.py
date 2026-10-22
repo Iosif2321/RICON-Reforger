@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P2 oracle (claude): path-observation contract check and the water layer `water_p527` (REQ-path-observation v0.2).
+"""P2 oracle (claude): path-observation contract check and the water layer `water_p527` (REQ-path-observation v0.3).
 
 ORACLE level: pure Python, binary64, no world/engine calls. Sea/fresh water permittivity follows
 ITU-R P.527-6 §5.1.2 eq. (14)-(27); one water profile per world (T, S) is ASSUMED_CONFIG, TEST_ONLY here.
@@ -29,7 +29,6 @@ T_MIN, T_MAX, S_MIN, S_MAX = -4.0, 40.0, 0.0, 40.0   # P.527-6 §5.1
 F_MAX_GHZ = 1000.0                                  # P.527-6 Annex 1 scope
 WATER_CODES = ("INVALID_OBSERVATION", "INVALID_PROFILE", "WATER_COVERAGE_INCOMPLETE", "NO_WATER",
                "OUT_OF_MODEL_DOMAIN", "NUMERIC_FAILURE", "OK")
-MIN_INDEX = 3.0                                     # WL05: below, the vertical-exit length error exceeds 6 %
 
 
 F32_MAX = 3.4028234663852886e38
@@ -171,8 +170,6 @@ def typed_observation(obs):
         known = s["knowledge"] in ("PROFILE", "RULE")
         if known != (s["materialId"] != "") or (known and KEY.fullmatch(s["materialId"]) is None):
             return None
-        if s["family"] == "WATER" and not (0 < start and end < length):
-            return None   # water at an antenna is described by the endpoint, not by a segment
         order = (start, SEGMENT_FAMILIES.index(s["family"]), s["entityKey"].encode("ascii"))
         if previous is not None and order < previous:
             return None
@@ -184,7 +181,25 @@ def typed_observation(obs):
         for (_, end), (start, _) in zip(spans, spans[1:]):
             if start < end:
                 return None
-    return {"frequencyMHz": f, "coverage": dict(cov), "tx": tx, "rx": rx, "lengthM": length, "segments": out}
+    merged = merge_water(out)
+    tx_wet = bool(merged) and merged[0][0] == 0
+    rx_wet = bool(merged) and merged[-1][1] == length
+    if (tx["medium"] == "WATER") != tx_wet or (rx["medium"] == "WATER") != rx_wet:
+        return None   # PO04: an endpoint is in water exactly when a merged water interval touches it
+    return {"frequencyMHz": f, "coverage": dict(cov), "tx": tx, "rx": rx, "lengthM": length, "segments": out,
+            "water": merged}
+
+
+def merge_water(segments) -> list[tuple[float, float]]:
+    """PO04/WL05: union of all WATER intervals regardless of entityKey; overlap and touching merge."""
+    spans = sorted((s["startM"], s["endM"]) for s in segments if s["family"] == "WATER")
+    merged: list[list[float]] = []
+    for start, end in spans:
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return [(a, b) for a, b in merged]
 
 
 def check_observation(obs) -> str:
@@ -210,9 +225,8 @@ def water_layer(obs, profile) -> dict:
     ends = (("tx", o["tx"]), ("rx", o["rx"]))
     if o["coverage"]["WATER"] != "COMPLETE" or any(e["medium"] == "UNKNOWN" for _, e in ends):
         return {"code": "WATER_COVERAGE_INCOMPLETE"}
-    wet = [(name, e) for name, e in ends if e["medium"] == "WATER"]
-    water = [s for s in o["segments"] if s["family"] == "WATER"]
-    if not wet and not water:
+    merged = o["water"]
+    if not merged:
         return {"code": "NO_WATER", "lossDb": 0.0}
     t_c, s_ppt = p
     f_mhz = o["frequencyMHz"]
@@ -220,32 +234,17 @@ def water_layer(obs, profile) -> dict:
         return {"code": "OUT_OF_MODEL_DOMAIN"}
     try:
         n = refractive_index(*water_permittivity(f_mhz / 1000.0, t_c, s_ppt))
-        if abs(n) < MIN_INDEX:
-            return {"code": "OUT_OF_MODEL_DOMAIN"}
         alpha = attenuation_db_per_m(f_mhz, n)
         lint = interface_loss_db(n)
-        length_error = 1.0 / math.cos(math.asin(1.0 / abs(n))) - 1.0
-        endpoints, segments, total, crossings = [], [], 0.0, 0
-        for name, e in wet:
-            loss = e["depthM"] * alpha + lint
-            x, y, z = e["position"]
-            endpoints.append({"end": name, "depthM": e["depthM"], "lossDb": loss,
-                              "effectivePoint": [x, y + e["depthM"], z]})
-            total += loss
-            crossings += 1
-        for s in water:
-            loss = (s["endM"] - s["startM"]) * alpha + 2.0 * lint
-            segments.append({"entityKey": s["entityKey"], "lengthM": s["endM"] - s["startM"], "lossDb": loss})
-            total += loss
-            crossings += 2
-        values = [total, alpha, lint, length_error] + [r["lossDb"] for r in endpoints + segments]
-        points = [c for r in endpoints for c in r["effectivePoint"]]
-        if not all(math.isfinite(v) and 0 <= v <= F32_MAX for v in values) or not all(abs(c) <= F32_MAX for c in points):
+        water_length = sum(b - a for a, b in merged)
+        crossings = sum((1 if a > 0 else 0) + (1 if b < o["lengthM"] else 0) for a, b in merged)
+        total = water_length * alpha + crossings * lint
+        if not all(math.isfinite(v) and 0 <= v <= F32_MAX for v in (total, alpha, lint, water_length)):
             return {"code": "NUMERIC_FAILURE"}
     except (ValueError, ZeroDivisionError, OverflowError):
         return {"code": "NUMERIC_FAILURE"}
-    return {"code": "OK", "lossDb": total, "alphaDbPerM": alpha, "interfaceDb": lint, "lengthErrorMax": length_error,
-            "crossings": crossings, "endpoints": endpoints, "segments": segments}
+    return {"code": "OK", "lossDb": total, "alphaDbPerM": alpha, "interfaceDb": lint, "waterLengthM": water_length,
+            "crossings": crossings, "intervals": [[a, b] for a, b in merged]}
 
 
 def evaluate(case) -> dict:

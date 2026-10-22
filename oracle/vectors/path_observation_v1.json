@@ -755,7 +755,7 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
@@ -777,7 +777,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 0.5,
+       "entityKey": "sea",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -874,15 +884,13 @@
      "lossDb": 163.1034273996756,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
+     "waterLengthM": 10.0,
      "crossings": 2,
-     "endpoints": [],
-     "segments": [
-      {
-       "entityKey": "z.pond",
-       "lengthM": 10.0,
-       "lossDb": 163.1034273996756
-      }
+     "intervals": [
+      [
+       300.0,
+       310.0
+      ]
      ]
     }
    }
@@ -1268,62 +1276,6 @@
    }
   },
   {
-   "id": "O22",
-   "title": "WATER-сегмент у самой антенны недопустим",
-   "input": {
-    "observation": {
-     "frequencyMHz": 150.0,
-     "environmentRevision": 1,
-     "tx": {
-      "position": [
-       0,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "rx": {
-      "position": [
-       1000,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "coverage": {
-      "TERRAIN": "COMPLETE",
-      "WATER": "COMPLETE",
-      "STRUCTURE": "COMPLETE",
-      "VEGETATION": "COMPLETE",
-      "VEHICLE": "COMPLETE"
-     },
-     "segments": [
-      {
-       "family": "WATER",
-       "startM": 0,
-       "endM": 3,
-       "entityKey": "pond",
-       "knowledge": "UNKNOWN",
-       "materialId": "",
-       "openings": false
-      }
-     ]
-    },
-    "profile": {
-     "tempC": 15,
-     "salinityPpt": 0.5
-    }
-   },
-   "expect": {
-    "observationCode": "INVALID_OBSERVATION",
-    "water": {
-     "code": "INVALID_OBSERVATION"
-    }
-   }
-  },
-  {
    "id": "O23",
    "title": "Недопустимые символы ключа",
    "input": {
@@ -1437,7 +1389,7 @@
   },
   {
    "id": "W01",
-   "title": "Антенна на 0.5 м под водой",
+   "title": "Антенна TX в воде, 0.5 м воды по пути",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -1445,7 +1397,7 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
@@ -1467,7 +1419,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 0.5,
+       "entityKey": "sea",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -1481,27 +1443,20 @@
      "lossDb": 12.181513111885923,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
+     "waterLengthM": 0.5,
      "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.5,
-       "lossDb": 12.181513111885923,
-       "effectivePoint": [
-        0.0,
-        -0.5,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "intervals": [
+      [
+       0.0,
+       0.5
+      ]
+     ]
     }
    }
   },
   {
    "id": "W02",
-   "title": "Приёмник на 2 м под водой",
+   "title": "Антенна RX в воде, 2 м воды",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -1518,7 +1473,7 @@
      "rx": {
       "position": [
        1000,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
@@ -1531,7 +1486,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 998,
+       "endM": 1000,
+       "entityKey": "lake.1",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -1545,27 +1510,20 @@
      "lossDb": 35.30491330786988,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
+     "waterLengthM": 2.0,
      "crossings": 1,
-     "endpoints": [
-      {
-       "end": "rx",
-       "depthM": 2.0,
-       "lossDb": 35.30491330786988,
-       "effectivePoint": [
-        1000.0,
-        1.0,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "intervals": [
+      [
+       998.0,
+       1000.0
+      ]
+     ]
     }
    }
   },
   {
    "id": "W03",
-   "title": "Оба конца в воде",
+   "title": "Оба конца в воде, вода у каждого конца",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -1573,7 +1531,7 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
@@ -1582,7 +1540,7 @@
      "rx": {
       "position": [
        800,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
@@ -1595,7 +1553,26 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 4,
+       "entityKey": "sea",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      },
+      {
+       "family": "WATER",
+       "startM": 790,
+       "endM": 800,
+       "entityKey": "lake.1",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -1606,34 +1583,21 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 47.48642641975581,
+     "lossDb": 224.7658279222995,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
+     "waterLengthM": 14.0,
      "crossings": 2,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 1.0,
-       "lossDb": 19.88931317721391,
-       "effectivePoint": [
-        0.0,
-        0.0,
-        0.0
-       ]
-      },
-      {
-       "end": "rx",
-       "depthM": 1.5,
-       "lossDb": 27.597113242541898,
-       "effectivePoint": [
-        800.0,
-        0.5,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "intervals": [
+      [
+       0.0,
+       4.0
+      ],
+      [
+       790.0,
+       800.0
+      ]
+     ]
     }
    }
   },
@@ -1693,22 +1657,20 @@
      "lossDb": 201.64242772631556,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
+     "waterLengthM": 12.5,
      "crossings": 2,
-     "endpoints": [],
-     "segments": [
-      {
-       "entityKey": "pond.4",
-       "lengthM": 12.5,
-       "lossDb": 201.64242772631556
-      }
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
      ]
     }
    }
   },
   {
    "id": "W05",
-   "title": "Погружённый конец и водный отрезок",
+   "title": "Прямая подводная связь [0, L]",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -1716,11 +1678,78 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
-      "depthM": 0.7
+      "depthM": 3.0
+     },
+     "rx": {
+      "position": [
+       5,
+       2.0,
+       0.0
+      ],
+      "medium": "WATER",
+      "depthM": 3.0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 5,
+       "entityKey": "lake.1",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "profile": {
+     "tempC": 15,
+     "salinityPpt": 0.5
+    }
+   },
+   "expect": {
+    "observationCode": "VALID",
+    "water": {
+     "code": "OK",
+     "lossDb": 77.07800065327987,
+     "alphaDbPerM": 15.415600130655974,
+     "interfaceDb": 4.473713046557935,
+     "waterLengthM": 5.0,
+     "crossings": 0,
+     "intervals": [
+      [
+       0.0,
+       5.0
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "W06",
+   "title": "Перекрытие разных водных объектов сливается",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -1741,9 +1770,18 @@
      "segments": [
       {
        "family": "WATER",
-       "startM": 400,
-       "endM": 412.5,
-       "entityKey": "pond.4",
+       "startM": 10,
+       "endM": 20,
+       "entityKey": "a.pond",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      },
+      {
+       "family": "WATER",
+       "startM": 15,
+       "endM": 25,
+       "entityKey": "b.pond",
        "knowledge": "UNKNOWN",
        "materialId": "",
        "openings": false
@@ -1759,36 +1797,23 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 216.9070606805644,
+     "lossDb": 240.18142805295548,
      "alphaDbPerM": 15.415600130655974,
      "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
-     "crossings": 3,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.699999988079071,
-       "lossDb": 15.264632954248842,
-       "effectivePoint": [
-        0.0,
-        -0.30000001192092896,
-        0.0
-       ]
-      }
-     ],
-     "segments": [
-      {
-       "entityKey": "pond.4",
-       "lengthM": 12.5,
-       "lossDb": 201.64242772631556
-      }
+     "waterLengthM": 15.0,
+     "crossings": 2,
+     "intervals": [
+      [
+       10.0,
+       25.0
+      ]
      ]
     }
    }
   },
   {
-   "id": "W06",
-   "title": "Антенна у самой поверхности воды",
+   "id": "W07",
+   "title": "Касание сегментов одного водного объекта сливается",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -1796,11 +1821,163 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 10,
+       "endM": 20,
+       "entityKey": "a.pond",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      },
+      {
+       "family": "WATER",
+       "startM": 20,
+       "endM": 30,
+       "entityKey": "a.pond",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "profile": {
+     "tempC": 15,
+     "salinityPpt": 0.5
+    }
+   },
+   "expect": {
+    "observationCode": "VALID",
+    "water": {
+     "code": "OK",
+     "lossDb": 317.2594287062354,
+     "alphaDbPerM": 15.415600130655974,
+     "interfaceDb": 4.473713046557935,
+     "waterLengthM": 20.0,
+     "crossings": 2,
+     "intervals": [
+      [
+       10.0,
+       30.0
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "W08",
+   "title": "Касание разных водных объектов сливается у конца",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
        0.0
       ],
       "medium": "WATER",
-      "depthM": 0.0
+      "depthM": 1.0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 6,
+       "entityKey": "a.sea",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      },
+      {
+       "family": "WATER",
+       "startM": 6,
+       "endM": 9,
+       "entityKey": "b.bay",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "profile": {
+     "tempC": 15,
+     "salinityPpt": 0.5
+    }
+   },
+   "expect": {
+    "observationCode": "VALID",
+    "water": {
+     "code": "OK",
+     "lossDb": 143.21411422246172,
+     "alphaDbPerM": 15.415600130655974,
+     "interfaceDb": 4.473713046557935,
+     "waterLengthM": 9.0,
+     "crossings": 1,
+     "intervals": [
+      [
+       0.0,
+       9.0
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "W09",
+   "title": "Конец в воде без водного интервала",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "WATER",
+      "depthM": 1.0
      },
      "rx": {
       "position": [
@@ -1826,32 +2003,70 @@
     }
    },
    "expect": {
-    "observationCode": "VALID",
+    "observationCode": "INVALID_OBSERVATION",
     "water": {
-     "code": "OK",
-     "lossDb": 4.473713046557935,
-     "alphaDbPerM": 15.415600130655974,
-     "interfaceDb": 4.473713046557935,
-     "lengthErrorMax": 0.0061236536334212666,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.0,
-       "lossDb": 4.473713046557935,
-       "effectivePoint": [
-        0.0,
-        -1.0,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "code": "INVALID_OBSERVATION"
     }
    }
   },
   {
-   "id": "W07",
+   "id": "W10",
+   "title": "Водный интервал у конца, а конец в воздухе",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 0,
+       "endM": 3,
+       "entityKey": "pond",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "profile": {
+     "tempC": 15,
+     "salinityPpt": 0.5
+    }
+   },
+   "expect": {
+    "observationCode": "INVALID_OBSERVATION",
+    "water": {
+     "code": "INVALID_OBSERVATION"
+    }
+   }
+  },
+  {
+   "id": "W11",
    "title": "Покрытие воды неполное",
    "input": {
     "observation": {
@@ -1860,11 +2075,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -1897,7 +2112,7 @@
    }
   },
   {
-   "id": "W08",
+   "id": "W12",
    "title": "Среда конца неизвестна",
    "input": {
     "observation": {
@@ -1943,53 +2158,7 @@
    }
   },
   {
-   "id": "W09",
-   "title": "Оба в воздухе, но вода не наблюдалась",
-   "input": {
-    "observation": {
-     "frequencyMHz": 150.0,
-     "environmentRevision": 1,
-     "tx": {
-      "position": [
-       0,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "rx": {
-      "position": [
-       1000,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "coverage": {
-      "TERRAIN": "COMPLETE",
-      "WATER": "NOT_OBSERVED",
-      "STRUCTURE": "COMPLETE",
-      "VEGETATION": "COMPLETE",
-      "VEHICLE": "COMPLETE"
-     },
-     "segments": []
-    },
-    "profile": {
-     "tempC": 15,
-     "salinityPpt": 0.5
-    }
-   },
-   "expect": {
-    "observationCode": "VALID",
-    "water": {
-     "code": "WATER_COVERAGE_INCOMPLETE"
-    }
-   }
-  },
-  {
-   "id": "W10",
+   "id": "W13",
    "title": "Частота выше 1000 ГГц",
    "input": {
     "observation": {
@@ -1998,11 +2167,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2020,7 +2189,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -2035,7 +2214,7 @@
    }
   },
   {
-   "id": "W11",
+   "id": "W14",
    "title": "30 МГц",
    "input": {
     "observation": {
@@ -2044,11 +2223,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 0.5
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2066,7 +2245,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -2077,30 +2266,23 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 11.729476505252071,
+     "lossDb": 182.05725443377446,
      "alphaDbPerM": 13.791156645501767,
      "interfaceDb": 4.833898182501188,
-     "lengthErrorMax": 0.005331926387785568,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.5,
-       "lossDb": 11.729476505252071,
-       "effectivePoint": [
-        0.0,
-        -0.5,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "waterLengthM": 12.5,
+     "crossings": 2,
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
+     ]
     }
    }
   },
   {
-   "id": "W12",
-   "title": "2 ГГц, 0.3 м",
+   "id": "W15",
+   "title": "2 ГГц",
    "input": {
     "observation": {
      "frequencyMHz": 2000.0,
@@ -2108,11 +2290,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 0.3
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2130,7 +2312,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -2141,93 +2333,22 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 70.57685262911187,
+     "lossDb": 2764.275212908683,
      "alphaDbPerM": 220.43037923579234,
      "interfaceDb": 4.447736230639286,
-     "lengthErrorMax": 0.006220842306256635,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.30000001192092896,
-       "lossDb": 70.57685262911187,
-       "effectivePoint": [
-        0.0,
-        -0.699999988079071,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "waterLengthM": 12.5,
+     "crossings": 2,
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
+     ]
     }
    }
   },
   {
-   "id": "W13",
-   "title": "450 МГц, 10 м",
-   "input": {
-    "observation": {
-     "frequencyMHz": 450.0,
-     "environmentRevision": 1,
-     "tx": {
-      "position": [
-       0,
-       -1.0,
-       0.0
-      ],
-      "medium": "WATER",
-      "depthM": 10.0
-     },
-     "rx": {
-      "position": [
-       1000,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "coverage": {
-      "TERRAIN": "COMPLETE",
-      "WATER": "COMPLETE",
-      "STRUCTURE": "COMPLETE",
-      "VEGETATION": "COMPLETE",
-      "VEHICLE": "COMPLETE"
-     },
-     "segments": []
-    },
-    "profile": {
-     "tempC": 15,
-     "salinityPpt": 0.5
-    }
-   },
-   "expect": {
-    "observationCode": "VALID",
-    "water": {
-     "code": "OK",
-     "lossDb": 252.62849448508402,
-     "alphaDbPerM": 24.81706453885974,
-     "interfaceDb": 4.457849096486621,
-     "lengthErrorMax": 0.006162675451704791,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 10.0,
-       "lossDb": 252.62849448508402,
-       "effectivePoint": [
-        0.0,
-        9.0,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
-    }
-   }
-  },
-  {
-   "id": "W14",
+   "id": "W16",
    "title": "Переполнение binary32 по выходу",
    "input": {
     "observation": {
@@ -2236,15 +2357,15 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 3e+38
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
-       1000,
+       3e+38,
        2.0,
        0.0
       ],
@@ -2258,7 +2379,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 5e+36,
+       "endM": 3e+37,
+       "entityKey": "ocean",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -2273,7 +2404,7 @@
    }
   },
   {
-   "id": "W15",
+   "id": "W17",
    "title": "Наблюдение неверно — слой тоже отказывает",
    "input": {
     "observation": {
@@ -2282,11 +2413,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2304,7 +2435,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": [],
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ],
      "extra": 1
     },
     "profile": {
@@ -2320,7 +2461,7 @@
    }
   },
   {
-   "id": "W16",
+   "id": "W18",
    "title": "Температура выше области",
    "input": {
     "observation": {
@@ -2329,11 +2470,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2351,7 +2492,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 41,
@@ -2366,7 +2517,7 @@
    }
   },
   {
-   "id": "W17",
+   "id": "W19",
    "title": "Солёность выше области",
    "input": {
     "observation": {
@@ -2375,11 +2526,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2397,7 +2548,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15,
@@ -2412,7 +2573,7 @@
    }
   },
   {
-   "id": "W18",
+   "id": "W20",
    "title": "Границы области T=−4, S=40 включены",
    "input": {
     "observation": {
@@ -2421,11 +2582,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2443,7 +2604,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": -4,
@@ -2454,29 +2625,22 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 330.66558049450174,
+     "lossDb": 4047.4690328096085,
      "alphaDbPerM": 322.4893211257719,
      "interfaceDb": 8.176259368729863,
-     "lengthErrorMax": 0.001400146905316646,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 1.0,
-       "lossDb": 330.66558049450174,
-       "effectivePoint": [
-        0.0,
-        0.0,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "waterLengthM": 12.5,
+     "crossings": 2,
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
+     ]
     }
    }
   },
   {
-   "id": "W19",
+   "id": "W21",
    "title": "Неверная структура профиля",
    "input": {
     "observation": {
@@ -2485,11 +2649,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 1.0
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2507,7 +2671,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 15
@@ -2521,8 +2695,8 @@
    }
   },
   {
-   "id": "W20",
-   "title": "Профиль без воды на пути не нужен",
+   "id": "W22",
+   "title": "Без воды на пути профиль не проверяется на область",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -2568,8 +2742,8 @@
    }
   },
   {
-   "id": "W21",
-   "title": "Солёный профиль: морская вода 35 ‰",
+   "id": "W23",
+   "title": "Солёный профиль 35 ‰",
    "input": {
     "observation": {
      "frequencyMHz": 150.0,
@@ -2577,11 +2751,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 0.5
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2599,7 +2773,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 20,
@@ -2610,29 +2794,22 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 226.95896394867697,
+     "lossDb": 5459.6713036633755,
      "alphaDbPerM": 435.2829022405236,
      "interfaceDb": 9.317512828415182,
-     "lengthErrorMax": 0.0008633653908740602,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.5,
-       "lossDb": 226.95896394867697,
-       "effectivePoint": [
-        0.0,
-        -0.5,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
+     "waterLengthM": 12.5,
+     "crossings": 2,
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
+     ]
     }
    }
   },
   {
-   "id": "W22",
+   "id": "W24",
    "title": "Чистая вода S=0",
    "input": {
     "observation": {
@@ -2641,11 +2818,11 @@
      "tx": {
       "position": [
        0,
-       -1.0,
+       2.0,
        0.0
       ],
-      "medium": "WATER",
-      "depthM": 0.5
+      "medium": "AIR",
+      "depthM": 0
      },
      "rx": {
       "position": [
@@ -2663,7 +2840,17 @@
       "VEGETATION": "COMPLETE",
       "VEHICLE": "COMPLETE"
      },
-     "segments": []
+     "segments": [
+      {
+       "family": "WATER",
+       "startM": 400,
+       "endM": 412.5,
+       "entityKey": "pond.4",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
     },
     "profile": {
      "tempC": 20,
@@ -2674,70 +2861,17 @@
     "observationCode": "VALID",
     "water": {
      "code": "OK",
-     "lossDb": 4.9215631470010575,
+     "lossDb": 21.448713693458032,
      "alphaDbPerM": 1.0091815129961668,
      "interfaceDb": 4.416972390502974,
-     "lengthErrorMax": 0.006303588700836915,
-     "crossings": 1,
-     "endpoints": [
-      {
-       "end": "tx",
-       "depthM": 0.5,
-       "lossDb": 4.9215631470010575,
-       "effectivePoint": [
-        0.0,
-        -0.5,
-        0.0
-       ]
-      }
-     ],
-     "segments": []
-    }
-   }
-  },
-  {
-   "id": "W23",
-   "title": "|n| < 3: выход по вертикали вне области",
-   "input": {
-    "observation": {
-     "frequencyMHz": 900000.0,
-     "environmentRevision": 1,
-     "tx": {
-      "position": [
-       0,
-       -1.0,
-       0.0
-      ],
-      "medium": "WATER",
-      "depthM": 0.5
-     },
-     "rx": {
-      "position": [
-       1000,
-       2.0,
-       0.0
-      ],
-      "medium": "AIR",
-      "depthM": 0
-     },
-     "coverage": {
-      "TERRAIN": "COMPLETE",
-      "WATER": "COMPLETE",
-      "STRUCTURE": "COMPLETE",
-      "VEGETATION": "COMPLETE",
-      "VEHICLE": "COMPLETE"
-     },
-     "segments": []
-    },
-    "profile": {
-     "tempC": 20,
-     "salinityPpt": 0
-    }
-   },
-   "expect": {
-    "observationCode": "VALID",
-    "water": {
-     "code": "OUT_OF_MODEL_DOMAIN"
+     "waterLengthM": 12.5,
+     "crossings": 2,
+     "intervals": [
+      [
+       400.0,
+       412.5
+      ]
+     ]
     }
    }
   }

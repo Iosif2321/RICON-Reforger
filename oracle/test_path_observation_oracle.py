@@ -81,11 +81,19 @@ class ObservationTest(unittest.TestCase):
         untyped["segments"][0].update(startM=16777200, endM=16777217)
         self.assertEqual("VALID", o.check_observation(untyped))
 
-    def test_vertical_exit_error_bound(self):
-        """WL05: Snell bound 1/cos(asin(1/|n|)) - 1 is small for water and the cut-off is |n| = 3."""
-        n = o.refractive_index(*o.water_permittivity(0.15, 15, 0.5))
-        self.assertLess(1 / math.cos(math.asin(1 / abs(n))) - 1, 0.01)
-        self.assertAlmostEqual(0.0607, 1 / math.cos(math.asin(1 / 3.0)) - 1, places=4)
+    def test_water_union_examples(self):
+        """codex #3437: A=[10,20]+B=[15,25] is 15 m and 2 crossings; A=[10,20]+A=[20,30] is 20 m and 2 crossings."""
+        for cid, length in (("W06", 15.0), ("W07", 20.0)):
+            observation = next(c for c in b.CASES if c[0] == cid)[2]
+            w = o.water_layer(observation, b.PROFILE)
+            self.assertEqual((length, 2), (w["waterLengthM"], w["crossings"]), cid)
+            self.assertAlmostEqual(w["lossDb"], length * w["alphaDbPerM"] + 2 * w["interfaceDb"], delta=1e-9)
+
+    def test_full_underwater_path_has_no_crossing(self):
+        observation = next(c for c in b.CASES if c[0] == "W05")[2]
+        w = o.water_layer(observation, b.PROFILE)
+        self.assertEqual(0, w["crossings"])
+        self.assertAlmostEqual(w["lossDb"], 5 * w["alphaDbPerM"], delta=1e-9)
 
 
 class CorpusTest(unittest.TestCase):
