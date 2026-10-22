@@ -148,8 +148,8 @@ Unit-тесты сверяют ε с P.527-6 Fig. 2 (T = 20 °C) и глубин
 и тождество αdB = 20·lg(e)/δ. Native сравнивает коды строго, числа — с допуском max(1e-3 дБ, 1e-5·|x|).
 
 Корпус v1 (заморожен): 51 случай (O01–O24 без O22 — наблюдение, W01–W28 — водный слой), LF SHA-256 `7a12ed92587318108059a213ace1d3f4286ad9a66bf86e8eb63dd4cdc7eea032`.
-Ошибки JSON-типа O16 (лишнее поле) и O19 (bool вместо числа) недостижимы в типизированном Enforce и остаются host-only;
-остальные 49 — для native. Команды: `python oracle/path_observation_oracle.py --check oracle/vectors/path_observation_v1.json`;
+Ошибки JSON-типа и структуры O16 и W17 (лишнее поле), O19 (bool вместо числа) и W21 (в профиле нет поля) недостижимы
+в типизированном Enforce и остаются host-only; остальные 47 — для native (уточнение codex #3483; JSON не менялся). Команды: `python oracle/path_observation_oracle.py --check oracle/vectors/path_observation_v1.json`;
 `python -m unittest discover -s oracle -p test_path_observation_oracle.py`.
 
 Сначала codex проверяет REQ, затем пересчитывает корпус своим checker по REQ, не читая эталон. После согласия —
