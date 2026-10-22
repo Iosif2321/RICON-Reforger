@@ -110,9 +110,19 @@ def penetration_depth_m(f_mhz: float, eps_real: float, eps_imag: float) -> float
 
 
 def interface_loss_db(n: complex) -> float:
-    """WL04: normal incidence, Γ = (1−n)/(1+n), L = −10·lg(1 − |Γ|²)."""
-    gamma = (1.0 - n) / (1.0 + n)
-    return -10.0 * math.log10(1.0 - abs(gamma) ** 2)
+    """WL04: normal incidence, T = 1 − |Γ|² = 4·Re(n)/|1+n|², L = −10·lg T (no cancellation, codex #3448)."""
+    return -10.0 * math.log10(4.0 * n.real / abs(1.0 + n) ** 2)
+
+
+def length_f32(a, b) -> float:
+    """PO03 (#3447): normative binary32 distance with scaling; every operation rounded to binary32."""
+    d = [f32(y - x) for x, y in zip(a, b)]
+    m = max(abs(v) for v in d)
+    if m == 0:
+        return 0.0
+    s = [f32(v / m) for v in d]
+    q = f32(f32(f32(s[0] * s[0]) + f32(s[1] * s[1])) + f32(s[2] * s[2]))
+    return f32(m * f32(math.sqrt(q)))
 
 
 # ---------------------------------------------------------------- PO03-PO07 observation check
@@ -148,8 +158,8 @@ def typed_observation(obs):
     tx, rx = typed_endpoint(obs["tx"]), typed_endpoint(obs["rx"])
     if tx is None or rx is None:
         return None
-    length = math.dist(tx["position"], rx["position"])
-    if not (math.isfinite(length) and length > 0):
+    length = length_f32(tx["position"], rx["position"])
+    if not (math.isfinite(length) and 0 < length <= F32_MAX):
         return None
     segs = obs["segments"]
     if type(segs) is not list or len(segs) > MAX_SEGMENTS:
@@ -182,10 +192,11 @@ def typed_observation(obs):
             if start < end:
                 return None
     merged = merge_water(out)
+    known = cov["WATER"] == "COMPLETE" and "UNKNOWN" not in (tx["medium"], rx["medium"])
     tx_wet = bool(merged) and merged[0][0] == 0
     rx_wet = bool(merged) and merged[-1][1] == length
-    if (tx["medium"] == "WATER") != tx_wet or (rx["medium"] == "WATER") != rx_wet:
-        return None   # PO04: an endpoint is in water exactly when a merged water interval touches it
+    if known and ((tx["medium"] == "WATER") != tx_wet or (rx["medium"] == "WATER") != rx_wet):
+        return None   # PO04 (#3449): checked only with complete water coverage and known media
     return {"frequencyMHz": f, "coverage": dict(cov), "tx": tx, "rx": rx, "lengthM": length, "segments": out,
             "water": merged}
 
@@ -233,7 +244,10 @@ def water_layer(obs, profile) -> dict:
     if not (T_MIN <= t_c <= T_MAX and S_MIN <= s_ppt <= S_MAX) or f_mhz / 1000.0 > F_MAX_GHZ:
         return {"code": "OUT_OF_MODEL_DOMAIN"}
     try:
-        n = refractive_index(*water_permittivity(f_mhz / 1000.0, t_c, s_ppt))
+        eps = water_permittivity(f_mhz / 1000.0, t_c, s_ppt)
+        if not all(math.isfinite(v) and abs(v) <= F32_MAX for v in (eps[0], eps[1], math.hypot(*eps))):
+            return {"code": "NUMERIC_FAILURE"}   # #3448: εw must be a finite binary32 value
+        n = refractive_index(*eps)
         alpha = attenuation_db_per_m(f_mhz, n)
         lint = interface_loss_db(n)
         water_length = sum(b - a for a, b in merged)

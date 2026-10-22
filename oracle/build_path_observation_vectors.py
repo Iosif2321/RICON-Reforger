@@ -103,6 +103,12 @@ CASES = [
     ("W16", "Переполнение binary32 по выходу", obs(air(0), air(3.0e38),
      segments=[seg("WATER", 0.5e37, 3.0e37, "ocean")])),
     ("W17", "Наблюдение неверно — слой тоже отказывает", mutate(POND, lambda b: b.update(extra=1))),
+    ("W25", "Диагональ: endM = L32 у RX в воде", obs(air(0, 0.0), wet(1, 0.4, y=2.0),
+     segments=[seg("WATER", 2.0, 2.2360680103302, "puddle")])),
+    ("W26", "Диагональ (1, 1, 0): endM = √2 после binary32 равно L32", obs(air(0, 0.0), wet(1, 0.4, y=1.0),
+     segments=[seg("WATER", 1.0, 1.4142135623730951, "puddle")])),
+    ("W28", "Неполное покрытие: конец в воде без интервала — не противоречие", obs(wet(0, 1.0), air(1000),
+     coverage=dict(COMPLETE, WATER="PARTIAL"))),
 ]
 PROFILE_CASES = [
     ("W18", "Температура выше области", POND, {"tempC": 41, "salinityPpt": 0.5}),
@@ -112,6 +118,8 @@ PROFILE_CASES = [
     ("W22", "Без воды на пути профиль не проверяется на область", BASE, {"tempC": 99, "salinityPpt": 0.5}),
     ("W23", "Солёный профиль 35 ‰", POND, {"tempC": 20, "salinityPpt": 35}),
     ("W24", "Чистая вода S=0", POND, {"tempC": 20, "salinityPpt": 0}),
+    ("W27", "ε″ не представим в binary32", mutate(POND, lambda b: b.update(frequencyMHz=1e-35)),
+     {"tempC": 20, "salinityPpt": 35}),
 ]
 
 
