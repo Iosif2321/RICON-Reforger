@@ -1,0 +1,14 @@
+{
+ "author": "claude",
+ "date": "2026-10-22",
+ "basis": "docs/req/REQ-link-publication.md v0.2 (HEAD 4896cc2), oracle source and tests not read",
+ "corpus": "oracle/vectors/link_publication_v1.json",
+ "corpusSha256": "a60ed14590222c103aceea9030fb80ee233eea432b5969b8ed7fe93ad5c10be3",
+ "reqSha256": "36950581b0509acae225c92141d35773067e3165c16f9ceed7e6623f9bb48e3c",
+ "checker": "docs/evidence/receipts/s3b-independent-req-check.py",
+ "checkerSha256": "e20ba44497368f186c8a1a43d76204f8c31c582b7e588d147385f66089ad2f5f",
+ "command": "python -I docs/evidence/receipts/s3b-independent-req-check.py oracle/vectors/link_publication_v1.json",
+ "result": "S3B_BLIND_CHECK PASS: 106/106",
+ "comparatorMutations": "767/767 caught",
+ "semanticMutants": "10/10 killed (f32 diff Q05, ceil T03, >= Q02/Q05, terminal B0x1, binding epoch C46, highWater reset E02/E03/E05/E11, seq<=last E09, limit before duplicate C39, epoch read after Next, clock check only same epoch E03)"
+}
