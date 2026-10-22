@@ -128,7 +128,6 @@ def cases():
     add("Неизвестное поле", lambda q: q.update(receiverThresholdDbm=-100))
     add("Верхняя граница численного диапазона", lambda q: q.update(numericalGuardDb=3.4028234663852886e38,
         paths=[{"pathId": "a", "upperDbm": 3.4028234663852886e38}]))
-    add("Слишком много путей", lambda q: q.update(paths=[{"pathId": str(i), "upperDbm": -150} for i in range(4097)]))
     return rows
 
 

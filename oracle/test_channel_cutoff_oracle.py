@@ -68,6 +68,11 @@ class ChannelCutoffTest(unittest.TestCase):
         q["paths"].reverse()
         self.assertEqual(cc.evaluate(q), forward)
 
+    def test_path_limit(self):
+        q = cc.baseline()
+        q["paths"] = [{"pathId": str(i), "upperDbm": -150} for i in range(4097)]
+        self.assertEqual(cc.evaluate(q)["reason"], "INVALID_INPUT")
+
 
 if __name__ == "__main__":
     unittest.main()
