@@ -4,11 +4,23 @@ import json
 import math
 from pathlib import Path
 import unittest
+import subprocess
+import sys
+import tempfile
 
 import channel_cutoff_oracle as cc
 
 
 class ChannelCutoffTest(unittest.TestCase):
+    def test_written_corpus_has_canonical_lf(self):
+        with tempfile.TemporaryDirectory() as task_dir:
+            target = Path(task_dir) / "corpus.json"
+            run = subprocess.run([sys.executable, "-B", cc.__file__, "--write", str(target)], capture_output=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+            self.assertNotIn(b"\r", target.read_bytes())
+            current = Path(__file__).with_name("vectors") / "channel_cutoff_v1.json"
+            self.assertEqual(target.read_bytes(), current.read_bytes())
+
     def test_frozen_values_and_corruption(self):
         path = Path(__file__).with_name("vectors") / "channel_cutoff_v1.json"
         data = json.loads(path.read_text(encoding="utf-8"))

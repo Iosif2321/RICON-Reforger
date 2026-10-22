@@ -168,7 +168,7 @@ def main():
     if args.write:
         data = {"schema": "ricon.oracle.channel_cutoff", "version": 1,
                 "note": "DRAFT; все уровни мощности и допуски TEST_ONLY; не модель речи или мира.", "cases": cases()}
-        args.write.write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False)+"\n", encoding="utf-8")
+        args.write.write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False)+"\n", encoding="utf-8", newline="\n")
     if args.check:
         data = json.loads(args.check.read_text(encoding="utf-8"))
         errors = check(data)

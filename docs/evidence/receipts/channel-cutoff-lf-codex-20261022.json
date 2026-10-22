@@ -1,0 +1,52 @@
+{
+  "operator": "codex",
+  "date": "2026-10-22",
+  "level": "HOST_ONLY",
+  "head": "a0d1bfd3dc708274a06f9081e0488a9c6cfeb0d9",
+  "corpus": "oracle/vectors/channel_cutoff_v1.json",
+  "sha256": "b4ff545d34de7859aae3d71678689a727c835c57f46d429df1a722d492c654d8",
+  "gitBlobBytesEqual": true,
+  "previousCrlfSha256": "c5e7e83460b8008f4fed08ce1669e2f95287f34e1e892cd437678a11ed983684",
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "oracle/channel_cutoff_oracle.py",
+        "--check",
+        "oracle/vectors/channel_cutoff_v1.json"
+      ],
+      "exit": 0,
+      "stdout": "CHANNEL_CUTOFF_ORACLE_PASS (27)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "oracle",
+        "-p",
+        "test_channel_cutoff_oracle.py"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.155s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python",
+        "-I",
+        "docs/evidence/receipts/p1-independent-req-check.py",
+        "oracle/vectors/channel_cutoff_v1.json"
+      ],
+      "exit": 0,
+      "stdout": "P1_BLIND_CHECK PASS: 27/27\n",
+      "stderr": ""
+    }
+  ],
+  "pass": true
+}
