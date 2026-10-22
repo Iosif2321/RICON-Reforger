@@ -1,0 +1,11 @@
+{
+  "sourceSha256": "7a12ed92587318108059a213ace1d3f4286ad9a66bf86e8eb63dd4cdc7eea032",
+  "cases": 51,
+  "passed": 51,
+  "failures": [],
+  "partnerOracleRead": false,
+  "selfTest": "PASS",
+  "requirementVersion": "0.3",
+  "status": "INDEPENDENT_RECALC_PASS",
+  "nativeRun": "NOT_RUN"
+}

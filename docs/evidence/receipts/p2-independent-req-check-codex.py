@@ -59,7 +59,7 @@ def distance32(tx, rx):
 
 
 def observation(value):
-    """PO03–PO07: общие ограничения; водная согласованность проверяется отдельно."""
+    """PO03–PO07: структура, численные домены, порядок и водная согласованность."""
     fields(value, "frequencyMHz environmentRevision tx rx coverage segments")
     revision = value["environmentRevision"]
     if type(revision) is not int or not 1 <= revision <= 2147483647:
@@ -104,10 +104,10 @@ def observation(value):
             raise ValueError("Неверный признак проёма")
         result.append(dict(item, startM=start, endM=end))
     intervals = water_union(result)
-    if coverage["WATER"] == "COMPLETE":
+    if coverage["WATER"] == "COMPLETE" and tx["medium"] != "UNKNOWN" and rx["medium"] != "UNKNOWN":
         for end, touches in ((tx, bool(intervals and intervals[0][0] == 0)),
                              (rx, bool(intervals and intervals[-1][1] == length))):
-            if end["medium"] != "UNKNOWN" and (end["medium"] == "WATER") != touches:
+            if (end["medium"] == "WATER") != touches:
                 raise ValueError("Вода у антенны противоречит полному наблюдению пути")
     return dict(value, frequencyMHz=frequency, tx=tx, rx=rx, segments=result), length
 
