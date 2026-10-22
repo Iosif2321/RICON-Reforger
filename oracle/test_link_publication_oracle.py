@@ -69,6 +69,19 @@ class LinkPublicationTest(unittest.TestCase):
         inp["qualityDelta"] = 1e-50
         self.assertEqual(lp.evaluate(inp, reg, spec)["callCode"], "INVALID_ELEMENT")
 
+    def test_other_epoch_ignores_old_entries_and_id_high_water(self):
+        inp, reg, spec = lp.established()
+        reg["sessionEpoch"] -= 1
+        reg["highWaterLinkId"] = lp.MAX
+        inp["limits"]["maxActiveLinks"] = 1
+        inp["bindings"] = [lp.binding(lease=12)]
+        inp["pairResult"]["pairs"] = [lp.pair(lease=12)]
+        out = lp.evaluate(inp, reg, spec)
+        self.assertEqual(out["callCode"], "NEED_FULL_RESYNC")
+        self.assertEqual(out["registry"]["entries"], [])
+        self.assertEqual(out["registry"]["highWaterLinkId"], 0)
+        self.assertEqual((out["sequenceCalls"], out["epochReads"]), (0, 1))
+
     def test_terminal_then_new_ptt_never_reuses_id(self):
         inp, reg, spec = lp.established()
         inp["bindings"], inp["pairResult"]["pairs"] = [], []
