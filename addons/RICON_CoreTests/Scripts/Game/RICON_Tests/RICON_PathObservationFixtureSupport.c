@@ -238,5 +238,21 @@ class RICON_PathObservationRun
 		Extra(RICON_WaterLayer.Evaluate(input, profile).m_eCode == RICON_EWaterCode.INVALID_OBSERVATION, "null_segment");
 		input.m_aSegments = null;
 		Extra(RICON_WaterLayer.Evaluate(input, profile).m_eCode == RICON_EWaterCode.INVALID_OBSERVATION, "null_segments");
+		input.m_aSegments = {};
+		array<string> keys = {"-", ".", "0", ":", "A", "_", "a"};
+		foreach (string key : keys)
+		{
+			RICON_PathSegment keyed = new RICON_PathSegment();
+			keyed.m_eFamily = RICON_EPathFamily.STRUCTURE;
+			keyed.m_sEntityKey = key;
+			keyed.m_fStartM = 1;
+			keyed.m_fEndM = 2;
+			input.m_aSegments.Insert(keyed);
+		}
+		bool sortedAscii = RICON_WaterLayer.Evaluate(input, profile).m_eCode == RICON_EWaterCode.NO_WATER;
+		RICON_PathSegment first = input.m_aSegments[0];
+		input.m_aSegments[0] = input.m_aSegments[1];
+		input.m_aSegments[1] = first;
+		Extra(sortedAscii && RICON_WaterLayer.Evaluate(input, profile).m_eCode == RICON_EWaterCode.INVALID_OBSERVATION, "ascii_sort");
 	}
 }

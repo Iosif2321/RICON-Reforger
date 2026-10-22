@@ -1,10 +1,10 @@
 {
-    "head":  "e60186197ecf7763739c057dce03d94c69525378",
-    "pid":  19556,
+    "head":  "aec9c09c7efe1feb7641663c700107ec61e22937",
+    "pid":  13864,
     "exitCode":  0,
-    "prefix":  "ricon-path-codex-20261022-234430",
-    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-path-codex-20261022-234430\\console.log",
-    "logSha256":  "a0e4bc024a3531472db8cc389adaed883aa416ab7b4c73060f593630a48b5a1b",
+    "prefix":  "ricon-path-codex-20261022-235314",
+    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-path-codex-20261022-235314\\console.log",
+    "logSha256":  "7a8fef0b4e99f68f063442a1fc8b493203943cdad560bc44509527c1faf6b4f0",
     "sourceStable":  true,
     "sources":  [
                     {
@@ -21,11 +21,11 @@
                     },
                     {
                         "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PathObservationFixtureSupport.c",
-                        "sha256":  "104a6497740d06a315067becec21a9c459987c93dee08bdcba859b430a808e01"
+                        "sha256":  "722e83bcccb0a605d3c0b5752b0ca32f915bb40a734492b28e0ea05ecece3ae2"
                     },
                     {
                         "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_PathObservationProbePlugin.c",
-                        "sha256":  "a4dfaacc1c50ee63c1b51df3fd8460bf15198fb9930a48c1373c737662b8526e"
+                        "sha256":  "046930fcb21613e7111eef58a5ebc3dbe4d7c6806da8ff80ab145779e7f5748e"
                     }
                 ],
     "worldStarted":  false

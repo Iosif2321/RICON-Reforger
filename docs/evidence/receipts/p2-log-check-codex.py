@@ -13,7 +13,7 @@ HOST = {"O16", "O19", "W17", "W21"}
 CODES = ("INVALID_OBSERVATION", "INVALID_PROFILE", "WATER_COVERAGE_INCOMPLETE", "NO_WATER",
          "OUT_OF_MODEL_DOMAIN", "NUMERIC_FAILURE", "OK")
 EXTRAS = {"null_input", "null_profile", "segments_1024_revision_MAX", "segments_1025",
-          "global_invalid_before_profile", "null_segment", "null_segments"}
+          "global_invalid_before_profile", "null_segment", "null_segments", "ascii_sort"}
 
 
 def need(condition, message):
@@ -33,7 +33,7 @@ def check(text, expected):
     need(lines.count("source=" + SOURCE_SHA) == 1 and sum(x.startswith("source=") for x in lines) == 1, "Неверный source SHA")
     need(lines.count("done: PASS") == 1, "Нет единственного PASS")
     need(sum(x.startswith("cases=") for x in lines) == 1, "Повтор/отсутствие итога")
-    need(f"cases={len(expected)} match={len(expected)} immutable={len(expected)} controls=11 extras=7 hostOnly=4" in lines,
+    need(f"cases={len(expected)} match={len(expected)} immutable={len(expected)} controls=11 extras={len(EXTRAS)} hostOnly=4" in lines,
          "Неверные счётчики")
     rows, extras = {}, {}
     max_relative_error = 0.0
@@ -82,7 +82,7 @@ def self_test(expected):
                      f"waterLength={exp.get('waterLengthM', 0)} crossings={exp.get('crossings', 0)} "
                      f"intervals={len(exp.get('intervals', []))} immutable=true")
     lines += [f"[RICON_PATH] extra={key} pass=1" for key in sorted(EXTRAS)]
-    lines += [f"[RICON_PATH] cases={len(expected)} match={len(expected)} immutable={len(expected)} controls=11 extras=7 hostOnly=4",
+    lines += [f"[RICON_PATH] cases={len(expected)} match={len(expected)} immutable={len(expected)} controls=11 extras={len(EXTRAS)} hostOnly=4",
               "[RICON_PATH] done: PASS"]
     text = "\n".join(lines)
     check(text, expected)

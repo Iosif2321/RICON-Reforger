@@ -5,9 +5,9 @@
   "printedNumericFields": 188,
   "maxObservedRelativeError": 5.287272371130624e-07,
   "controls": 11,
-  "extras": 7,
+  "extras": 8,
   "hostOnly": 4,
-  "logSha256": "a0e4bc024a3531472db8cc389adaed883aa416ab7b4c73060f593630a48b5a1b",
+  "logSha256": "7a8fef0b4e99f68f063442a1fc8b493203943cdad560bc44509527c1faf6b4f0",
   "status": "NATIVE_LOG_PASS",
   "unprintedIntervalBounds": "Проверены native comparator; в лог выведено только число интервалов"
 }

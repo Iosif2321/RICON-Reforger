@@ -12,7 +12,7 @@ class RICON_PathObservationProbePlugin : WorkbenchPlugin
 			runner.m_iMatches, runner.m_iImmutable, runner.m_iControls, runner.m_iExtras, RICON_PathObservationFixtures.HOST_ONLY);
 		int cases = RICON_PathObservationFixtures.CASES;
 		if (runner.m_bOk && runner.m_iCases == cases && runner.m_iMatches == cases && runner.m_iImmutable == cases
-			&& runner.m_iControls == 11 && runner.m_iExtras == 7)
+			&& runner.m_iControls == 11 && runner.m_iExtras == 8)
 		{
 			Print("[RICON_PATH] done: PASS");
 			Workbench.Exit(0);
