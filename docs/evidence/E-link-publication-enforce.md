@@ -23,10 +23,12 @@
   корпуса; тест генератора — 8 случаев. Неизвестный `deviceCode` (C37) кодируется как −1 по REQ-LP §6.
 - Общая регрессия: `regress_host.py` (+ CLI эталона S3b и `--check` генератора), `regress_wb.ps1` (+ пробник).
 
+SHA-256 файлов репозитория — по содержимому git blob (LF); рабочая копия Windows может хранить CRLF.
+
 | Файл | SHA-256 |
 |---|---|
 | `RICON_LinkPublication.c` | `b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb` |
-| `RICON_LinkPublicationFixtureSupport.c` | `cf6fddc5b5be37f52af8c7e72661fbeaa8af3f95f4942220cbf07d7f77496c32` |
+| `RICON_LinkPublicationFixtureSupport.c` | `09ff4ec6c12f94dbf459bcd1a7637f19df2d5f75fd3bfc959f7a36f2b3569c34` |
 | `RICON_LinkPublicationFixtures.c` | `03d7b37832a986d6eb23dad568f41fd90fcf1dbf72348c3711cb87df097c45b0` |
 | `RICON_LinkPublicationProbePlugin.c` | `6a8ad09c71d8ad3c0e0f3a172e8880ab4f3ac67260293bbabc944d06e59f0c95` |
 | `gen_link_publication_fixture.py` | `a327f1efd2b3eccd1664fbdca0c3047b57238a51498023bc7e9f7e4811513c15` |
@@ -47,9 +49,9 @@ CRC в логе: `RICON_LinkPublication.c` 197aa68a, FixtureSupport 6846dc19, Fi
 
 Общая регрессия на одном дереве:
 - host: `TOTAL 30/30 PASS` — `docs/evidence/receipts/s3b-host-claude-20261022.txt`, SHA-256
-  `4d2791f97369379814433c3b984d679266c9fa3cfbf89ef0f39a4822fda18b61`;
+  `3cfd8f425f9592ebab31a036f0a253e68bf3464c6b108a45be9ea19484ff6f36`;
 - Workbench: `TOTAL 11/11 PASS` — `docs/evidence/receipts/s3b-wb-claude-20261022.txt`, SHA-256
-  `72f8ed0c3404201df57bdb8120f95ae032051a64279fb99ec52ab1521a0ace18`.
+  `3d9035fa71c681f224bcddeee7872ecd6c3b61d1d27f59f55ae70ec904b32a71`.
 
 ## Границы
 
