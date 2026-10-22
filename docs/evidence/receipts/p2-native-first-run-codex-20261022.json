@@ -1,0 +1,27 @@
+{
+    "status":  "STARTUP_CACHE_FAILED",
+    "nativeRun":  "NOT_RUN",
+    "reason":  "ResourceDB: could not open cache file",
+    "processId":  null,
+    "exitCode":  null,
+    "worldStarted":  false,
+    "archive":  "p2-first-start-codex-20261022.zip",
+    "archiveSha256":  "8e8f3323c49dce8efe37c9320a0c4048b0230ac9d2af6c82ab72f195cfd3a8c9",
+    "logs":  [
+                 {
+                     "name":  "console.log",
+                     "sha256":  "58b4bf558371b68c2415b5ce6f42b11c3a16f6d85e51e66730b4bfa18b1a7b9e",
+                     "bytes":  33154
+                 },
+                 {
+                     "name":  "error.log",
+                     "sha256":  "ecae8a7b0c8b182e2c2d7b70db4b2c8d5a5dc380c3de48a10b96d7b68d7d453b",
+                     "bytes":  168
+                 },
+                 {
+                     "name":  "script.log",
+                     "sha256":  "1e5fb4c29ae52263a30ca732981a32db38976562a8f0795bb2da6ace9b17fe33",
+                     "bytes":  19312
+                 }
+             ]
+}

@@ -1,0 +1,32 @@
+{
+    "head":  "e60186197ecf7763739c057dce03d94c69525378",
+    "pid":  21192,
+    "exitCode":  0,
+    "prefix":  "ricon-path-codex-20261022-234122",
+    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-path-codex-20261022-234122\\console.log",
+    "logSha256":  "cec794502f004bc19000d920350804ac66b518099bb5ed33dac0110e7bb1c685",
+    "sourceStable":  true,
+    "sources":  [
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PathObservation.c",
+                        "sha256":  "10f5a3e2b45dff1e9b988d16574d3b501a416e9218c65bcd9fdff877d310a90f"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WaterLayer.c",
+                        "sha256":  "e1b6cad38517f6d926152c852df81749a15d9ac7ece203acdfaf43e89bbb945d"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PathObservationFixtures.c",
+                        "sha256":  "03d6a3b0463c96375cd521dcc1b2f226da43551c527ac972aa7348c20cec83e9"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PathObservationFixtureSupport.c",
+                        "sha256":  "104a6497740d06a315067becec21a9c459987c93dee08bdcba859b430a808e01"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_PathObservationProbePlugin.c",
+                        "sha256":  "a4dfaacc1c50ee63c1b51df3fd8460bf15198fb9930a48c1373c737662b8526e"
+                    }
+                ],
+    "worldStarted":  false
+}

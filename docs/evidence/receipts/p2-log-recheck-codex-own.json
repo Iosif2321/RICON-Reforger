@@ -1,0 +1,13 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 20,
+  "cases": 47,
+  "printedNumericFields": 188,
+  "maxObservedRelativeError": 5.287272371130624e-07,
+  "controls": 11,
+  "extras": 7,
+  "hostOnly": 4,
+  "logSha256": "a0e4bc024a3531472db8cc389adaed883aa416ab7b4c73060f593630a48b5a1b",
+  "status": "NATIVE_LOG_PASS",
+  "unprintedIntervalBounds": "Проверены native comparator; в лог выведено только число интервалов"
+}

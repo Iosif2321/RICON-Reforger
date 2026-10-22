@@ -124,7 +124,9 @@ def literal(value: float) -> str:
     """Plain decimal float literal (no exponent form)."""
     text = repr(float(value))
     if "e" in text or "E" in text:
-        text = format(float(value), ".17f").rstrip("0")
+        mantissa, exponent = text.lower().split("e")
+        places = max(17, len(mantissa.partition(".")[2]) - int(exponent))
+        text = format(float(value), f".{places}f").rstrip("0")
         if text.endswith("."):
             text += "0"
     return text
