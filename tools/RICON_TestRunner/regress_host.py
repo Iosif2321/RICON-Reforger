@@ -57,7 +57,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_pair_service_fixture.py", V / "pair_service_v1.json",
                        TESTS / "RICON_PairServiceFixtures.c"),
                       ("gen_link_publication_fixture.py", V / "link_publication_v1.json",
-                       TESTS / "RICON_LinkPublicationFixtures.c")):
+                       TESTS / "RICON_LinkPublicationFixtures.c"),
+                      ("gen_channel_cutoff_fixture.py", V / "channel_cutoff_v1.json",
+                       TESTS / "RICON_ChannelCutoffFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes
