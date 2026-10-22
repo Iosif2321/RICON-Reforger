@@ -76,7 +76,7 @@
 | Код S3b, стенд, генератор | claude | codex | закрыт: 106/106 в Workbench у обоих, 15 контрольных отказов, host 31/31, Workbench 11/11 |
 | P1 канал и отсечка, контракт P1b | codex (REQ, эталон) | claude | REQ и корпус заморожены (слепой пересчёт 27/27); закрыт: код claude 24+3 в Workbench у обоих; production не подключён; P1b REQ v0.2 согласован |
 | P1b замирания, код | claude | codex | после наблюдений P2; тесты коротких просветов, миграция потребителей снимка |
-| P2 наблюдение пути и вода | claude (REQ, эталон) | codex | код codex — parity в Workbench |
+| P2 наблюдение пути и вода | claude (REQ, эталон) | codex | закрыт: 51 случай заморожен, слепой пересчёт codex 51/51, Workbench 47 native у обоих |
 | P3 постройки и модовые объекты | codex (REQ, эталон) | claude | код claude — parity в Workbench |
 | P4 растительность | claude (REQ, эталон) | codex | код codex — parity в Workbench |
 | P5 техника | codex (REQ, эталон) | claude | код claude — parity в Workbench |
