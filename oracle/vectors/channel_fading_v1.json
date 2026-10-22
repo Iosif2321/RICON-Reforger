@@ -1,0 +1,3507 @@
+{
+  "schema": "ricon-channel-fading-v1",
+  "version": 1,
+  "requirement": "REQ-channel-fading v0.1 DRAFT",
+  "note": "TEST_ONLY. Не профиль рации, не доказательство доставки или точного Rayleigh/Rice finite-N.",
+  "hostOnly": [
+    "F27",
+    "F28",
+    "F29",
+    "F30"
+  ],
+  "cases": [
+    {
+      "id": "F01",
+      "title": "Одна составляющая, единичный коэффициент среды",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.0,
+        "imag": 0.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          0
+        ]
+      }
+    },
+    {
+      "id": "F02",
+      "title": "Точная четверть оборота",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 268435456,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.0,
+        "imag": 1.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          268435456
+        ]
+      }
+    },
+    {
+      "id": "F03",
+      "title": "Конструктивная интерференция двух путей",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.4142135381698608,
+        "imag": 0.0,
+        "gainDb": 3.010299807987141,
+        "phasesQ": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "F04",
+      "title": "Мгновенная компенсация, descriptor не удаляется",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 536870912,
+              "dopplerQ": 1074
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "ZERO_AT_SAMPLE",
+        "real": 0.0,
+        "imag": 0.0,
+        "gainDb": null,
+        "phasesQ": [
+          0,
+          536870912
+        ]
+      }
+    },
+    {
+      "id": "F05",
+      "title": "Тот же канал позже восстанавливается",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 536870912,
+              "dopplerQ": 1074
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1250,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.707373857498169,
+        "imag": -0.7071067094802856,
+        "gainDb": 0.0016399801210537157,
+        "phasesQ": [
+          0,
+          805370912
+        ]
+      }
+    },
+    {
+      "id": "F06",
+      "title": "Отрицательный доплер и перенос фазы",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": -1074
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1250,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": -0.0003776903613470495,
+        "imag": -0.9999999403953552,
+        "gainDb": -5.177193818643528e-07,
+        "phasesQ": [
+          805241824
+        ]
+      }
+    },
+    {
+      "id": "F07",
+      "title": "Малый остаток рядом с противофазой",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 536870913,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.0,
+        "imag": -4.137757247946183e-09,
+        "gainDb": -167.66469983826755,
+        "phasesQ": [
+          0,
+          536870913
+        ]
+      }
+    },
+    {
+      "id": "F08",
+      "title": "Слабый путь после компенсации сильных",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 536870912,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "c",
+              "powerWeight": 1e-24,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 7.071067906552764e-13,
+        "imag": 0.0,
+        "gainDb": -243.01029984032877,
+        "phasesQ": [
+          0,
+          536870912,
+          0
+        ]
+      }
+    },
+    {
+      "id": "F09",
+      "title": "Максимальное время без float-произведения",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 2147483647,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": -268435453
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 2147483646,
+          "subUs": 999
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.7572572687640786e-05,
+        "imag": 1.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          268432453
+        ]
+      }
+    },
+    {
+      "id": "F10",
+      "title": "Микросекунды и верхняя граница доплера",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 268435456
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 999
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.0,
+        "imag": -1.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          805306368
+        ]
+      }
+    },
+    {
+      "id": "F11",
+      "title": "Ненулевой доплер у статичной среды недопустим",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 1
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F12",
+      "title": "Исчерпан ресурс",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": true,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "RESOURCE_EXHAUSTED",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F13",
+      "title": "Неполное физическое описание",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": false,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INCOMPLETE_COVERAGE",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F14",
+      "title": "Смена условий среды",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 2,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F15",
+      "title": "Другая частота",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 151,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F16",
+      "title": "Другая версия профиля",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 2,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F17",
+      "title": "Неподдерживаемая модель",
+      "input": {
+        "descriptor": {
+          "modelId": "OTHER_MODEL",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "UNSUPPORTED_MODEL",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F18",
+      "title": "Пустое описание полезной среды",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": []
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "EMPTY_MEDIUM",
+        "real": 0.0,
+        "imag": 0.0,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F19",
+      "title": "Все веса нулевые",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "EMPTY_MEDIUM",
+        "real": 0.0,
+        "imag": 0.0,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F20",
+      "title": "Последняя запись невалидна, несмотря на ресурсный отказ",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": true,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "z",
+              "powerWeight": -1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F21",
+      "title": "До начала интервала",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 999,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "STALE_DESCRIPTOR",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F22",
+      "title": "Правая граница интервала исключена",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 5000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "STALE_DESCRIPTOR",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F23",
+      "title": "Доплер вне области модели",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 268435457
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F24",
+      "title": "INT_MIN доплера отвергается до abs",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": -2147483648
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F25",
+      "title": "Дубликат componentId",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "direct",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F26",
+      "title": "Нарушен порядок componentId",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F27",
+      "title": "bool вместо времени",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": true,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F28",
+      "title": "bool вместо веса",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": true,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F29",
+      "title": "Лишнее поле JSON",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ],
+          "extra": 1
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F30",
+      "title": "Пропущена версия профиля JSON",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F31",
+      "title": "Переполнение binary32 веса",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1e+39,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F32",
+      "title": "Недопустимый символ ключа",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "bad/key",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F33",
+      "title": "Фаза за пределом полного оборота",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 1073741824,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F34",
+      "title": "Минимальный положительный binary32 вес",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.401298464324817e-45,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.0,
+        "imag": 0.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          0
+        ]
+      }
+    },
+    {
+      "id": "F35",
+      "title": "Взаимный канал при обратном направлении",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 536870912,
+              "dopplerQ": 1074
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "ZERO_AT_SAMPLE",
+        "real": 0.0,
+        "imag": 0.0,
+        "gainDb": null,
+        "phasesQ": [
+          0,
+          536870912
+        ]
+      }
+    },
+    {
+      "id": "F36",
+      "title": "Descriptor неканоничен",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F37",
+      "title": "Одинаковая физическая антенна с обеих сторон",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F38",
+      "title": "Неверная микросекундная доля",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 1000
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F39",
+      "title": "Частоты совпадают после binary32",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.000001,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.0,
+        "imag": 0.0,
+        "gainDb": 0.0,
+        "phasesQ": [
+          0
+        ]
+      }
+    },
+    {
+      "id": "F40",
+      "title": "TEST_ONLY неравномерное окно, t=0 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 0,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.3945214748382568,
+        "imag": 0.3399738073348999,
+        "gainDb": 3.13924681118753,
+        "phasesQ": [
+          0,
+          123456789,
+          345678901,
+          876543210,
+          112233445,
+          998877665
+        ]
+      }
+    },
+    {
+      "id": "F41",
+      "title": "TEST_ONLY неравномерное окно, t=380 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 380,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.1052154302597046,
+        "imag": -0.5026315450668335,
+        "gainDb": 1.6853859903013548,
+        "phasesQ": [
+          0,
+          269894965,
+          1433429,
+          973235914,
+          890162501,
+          696915777
+        ]
+      }
+    },
+    {
+      "id": "F42",
+      "title": "TEST_ONLY неравномерное окно, t=390 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 390,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.9042835235595703,
+        "imag": 0.5219227075576782,
+        "gainDb": 5.9091970393523745,
+        "phasesQ": [
+          0,
+          302004965,
+          77143429,
+          15064090,
+          6430677,
+          1028045777
+        ]
+      }
+    },
+    {
+      "id": "F43",
+      "title": "TEST_ONLY неравномерное окно, t=400 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 400,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.9317929148674011,
+        "imag": 1.758184552192688,
+        "gainDb": 5.976349741567326,
+        "phasesQ": [
+          0,
+          334114965,
+          152853429,
+          130634090,
+          196440677,
+          285433953
+        ]
+      }
+    },
+    {
+      "id": "F44",
+      "title": "TEST_ONLY неравномерное окно, t=410 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 410,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": -0.290178507566452,
+        "imag": 1.2763489484786987,
+        "gainDb": 2.338259080684215,
+        "phasesQ": [
+          0,
+          366224965,
+          228563429,
+          246204090,
+          386450677,
+          616563953
+        ]
+      }
+    },
+    {
+      "id": "F45",
+      "title": "TEST_ONLY неравномерное окно, t=670 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 670,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.5560963153839111,
+        "imag": 0.14125801622867584,
+        "gainDb": 3.876370699635559,
+        "phasesQ": [
+          0,
+          127343141,
+          49539781,
+          29798618,
+          1031743381,
+          636009361
+        ]
+      }
+    },
+    {
+      "id": "F46",
+      "title": "TEST_ONLY неравномерное окно, t=680 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 680,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.8197851181030273,
+        "imag": 0.9805692434310913,
+        "gainDb": 6.307465367803426,
+        "phasesQ": [
+          0,
+          159453141,
+          125249781,
+          145368618,
+          148011557,
+          967139361
+        ]
+      }
+    },
+    {
+      "id": "F47",
+      "title": "TEST_ONLY неравномерное окно, t=690 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 690,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.7027652859687805,
+        "imag": 1.9220423698425293,
+        "gainDb": 6.220197401188471,
+        "phasesQ": [
+          0,
+          191563141,
+          200959781,
+          260938618,
+          338021557,
+          224527537
+        ]
+      }
+    },
+    {
+      "id": "F48",
+      "title": "TEST_ONLY неравномерное окно, t=700 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 700,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": -0.5604970455169678,
+        "imag": 1.1077107191085815,
+        "gainDb": 1.878533443924871,
+        "phasesQ": [
+          0,
+          223673141,
+          276669781,
+          376508618,
+          528031557,
+          555657537
+        ]
+      }
+    },
+    {
+      "id": "F49",
+      "title": "TEST_ONLY неравномерное окно, t=1000 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.26354148983955383,
+        "imag": -0.4455057680606842,
+        "gainDb": -5.719794580487754,
+        "phasesQ": [
+          0,
+          113231317,
+          400486133,
+          622383146,
+          859622437,
+          825881121
+        ]
+      }
+    },
+    {
+      "id": "F50",
+      "title": "TEST_ONLY неравномерное окно, t=1230 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 0,
+          "validUntilMs": 31000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "path0",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "path1",
+              "powerWeight": 1,
+              "phaseQ": 123456789,
+              "dopplerQ": 3211
+            },
+            {
+              "componentId": "path2",
+              "powerWeight": 1,
+              "phaseQ": 345678901,
+              "dopplerQ": 7571
+            },
+            {
+              "componentId": "path3",
+              "powerWeight": 1,
+              "phaseQ": 876543210,
+              "dopplerQ": 11557
+            },
+            {
+              "componentId": "path4",
+              "powerWeight": 1,
+              "phaseQ": 112233445,
+              "dopplerQ": 19001
+            },
+            {
+              "componentId": "path5",
+              "powerWeight": 1,
+              "phaseQ": 998877665,
+              "dopplerQ": 33113
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1230,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.854927897453308,
+        "imag": -0.8755237460136414,
+        "gainDb": 6.240034598016999,
+        "phasesQ": [
+          0,
+          851761317,
+          1068074309,
+          59267674,
+          934885141,
+          925678353
+        ]
+      }
+    }
+  ]
+}
