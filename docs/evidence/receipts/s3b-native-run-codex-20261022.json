@@ -1,0 +1,16 @@
+{
+    "operator":  "codex",
+    "date":  "2026-10-22",
+    "head":  "8da27faab2c13016d9dc6ca999d357d65efdf8da",
+    "processId":  25932,
+    "exitCode":  0,
+    "sourceStable":  true,
+    "sourceSha256":  {
+                         "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_LinkPublicationProbePlugin.c":  "6A8AD09C71D8AD3C0E0F3A172E8880AB4F3AC67260293BBABC944D06E59F0C95",
+                         "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c":  "B3B5061A73937763FEB7FB1991F8AD6D7938970A009FF79F98E536C41F078DEB",
+                         "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LinkPublicationFixtureSupport.c":  "CF6FDDC5B5BE37F52AF8C7E72661FBEAA8AF3F95F4942220CBF07D7F77496C32",
+                         "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LinkPublicationFixtures.c":  "03D7B37832A986D6EB23DAD568F41FD90FCF1DBF72348C3711CB87DF097C45B0"
+                     },
+    "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-linkpub-codex-20261022-222134\\console.log",
+    "logSha256":  "A90D5449E7A10CD00F86BCD3F1E4A7CD43A9938777F1B2CC23774ED7E790A690"
+}

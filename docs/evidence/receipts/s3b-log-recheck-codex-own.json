@@ -1,0 +1,12 @@
+{
+  "operator": "codex",
+  "level": "NATIVE_LOG_RECHECK",
+  "log": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-linkpub-codex-20261022-222134\\console.log",
+  "logSha256": "a90d5449e7a10cd00f86bcd3f1e4a7cd43a9938777f1b2cc23774ed7e790a690",
+  "corpusSha256": "a60ed14590222c103aceea9030fb80ee233eea432b5969b8ed7fe93ad5c10be3",
+  "processExit": 0,
+  "expectedExtras": 3,
+  "errors": [],
+  "pass": true,
+  "limits": "Сверены напечатанные поля; остальные поля сравнивает native-стенд."
+}
