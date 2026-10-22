@@ -19,6 +19,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import struct
 import math
 import re
 import sys
@@ -121,12 +122,16 @@ def validate(data: object) -> None:
 
 
 def literal(value: float) -> str:
-    """Plain decimal float literal (no exponent form)."""
+    """Десятичный литерал без exponent; уже верный binary32 сохраняет прежний текст."""
     text = repr(float(value))
     if "e" in text or "E" in text:
-        mantissa, exponent = text.lower().split("e")
-        places = max(17, len(mantissa.partition(".")[2]) - int(exponent))
-        text = format(float(value), f".{places}f").rstrip("0")
+        scientific = text
+        text = format(float(value), ".17f")
+        if abs(value) < 1 and struct.pack("!f", float(text)) != struct.pack("!f", value):
+            mantissa, exponent = scientific.lower().split("e")
+            places = max(17, len(mantissa.partition(".")[2]) - int(exponent))
+            text = format(float(value), f".{places}f")
+        text = text.rstrip("0")
         if text.endswith("."):
             text += "0"
     return text

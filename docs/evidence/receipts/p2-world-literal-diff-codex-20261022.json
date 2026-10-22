@@ -1,0 +1,117 @@
+{
+  "source": "oracle/vectors/world_profile_v1.json",
+  "sourceSha256": "56c6a148236325183af8117d838ed1a22e12316642d9946c3b3ab57be48b5b1e",
+  "fixture": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_WorldProfileFixtures.c",
+  "changedLines": 12,
+  "changes": [
+    {
+      "line": 228,
+      "oldLiteral": "0.00000000000006659",
+      "newLiteral": "0.00000000000006659175741584933",
+      "oldBinary32": 6.659000336816517e-14,
+      "newBinary32": 6.659175842043188e-14,
+      "oldBits": "2995f286",
+      "newBits": "2995f389"
+    },
+    {
+      "line": 229,
+      "oldLiteral": "0.00000000000101313",
+      "newLiteral": "0.000000000001013133243927534",
+      "oldBinary32": 1.0131300095736484e-12,
+      "newBinary32": 1.0131332621801659e-12,
+      "oldBits": "2b8e95db",
+      "newBits": "2b8e95f9"
+    },
+    {
+      "line": 230,
+      "oldLiteral": "0.00000000001379297",
+      "newLiteral": "0.000000000013792967512284096",
+      "oldBinary32": 1.3792970238180047e-11,
+      "newBinary32": 1.3792967636094833e-11,
+      "oldBits": "2d72a604",
+      "newBits": "2d72a601"
+    },
+    {
+      "line": 276,
+      "oldLiteral": "0.00000000001379297",
+      "newLiteral": "0.000000000013792967512284096",
+      "oldBinary32": 1.3792970238180047e-11,
+      "newBinary32": 1.3792967636094833e-11,
+      "oldBits": "2d72a604",
+      "newBits": "2d72a601"
+    },
+    {
+      "line": 277,
+      "oldLiteral": "0.00000000000101313",
+      "newLiteral": "0.000000000001013133243927534",
+      "oldBinary32": 1.0131300095736484e-12,
+      "newBinary32": 1.0131332621801659e-12,
+      "oldBits": "2b8e95db",
+      "newBits": "2b8e95f9"
+    },
+    {
+      "line": 278,
+      "oldLiteral": "0.00000000000006659",
+      "newLiteral": "0.00000000000006659175741584933",
+      "oldBinary32": 6.659000336816517e-14,
+      "newBinary32": 6.659175842043188e-14,
+      "oldBits": "2995f286",
+      "newBits": "2995f389"
+    },
+    {
+      "line": 1010,
+      "oldLiteral": "0.00000000000006659",
+      "newLiteral": "0.00000000000006659175741584933",
+      "oldBinary32": 6.659000336816517e-14,
+      "newBinary32": 6.659175842043188e-14,
+      "oldBits": "2995f286",
+      "newBits": "2995f389"
+    },
+    {
+      "line": 1011,
+      "oldLiteral": "0.00000000000101313",
+      "newLiteral": "0.000000000001013133243927534",
+      "oldBinary32": 1.0131300095736484e-12,
+      "newBinary32": 1.0131332621801659e-12,
+      "oldBits": "2b8e95db",
+      "newBits": "2b8e95f9"
+    },
+    {
+      "line": 1012,
+      "oldLiteral": "0.00000000001379297",
+      "newLiteral": "0.000000000013792967512284096",
+      "oldBinary32": 1.3792970238180047e-11,
+      "newBinary32": 1.3792967636094833e-11,
+      "oldBits": "2d72a604",
+      "newBits": "2d72a601"
+    },
+    {
+      "line": 1058,
+      "oldLiteral": "0.00000000001379297",
+      "newLiteral": "0.000000000013792967512284096",
+      "oldBinary32": 1.3792970238180047e-11,
+      "newBinary32": 1.3792967636094833e-11,
+      "oldBits": "2d72a604",
+      "newBits": "2d72a601"
+    },
+    {
+      "line": 1059,
+      "oldLiteral": "0.00000000000101313",
+      "newLiteral": "0.000000000001013133243927534",
+      "oldBinary32": 1.0131300095736484e-12,
+      "newBinary32": 1.0131332621801659e-12,
+      "oldBits": "2b8e95db",
+      "newBits": "2b8e95f9"
+    },
+    {
+      "line": 1060,
+      "oldLiteral": "0.00000000000006659",
+      "newLiteral": "0.00000000000006659175741584933",
+      "oldBinary32": 6.659000336816517e-14,
+      "newBinary32": 6.659175842043188e-14,
+      "oldBits": "2995f286",
+      "newBits": "2995f389"
+    }
+  ],
+  "reason": "?????????? ?????????? ????? ????? ????? ???????????; ???????? JSON ? production-?????? ?? ????????"
+}

@@ -1,0 +1,114 @@
+{
+  "status": "PASS",
+  "passed": 15,
+  "total": 15,
+  "checks": [
+    {
+      "label": "gen_l0_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "L0_GENERATOR_PASS: 57 случаев, 4 недоступных поля effectiveDistanceM\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_p526_matrix.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "P526_GENERATOR_PASS: 1008, physicalSnr=840, fallback=168\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_route_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "ROUTE_GENERATOR_PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_snapshot_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "SNAPSHOT_GENERATOR_PASS: 43 случая, 77 шагов, 3 allocator заблокированы\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_sensitivity_points.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "SENSITIVITY_GENERATOR_PASS: 16\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_world_profile_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "WORLD_PROFILE_GENERATOR_PASS: 39\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_radio_device_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "RADIO_DEVICE_GENERATOR_PASS: 68\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_pair_service_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "PAIR_SERVICE_GENERATOR_PASS: 72\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_link_publication_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "LINK_PUBLICATION_GENERATOR_PASS: 106\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_channel_cutoff_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "CHANNEL_CUTOFF_GENERATOR_PASS: 24 native, 3 host-only\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_l2_fixture.py byte-compare",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "written C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-p2-host-cy_8v_p9\\RICON_L2Fixtures.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_lifecycle_fixture.py byte-compare",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "written C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-p2-host-cy_8v_p9\\RICON_LifecycleFixtures.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_von_seam_fixture.py byte-compare",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "written C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-p2-host-cy_8v_p9\\RICON_VoNSeamFixtures.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "gen_path_observation_fixture.py",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "P2 fixture: 47 native, 4 host-only; SHA 7a12ed92587318108059a213ace1d3f4286ad9a66bf86e8eb63dd4cdc7eea032; PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "unittest tools",
+      "passed": true,
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "..............................................................................\n----------------------------------------------------------------------\nRan 78 tests in 0.584s\n\nOK\n"
+    }
+  ],
+  "earlierFullRun": "30/34: oracle/physics/sensitivity passed; fixture/text regressions corrected by these targeted checks",
+  "sharedFormatterSha256": "1672cdc3de669a8781ad9976f0c5a596eeea0a74fda1b96a075ab36ede7339e3"
+}

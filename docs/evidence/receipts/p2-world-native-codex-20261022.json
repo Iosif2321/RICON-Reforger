@@ -1,0 +1,28 @@
+{
+    "head":  "aec9c09c7efe1feb7641663c700107ec61e22937",
+    "pid":  18344,
+    "exitCode":  0,
+    "prefix":  "ricon-world-codex-20261022-235604",
+    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-world-codex-20261022-235604\\console.log",
+    "logSha256":  "ca7f1e01951bc6161a77ed9194985bf61b06702ea08092f0b1cce5f557ee57c4",
+    "sourceStable":  true,
+    "sources":  [
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+                        "sha256":  "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_WorldProfileFixtures.c",
+                        "sha256":  "dddc9e60aebf91f4fa69d3090dbb7dea37e69d13aa2e36c8f7c9f2eaf121bdaa"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_WorldProfileFixtureSupport.c",
+                        "sha256":  "a4995f398f106e5c8229fce1afce43debde760375f4c5079eb35df2159398874"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_WorldProfileProbePlugin.c",
+                        "sha256":  "19da459c03e553d9f75051b1e43a35bd3bb9b18825dc3919bd71434ad9a09b5b"
+                    }
+                ],
+    "worldStarted":  false
+}

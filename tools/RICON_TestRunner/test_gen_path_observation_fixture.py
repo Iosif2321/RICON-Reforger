@@ -48,11 +48,15 @@ class PathObservationFixtureTest(unittest.TestCase):
         self.assertIn(f"expected.m_fLossDb = {literal};", "\n".join(generator.case_lines(0, case)))
 
     def test_small_float_literals_preserve_binary32(self):
-        for value in (1e-17, 1e-18, 1e-35, -1e-35, 1.234567890123e-35, 2**-149):
+        for value in (1e-17, 1e-18, 1e-35, -1e-35, 1.234567890123e-35, 2**-149, 6.659175741584933e-14):
             with self.subTest(value=value):
                 text = generator.value_literal(value, "float")
                 self.assertNotIn("e", text.lower())
                 self.assertEqual(struct.pack("!f", float(text)), struct.pack("!f", value))
+
+    def test_already_correct_binary32_keeps_legacy_text(self):
+        self.assertEqual(generator.value_literal(1e-50, "float"), "0.0")
+        self.assertEqual(generator.value_literal(1.4901161193847656e-8, "float"), "0.00000001490116119")
 
 
 if __name__ == "__main__":
