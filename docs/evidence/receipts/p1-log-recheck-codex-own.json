@@ -1,0 +1,70 @@
+{
+  "operator": "codex",
+  "level": "NATIVE_LOG_RECHECK",
+  "corpusSha256": "b4ff545d34de7859aae3d71678689a727c835c57f46d429df1a722d492c654d8",
+  "log": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-cutoff-codex-20261022-224631\\console.log",
+  "logSha256": "8776128fa0180b3669a2f43a8678000e4873d572dd2e785eb40a40868ca51339",
+  "processExit": 0,
+  "nativeCases": 24,
+  "hostOnlyCases": 3,
+  "errors": [],
+  "pass": true,
+  "limits": "Сверены напечатанные поля, не production-профиль и не поведение в мире.",
+  "observedBounds": [
+    {
+      "id": "C01",
+      "actual": -150.0,
+      "oracle": -150.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C02",
+      "actual": -120.0,
+      "oracle": -120.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C03",
+      "actual": -90.0,
+      "oracle": -90.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C04",
+      "actual": -118.979400635,
+      "oracle": -118.97940008672037,
+      "absDeltaDb": 5.482796296973902e-07
+    },
+    {
+      "id": "C05",
+      "actual": -110.457572937,
+      "oracle": -110.45757490560675,
+      "absDeltaDb": 1.9686067531665685e-06
+    },
+    {
+      "id": "C10",
+      "actual": -150.0,
+      "oracle": -150.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C15",
+      "actual": -150.0,
+      "oracle": -150.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C17",
+      "actual": -119.0,
+      "oracle": -119.0,
+      "absDeltaDb": 0.0
+    },
+    {
+      "id": "C18",
+      "actual": 400.0,
+      "oracle": 400.0,
+      "absDeltaDb": 0.0
+    }
+  ],
+  "maxObservedDeltaDb": 1.9686067531665685e-06
+}

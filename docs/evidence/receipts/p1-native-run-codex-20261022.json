@@ -1,0 +1,16 @@
+{
+    "operator":  "codex",
+    "date":  "2026-10-22",
+    "head":  "8ac83dcc72ddb9afa992786eb5739959c37bf25d",
+    "processId":  24384,
+    "exitCode":  0,
+    "sourceStable":  true,
+    "sourceSha256":  {
+                         "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c":  "A6AB53C70ED6A02D5828C2EFE851F9F09F576687ADB46945D34B0F8B457211E7",
+                         "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelCutoffFixtures.c":  "FCB43022FDEBFBA8A3C97D9A4400034AFC81FF391927FBA0B62C39710277E35B",
+                         "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelCutoffFixtureSupport.c":  "55F472F47F4B7285C9DF93E754DC63DE7FE2EA0A55538C81625E6F77E6C97A99",
+                         "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_ChannelCutoffProbePlugin.c":  "65A7E0845241FB5FCEAC560733E55247F85AA41BEA81F25FB39B1B3FFD3E6CCC"
+                     },
+    "log":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-cutoff-codex-20261022-224631\\console.log",
+    "logSha256":  "8776128FA0180B3669A2F43A8678000E4873D572DD2E785EB40A40868CA51339"
+}
