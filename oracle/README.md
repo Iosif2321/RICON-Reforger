@@ -369,6 +369,22 @@ bindings того же такта, предыдущий реестр и TEST_ONL
 - `python oracle/link_publication_oracle.py --check oracle/vectors/link_publication_v1.json`;
 - `python -m unittest discover -s oracle -p test_link_publication_oracle.py`.
 
-Корпус пока **DRAFT**, не заморожен: ожидается независимый пересчёт claude по REQ без чтения этого эталона.
+Корпус независимо пересчитан claude (`8e5d34a`): 106/106 без чтения эталона, codex повторил checker.
+Freeze согласован в Agora #3343, SHA-256 `a60ed14590222c103aceea9030fb80ee233eea432b5969b8ed7fe93ad5c10be3`.
 Q сравнивается с допуском 1e−6 только в компараторе Enforce; входы и разность Q округляются к float32,
 ветвление строгое. Q05/Q06 отдельно проверяют округление разности и десятичных JSON-литералов.
+
+## Отсечка полезного вклада: `vectors/channel_cutoff_v1.json` (P1)
+
+`channel_cutoff_oracle.py` по `docs/req/REQ-channel-cutoff.md`: чистый Assess строгих границ конечного
+вклада всех возможных составляющих. Безопасная амплитудная сумма учитывает неизвестные фазы.
+Неизвестное покрытие/ресурс/истёкший интервал не дают физический LOST; отсутствие границы стохастического
+хвоста запрещает отсечку. Допуск не является чувствительностью приёмника. Вход не меняется.
+
+27 случаев независимо пересчитаны claude (`91d50fa`), codex повторил checker. SHA-256
+`c5e7e83460b8008f4fed08ce1669e2f95287f34e1e892cd437678a11ed983684`.
+Числа — TEST_ONLY, производственный численный запас не выбран. Реальные модели мира, Enforce и
+экономия вычислений этим эталоном не подтверждены. Временной контракт P1b — `REQ-channel-time.md`.
+
+Проверки: `python -B oracle/channel_cutoff_oracle.py --check oracle/vectors/channel_cutoff_v1.json` и
+`python -B -m unittest discover -s oracle -p test_channel_cutoff_oracle.py`.

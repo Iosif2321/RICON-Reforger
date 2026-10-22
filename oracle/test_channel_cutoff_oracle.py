@@ -73,6 +73,27 @@ class ChannelCutoffTest(unittest.TestCase):
         q["paths"] = [{"pathId": str(i), "upperDbm": -150} for i in range(4097)]
         self.assertEqual(cc.evaluate(q)["reason"], "INVALID_INPUT")
 
+    def test_invalid_tolerance_empty_id_and_stale_empty(self):
+        q = cc.baseline()
+        q["toleranceDbm"] = "NaN"
+        self.assertEqual(cc.evaluate(q)["reason"], "INVALID_INPUT")
+        q = cc.baseline()
+        q["paths"][0]["pathId"] = ""
+        self.assertEqual(cc.evaluate(q)["reason"], "INVALID_INPUT")
+        q = cc.baseline()
+        q.update(paths=[], nowMs=200)
+        self.assertEqual(cc.evaluate(q)["reason"], "STALE_BOUND")
+
+    def test_amplitude_bound_covers_sampled_phases(self):
+        q = cc.baseline()
+        q["paths"] = [{"pathId": str(i), "upperDbm": -120-i} for i in range(6)]
+        bound = cc.evaluate(q)["upperDbm"]
+        for tick in range(200):
+            field = sum(10**(p["upperDbm"]/20) * complex(math.cos(tick*(i+1)), math.sin(tick*(i+1)))
+                        for i, p in enumerate(q["paths"]))
+            if abs(field):
+                self.assertLessEqual(20*math.log10(abs(field)), bound+1e-12)
+
 
 if __name__ == "__main__":
     unittest.main()
