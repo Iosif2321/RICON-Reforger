@@ -74,6 +74,19 @@ class ObservationTest(unittest.TestCase):
         observation = b.obs(b.air(0), b.air(10), coverage=dict(b.COMPLETE, WATER="PARTIAL"))
         self.assertEqual("WATER_COVERAGE_INCOMPLETE", o.water_layer(observation, b.PROFILE)["code"])
 
+    def test_binary32_typing_precedes_checks(self):
+        case = next(c for c in b.CASES if c[0] == "O24")
+        self.assertEqual("INVALID_OBSERVATION", o.check_observation(case[2]))
+        untyped = copy.deepcopy(case[2])
+        untyped["segments"][0].update(startM=16777200, endM=16777217)
+        self.assertEqual("VALID", o.check_observation(untyped))
+
+    def test_vertical_exit_error_bound(self):
+        """WL05: Snell bound 1/cos(asin(1/|n|)) - 1 is small for water and the cut-off is |n| = 3."""
+        n = o.refractive_index(*o.water_permittivity(0.15, 15, 0.5))
+        self.assertLess(1 / math.cos(math.asin(1 / abs(n))) - 1, 0.01)
+        self.assertAlmostEqual(0.0607, 1 / math.cos(math.asin(1 / 3.0)) - 1, places=4)
+
 
 class CorpusTest(unittest.TestCase):
     def test_vectors_are_built_from_case_list(self):
@@ -84,7 +97,7 @@ class CorpusTest(unittest.TestCase):
         self.assertEqual(0, o.check(VECTORS))
         d = json.loads(VECTORS.read_bytes())
         for mutate in (lambda c: c["expect"]["water"].update(lossDb=c["expect"]["water"]["lossDb"] + 1e-3),
-                       lambda c: c["expect"]["water"].update(variant="DIRECT_UNDERWATER"),
+                       lambda c: c["expect"]["water"].update(crossings=9),
                        lambda c: c["expect"].update(observationCode="INVALID_OBSERVATION")):
             corrupted = copy.deepcopy(d)
             target = next(c for c in corrupted["cases"] if c["id"] == "W02")
@@ -94,14 +107,9 @@ class CorpusTest(unittest.TestCase):
                 o.close(o.evaluate(c), c["expect"], c["id"], errors, 1e-9)
             self.assertTrue(errors)
 
-    def test_variant_margin_is_large(self):
-        for c in json.loads(VECTORS.read_bytes())["cases"]:
-            w = c["expect"]["water"]
-            if w.get("code") == "OK" and len(w["endpoints"]) == 2 and c["input"]["observation"]["tx"]["waterBodyKey"]:
-                tx, rx = c["input"]["observation"]["tx"], c["input"]["observation"]["rx"]
-                direct = math.dist(tx["position"], rx["position"]) * w["endpoints"][0]["alphaDbPerM"]
-                vertical = sum(r["endLossDb"] for r in w["endpoints"])
-                self.assertGreater(abs(direct - vertical), 1.0, c["id"])
+    def test_every_water_code_is_covered(self):
+        codes = {c["expect"]["water"]["code"] for c in json.loads(VECTORS.read_bytes())["cases"]}
+        self.assertEqual(set(o.WATER_CODES), codes)
 
 
 if __name__ == "__main__":

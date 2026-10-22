@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""P2 oracle (claude): path-observation contract check and the water layer `water_p527` (REQ-path-observation v0.1).
+"""P2 oracle (claude): path-observation contract check and the water layer `water_p527` (REQ-path-observation v0.2).
 
 ORACLE level: pure Python, binary64, no world/engine calls. Sea/fresh water permittivity follows
-ITU-R P.527-6 §5.1.2 eq. (14)-(27); the water profile (T, S per class) is TEST_ONLY.
+ITU-R P.527-6 §5.1.2 eq. (14)-(27); one water profile per world (T, S) is ASSUMED_CONFIG, TEST_ONLY here.
 Usage: python path_observation_oracle.py --check vectors/path_observation_v1.json"""
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import cmath
 import json
 import math
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -22,21 +23,31 @@ SEGMENT_FAMILIES = ("WATER", "STRUCTURE", "VEGETATION", "VEHICLE")
 COVERAGE = ("COMPLETE", "PARTIAL", "NOT_OBSERVED")
 KNOWLEDGE = ("PROFILE", "RULE", "HINT_ONLY", "UNKNOWN")
 MEDIA = ("AIR", "WATER", "UNKNOWN")
-WATER_CLASSES = ("SEA", "FRESH", "UNKNOWN")
 KEY = re.compile(r"[A-Za-z0-9_.:\-]{1,64}")
 MAX_SEGMENTS = 1024
 T_MIN, T_MAX, S_MIN, S_MAX = -4.0, 40.0, 0.0, 40.0   # P.527-6 §5.1
 F_MAX_GHZ = 1000.0                                  # P.527-6 Annex 1 scope
-WATER_CODES = ("OK", "NO_SUBMERGED_ENDPOINT", "INVALID_OBSERVATION", "INVALID_PROFILE", "WATER_COVERAGE_INCOMPLETE",
-               "WATER_CLASS_UNKNOWN", "OUT_OF_MODEL_DOMAIN", "NUMERIC_FAILURE")
+WATER_CODES = ("INVALID_OBSERVATION", "INVALID_PROFILE", "WATER_COVERAGE_INCOMPLETE", "NO_WATER",
+               "OUT_OF_MODEL_DOMAIN", "NUMERIC_FAILURE", "OK")
+MIN_INDEX = 3.0                                     # WL05: below, the vertical-exit length error exceeds 6 %
 
 
 F32_MAX = 3.4028234663852886e38
 
 
-def is_num(v) -> bool:
-    """Finite and within the binary32 range (REQ PO03)."""
-    return type(v) in (int, float) and math.isfinite(v) and abs(v) <= F32_MAX
+def f32(x: float) -> float:
+    try:
+        return struct.unpack("<f", struct.pack("<f", x))[0]
+    except OverflowError:
+        return math.copysign(math.inf, x)
+
+
+def typed(v):
+    """PO03: a JSON number rounded to binary32, or None when it is not a finite binary32 number (bool/str/inf)."""
+    if type(v) not in (int, float):
+        return None
+    x = f32(float(v))
+    return x if math.isfinite(x) else None
 
 
 def is_int(v, lo, hi) -> bool:
@@ -107,131 +118,134 @@ def interface_loss_db(n: complex) -> float:
 
 # ---------------------------------------------------------------- PO03-PO07 observation check
 
-def valid_endpoint(e) -> bool:
-    if type(e) is not dict or set(e) != {"position", "medium", "depthM", "waterClass", "waterBodyKey"}:
-        return False
+def typed_endpoint(e):
+    """Typed copy of an Endpoint or None when it violates PO05."""
+    if type(e) is not dict or set(e) != {"position", "medium", "depthM"}:
+        return None
     p = e["position"]
-    if type(p) is not list or len(p) != 3 or not all(is_num(v) for v in p):
-        return False
-    if e["medium"] not in MEDIA or not is_num(e["depthM"]) or type(e["waterBodyKey"]) is not str:
-        return False
-    if e["medium"] == "WATER":
-        if e["depthM"] < 0 or e["waterClass"] not in WATER_CLASSES:
-            return False
-        return e["waterBodyKey"] == "" or KEY.fullmatch(e["waterBodyKey"]) is not None
-    return e["depthM"] == 0 and e["waterClass"] == "NONE" and e["waterBodyKey"] == ""
+    if type(p) is not list or len(p) != 3:
+        return None
+    pos = [typed(v) for v in p]
+    depth = typed(e["depthM"])
+    if None in pos or depth is None or e["medium"] not in MEDIA:
+        return None
+    if e["medium"] == "WATER" and depth < 0:
+        return None
+    if e["medium"] != "WATER" and depth != 0:
+        return None
+    return {"position": pos, "medium": e["medium"], "depthM": depth}
 
 
-def distance(a, b) -> float:
-    return math.dist(a["position"], b["position"])
-
-
-def check_observation(obs) -> str:
-    """PO07: 'VALID' or 'INVALID_OBSERVATION'; all checks global."""
+def typed_observation(obs):
+    """PO07: typed observation (binary32 numbers, length L) or None when INVALID_OBSERVATION; checks are global."""
     if type(obs) is not dict or set(obs) != {"frequencyMHz", "environmentRevision", "tx", "rx", "coverage", "segments"}:
-        return "INVALID_OBSERVATION"
-    if not is_num(obs["frequencyMHz"]) or obs["frequencyMHz"] <= 0 or not is_int(obs["environmentRevision"], 1, MAX):
-        return "INVALID_OBSERVATION"
+        return None
+    f = typed(obs["frequencyMHz"])
+    if f is None or f <= 0 or not is_int(obs["environmentRevision"], 1, MAX):
+        return None
     cov = obs["coverage"]
     if type(cov) is not dict or set(cov) != set(FAMILIES) or not all(cov[k] in COVERAGE for k in FAMILIES):
-        return "INVALID_OBSERVATION"
-    if not valid_endpoint(obs["tx"]) or not valid_endpoint(obs["rx"]):
-        return "INVALID_OBSERVATION"
-    tx, rx = obs["tx"], obs["rx"]
-    length = distance(tx, rx)
-    if not length > 0:
-        return "INVALID_OBSERVATION"
-    if (tx["medium"] == rx["medium"] == "WATER" and tx["waterBodyKey"] and tx["waterBodyKey"] == rx["waterBodyKey"]
-            and tx["waterClass"] != rx["waterClass"]):
-        return "INVALID_OBSERVATION"   # one identified water body cannot have two classes
+        return None
+    tx, rx = typed_endpoint(obs["tx"]), typed_endpoint(obs["rx"])
+    if tx is None or rx is None:
+        return None
+    length = math.dist(tx["position"], rx["position"])
+    if not (math.isfinite(length) and length > 0):
+        return None
     segs = obs["segments"]
     if type(segs) is not list or len(segs) > MAX_SEGMENTS:
-        return "INVALID_OBSERVATION"
-    previous = None
+        return None
+    out, previous = [], None
     by_entity: dict[str, list[tuple[float, float]]] = {}
     for s in segs:
         if type(s) is not dict or set(s) != {"family", "startM", "endM", "entityKey", "knowledge", "materialId",
                                              "openings"}:
-            return "INVALID_OBSERVATION"
+            return None
+        start, end = typed(s["startM"]), typed(s["endM"])
+        if start is None or end is None or not 0 <= start < end <= length:
+            return None
         if s["family"] not in SEGMENT_FAMILIES or s["knowledge"] not in KNOWLEDGE or type(s["openings"]) is not bool:
-            return "INVALID_OBSERVATION"
-        if not is_num(s["startM"]) or not is_num(s["endM"]) or not 0 <= s["startM"] < s["endM"] <= length:
-            return "INVALID_OBSERVATION"
+            return None
         if type(s["entityKey"]) is not str or KEY.fullmatch(s["entityKey"]) is None or type(s["materialId"]) is not str:
-            return "INVALID_OBSERVATION"
+            return None
         known = s["knowledge"] in ("PROFILE", "RULE")
         if known != (s["materialId"] != "") or (known and KEY.fullmatch(s["materialId"]) is None):
-            return "INVALID_OBSERVATION"
-        order = (s["startM"], SEGMENT_FAMILIES.index(s["family"]), s["entityKey"])
+            return None
+        if s["family"] == "WATER" and not (0 < start and end < length):
+            return None   # water at an antenna is described by the endpoint, not by a segment
+        order = (start, SEGMENT_FAMILIES.index(s["family"]), s["entityKey"].encode("ascii"))
         if previous is not None and order < previous:
-            return "INVALID_OBSERVATION"
+            return None
         previous = order
-        by_entity.setdefault(s["entityKey"], []).append((s["startM"], s["endM"]))
+        by_entity.setdefault(s["entityKey"], []).append((start, end))
+        out.append(dict(s, startM=start, endM=end))
     for spans in by_entity.values():
         spans.sort()
         for (_, end), (start, _) in zip(spans, spans[1:]):
             if start < end:
-                return "INVALID_OBSERVATION"
-    return "VALID"
+                return None
+    return {"frequencyMHz": f, "coverage": dict(cov), "tx": tx, "rx": rx, "lengthM": length, "segments": out}
+
+
+def check_observation(obs) -> str:
+    return "VALID" if typed_observation(obs) is not None else "INVALID_OBSERVATION"
 
 
 # ---------------------------------------------------------------- WL01-WL07 water layer
 
-def valid_profile(profile) -> bool:
-    if type(profile) is not dict or not set(profile) <= {"SEA", "FRESH"}:
-        return False
-    for value in profile.values():
-        if type(value) is not dict or set(value) != {"tempC", "salinityPpt"}:
-            return False
-        if not is_num(value["tempC"]) or not is_num(value["salinityPpt"]):
-            return False
-    return True
+def typed_profile(profile):
+    if type(profile) is not dict or set(profile) != {"tempC", "salinityPpt"}:
+        return None
+    t, s = typed(profile["tempC"]), typed(profile["salinityPpt"])
+    return None if t is None or s is None else (t, s)
 
 
 def water_layer(obs, profile) -> dict:
-    if check_observation(obs) != "VALID":
+    o = typed_observation(obs)
+    if o is None:
         return {"code": "INVALID_OBSERVATION"}
-    if not valid_profile(profile):
+    p = typed_profile(profile)
+    if p is None:
         return {"code": "INVALID_PROFILE"}
-    ends = (("tx", obs["tx"]), ("rx", obs["rx"]))
-    if obs["coverage"]["WATER"] != "COMPLETE" or any(e["medium"] == "UNKNOWN" for _, e in ends):
+    ends = (("tx", o["tx"]), ("rx", o["rx"]))
+    if o["coverage"]["WATER"] != "COMPLETE" or any(e["medium"] == "UNKNOWN" for _, e in ends):
         return {"code": "WATER_COVERAGE_INCOMPLETE"}
     wet = [(name, e) for name, e in ends if e["medium"] == "WATER"]
-    if not wet:
-        return {"code": "NO_SUBMERGED_ENDPOINT", "lossDb": 0.0}
-    if any(e["waterClass"] == "UNKNOWN" or e["waterClass"] not in profile for _, e in wet):
-        return {"code": "WATER_CLASS_UNKNOWN"}
-    f_mhz = obs["frequencyMHz"]
-    for _, e in wet:
-        p = profile[e["waterClass"]]
-        if not (T_MIN <= p["tempC"] <= T_MAX and S_MIN <= p["salinityPpt"] <= S_MAX) or f_mhz / 1000.0 > F_MAX_GHZ:
-            return {"code": "OUT_OF_MODEL_DOMAIN"}
+    water = [s for s in o["segments"] if s["family"] == "WATER"]
+    if not wet and not water:
+        return {"code": "NO_WATER", "lossDb": 0.0}
+    t_c, s_ppt = p
+    f_mhz = o["frequencyMHz"]
+    if not (T_MIN <= t_c <= T_MAX and S_MIN <= s_ppt <= S_MAX) or f_mhz / 1000.0 > F_MAX_GHZ:
+        return {"code": "OUT_OF_MODEL_DOMAIN"}
     try:
-        rows, vertical = [], 0.0
+        n = refractive_index(*water_permittivity(f_mhz / 1000.0, t_c, s_ppt))
+        if abs(n) < MIN_INDEX:
+            return {"code": "OUT_OF_MODEL_DOMAIN"}
+        alpha = attenuation_db_per_m(f_mhz, n)
+        lint = interface_loss_db(n)
+        length_error = 1.0 / math.cos(math.asin(1.0 / abs(n))) - 1.0
+        endpoints, segments, total, crossings = [], [], 0.0, 0
         for name, e in wet:
-            p = profile[e["waterClass"]]
-            eps = water_permittivity(f_mhz / 1000.0, p["tempC"], p["salinityPpt"])
-            n = refractive_index(*eps)
-            alpha = attenuation_db_per_m(f_mhz, n)
-            lint = interface_loss_db(n)
-            end_loss = e["depthM"] * alpha + lint
+            loss = e["depthM"] * alpha + lint
             x, y, z = e["position"]
-            rows.append({"end": name, "alphaDbPerM": alpha, "interfaceDb": lint, "endLossDb": end_loss,
-                         "effectivePoint": [x, y + e["depthM"], z]})
-            vertical += end_loss
-        loss, variant = vertical, "VERTICAL_EXIT"
-        tx, rx = obs["tx"], obs["rx"]
-        if len(wet) == 2 and tx["waterBodyKey"] and tx["waterBodyKey"] == rx["waterBodyKey"]:
-            direct = distance(tx, rx) * rows[0]["alphaDbPerM"]
-            if direct < vertical:
-                loss, variant = direct, "DIRECT_UNDERWATER"
-        values = [loss] + [v for r in rows for v in (r["alphaDbPerM"], r["interfaceDb"], r["endLossDb"])]
-        points = [c for r in rows for c in r["effectivePoint"]]
+            endpoints.append({"end": name, "depthM": e["depthM"], "lossDb": loss,
+                              "effectivePoint": [x, y + e["depthM"], z]})
+            total += loss
+            crossings += 1
+        for s in water:
+            loss = (s["endM"] - s["startM"]) * alpha + 2.0 * lint
+            segments.append({"entityKey": s["entityKey"], "lengthM": s["endM"] - s["startM"], "lossDb": loss})
+            total += loss
+            crossings += 2
+        values = [total, alpha, lint, length_error] + [r["lossDb"] for r in endpoints + segments]
+        points = [c for r in endpoints for c in r["effectivePoint"]]
         if not all(math.isfinite(v) and 0 <= v <= F32_MAX for v in values) or not all(abs(c) <= F32_MAX for c in points):
             return {"code": "NUMERIC_FAILURE"}
     except (ValueError, ZeroDivisionError, OverflowError):
         return {"code": "NUMERIC_FAILURE"}
-    return {"code": "OK", "lossDb": loss, "variant": variant, "endpoints": rows}
+    return {"code": "OK", "lossDb": total, "alphaDbPerM": alpha, "interfaceDb": lint, "lengthErrorMax": length_error,
+            "crossings": crossings, "endpoints": endpoints, "segments": segments}
 
 
 def evaluate(case) -> dict:
