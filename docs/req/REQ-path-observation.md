@@ -137,7 +137,7 @@ tempC и salinityPpt, числа по PO03) → `WATER_COVERAGE_INCOMPLETE` (cov
 Unit-тесты сверяют ε с P.527-6 Fig. 2 (T = 20 °C) и глубину проникновения с Fig. 1, σsw 35 ‰ при 20 °C ≈ 4.79 См/м,
 и тождество αdB = 20·lg(e)/δ. Native сравнивает коды строго, числа — с допуском max(1e-3 дБ, 1e-5·|x|).
 
-Корпус v1 DRAFT: 47 случаев (O01–O24 наблюдение, W01–W23 водный слой), LF SHA-256 `3f9dd7dd317db681161441c5d4b2c5c138654d2d09cd0fe53bd46c9afad4a3f0`.
+Корпус v1 DRAFT: 47 случаев (O01–O24 без O22 — наблюдение, W01–W24 — водный слой), LF SHA-256 `3f9dd7dd317db681161441c5d4b2c5c138654d2d09cd0fe53bd46c9afad4a3f0`.
 Ошибки JSON-типа O16 (лишнее поле) и O19 (bool вместо числа) недостижимы в типизированном Enforce и остаются host-only;
 остальные 45 — для native. Команды: `python oracle/path_observation_oracle.py --check oracle/vectors/path_observation_v1.json`;
 `python -m unittest discover -s oracle -p test_path_observation_oracle.py`.
