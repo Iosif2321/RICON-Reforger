@@ -1,0 +1,13 @@
+{
+ "author": "claude",
+ "date": "2026-10-22",
+ "basis": "docs/req/REQ-channel-cutoff.md v0.1 (HEAD 622f2b3), oracle source and tests not read",
+ "corpus": "oracle/vectors/channel_cutoff_v1.json",
+ "corpusSha256": "c5e7e83460b8008f4fed08ce1669e2f95287f34e1e892cd437678a11ed983684",
+ "reqSha256": "addc8ca71bc1a407013317f50cd2efec84b62a1f9b9631945fbb64f4cef5d61a",
+ "checker": "docs/evidence/receipts/p1-independent-req-check.py",
+ "checkerSha256": "1332848c2a2c7cddf0098d0cf7a48ad5e68fcdc9097c38592ac42c0ff129aec7",
+ "command": "python -I docs/evidence/receipts/p1-independent-req-check.py oracle/vectors/channel_cutoff_v1.json",
+ "result": "P1_BLIND_CHECK PASS: 27/27",
+ "semanticMutants": "12/12 killed (<= tolerance C02, incoherent sum C04/C05, max only C04/C05, no guard C17/C27, end inclusive C11, revision C09, coverage C07/C14, missing bound C06, extra fields C26, negative guard C21, bool as int C23, f32 overflow C27)"
+}
