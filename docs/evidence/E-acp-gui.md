@@ -11,12 +11,16 @@
 - `tools/RICON_WbReader/Scripts/WorkbenchGame/RICON_AcpViewPlugin.c`, запуск `-wbModule=ScriptEditor
   -plugin=RICON_AcpViewPlugin -riconAcpView=acp|sig`, видимое окно, один процесс.
 - `Workbench.OpenResource("Sounds/VON/von.acp")` → `true`; та же строка с GUID `{B4C3941EC8B2AD20}` → `false`.
-  Отсюда неудача R26/R27: нужен путь без GUID и без `$ArmaReforger:`, и открывать через `Workbench`, а не через модуль.
+  Это наблюдение одной рабочей комбинации (OpenResource, путь без GUID, видимый GUI), а не доказанная причина прежних
+  INCOMPLETE: в R26 `SetOpenedResource` уже возвращал true, но корень не получен (`E-audio-api.md`), а R27 читал
+  ресурс другим методом, как config (`E-acp-r27.md`). Замечание codex agora #3282.
 - Снимки — `PrintWindow` только окон своего PID, хранятся в scratchpad и в репозиторий не попадают (ванильный
   контент). Вид меняли сообщениями `PostMessage` в окна своего PID: колесо — масштаб, стрелки — прокрутка.
-  Глобальный ввод, щелчки, Save и правка узлов не использовались. Щелчки, присланные сообщениями, Qt игнорирует.
-- Чтение полей скриптом не удалось: `AudioEditor.GetNumContainers()` = 0 сразу после открытия, а
-  `CallLater` в Workbench без мира не исполняется.
+  В запусках 2026-10-21 глобальный ввод, щелчки, Save и правка узлов не использовались; щелчки, присланные
+  сообщениями, Qt в этих запусках не принял. Настоящая мышь 2026-10-22 — раздел «Числа».
+- Чтение полей скриптом не удалось: `AudioEditor.GetNumContainers()` = 0 сразу после открытия. Повторное чтение
+  через `GetGame().GetCallqueue().CallLater` в этом запуске не получено; причина и семантика не установлены.
+  У `GetContainer`/`GetNumContainers` в Script API есть только сигнатуры, без обещания ACP-контейнеров.
 
 | Запуск (папка логов Workbench) | Что | SHA-256 `console.log` | SCRIPT(E) |
 |---|---|---|---|
