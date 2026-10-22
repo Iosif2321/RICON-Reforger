@@ -278,7 +278,7 @@ class RICON_LinkPublicationRun
 			return false;
 		if (a.m_eState != b.m_eState || a.m_iTtlMs != b.m_iTtlMs || a.m_iPublishedAtMs != b.m_iPublishedAtMs)
 			return false;
-		// Копия ошибочного реестра при отказе может содержать неконечное Q: тогда сравнение побитное.
+		// Копия ошибочного реестра при отказе может содержать неконечное Q: неконечные сравниваются по тексту.
 		if (!RICON_Num.IsFinite(a.m_fQuality) || !RICON_Num.IsFinite(b.m_fQuality))
 			return RICON_LinkPublicationInputSnapshot.SameFloat(a.m_fQuality, b.m_fQuality);
 		return SameQuality(a.m_fQuality, b.m_fQuality);
@@ -533,6 +533,84 @@ class RICON_LinkPublicationRun
 			&& r.m_Registry && r.m_Registry.m_iSessionEpoch == 3 && r.m_Registry.m_bNeedsFullResync;
 		Require(resync, "linkpub adapter", "адаптер без менеджера: NEED_FULL_RESYNC, реестр с входной epoch");
 		if (resync)
+			m_iExtras++;
+		CheckOtherEpoch();
+	}
+
+	//! Unit codex #3343: реестр другой epoch с highWater=MAX и полным maxActive считается пустым для ACTIVE_LIMIT и
+	//! ID_EXHAUSTED; итог — NEED_FULL_RESYNC после одного чтения epoch, highWater сбрасывается в 0.
+	protected void CheckOtherEpoch()
+	{
+		RICON_LinkPublicationInput input = new RICON_LinkPublicationInput();
+		input.m_iNowMs = 5;
+		input.m_iSessionEpoch = 5;
+		input.m_iTtlMs = 1000;
+		input.m_fQualityDelta = 0.125;
+		input.m_Limits = new RICON_LinkPublicationLimits();
+		input.m_Limits.m_iMaxBindings = 1;
+		input.m_Limits.m_iMaxPairs = 1;
+		input.m_Limits.m_iMaxActiveLinks = 1;
+		RICON_TransmissionBinding b = new RICON_TransmissionBinding();
+		b.m_iLeaseId = 21;
+		b.m_iSessionEpoch = 5;
+		b.m_iTxPlayerId = 1;
+		b.m_iTxGeneration = 1;
+		b.m_iTxDeviceId = 101;
+		b.m_iTxTransceiverIndex = 0;
+		b.m_iNetworkTypeId = 1;
+		b.m_iChannelId = 1;
+		b.m_bActive = true;
+		b.m_iIssuedAtMs = 0;
+		b.m_iTtlMs = 10000;
+		input.m_aBindings.Insert(b);
+		input.m_PairResult = new RICON_PairServiceResult();
+		input.m_PairResult.m_eCallCode = RICON_EPairServiceCode.OK;
+		RICON_PairResult p = new RICON_PairResult();
+		p.m_iLeaseId = 21;
+		p.m_iTxDeviceId = 101;
+		p.m_iRxPlayerId = 2;
+		p.m_iRxDeviceId = 202;
+		p.m_iRxTransceiverIndex = 0;
+		p.m_ePairCode = RICON_EPairCode.EVALUATED;
+		p.m_bHasDeviceCode = true;
+		p.m_eDeviceCode = RICON_ERadioQueryCode.READY;
+		p.m_bHasBudget = true;
+		p.m_bValid = true;
+		p.m_eReason = RICON_EReason.OK;
+		p.m_eState = RICON_ELinkState.CLEAN;
+		p.m_fIntelligibility = 0.75;
+		p.m_fSinrDb = 16;
+		input.m_PairResult.m_aPairs.Insert(p);
+		RICON_LinkRegistry registry = new RICON_LinkRegistry();
+		registry.m_iSessionEpoch = 4;
+		registry.m_iHighWaterLinkId = int.MAX;
+		registry.m_iLastTickMs = 10;
+		registry.m_bNeedsFullResync = false;
+		RICON_LinkRegistryEntry e = new RICON_LinkRegistryEntry();
+		e.m_iLeaseId = 11;
+		e.m_iRxDeviceId = 202;
+		e.m_iRxTransceiverIndex = 0;
+		e.m_iRxPlayerId = 2;
+		e.m_iTxPlayerId = 1;
+		e.m_iTxDeviceId = 101;
+		e.m_iTxTransceiverIndex = 0;
+		e.m_iLinkId = int.MAX;
+		e.m_iLinkSeq = 5;
+		e.m_eState = RICON_ELinkState.CLEAN;
+		e.m_fQuality = 0.5;
+		e.m_iTtlMs = 1000;
+		e.m_iPublishedAtMs = 10;
+		registry.m_aEntries.Insert(e);
+		RICON_LinkFakeSource source = new RICON_LinkFakeSource(5);
+		RICON_LinkPublicationService service = new RICON_LinkPublicationService();
+		RICON_LinkPublicationResult r = service.Publish(input, registry, source);
+		bool ok = r.m_eCallCode == RICON_ELinkPublicationCode.NEED_FULL_RESYNC && r.m_iEpochReads == 1 && source.m_iReads == 1;
+		ok = ok && r.m_iSequenceCalls == 0 && source.m_iCalls == 0 && r.m_bRequiresFullResync && r.m_aSnapshots.Count() == 0;
+		ok = ok && r.m_Registry && r.m_Registry.m_iSessionEpoch == 5 && r.m_Registry.m_iHighWaterLinkId == 0;
+		ok = ok && r.m_Registry.m_iLastTickMs == -1 && r.m_Registry.m_bNeedsFullResync && r.m_Registry.m_aEntries.Count() == 0;
+		ok = ok && registry.m_iHighWaterLinkId == int.MAX && registry.m_aEntries.Count() == 1;
+		Require(ok, "linkpub other epoch", "другая epoch: NEED_FULL_RESYNC без ложных ACTIVE_LIMIT/ID_EXHAUSTED, highWater 0");
+		if (ok)
 			m_iExtras++;
 	}
 }

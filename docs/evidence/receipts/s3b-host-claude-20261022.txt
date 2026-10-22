@@ -11,6 +11,7 @@ PASS | world_profile | exit 0 | WORLD_PROFILE_ORACLE_PASS: 39 cases
 PASS | radio_device | exit 0 | RADIO_DEVICE_ORACLE_PASS: 68 cases
 PASS | pair_service | exit 0 | PAIR_SERVICE_ORACLE_PASS: 72 cases
 PASS | link_publication | exit 0 | LINK_PUBLICATION_ORACLE_PASS: 106 �������
+PASS | channel_cutoff | exit 0 | CHANNEL_CUTOFF_ORACLE_PASS (27)
 PASS | sensitivity anchors | exit 0 | SENSITIVITY_ANCHORS_PASS
 PASS | sensitivity full | exit 0 | SENSITIVITY_ORACLE_PASS
 PASS | p527 checker (codex) | exit 0 | P527_COMPLEX_CROSSCHECK_PASS: 216, real=201, rejected=15, max_abs=2.13162820728e-14
@@ -28,4 +29,4 @@ PASS | gen_lifecycle_fixture.py byte-compare | exit 0 | identical
 PASS | gen_von_seam_fixture.py byte-compare | exit 0 | identical
 PASS | unittest oracle | exit 0 | OK
 PASS | unittest tools | exit 0 | OK
-TOTAL 30/30 PASS
+TOTAL 31/31 PASS

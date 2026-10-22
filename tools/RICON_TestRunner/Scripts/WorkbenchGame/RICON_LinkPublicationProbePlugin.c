@@ -12,7 +12,7 @@ class RICON_LinkPublicationProbePlugin : WorkbenchPlugin
 			runner.m_iMatches, runner.m_iImmutable, runner.m_iControls, runner.m_iExtras, runner.m_iSnapshots);
 		int cases = RICON_LinkPublicationFixtures.CASES;
 		if (runner.m_bOk && runner.m_iCases == cases && runner.m_iMatches == cases && runner.m_iImmutable == cases
-			&& runner.m_iControls == 15 && runner.m_iExtras == 3)
+			&& runner.m_iControls == 15 && runner.m_iExtras == 4)
 		{
 			Print("[RICON_LINKPUB] done: PASS");
 			Workbench.Exit(0);
