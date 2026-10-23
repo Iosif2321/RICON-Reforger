@@ -1,0 +1,2263 @@
+{
+ "checker": "claude p3-2a-independent-req-check",
+ "corpusSha256": "5158791b65eac11ea3b0bd3ed9dc997c8ca43109ebe5fbbb9a97a6e8a07489cb",
+ "corpusLfSha256": "c771d3bf9a1336bfc0351bf8fd5aa27097772494a5ee19baa00cd832e58760a1",
+ "cases": 59,
+ "mismatches": 0,
+ "maxDiffOverTol": 0.024571988888055785,
+ "invariants": {
+  "quarterWaveN2": {
+   "L": 1.938200260161128,
+   "expected": 1.9382002601611281,
+   "R+T": 1.0
+  },
+  "halfWaveN2": {
+   "L": 0.0,
+   "expected": 0.0,
+   "R+T": 1.0
+  },
+  "brewsterTMn3": {
+   "L": 9.643274665532871e-16,
+   "expected": 0.0,
+   "R": 4.930380657631324e-33
+  },
+  "normalTEeqTM": [
+   5.624226759191871,
+   5.624226759191873
+  ],
+  "lossyObliqueEnergy": {
+   "R+T": 0.5971138273363329,
+   "mustBeBelow": 1.0
+  },
+  "losslessObliqueTM": {
+   "R+T": 1.0,
+   "mustBe": 1.0
+  },
+  "thinSheetMS022": {
+   "L": 0.16213378179153917,
+   "sheetFormula": 0.1621337817835421,
+   "sigmaEffOverSigma": 1.0002723998476357
+  }
+ },
+ "emulationNative": {
+  "MS001": {
+   "stable": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   }
+  },
+  "MS002": {
+   "stable": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   }
+  },
+  "MS003": {
+   "stable": {
+    "loss": 1.9381998777389526,
+    "err": -3.824221752601886e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.9381998777389526,
+    "err": -3.824221752601886e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.9382003545761108,
+    "err": 9.441498294293638e-08,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.9381998777389526,
+    "err": -3.824221752601886e-07,
+    "withinTol": true
+   }
+  },
+  "MS004": {
+   "stable": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   }
+  },
+  "MS005": {
+   "stable": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   }
+  },
+  "MS006": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS007": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS008": {
+   "stable": {
+    "loss": 3.6216812133789062,
+    "err": -7.793795928634495e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 3.6216816902160645,
+    "err": -3.025424346603245e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 3.6216816902160645,
+    "err": -3.025424346603245e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 3.6216812133789062,
+    "err": -7.793795928634495e-07,
+    "withinTol": true
+   }
+  },
+  "MS009": {
+   "stable": {
+    "loss": 0.022037548944354057,
+    "err": -4.3817032571724646e-08,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.022037548944354057,
+    "err": -4.3817032571724646e-08,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.022037550806999207,
+    "err": -4.195438742249369e-08,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.022037548944354057,
+    "err": -4.3817032571724646e-08,
+    "withinTol": true
+   }
+  },
+  "MS010": {
+   "stable": {
+    "loss": 16.48345375061035,
+    "err": -1.6466345087451373e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 16.48345184326172,
+    "err": -2.0720120836870137e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 16.483455657958984,
+    "err": 1.7426851819379863e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 16.48345375061035,
+    "err": -1.6466345087451373e-07,
+    "withinTol": true
+   }
+  },
+  "MS011": {
+   "stable": {
+    "loss": 5.460569381713867,
+    "err": -3.229175069563439e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 5.460569381713867,
+    "err": -3.229175069563439e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 5.460567951202393,
+    "err": -1.753428981565719e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 5.460569381713867,
+    "err": -3.229175069563439e-07,
+    "withinTol": true
+   }
+  },
+  "MS012": {
+   "stable": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 21.245338439941406,
+    "err": 5.532072673730681e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   }
+  },
+  "MS013": {
+   "stable": {
+    "loss": 9.57021427154541,
+    "err": 4.974405829472062e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 9.570213317871094,
+    "err": -4.5623373345904383e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 9.570213317871094,
+    "err": -4.5623373345904383e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 9.57021427154541,
+    "err": 4.974405829472062e-07,
+    "withinTol": true
+   }
+  },
+  "MS014": {
+   "stable": {
+    "loss": 111.8817367553711,
+    "err": 7.484474195962321e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 111.8817367553711,
+    "err": 7.484474195962321e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 111.88584899902344,
+    "err": 0.004112992099763346,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 111.8817367553711,
+    "err": 7.484474195962321e-07,
+    "withinTol": true
+   }
+  },
+  "MS015": {
+   "stable": {
+    "loss": 115.6243667602539,
+    "err": 5.503583267341128e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 115.6243667602539,
+    "err": 5.503583267341128e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 115.63111114501953,
+    "err": 0.006749888348892341,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 115.6243667602539,
+    "err": 5.503583267341128e-06,
+    "withinTol": true
+   }
+  },
+  "MS016": {
+   "stable": {
+    "loss": 129.28271484375,
+    "err": -1.2303432868066011e-05,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 129.28273010253906,
+    "err": 2.955356194433989e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 129.2809295654297,
+    "err": -0.001797581753180566,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 129.28271484375,
+    "err": -1.2303432868066011e-05,
+    "withinTol": true
+   }
+  },
+  "MS017": {
+   "stable": {
+    "loss": 243.11256408691406,
+    "err": -2.278517567333438e-05,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 243.11256408691406,
+    "err": -2.278517567333438e-05,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 243.1110076904297,
+    "err": -0.0015791816600483344,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 243.11256408691406,
+    "err": -2.278517567333438e-05,
+    "withinTol": true
+   }
+  },
+  "MS018": {
+   "stable": {
+    "loss": 364.6976623535156,
+    "err": 8.654059683976811e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 364.6976623535156,
+    "err": 8.654059683976811e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 364.6983947753906,
+    "err": 0.0007410759346839768,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 364.6976623535156,
+    "err": 8.654059683976811e-06,
+    "withinTol": true
+   }
+  },
+  "MS019": {
+   "stable": {
+    "loss": 1776.565185546875,
+    "err": 6.544345592374157e-05,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1776.565185546875,
+    "err": 6.544345592374157e-05,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1776.565185546875,
+    "err": 6.544345592374157e-05,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1776.565185546875,
+    "err": 6.544345592374157e-05,
+    "withinTol": true
+   }
+  },
+  "MS020": {
+   "stable": {
+    "loss": 3705.494140625,
+    "err": 0.00028546084513436654,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 3705.494140625,
+    "err": 0.00028546084513436654,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 3705.494140625,
+    "err": 0.00028546084513436654,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 3705.494140625,
+    "err": 0.00028546084513436654,
+    "withinTol": true
+   }
+  },
+  "MS021": {
+   "stable": {
+    "loss": 172675.484375,
+    "err": -0.003912954096449539,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 172675.484375,
+    "err": -0.003912954096449539,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 172675.484375,
+    "err": -0.003912954096449539,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 172675.484375,
+    "err": -0.003912954096449539,
+    "withinTol": true
+   }
+  },
+  "MS022": {
+   "stable": {
+    "loss": 0.1621248424053192,
+    "err": -8.939378229599892e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.1621248424053192,
+    "err": -8.939378229599892e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.16289521753787994,
+    "err": 0.0007614357543311301,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.16977880895137787,
+    "err": 0.007645027167829055,
+    "withinTol": true
+   }
+  },
+  "MS023": {
+   "stable": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": 0.0,
+    "withinTol": true
+   }
+  },
+  "MS024": {
+   "stable": {
+    "loss": 115.66194152832031,
+    "err": -7.423798095373968e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 115.66194152832031,
+    "err": -7.423798095373968e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 115.66194152832031,
+    "err": -7.423798095373968e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 115.66194152832031,
+    "err": -7.423798095373968e-06,
+    "withinTol": true
+   }
+  },
+  "MS025": {
+   "stable": {
+    "loss": 115.6619644165039,
+    "err": -4.88438620038778e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 115.6619644165039,
+    "err": -4.88438620038778e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 115.6619644165039,
+    "err": -4.88438620038778e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 115.6619644165039,
+    "err": -4.88438620038778e-06,
+    "withinTol": true
+   }
+  },
+  "MS026": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS027": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS028": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS030": {
+   "stable": {
+    "loss": 0.0,
+    "err": -4.29228182409534e-11,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 0.0,
+    "err": -4.29228182409534e-11,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 0.0,
+    "err": -4.29228182409534e-11,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 0.0,
+    "err": -4.29228182409534e-11,
+    "withinTol": true
+   }
+  },
+  "MS031": {
+   "stable": {
+    "loss": 1.7850321531295776,
+    "err": -1.3312899316275661e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.7850321531295776,
+    "err": -1.3312899316275661e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.7850316762924194,
+    "err": -6.099661513658816e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.7850321531295776,
+    "err": -1.3312899316275661e-07,
+    "withinTol": true
+   }
+  },
+  "MS034": {
+   "stable": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.1759378910064697,
+    "err": 2.1177299203145594e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.1759371757507324,
+    "err": -5.034827452732316e-07,
+    "withinTol": true
+   }
+  },
+  "MS037": {
+   "stable": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 21.245338439941406,
+    "err": 5.532072673730681e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 21.245332717895508,
+    "err": -1.8997322470681866e-07,
+    "withinTol": true
+   }
+  },
+  "MS038": {
+   "stable": {
+    "loss": 21.245332717895508,
+    "err": 4.5241532120599004e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 21.245332717895508,
+    "err": 4.5241532120599004e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 21.245338439941406,
+    "err": 6.17446121964349e-06,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 21.245332717895508,
+    "err": 4.5241532120599004e-07,
+    "withinTol": true
+   }
+  },
+  "MS039": {
+   "stable": {
+    "loss": 1.5068104267120361,
+    "err": -1.1177055132538527e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.5068104267120361,
+    "err": -1.1177055132538527e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.5068110227584839,
+    "err": -5.216590654999465e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.5068104267120361,
+    "err": -1.1177055132538527e-06,
+    "withinTol": true
+   }
+  },
+  "MS040": {
+   "stable": {
+    "loss": 1.5068084001541138,
+    "err": -1.0655916793389508e-07,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 1.5068084001541138,
+    "err": -1.0655916793389508e-07,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 1.506809115409851,
+    "err": 6.086965693707924e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 1.5068084001541138,
+    "err": -1.0655916793389508e-07,
+    "withinTol": true
+   }
+  },
+  "MS042": {
+   "stable": {
+    "loss": 12.88658332824707,
+    "err": -1.0238463890033245e-06,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 12.88658332824707,
+    "err": -1.0238463890033245e-06,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 12.886585235595703,
+    "err": 8.835022438091755e-07,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 12.88658332824707,
+    "err": -1.0238463890033245e-06,
+    "withinTol": true
+   }
+  },
+  "MS044": {
+   "stable": {
+    "loss": 345300.46875,
+    "err": -0.000309888506308198,
+    "withinTol": true
+   },
+   "naiveDiv": {
+    "loss": 345300.46875,
+    "err": -0.000309888506308198,
+    "withinTol": true
+   },
+   "naiveA": {
+    "loss": 345300.46875,
+    "err": -0.000309888506308198,
+    "withinTol": true
+   },
+   "naiveW": {
+    "loss": 345300.46875,
+    "err": -0.000309888506308198,
+    "withinTol": true
+   }
+  }
+ },
+ "extras": [
+  {
+   "id": "E01",
+   "kind": "native",
+   "note": "f*d tie-to-even: 3 * f32(500/3) = 500 + 2^-16 in binary64, exactly 500 in binary32 -> OK",
+   "input": {
+    "frequencyMHz": 3.0,
+    "thicknessM": 166.6666717529297,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.5068075346460894,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514924857389e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514924857389e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 1.5068061351776123,
+     "err": -1.3994684771034827e-06,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514924857389e-06,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E02",
+   "kind": "native",
+   "note": "f*d rounds down: 76 * f32(500/76) = 500.0000134 in binary64, 500 in binary32 -> OK",
+   "input": {
+    "frequencyMHz": 76.0,
+    "thicknessM": 6.5789475440979,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.5068076561545352,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 1.5068055391311646,
+     "err": -2.1170233706069297e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 1.5068055391311646,
+     "err": -2.1170233706069297e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 1.5068061351776123,
+     "err": -1.5209769228530234e-06,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 1.5068055391311646,
+     "err": -2.1170233706069297e-06,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E03",
+   "kind": "native",
+   "note": "f*d tie-to-even, second pair: 7 * f32(500/7)",
+   "input": {
+    "frequencyMHz": 7.0,
+    "thicknessM": 71.42857360839844,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.5068075346460836,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514919084229e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514919084229e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 1.5068061351776123,
+     "err": -1.399468471330323e-06,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 1.5068055391311646,
+     "err": -1.995514919084229e-06,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E04",
+   "kind": "native",
+   "note": "precedence: outer invalid (f = 0) and material null -> INVALID_INPUT",
+   "input": {
+    "frequencyMHz": 0,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": null
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "E05",
+   "kind": "native",
+   "note": "precedence: profile invalid (eps 0.5) and f = 0.5 out of domain -> INVALID_PROFILE",
+   "input": {
+    "frequencyMHz": 0.5,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 0.5,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "E06",
+   "kind": "native",
+   "note": "precedence: f = 0.5 out of domain and f*d = 1000 -> OUT_OF_MODEL_DOMAIN",
+   "input": {
+    "frequencyMHz": 0.5,
+    "thicknessM": 2000.0,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "E07",
+   "kind": "native",
+   "note": "precedence: f outside [min,max] and eps > 100 -> OUT_OF_MODEL_DOMAIN",
+   "input": {
+    "frequencyMHz": 100.0,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 100.00000762939453,
+     "conductivitySm": 0.0,
+     "minMHz": 200.0,
+     "maxMHz": 300.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "E08",
+   "kind": "native",
+   "note": "cosIncidence = 0 is structurally valid, numerically refused -> NUMERIC_DOMAIN_LIMIT",
+   "input": {
+    "frequencyMHz": 100.0,
+    "thicknessM": 0.2,
+    "cosIncidence": 0.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   }
+  },
+  {
+   "id": "E09",
+   "kind": "json",
+   "note": "binary32 overflow 1e39 -> INVALID_INPUT",
+   "input": {
+    "frequencyMHz": 1e+39,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "E10",
+   "kind": "json",
+   "note": "3.4028236e38 rounds to Inf -> INVALID_INPUT",
+   "input": {
+    "frequencyMHz": 3.4028236e+38,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "E11",
+   "kind": "json",
+   "note": "3.4028235e38 rounds to FLT_MAX -> OUT_OF_MODEL_DOMAIN",
+   "input": {
+    "frequencyMHz": 3.4028235e+38,
+    "thicknessM": 0.2,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "E12",
+   "kind": "native",
+   "note": "MS06 corner: f*d = 500, eps 100, lossless -> y = 104.8 rad, native trig at large argument",
+   "input": {
+    "frequencyMHz": 100.0,
+    "thicknessM": 5.0,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 100.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 13.190136521546096,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 13.190138816833496,
+     "err": 2.29528740014473e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 13.190138816833496,
+     "err": 2.29528740014473e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 13.190140724182129,
+     "err": 4.20263603295723e-06,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 13.190138816833496,
+     "err": 2.29528740014473e-06,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E13",
+   "kind": "native",
+   "note": "thin sheet with W ~ A (L ~ 7 dB): catches naive 1 - r^2",
+   "input": {
+    "frequencyMHz": 30.0,
+    "thicknessM": 7e-11,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 100000000.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 7.305697535723499,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 7.305690765380859,
+     "err": -6.770342639406124e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 7.305690765380859,
+     "err": -6.770342639406124e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 7.329066753387451,
+     "err": 0.02336921766395239,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 7.30908727645874,
+     "err": 0.0033897407352414533,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E14",
+   "kind": "native",
+   "note": "thin sheet with x ~ 1e-8: catches naive 1 - exp(-2x)",
+   "input": {
+    "frequencyMHz": 1.0,
+    "thicknessM": 5e-13,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 100000000.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.08144519095511062,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 0.08145175129175186,
+     "err": 6.5603366412453346e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 0.08145175129175186,
+     "err": 6.5603366412453346e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 0.08074764907360077,
+     "err": -0.0006975418815098472,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 0.04092053696513176,
+     "err": -0.04052465398997886,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E15",
+   "kind": "native",
+   "note": "TM conductor sheet at grazing: a = eC huge",
+   "input": {
+    "frequencyMHz": 30.0,
+    "thicknessM": 1e-12,
+    "cosIncidence": 0.05,
+    "polarization": "TM",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 100000000.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.008178971274354132,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 0.008184107020497322,
+     "err": 5.135746143190498e-06,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 0.008184107020497322,
+     "err": 5.135746143190498e-06,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 0.008175823837518692,
+     "err": -3.147436835439568e-06,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 0.008573432452976704,
+     "err": 0.00039446117862257206,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E16",
+   "kind": "native",
+   "note": "thin lossy dielectric, x ~ 2e-5",
+   "input": {
+    "frequencyMHz": 100.0,
+    "thicknessM": 1e-06,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 1.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.001636410522737617,
+    "provenance": "TEST_ONLY"
+   },
+   "emulation": {
+    "stable": {
+     "loss": 0.001637028530240059,
+     "err": 6.180075024419997e-07,
+     "withinTol": true
+    },
+    "naiveDiv": {
+     "loss": 0.001637028530240059,
+     "err": 6.180075024419997e-07,
+     "withinTol": true
+    },
+    "naiveA": {
+     "loss": 0.0016359931323677301,
+     "err": -4.173903698867585e-07,
+     "withinTol": true
+    },
+    "naiveW": {
+     "loss": 0.0016359931323677301,
+     "err": -4.173903698867585e-07,
+     "withinTol": true
+    }
+   }
+  },
+  {
+   "id": "E17",
+   "kind": "json",
+   "note": "negative zero thickness -> OK 0",
+   "input": {
+    "frequencyMHz": 100.0,
+    "thicknessM": -0.0,
+    "cosIncidence": 1.0,
+    "polarization": "TE",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 450000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.0,
+    "provenance": "TEST_ONLY"
+   }
+  }
+ ],
+ "rows": [
+  {
+   "id": "MS001",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.0,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS002",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.0,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS003",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.938200260161128,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.938200260161128,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS004",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.0,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS005",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.9286549331065743e-15,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.9286549331065743e-15
+  },
+  {
+   "id": "MS006",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS007",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS008",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 3.621681992758499,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 3.6216819927585004,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS009",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0.02203759276138663,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.02203759276138783,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.2004286453759505e-15
+  },
+  {
+   "id": "MS010",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 16.483453915273802,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 16.483453915273806,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 3.552713678800501e-15
+  },
+  {
+   "id": "MS011",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 5.460569704631374,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 5.460569704631376,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.7763568394002505e-15
+  },
+  {
+   "id": "MS012",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 21.245332907868733,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 21.245332907868736,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 3.552713678800501e-15
+  },
+  {
+   "id": "MS013",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 9.570213774104827,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 9.570213774104829,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.7763568394002505e-15
+  },
+  {
+   "id": "MS014",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 111.88173600692367,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 111.88173600692369,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.4210854715202004e-14
+  },
+  {
+   "id": "MS015",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 115.62436125667064,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 115.62436125667065,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.4210854715202004e-14
+  },
+  {
+   "id": "MS016",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 129.28272714718287,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 129.28272714718287,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS017",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 243.11258687208974,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 243.11258687208976,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 2.842170943040401e-14
+  },
+  {
+   "id": "MS018",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 364.69765369945594,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 364.6976536994559,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 5.684341886080802e-14
+  },
+  {
+   "id": "MS019",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1776.565120103419,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1776.565120103419,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS020",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 3705.493855164155,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 3705.4938551641544,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 4.547473508864641e-13
+  },
+  {
+   "id": "MS021",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 172675.4882879541,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 172675.4882879541,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS022",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0.1621337817835488,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 0.16213378179153917,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 7.990358374954099e-12
+  },
+  {
+   "id": "MS023",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 0.0,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 2.4187109139599318e-39,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 2.4187109139599318e-39
+  },
+  {
+   "id": "MS024",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 115.66194895211841,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 115.66194895211841,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS025",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 115.6619693008901,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 115.66196930064439,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 2.4571988888055785e-10
+  },
+  {
+   "id": "MS026",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "SOURCE_DOMAIN"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "SOURCE_DOMAIN"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS027",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "ASSUMED_CONFIG"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "ASSUMED_CONFIG"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS028",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS029",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS030",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 4.29228182409534e-11,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 4.2922215536392866e-11,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 6.027045605332424e-16
+  },
+  {
+   "id": "MS031",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.7850322862585708,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.7850322862585697,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.1102230246251565e-15
+  },
+  {
+   "id": "MS032",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS033",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS034",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.1759376792334777,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.175937679233479,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.3322676295501878e-15
+  },
+  {
+   "id": "MS035",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS036",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS037",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 21.245332907868733,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 21.245332907868736,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 3.552713678800501e-15
+  },
+  {
+   "id": "MS038",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 21.245332265480187,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 21.245332265480187,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS039",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.5068115444175494,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.506811544417552,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 2.6645352591003757e-15
+  },
+  {
+   "id": "MS040",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.5068085067132817,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 1.5068085067132801,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.5543122344752192e-15
+  },
+  {
+   "id": "MS041",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS042",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 12.88658435209346,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 12.886584352093461,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 1.7763568394002505e-15
+  },
+  {
+   "id": "MS043",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS044",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "OK",
+    "lossDb": 345300.4690598885,
+    "provenance": "TEST_ONLY"
+   },
+   "got": {
+    "code": "OK",
+    "lossDb": 345300.4690598885,
+    "provenance": "TEST_ONLY"
+   },
+   "absDiff": 0.0
+  },
+  {
+   "id": "MS045",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS046",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS047",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS048",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS049",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS050",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_PROFILE"
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS051",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_PROFILE"
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS052",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_PROFILE"
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS053",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_PROFILE"
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS054",
+   "native": false,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS055",
+   "native": false,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS056",
+   "native": false,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS057",
+   "native": true,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_PROFILE"
+   },
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS058",
+   "native": false,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  },
+  {
+   "id": "MS059",
+   "native": false,
+   "ok": true,
+   "expect": {
+    "code": "INVALID_INPUT"
+   },
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "absDiff": null
+  }
+ ]
+}
