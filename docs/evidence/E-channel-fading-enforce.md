@@ -82,7 +82,7 @@ SHA-256 `240ce6dea188fb80e62b224be7fef1ac77e9155b00b40eb04897eb9103da7b33`. Ре
 Независимая проверка лога: `python -I docs/evidence/receipts/p1b-log-check-claude.py <log>
 oracle/vectors/channel_fading_v1.json` → `P1B_LOG_CHECK_PASS: 65 native, host-only 6 absent, SCRIPT(E) 0`.
 
-Host: `TOTAL 38/38 PASS` — `docs/evidence/receipts/p1b-host-claude-20261023.txt`, SHA-256 `e57ca5411ccefd2bbd59b3de2b0679560ecca826ed1c83375ac7c735fcbc91e8`.
+Host: `TOTAL 38/38 PASS` — `docs/evidence/receipts/p1b-host-claude-20261023.txt`, SHA-256 `c537e391b9c17f33d681bce02efba644abc32e7ecb6a385ceed822c655407825`.
 
 ## Границы
 
