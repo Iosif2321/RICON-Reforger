@@ -1,0 +1,27 @@
+{
+  "status": "PROCESS_SOURCE_MATCH_PASS",
+  "jointAcceptance": "PENDING_CLAUDE_REVIEW_BY_OWNER_INSTRUCTION",
+  "ownProcessReceipt": "docs\\evidence\\receipts\\p3-2b-native-run-codex-20261023-212950.json",
+  "ownLogSha256": "b46bbca2011b3a97d17ae579c7229e860cc36d3f59af22387ecfbc8c15dbd7ed",
+  "peerLogSha256": "ced9610bda1ee609e00491aae8456e90035f5e2a8abb57119df10bb405a351a3",
+  "sourceHashesChecked": 94,
+  "peerReceiptSourcesMatched": {
+    "RICON_MaterialProfile.c": "b26b916b29b679806ca2d92b721c8062d91d8700c7208c9ac13b0b579cf9908d",
+    "RICON_MaterialProfileFixtureSupport.c": "eb84c61f730a3f19479f197f0fda8e1074919b1efc718f37ba1a3b9ed9542b62",
+    "RICON_MaterialProfileFixtures.c": "6bc7b7dbc3b27c20378c9d571b33c09a855cfb3ddc94832b470a4b892cf04851",
+    "RICON_MaterialProfileProbePlugin.c": "f897e0145dce4706e1e45d59d06d4d9c6d9cd20339ca3739e699fa9e885e3fc9",
+    "gen_material_profile_fixture.py": "03a18ddb200b36c3427f03b31ab7efc32a3435c7e0cdff4b059d7e633b2b85ac"
+  },
+  "engineCrcMatch": {
+    "Scripts/Game/RICON/Propagation/RICON_MaterialProfile.c": "1a2eeb69",
+    "Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtureSupport.c": "47d51590",
+    "Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtures.c": "72c5e41b",
+    "Scripts/WorkbenchGame/RICON_MaterialProfileProbePlugin.c": "d1e038d2"
+  },
+  "exitCode": 0,
+  "timedOut": false,
+  "sourceStable": true,
+  "scriptErrors": 0,
+  "passCount": 1,
+  "scope": "Workbench ScriptEditor; без мира, Play и сервера"
+}

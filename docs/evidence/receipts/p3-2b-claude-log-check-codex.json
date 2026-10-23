@@ -1,0 +1,16 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 33,
+  "cases": 223,
+  "hostOnly": 13,
+  "nativeControls": 5,
+  "nativeExtras": 7,
+  "maxRelativeErrorFromBits": 8.498369326656266e-06,
+  "maxRelativeErrorPrinted": 8.498e-06,
+  "chains": 119,
+  "maxChainLossErrorDb": 0.01953795409644954,
+  "powerRegressions": 4,
+  "status": "NATIVE_LOG_PASS",
+  "logSha256": "ced9610bda1ee609e00491aae8456e90035f5e2a8abb57119df10bb405a351a3",
+  "processReceiptChecked": false
+}
