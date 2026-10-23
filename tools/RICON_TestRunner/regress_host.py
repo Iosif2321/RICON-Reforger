@@ -61,6 +61,16 @@ run("material slab", [str(O / "material_slab_oracle.py"), "--check", str(V / "ma
 run("material slab vectors", [str(O / "build_material_slab_vectors.py"), "--check"], "MATERIAL_SLAB_VECTORS_PASS")
 run("p3.2a log self-check (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2a-log-check-claude.py"),
                                      "--self-check", str(V / "material_slab_v1.json")], "P3_2A_LOG_SELFCHECK_PASS")
+run("p3.2b checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2b-independent-req-check.py"),
+                               str(V / "material_profile_v1.json"), str(O / "data" / "material_profiles_p2040_v1.json"),
+                               str(repo / "docs" / "req" / "REQ-material-profile.md")], "P3_2B_BLIND_CHECK_PASS")
+run("material profile", [str(O / "material_profile_oracle.py"), "--check", str(V / "material_profile_v1.json")], "PASS")
+run("material profile vectors", [str(O / "build_material_profile_vectors.py"), "--check"], "PASS")
+run("p3.2b log self-check (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2b-log-check-claude.py"),
+                                     "--self-check", str(V / "material_profile_v1.json"), "--slab-oracle", str(O)],
+    "P3_2B_LOG_SELFCHECK_PASS")
+run("p3.2b log validator self-test (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2b-log-check-codex.py")],
+    "validatorSelfTest")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
 run("vegetation fixture --check", ["-I", str(T / "gen_vegetation_fixture.py"), "--check"], "P4_GENERATOR_PASS")
 run("vegetation checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p4-independent-req-check-codex.py"),
@@ -99,7 +109,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_object_rf_profile_fixture.py", V / "object_rf_profile_v1.json",
                        TESTS / "RICON_ObjectRfProfileFixtures.c"),
                       ("gen_material_slab_fixture.py", V / "material_slab_v1.json",
-                       TESTS / "RICON_MaterialSlabFixtures.c")):
+                       TESTS / "RICON_MaterialSlabFixtures.c"),
+                      ("gen_material_profile_fixture.py", V / "material_profile_v1.json",
+                       TESTS / "RICON_MaterialProfileFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes

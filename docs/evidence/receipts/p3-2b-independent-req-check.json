@@ -1,10 +1,10 @@
 {
  "checker": "claude p3-2b-independent-req-check",
- "corpusLfSha256": "5e2360e72118d945211cbfaf2df7aa44cb9c688484c6a82bd50463a793bd3807",
+ "corpusLfSha256": "36f854eaa5cc2b9e1dc10d8ee6e158f4db55f2b4ae6bee7ccfcc38042135ebc2",
  "catalogLfSha256": "9d5b720157407d2562b5f0f8756052f1cacd1f3d43d3688f34b26c1a679649e9",
- "reqLfSha256": "4a041428213c232126543ca8712919cef0f8bffe2d972409adfd5a104d91be66",
- "cases": 234,
- "native": 221,
+ "reqLfSha256": "2385e37bcb24f8183eaee84e477bf6211a17f557c808d7a011998dbdfb9597dd",
+ "cases": 236,
+ "native": 223,
  "mismatches": 0,
  "directPowerMismatches": [],
  "errors": [],
@@ -4289,6 +4289,42 @@
    },
    "expect": {
     "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP235",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 9.99994610111476e-41,
+     "minMHz": 100.0,
+     "maxMHz": 100.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 9.99994610111476e-41,
+     "minMHz": 100.0,
+     "maxMHz": 100.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP236",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
    }
   }
  ]

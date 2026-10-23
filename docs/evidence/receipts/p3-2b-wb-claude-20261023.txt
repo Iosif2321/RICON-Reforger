@@ -1,0 +1,77 @@
+# P3.2b Workbench runs (claude, 2026-10-23): RICON_MaterialProfileProbePlugin via tools/RICON_TestRunner/addon.gproj,
+# ScriptEditor hidden, -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum; no world, Play or server.
+# Run 1 (21:08:40): plain log form 10^t; Power counterexample 1 (9e-46) -> NUMERIC_FAILURE: engine Math.Pow returns 0 below FLT_TRUE_MIN -> done: FAIL (honest).
+# Run 2 (21:12:15): scaled form 10^(t+20)*1e-20 for t < 0 -> all 6 extras, done: PASS. Final sources = run 2 snapshot.
+
+=== RUN 1 ===
+BEFORE
+2E16309BE2198E65791D40F5981E52C01EF4072C8939FAC33736050C79098C34  RICON_MaterialProfile.c
+139AF3498ABB002A5AA845DEFFC82932FF15F1E7EE76D92E1F3DCE1CE4D200CC  RICON_MaterialProfileFixtureSupport.c
+6BC7B7DBC3B27C20378C9D571B33C09A855CFB3DDC94832B470A4B892CF04851  RICON_MaterialProfileFixtures.c
+B68EC427753D68C4D467B14945A6B81F537F57F28F3B626E2615C5383BECE936  RICON_MaterialProfileProbePlugin.c
+03A18DDB200B36C3427F03B31AB7EFC32A3435C7E0CDFF4B059D7E633B2B85AC  gen_material_profile_fixture.py
+exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin\console.log
+scriptErrors=0
+Log C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin\console.log started at 2026-10-23 21:08:40 (2026-10-23 18:08:40 UTC)
+21:08:40.680   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin' to filesystem under name logs
+21:08:41.743   ENGINE       : CLI Params: -gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons -noBackend -wbModule ScriptEditor -plugin RICON_MaterialProfileProbePlugin -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum -logsDir ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin 
+21:08:42.339   RESOURCES    : ResourceDB: loading cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+21:08:43.421   RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+21:08:47.922    SCRIPT    (V): Script file: 'Scripts/Game/RICON/Propagation/RICON_MaterialProfile.c' CRC: 5391326d
+21:08:47.936    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtureSupport.c' CRC: d99c4a29
+21:08:47.939    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtures.c' CRC: 72c5e41b
+21:08:52.141    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_MaterialProfileProbePlugin.c' CRC: 9ba4b825
+21:08:57.486  SCRIPT       : [RICON_MPROF] source=36f854eaa5cc2b9e1dc10d8ee6e158f4db55f2b4ae6bee7ccfcc38042135ebc2
+21:08:58.092  SCRIPT       : [RICON_MPROF_POWER] id=1 code=NUMERIC_FAILURE sigmaBits=NONE ok=0
+21:08:58.092  SCRIPT       : [RICON_TEST] FAIL material profile power 1: РєРѕРЅС‚СЂРїСЂРёРјРµСЂ Power СЃРѕРІРїР°РґР°РµС‚ СЃ host-РѕР¶РёРґР°РЅРёРµРј
+21:08:58.095  SCRIPT       : [RICON_MPROF_POWER] id=2 code=OK sigmaBits=869711765 ok=1
+21:08:58.096  SCRIPT       : [RICON_MPROF_POWER] id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE ok=1
+21:08:58.096  SCRIPT       : [RICON_MPROF] cases=223 match=223 immutable=223 controls=5 extras=5 hostOnly=13 chains=119 maxRelativeError=0.000008498
+21:08:58.096  SCRIPT       : [RICON_MPROF] done: FAIL
+21:09:02.231 RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-210840-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+AFTER
+2E16309BE2198E65791D40F5981E52C01EF4072C8939FAC33736050C79098C34  RICON_MaterialProfile.c
+139AF3498ABB002A5AA845DEFFC82932FF15F1E7EE76D92E1F3DCE1CE4D200CC  RICON_MaterialProfileFixtureSupport.c
+6BC7B7DBC3B27C20378C9D571B33C09A855CFB3DDC94832B470A4B892CF04851  RICON_MaterialProfileFixtures.c
+B68EC427753D68C4D467B14945A6B81F537F57F28F3B626E2615C5383BECE936  RICON_MaterialProfileProbePlugin.c
+03A18DDB200B36C3427F03B31AB7EFC32A3435C7E0CDFF4B059D7E633B2B85AC  gen_material_profile_fixture.py
+LOGSHA 5BE9B1BBF9396B8B7FF8AA942FB7A6ADF0F68B5D136C5D7078A43D6F1835D5E3 size 930321
+
+[exited with code 0]
+
+=== RUN 2 (final) ===
+BEFORE
+790AB0B4994477F807EBF69CA5A50985BA0354C8D7FAD1F464F80F9BE1E65832  RICON_MaterialProfile.c
+139AF3498ABB002A5AA845DEFFC82932FF15F1E7EE76D92E1F3DCE1CE4D200CC  RICON_MaterialProfileFixtureSupport.c
+6BC7B7DBC3B27C20378C9D571B33C09A855CFB3DDC94832B470A4B892CF04851  RICON_MaterialProfileFixtures.c
+B68EC427753D68C4D467B14945A6B81F537F57F28F3B626E2615C5383BECE936  RICON_MaterialProfileProbePlugin.c
+03A18DDB200B36C3427F03B31AB7EFC32A3435C7E0CDFF4B059D7E633B2B85AC  gen_material_profile_fixture.py
+exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin\console.log
+scriptErrors=0
+Log C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin\console.log started at 2026-10-23 21:12:16 (2026-10-23 18:12:16 UTC)
+21:12:16.332   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin' to filesystem under name logs
+21:12:17.410   ENGINE       : CLI Params: -gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons -noBackend -wbModule ScriptEditor -plugin RICON_MaterialProfileProbePlugin -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum -logsDir ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin 
+21:12:17.877   RESOURCES    : ResourceDB: loading cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+21:12:18.549   RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+21:12:22.462    SCRIPT    (V): Script file: 'Scripts/Game/RICON/Propagation/RICON_MaterialProfile.c' CRC: 3a597b37
+21:12:22.472    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtureSupport.c' CRC: d99c4a29
+21:12:22.474    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialProfileFixtures.c' CRC: 72c5e41b
+21:12:25.628    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_MaterialProfileProbePlugin.c' CRC: 9ba4b825
+21:12:29.267  SCRIPT       : [RICON_MPROF] source=36f854eaa5cc2b9e1dc10d8ee6e158f4db55f2b4ae6bee7ccfcc38042135ebc2
+21:12:29.690  SCRIPT       : [RICON_MPROF_POWER] id=1 code=OK sigmaBits=1 ok=1
+21:12:29.691  SCRIPT       : [RICON_MPROF_POWER] id=2 code=OK sigmaBits=869711764 ok=1
+21:12:29.692  SCRIPT       : [RICON_MPROF_POWER] id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE ok=1
+21:12:29.693  SCRIPT       : [RICON_MPROF] cases=223 match=223 immutable=223 controls=5 extras=6 hostOnly=13 chains=119 maxRelativeError=0.000008498
+21:12:29.693  SCRIPT       : [RICON_MPROF] done: PASS
+21:12:30.015 RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin/resourceDatabase.rdb)
+AFTER
+790AB0B4994477F807EBF69CA5A50985BA0354C8D7FAD1F464F80F9BE1E65832  RICON_MaterialProfile.c
+139AF3498ABB002A5AA845DEFFC82932FF15F1E7EE76D92E1F3DCE1CE4D200CC  RICON_MaterialProfileFixtureSupport.c
+6BC7B7DBC3B27C20378C9D571B33C09A855CFB3DDC94832B470A4B892CF04851  RICON_MaterialProfileFixtures.c
+B68EC427753D68C4D467B14945A6B81F537F57F28F3B626E2615C5383BECE936  RICON_MaterialProfileProbePlugin.c
+03A18DDB200B36C3427F03B31AB7EFC32A3435C7E0CDFF4B059D7E633B2B85AC  gen_material_profile_fixture.py
+LOGSHA 4F1D11B6D0C6379554C6D88109FDE1954A7230CB2B38DCD21AA7E88B9438CE7B size 930156
+
+[exited with code 0]
