@@ -1,13 +1,17 @@
 # Э-A: адресные окна ванильных VON-классов (WbReader, read-only)
 
-Дата: 2026-10-23. Исполнил: claude по заказу окон codex (agora #3939), ACK #3946, END #3948. Уровень:
-**WORKBENCH_STATIC** — чтение исходников через штатный `tools/RICON_WbReader/run.ps1`, ScriptEditor без мира, Play и
-сервера; ≤ 15 строк на запуск. Это не runtime и не доказательство поведения в игре. Цель — точки подписки для
+Дата: 2026-10-23. Исполнил: claude по заказу окон codex (agora #3939), ACK #3946, END #3951; вторая серия — ACK #3953.
+Уровень: **WORKBENCH_STATIC** — чтение исходников через штатный `tools/RICON_WbReader/run.ps1`, ScriptEditor без мира,
+Play и сервера; ≤ 15 строк на запуск. Это не runtime и не доказательство поведения в игре. Цель — точки подписки для
 прибора наблюдения radio-only (`LIVE-order-frequency-mute.md`, `AUDIO_CHAIN_CONTROL_RU.md` §2, §5 Э-A).
 
-Семь запусков подряд, у каждого exit 0, `SearchResources=true`, 1 кандидат, `[RICON_WbReader] done`, SCRIPT (E) = 0
-(прочие (E) — штатные Steamworks `RequestCurrentStats` и «Resource leaks» UI-текстур). Логи —
-`%USERPROFILE%\Documents\My Games\ArmaReforgerWorkbench\logs\<папка>\console.log`.
+Ванильный текст в репозиторий не копируется (правило `tools/RICON_WbReader/README`, codex #3965): здесь только
+`путь:строки`, сигнатуры и смысл своими словами; сырые окна остаются в логах Workbench, их sha256 — в таблицах ниже.
+Логи — `%USERPROFILE%\Documents\My Games\ArmaReforgerWorkbench\logs\<папка>\console.log`; у каждого запуска exit 0,
+`SearchResources=true`, 1 кандидат, `[RICON_WbReader] done`, SCRIPT (E) = 0 (прочие (E) — штатные Steamworks
+`RequestCurrentStats` и «Resource leaks» UI-текстур). Пути файлов — `$ArmaReforger:scripts/…`.
+
+## Первая серия (ea1–ea7)
 
 | Окно | Папка лога | sha256 | Строк |
 |---|---|---|---|
@@ -19,130 +23,29 @@
 | ea6 `SCR_BaseGameMode.c` grep `OnPlayerSpawned` C5 | `ricon-wbreader-ea6-onplayerspawned-20261023-203123` | `0c7d2d28f5c84d45fdfa24248e8da8c70999a42a95a8f18ce21e3eea36ff2339` | 15 (кап) |
 | ea7 `SCR_VONEntryRadio.c` grep `ToggleMute` C5 | `ricon-wbreader-ea7-togglemute-20261023-203131` | `f0cbaa12f93112a477c2353edf54e9a3b2b0d94bef1e96819757603743028f6b` | 11 |
 
-## Прочитанные строки (ровно как в логе; пути `$ArmaReforger:scripts/…`)
-
-**ea1 — `Game/VON/SCR_VONController.c:307–319`, `:327–328`** (контекст вызова, тело `ActivateVON` не достигнуто):
-```
-307:            return;
-309:        if (activate && m_eVONType == EVONTransmitType.DIRECT)
-310:            return;
-312:        if (activate)
-313:            ActivateVON(EVONTransmitType.DIRECT);
-314:        else
-315:            DeactivateVON(EVONTransmitType.DIRECT);
-316:    }
-319:    protected void SetVONProximityToggle(bool activate)
-327:        if (m_bIsToggledDirect == activate)
-328:            return;
-```
-
-**ea2 — `SCR_VONController.c:207–219`, `:249–250`** (тело `DeactivateVON` не достигнуто):
-```
-208:        entry.SetActive(true);
-209:        m_ActiveEntry = entry;
-210:        m_OnEntriesActiveChanged.Invoke(entry, true);
-212:        if (m_ActiveEntry && !m_ActiveEntry.IsUsable())    // turn off toggle when switching to disabled entry
-213:            DeactivateVON();
-215:        if (m_VONDisplay)
-216:            m_VONDisplay.ShowSelectedVONHint(m_ActiveEntry);
-218:        SCR_VONEntryRadio radioEntry = SCR_VONEntryRadio.Cast(entry);
-219:        if (radioEntry)
-250:        m_OnEntriesChanged.Invoke(entry, false);
-```
-
-**ea3 — `SCR_VONController.c:622–636`:**
-```
-622:    //! Set transmission method depending on entry type when starting VON transmit
-623:    protected void SetActiveTransmit(notnull SCR_VONEntry entry)
-624:    {
-625:        if (!m_VONComp && !AssignVONComponent())
-626:            return;
-628:        if (entry.GetVONMethod() == ECommMethod.SQUAD_RADIO)
-629:        {
-630:            m_VONComp.SetCommMethod(ECommMethod.SQUAD_RADIO);
-631:            m_VONComp.SetTransmitRadio(SCR_VONEntryRadio.Cast(entry).GetTransceiver());
-632:            SetEntryActive(entry);
-633:        }
-634:        else 
-635:        {
-636:            m_VONComp.SetCommMethod(ECommMethod.DIRECT);
-```
-
-**ea4 — `GameCode/Network/SCR_VoNComponent.c:78–92`:**
-```
-78:     override protected event void OnReceive(int playerId, bool isSenderEditor, BaseTransceiver receiver, int frequency, float quality)
-79:     {
-80:         SCR_VonDisplay display = GetDisplay();
-82:         if (display)
-83:             display.OnReceive(playerId, isSenderEditor, receiver, frequency, quality);
-85:         m_OnReceivedVON.Invoke(playerId, receiver, frequency, quality);
-86:     }
-89:     override protected event void OnVoNUsed(int senderId)
-90:     {
-91:         if (m_OnVoNUsed)
-92:             m_OnVoNUsed.Invoke(senderId);
-```
-
-**ea5 — `SCR_VoNComponent.c:8–20`, `:56–57`** (тело `OnCapture` не достигнуто):
-```
-8:      private const float TRANSMISSION_TIMEOUT_MS = 500;
-9:      private float m_fTransmitingTimeout;
-10:     private float m_fTransmitRadioTimeout;
-11:     private SCR_VonDisplay m_VONDisplay;
-13:     ref ScriptInvoker m_OnReceivedVON = new ScriptInvoker();
-14:     ref ScriptInvoker m_OnCaptureVON = new ScriptInvoker();
-15:     protected static ref ScriptInvokerInt m_OnVoNUsed;
-18:     static ScriptInvokerInt GetOnVoNUsed()
-19:     {
-20:         if (!m_OnVoNUsed)
-56:     bool IsTransmitingRadio()
-57:     {
-```
-
-**ea6 — `Game/GameMode/SCR_BaseGameMode.c:157–167`, `:624–627`:**
-```
-157:    protected ref ScriptInvokerBase<SCR_BaseGameMode_PlayerId> m_OnPlayerAuditRevived = new ScriptInvokerBase<SCR_BaseGameMode_PlayerId>();
-158:    protected ref ScriptInvokerBase<SCR_BaseGameMode_PlayerId> m_OnPlayerConnected = new ScriptInvokerBase<SCR_BaseGameMode_PlayerId>();
-159:    protected ref ScriptInvokerBase<SCR_BaseGameMode_PlayerId> m_OnPlayerRegistered = new ScriptInvokerBase<SCR_BaseGameMode_PlayerId>();
-160:    protected ref ScriptInvokerBase<SCR_BaseGameMode_OnPlayerDisconnected> m_OnPlayerDisconnected = new ScriptInvokerBase<SCR_BaseGameMode_OnPlayerDisconnected>();
-161:    protected ref ScriptInvokerBase<SCR_BaseGameMode_OnPlayerDisconnected> m_OnPostCompPlayerDisconnected = new ScriptInvokerBase<SCR_BaseGameMode_OnPlayerDisconnected>(); //~ Called after the GameMode Components are notified that a player was disconnected
-162:    protected ref ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity> m_OnPlayerSpawned = new ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity>();
-163:    protected ref ScriptInvokerBase<SCR_BaseGameMode_OnControllableDestroyed> m_OnPlayerKilled = new ScriptInvokerBase<SCR_BaseGameMode_OnControllableDestroyed>();
-164:    protected ref ScriptInvokerBase<SCR_BaseGameMode_OnControllableDestroyed> m_OnControllableDestroyed = new ScriptInvokerBase<SCR_BaseGameMode_OnControllableDestroyed>();
-165:    protected ref ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity> m_OnPlayerDeleted = new ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity>();
-166:    protected ref ScriptInvokerBase<SCR_BaseGameMode_OnPlayerRoleChanged> m_OnPlayerRoleChange = new ScriptInvokerBase<SCR_BaseGameMode_OnPlayerRoleChanged>();
-625:    ScriptInvokerBase<SCR_BaseGameMode_OnPlayerDisconnected> GetOnPostCompPlayerDisconnected()
-626:    {
-627:        return m_OnPostCompPlayerDisconnected;
-```
-
-**ea7 — `Game/VON/SCR_VONEntryRadio.c:229–239`** (сам вызов mute не достигнут):
-```
-229:        else
-230:            SCR_UISoundEntity.SoundEvent(SCR_SoundEvent.SOUND_RADIO_TURN_ON);
-231:    }
-234:    bool ToggleMuteEntry()
-235:    {
-236:        // Constructor allows the entry to not have m_RadioTransceiver assigned
-237:        if (!m_RadioTransceiver)
-238:            return false;
-```
+| Окно | Путь:строки | Сигнатура / смысл (своими словами) |
+|---|---|---|
+| ea1 | `Game/VON/SCR_VONController.c:307–319`, `:327–328` | Toggle-обёртка прямой речи: при активации с уже активным `EVONTransmitType.DIRECT` — ранний выход; иначе вызов `ActivateVON(DIRECT)` либо `DeactivateVON(DIRECT)`. Далее начало `protected void SetVONProximityToggle(bool activate)` с ранним выходом при неизменном `m_bIsToggledDirect`. Тело `ActivateVON` в окно не попало. |
+| ea2 | `SCR_VONController.c:207–219`, `:249–250` | Активация entry: `entry.SetActive(true)`, запоминание в `m_ActiveEntry`, `m_OnEntriesActiveChanged.Invoke(entry, true)`; если активная entry непригодна (`IsUsable()` false) — `DeactivateVON()`; дисплей показывает подсказку выбранной entry; приведение к `SCR_VONEntryRadio` с ветвью для радио; в другом месте `m_OnEntriesChanged.Invoke(entry, false)`. Тело `DeactivateVON` не достигнуто. |
+| ea3 | `SCR_VONController.c:622–636` | `protected void SetActiveTransmit(notnull SCR_VONEntry entry)`: без `m_VONComp` (и при неудачном `AssignVONComponent()`) — выход; если `entry.GetVONMethod()` = `ECommMethod.SQUAD_RADIO` — `m_VONComp.SetCommMethod(SQUAD_RADIO)`, `m_VONComp.SetTransmitRadio(<трансивер entry>)`, `SetEntryActive(entry)`; иначе `m_VONComp.SetCommMethod(DIRECT)` (продолжение не прочитано). |
+| ea4 | `GameCode/Network/SCR_VoNComponent.c:78–92` | `override protected event void OnReceive(int playerId, bool isSenderEditor, BaseTransceiver receiver, int frequency, float quality)`: передаёт то же дисплею VON, затем `m_OnReceivedVON.Invoke(playerId, receiver, frequency, quality)`. `override protected event void OnVoNUsed(int senderId)` → `m_OnVoNUsed.Invoke(senderId)`, если invoker создан. |
+| ea5 | `SCR_VoNComponent.c:8–20`, `:56–57` | Константа `TRANSMISSION_TIMEOUT_MS = 500`, поля таймаутов передачи и радио-передачи, ссылка на дисплей; публичные `ref ScriptInvoker m_OnReceivedVON` и `m_OnCaptureVON`; `protected static ref ScriptInvokerInt m_OnVoNUsed` с ленивым созданием в `static ScriptInvokerInt GetOnVoNUsed()`; объявление `bool IsTransmitingRadio()`. |
+| ea6 | `Game/GameMode/SCR_BaseGameMode.c:157–167`, `:624–627` | Защищённые invokers жизненного цикла (`ScriptInvokerBase<…>`): audit revived, connected, registered, disconnected, post-comp disconnected, **spawned** (тип `SCR_BaseGameMode_PlayerIdAndEntity`), killed, controllable destroyed, deleted, role change; публичный getter `GetOnPostCompPlayerDisconnected()`. |
+| ea7 | `Game/VON/SCR_VONEntryRadio.c:229–239` | Хвост соседнего метода: UI-звук включения радио. `bool ToggleMuteEntry()`: комментарий о том, что конструктор допускает entry без трансивера; без `m_RadioTransceiver` возвращает false. |
 
 ## Что из этого следует (только прочитанное)
 
 1. `SCR_VoNComponent` публикует `ref ScriptInvoker m_OnReceivedVON` (`Invoke(playerId, receiver, frequency,
    quality)`), `ref ScriptInvoker m_OnCaptureVON` и статический `GetOnVoNUsed()` (`ScriptInvokerInt`, `Invoke(senderId)`).
    Значит, наблюдатели прибора на приём (`RX_EVENT`) и на «кто говорит» (`TX_SEEN`) можно подписать штатно, **без
-   `modded class`**; подписка на `m_OnCaptureVON` — кандидат для `TX_START/TX_STOP` (тело `OnCapture` и аргументы
-   `Invoke` не прочитаны — следующее окно).
+   `modded class`**; подписка на `m_OnCaptureVON` — кандидат для `TX_START/TX_STOP` (см. ea10).
 2. `SCR_VONController.SetActiveTransmit` (:623–636): радио → `SetCommMethod(SQUAD_RADIO)` + `SetTransmitRadio(
    entry.GetTransceiver())` + `SetEntryActive`; иначе → `SetCommMethod(DIRECT)` (продолжение не прочитано). Это
    подтверждает раздельные ветви радио/direct на стороне контроллера — основа требования «прямую речь не трогаем».
 3. `SCR_BaseGameMode` держит защищённые invokers жизненного цикла (`m_OnPlayerSpawned`, `m_OnPlayerConnected`,
    `m_OnPlayerDisconnected`, …) с публичными getter-ами (прочитан `GetOnPostCompPlayerDisconnected()`); getter для
-   `m_OnPlayerSpawned` вероятен, но в окно не попал — следующее окно.
-4. `SCR_VONEntryRadio.ToggleMuteEntry()` возвращает false без трансивера; какой native-вызов он делает дальше
-   (`SetMuteState`?) — не прочитано — следующее окно.
+   `m_OnPlayerSpawned` — см. ea12.
+4. `SCR_VONEntryRadio.ToggleMuteEntry()` возвращает false без трансивера; продолжение — см. ea11.
 
 Не прочитано в первой серии: тела `ActivateVON(EVONTransmitType)`, `DeactivateVON(...)`, `OnCapture`, продолжение
 `SetActiveTransmit` для DIRECT, тело `ToggleMuteEntry` после проверки, getter `GetOnPlayerSpawned` — закрыто второй
@@ -158,72 +61,13 @@
 | ea11 `SCR_VONEntryRadio.c` line 240 C7 | `ricon-wbreader-ea11-togglemute-240-20261023-203735` | `c803759f100ea795383cb8bf5747b295218185620b115d2ff063d5a11b2e545f` | 15 |
 | ea12 `SCR_BaseGameMode.c` grep `GetOnPlayerSpawned` C3 | `ricon-wbreader-ea12-getonplayerspawned-20261023-203747` | `13bee42bb3615ecc523396b6d3af2ee51bfd9ddd2decce22af15e28cb510aac5` | 7 |
 
-**ea8 — `SCR_VONController.c:517–531`:**
-```
-518:        SetVONLongRange(!m_bIsLongRangeToggled);
-522:    //! VON activation
-523:    //! \param[in] transmitType type of entry to be activated
-524:    protected void ActivateVON(EVONTransmitType transmitType)
-525:    {
-526:        SCR_VONEntry entry = GetEntryByTransmitType(transmitType);
-527:        if (!entry)
-528:            return;
-530:        ActivateVON(entry, transmitType);
-531:    }
-```
-
-**ea9 — `SCR_VONController.c:578–591`:**
-```
-578:        m_VONComp.SetCapture(true);
-579:        m_bIsActive = true;
-580:        return true;
-581:    }
-584:    //! Current VON deactivation
-585:    protected void DeactivateVON(EVONTransmitType transmitType = EVONTransmitType.NONE)
-586:    {
-587:        if (!m_VONComp)
-588:            return; 
-590:        if (transmitType != EVONTransmitType.NONE && transmitType != m_eVONType)    // only deactivate target type, in case other type was activated already
-591:            return;
-```
-
-**ea10 — `SCR_VoNComponent.c:55–69`:**
-```
-55:     //! \return true if recently active
-56:     bool IsTransmitingRadio()
-57:     {
-58:         return m_fTransmitRadioTimeout > GetGame().GetWorld().GetWorldTime();
-59:     }
-62:     override protected event void OnCapture(BaseTransceiver transmitter)
-63:     {
-64:         SCR_VonDisplay display = GetDisplay();
-66:         if (display)
-67:             display.OnCapture(transmitter);
-69:         m_OnCaptureVON.Invoke(transmitter);
-```
-
-**ea11 — `SCR_VONEntryRadio.c:240–254`:**
-```
-240:        bool state = !m_RadioTransceiver.IsMuted();
-241:        m_RadioTransceiver.SetMuteState(state);
-242:        SetMuted(state);
-244:        return state;
-245:    }
-248:    bool GetIsMuted()
-249:    {
-250:        // Constructor allows the entry to not have m_RadioTransceiver assigned
-251:        if (!m_RadioTransceiver)
-252:            return true;
-254:        // m_RadioTransceiver can't be used directly if this is called on a entry that is not the active entry.
-```
-
-**ea12 — `SCR_BaseGameMode.c:626–632`:**
-```
-629:    ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity> GetOnPlayerSpawned()
-630:    {
-631:        return m_OnPlayerSpawned;
-632:    }
-```
+| Окно | Путь:строки | Сигнатура / смысл (своими словами) |
+|---|---|---|
+| ea8 | `SCR_VONController.c:517–531` | Хвост соседнего метода: переключение дальней связи `SetVONLongRange(!m_bIsLongRangeToggled)`. `protected void ActivateVON(EVONTransmitType transmitType)`: entry ищется через `GetEntryByTransmitType(transmitType)`; без entry — выход; иначе перегрузка `ActivateVON(entry, transmitType)`. |
+| ea9 | `SCR_VONController.c:578–591` | Хвост перегрузки активации: `m_VONComp.SetCapture(true)`, `m_bIsActive = true`, возврат true. `protected void DeactivateVON(EVONTransmitType transmitType = EVONTransmitType.NONE)`: выход без `m_VONComp`; выход, если задан тип и он не равен `m_eVONType` (комментарий: деактивируется только целевой тип, если уже активирован другой). |
+| ea10 | `SCR_VoNComponent.c:55–69` | `bool IsTransmitingRadio()` — «недавно активна»: `m_fTransmitRadioTimeout` больше текущего `GetWorld().GetWorldTime()`. `override protected event void OnCapture(BaseTransceiver transmitter)`: дисплею `OnCapture(transmitter)`, затем `m_OnCaptureVON.Invoke(transmitter)`. |
+| ea11 | `SCR_VONEntryRadio.c:240–254` | Продолжение `ToggleMuteEntry()`: новое состояние = инверсия `m_RadioTransceiver.IsMuted()`; `m_RadioTransceiver.SetMuteState(state)`; дублирование в entry через `SetMuted(state)`; возврат состояния. `bool GetIsMuted()`: без трансивера — true; комментарий :254 — трансивер entry нельзя использовать напрямую, если entry не активна. |
+| ea12 | `SCR_BaseGameMode.c:626–632` | `ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity> GetOnPlayerSpawned()` — публичный getter, возвращает `m_OnPlayerSpawned`. |
 
 Следствия второй серии (только прочитанное):
 5. `OnCapture` вызывает `m_OnCaptureVON.Invoke(transmitter)` — наблюдатель `TX_START/TX_STOP` прибора получает
@@ -244,3 +88,4 @@ DIRECT-ветвь `SetActiveTransmit` после :636, таймаут/оконч
 
 Воспроизведение: `docs/evidence/receipts/ea-windows-claude.ps1` → по одному `tools/RICON_WbReader/run.ps1 -Name
 ea<N>-… -Root '$ArmaReforger:scripts' -Ext c -Grep <…> -PathFilter <файл> -Context <N> -MaxFiles 1 [-Line <N>]`.
+Сами окна (≤ 15 строк каждое) — в `console.log` папок из таблиц, проверяются по sha256; в Git они не хранятся.
