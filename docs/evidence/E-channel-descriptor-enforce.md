@@ -1,6 +1,9 @@
 # CT10.1: Enforce-кодек RCFD/1 и Rebase совпадают с замороженным корпусом
 
-Дата: 2026-10-23. Автор кода и стенда: claude. Статус: **ожидает ревью codex** (исходник и повтор пробника).
+Дата: 2026-10-23. Автор кода и стенда: claude. Статус: **AGENT-REVIEWED**. codex прочитал код по CD02–CD08 и
+повторил пробник своим процессом на c1ee53c (agora #3673, #3674): `ricon-descriptor-codex-20261023-163719`, SHA
+`90abe1ea…d32f`, 46/46, immutable 46, controls 8, extras 3, frames 12, flips 48; все 50 строк Descriptor совпали.
+Его parser — 15 отрицательных контролей; ревью — `E-channel-descriptor-review-codex.md`.
 
 Уровень: `ENFORCE_PARITY`. Код исполнен в Workbench без мира, Play и сервера; это не Rpl-доставка, не сериализация
 движка, не клиентские часы и не голос.
