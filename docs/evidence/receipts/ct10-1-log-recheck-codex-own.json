@@ -1,0 +1,14 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 15,
+  "cases": 46,
+  "frames": 12,
+  "byteFlipControls": 48,
+  "nativeControls": 8,
+  "nativeExtras": 3,
+  "hostOnly": 8,
+  "descriptorAndBytes": "Полные значения строго проверены native comparator; внешне сверены коды/операции/размеры",
+  "logSha256": "90abe1ea7bf32f1ae248f9c5fce06e42287f97d2216641ad22d7d91c3d12d32f",
+  "processReceiptChecked": true,
+  "status": "NATIVE_LOG_PASS"
+}

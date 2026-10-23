@@ -1,0 +1,13 @@
+{
+  "status": "P42_PEER_LOG_VERIFIED",
+  "identicalRows": 61,
+  "peerLogSha256": "0efad8a1d1a7b8a9f4ac3c28afe5e379905a4a732b9c8f9cb5e71015697507c9",
+  "p42SourcesUnchanged": true,
+  "otherSourceChanges": [
+    {
+      "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelDescriptorFixtureSupport.c",
+      "before": "c3ed3cb1d062886f1bf9374d0f5b680384ec2e4b29bfc6cab1ae87da3dc56ddb",
+      "after": "a1d43950e4eff65887ec214ba537cfa3a3e06bea9f05d25edd9289aea784c5ad"
+    }
+  ]
+}

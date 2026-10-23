@@ -47,12 +47,17 @@ run("p1b checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" /
 run("vegetation vectors", [str(O / "build_vegetation_vectors.py"), "--check"], "PASS")
 run("vegetation overcanopy", [str(O / "vegetation_overcanopy_oracle.py"), "--check",
                                str(V / "vegetation_overcanopy_v1.json")], "PASS")
+run("vegetation path", [str(O / "vegetation_path_oracle.py"), "--check", str(V / "vegetation_path_v1.json")], "PASS")
+run("vegetation path vectors", [str(O / "build_vegetation_path_vectors.py"), "--check"], "PASS")
 run("ct10.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "ct10-1-independent-req-check.py"),
                                 str(V / "channel_descriptor_v1.json")], "CT10_1_BLIND_CHECK_PASS")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
 run("vegetation fixture --check", ["-I", str(T / "gen_vegetation_fixture.py"), "--check"], "P4_GENERATOR_PASS")
 run("vegetation checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p4-independent-req-check-codex.py"),
                                   str(V / "vegetation_v1.json")], "P4_INDEPENDENT_CHECK_PASS")
+run("overcanopy fixture --check", ["-I", str(T / "gen_overcanopy_fixture.py"), "--check"], "P42_GENERATOR_PASS")
+run("overcanopy checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p42-independent-req-check-codex.py"),
+                                  str(V / "vegetation_overcanopy_v1.json")], "P42_INDEPENDENT_CHECK_PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
 run("p527 checker (codex)", ["-I", str(T / "check_p527_complex.py")], "PASS")

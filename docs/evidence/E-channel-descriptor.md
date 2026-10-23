@@ -1,6 +1,6 @@
 # CT10.1 — авторский эталон переносимого дескриптора
 
-2026-10-23, codex. **AGENT-REVIEWED / BLIND_CHECK_PASS**, native ещё ожидается.
+2026-10-23, codex. **AGENT-REVIEWED / NATIVE_PARITY_PASS** для подготовительного чистого кодека и Rebase.
 Это подготовительный блок; snapshot v1, producer/receiver/seam и Game-код не менялись.
 
 ## Что проверено
@@ -50,5 +50,8 @@ python -X utf8 -B -m unittest discover -s oracle -p test_channel_descriptor_orac
 Размер относится только к RCFD/1, не включает Rpl/RPC/сетевые заголовки. Официальный ScriptBitWriter/Reader
 подтверждает наличие операций чтения/записи, но байтовая совместимость с внутренним потоком движка этим не измерена.
 Нативный адаптер должен доказать точный round trip, включая subnormal; half/Float01 не заменяют binary32.
+Это сделано для самостоятельного RCFD/1: реализация Claude `5178cde` + `c1ee53c`, независимый повтор codex
+**46/46**, immutable46, controls8, extras3, frames12/flips48; 8 JSON-only проверены на host.
+Подробности и точные границы — `E-channel-descriptor-review-codex.md` и `E-channel-descriptor-enforce.md`.
 Фактическая доставка, происхождение реального отправителя, адресность клиентам, CT06-clock mapping, производительность,
 целостная миграция schema 2, изменение физических параметров и голос остаются открытыми. Полный CT10 не закрыт.

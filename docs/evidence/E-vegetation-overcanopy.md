@@ -1,6 +1,6 @@
 # P4.2 — чистый расчёт поправки терминала под кронами
 
-2026-10-23, codex. **ENFORCE_PARITY / AUTHOR_NATIVE_PASS**, независимое ревью и повтор Claude ожидаются.
+2026-10-23, codex. **AGENT-REVIEWED / NATIVE_PARITY_PASS**, независимое ревью и повтор Claude пройдены.
 Ни мир, ни Play, ни игровой сервер не запускались. Срез не закрывает полный P4 и слышимость в игре.
 
 ## Контракт и независимый пересчёт
@@ -44,6 +44,9 @@ max(0.001, 1e-5·abs(expected)). Для каждого из 30 случаев п
 наблюдения и профиля P4. **4/4 unit-теста PASS**: freeze, отказ без перезаписи, перенос ожиданий, bool вместо числа.
 Единственная правка прежнего стенда — `RICON_VegetationRun.Capture` стал public, тело не изменено.
 Production-код P4.1 не менялся.
+Общие runners дополнены проверкой fixture, независимым checker и Workbench probe.
+Итог `python -X utf8 -B tools/RICON_TestRunner/regress_host.py .` после CT10.1 и P4.2: **46/46 PASS**,
+включая все oracle/tool unit-тесты; receipt `receipts/p42-ct10-host-codex-20261023.txt`.
 
 ## Исполнение
 
@@ -64,6 +67,16 @@ Production-код P4.1 не менялся.
 один PASS; **58/58**, controls=13, extras=4. Лог SHA
 `c620d7b49d2ec44af1661c1031677cbc971a685fad3aad2af3bef8c6160e2720`.
 Независимый parser Claude подтвердил 58 случаев и 202 напечатанных числа.
+
+Независимый повтор Claude: `ricon-overcanopy-claude-20261023-163456`, exit 0, SCRIPT(E)=0, один PASS,
+30/30, immutable=30, controls=20, extras=5. SHA-256 лога
+`0efad8a1d1a7b8a9f4ac3c28afe5e379905a4a732b9c8f9cb5e71015697507c9`.
+Ревью исходника принято в Agora #3664; parser Claude — commit `91aae7a`.
+Codex проверил SHA, тождество всех **61** строк RICON_CANOPY*, повторил оба parser на peer-логе:
+156 чисел у codex = 138 активных чисел у Claude + 18 нулевых итогов отказов. Оба PASS.
+CRC Layer `7b0ff36e`, Support `94012f1f`, Fixtures `bb44c9db`, Probe `3361ba71` совпали у обеих сторон.
+Исходники P4.2 сохранились; единственное последующее изменение общего снимка — чужой test-helper CT10.1,
+исправленный по отдельному review. Это зафиксировано в `receipts/p42-peer-review-codex-20261023.json`.
 
 Сохранены неудачные попытки:
 
