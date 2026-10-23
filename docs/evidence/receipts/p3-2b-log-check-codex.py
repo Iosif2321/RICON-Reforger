@@ -18,7 +18,7 @@ CATALOG_SHA = "9d5b720157407d2562b5f0f8756052f1cacd1f3d43d3688f34b26c1a679649e9"
 P = "[RICON_MPROF] "
 CHAIN = "[RICON_MPROF_CHAIN] "
 POWER = "[RICON_MPROF_POWER] "
-SUMMARY = "cases=223 match=223 immutable=223 controls=5 extras=6 hostOnly=13 chains=119 maxRelativeError="
+SUMMARY = "cases=223 match=223 immutable=223 controls=5 extras=7 hostOnly=13 chains=119 maxRelativeError="
 
 
 def need(condition, reason):
@@ -81,10 +81,11 @@ def inputs():
     return native
 
 
-def chain_input(row, material):
+def chain_input(row, material, observed_bits):
     data = fields(row, CHAIN, "fBits dBits epsBits sigmaBits slab loss shifted ok")
     f, d, epsilon, sigma = [decode(data[k]) for k in ("fBits", "dBits", "epsBits", "sigmaBits")]
     need(data["slab"] == "OK" and data["shifted"] == "OUT_OF_MODEL_DOMAIN" and data["ok"] == "1", "Отказ цепи")
+    need((data["epsBits"], data["sigmaBits"]) == observed_bits, "Материал цепи отличается от результата случая")
     need(f == material["minMHz"] == material["maxMHz"], "Чужая частота цепи")
     need(d == f32(.1 if f <= 2000 else 200 / f), "Неверная толщина цепи")
     need(close(epsilon, material["epsilonReal"]) and close(sigma, material["conductivitySm"]), "Чужой материал цепи")
@@ -104,9 +105,10 @@ def check(text, expected):
     chain_materials = [exp["material"] for exp in expected.values()
                        if exp["code"] == "OK" and exp["material"]["conductivitySm"] > 0]
     need(len(chain_materials) == 119, "Неверный набор ожидаемых цепей")
-    need(len(rows) == len(expected) + len(chain_materials) + 6, "Лишние/пропущенные записи")
+    need(len(rows) == len(expected) + len(chain_materials) + 7, "Лишние/пропущенные записи")
     need(rows[0] == P + "source=" + CORPUS_SHA and rows[-1] == P + "done: PASS", "Неверный заголовок/итог")
     maximum = 0
+    observed_bits = []
     for row, (ident, exp) in zip(rows[1:224], expected.items()):
         data = fields(row, P, "id code epsBits sigmaBits minBits maxBits provenance match immutable")
         need(data["id"] == ident and data["code"] == exp["code"], "Неверный id/код/порядок: " + ident)
@@ -116,6 +118,8 @@ def check(text, expected):
                  "Материал при отказе: " + ident)
             continue
         material = exp["material"]
+        if material["conductivitySm"] > 0:
+            observed_bits.append((data["epsBits"], data["sigmaBits"]))
         need(data["provenance"] == material["provenance"], "Происхождение: " + ident)
         for bit_key, value_key in (("epsBits", "epsilonReal"), ("sigmaBits", "conductivitySm"),
                                    ("minBits", "minMHz"), ("maxBits", "maxMHz")):
@@ -127,13 +131,13 @@ def check(text, expected):
                 if reference:
                     maximum = max(maximum, abs(actual - reference) / reference)
     extras = rows[224:-2]
-    chains = [chain_input(row, m) for row, m in zip(extras[:119], chain_materials)]
+    chains = [chain_input(row, m, b) for row, m, b in zip(extras[:119], chain_materials, observed_bits)]
     powers = [fields(row, POWER, "id code sigmaBits ok") for row in extras[119:]]
-    need([p["id"] for p in powers] == ["1", "2", "3"], "Неверные Power-контрпримеры")
+    need([p["id"] for p in powers] == ["1", "2", "3", "4"], "Неверные Power-контрпримеры")
     for p in powers:
         need(p["ok"] == "1", "Отказ Power-контрпримера")
-        if p["id"] == "3":
-            need(p["code"] == "NUMERIC_DOMAIN_LIMIT" and p["sigmaBits"] == "NONE", "Неверный верхний край")
+        if p["id"] in ("3", "4"):
+            need(p["code"] == "NUMERIC_DOMAIN_LIMIT" and p["sigmaBits"] == "NONE", "Неверный край области")
         else:
             need(p["code"] == "OK", "Неверный Power-код")
             ref = f32(1e-45) if p["id"] == "1" else f32(f32(1e38) * .001 ** 15)
@@ -142,9 +146,9 @@ def check(text, expected):
     need(rows[-2].startswith(P + SUMMARY), "Неверные счётчики")
     printed = number(rows[-2][len(P + SUMMARY):])
     need(0 <= printed <= 2e-5 and abs(printed - maximum) <= 5e-8, "Неверная максимальная ошибка")
-    return {"cases": 223, "hostOnly": 13, "nativeControls": 5, "nativeExtras": 6,
+    return {"cases": 223, "hostOnly": 13, "nativeControls": 5, "nativeExtras": 7,
             "maxRelativeErrorFromBits": maximum, "maxRelativeErrorPrinted": printed,
-            "chains": len(chains), "maxChainLossErrorDb": max(chains), "powerRegressions": 3}
+            "chains": len(chains), "maxChainLossErrorDb": max(chains), "powerRegressions": 4}
 
 
 def self_test(expected):
@@ -167,21 +171,27 @@ def self_test(expected):
                     f"slab=OK loss={loss} shifted=OUT_OF_MODEL_DOMAIN ok=1")
     rows += [POWER + "id=1 code=OK sigmaBits=1 ok=1",
              POWER + "id=2 code=OK sigmaBits=869711764 ok=1",
-             POWER + "id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE ok=1", P + SUMMARY + "0", P + "done: PASS"]
+             POWER + "id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE ok=1",
+             POWER + "id=4 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE ok=1", P + SUMMARY + "0", P + "done: PASS"]
     good = "\n".join(rows)
     check(good, expected)
+    check(good.replace("sigmaBits=869711764 ok=1", "sigmaBits=869711765 ok=1"), expected)
     target = next(row for row in rows if row.startswith(P + "id=MP006 "))
     mutations = [good.replace(CORPUS_SHA, "0" * 64), good.replace(target, ""), good + "\n" + target,
                  good.replace("id=MP006", "id=MP222"), good.replace("controls=5", "controls=4"),
                  good.replace("done: PASS", "done: FAIL"), good + "\nSCRIPT (E): намеренная ошибка",
                  good + "\n[RICON_TEST] FAIL", good.replace("maxRelativeError=0", "maxRelativeError=0.001"),
-                 good.replace("extras=6", "extras=5"), good.replace("shifted=OUT_OF_MODEL_DOMAIN", "shifted=OK"),
+                 good.replace("extras=7", "extras=6"), good.replace("shifted=OUT_OF_MODEL_DOMAIN", "shifted=OK"),
                  good.replace("[RICON_MPROF_POWER] id=1 code=OK sigmaBits=1", "[RICON_MPROF_POWER] id=1 code=OK sigmaBits=0"),
                  good.replace(rows[-3], rows[-3].replace("NUMERIC_DOMAIN_LIMIT", "NUMERIC_FAILURE")),
+                 good.replace(rows[-4], rows[-4].replace("NUMERIC_DOMAIN_LIMIT", "NUMERIC_FAILURE")),
+                 good.replace(rows[-3], ""),
                  good.replace("chains=119", "chains=118"), good.replace(rows[224], "", 1),
                  good.replace(rows[224], re.sub(r"loss=\S+", "loss=100000000", rows[224]), 1)]
     for field in ("fBits", "dBits", "epsBits", "sigmaBits"):
         mutations.append(good.replace(rows[224], re.sub(rf"\b{field}=\S+", field + "=0", rows[224]), 1))
+    sigma = int(fields(rows[224], CHAIN, "fBits dBits epsBits sigmaBits slab loss shifted ok")["sigmaBits"])
+    mutations.append(good.replace(rows[224], rows[224].replace("sigmaBits=" + str(sigma), "sigmaBits=" + str(sigma + 1)), 1))
     for field, value in (("code", "NUMERIC_FAILURE"), ("epsBits", "2139095040"), ("sigmaBits", "0"),
                          ("epsBits", "-1"), ("epsBits", "nan"), ("minBits", "0"), ("maxBits", "0"),
                          ("provenance", "TEST_ONLY"), ("match", "0"), ("immutable", "0")):

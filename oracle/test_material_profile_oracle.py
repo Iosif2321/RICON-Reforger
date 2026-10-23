@@ -115,6 +115,10 @@ class MaterialProfileTests(unittest.TestCase):
         value = builder.baseline()
         value["profile"].update(c=3.4e38, d=1)
         self.assertEqual({"code": "NUMERIC_DOMAIN_LIMIT"}, o.evaluate(value))
+        value = builder.baseline()
+        value["frequencyMHz"] = 1000.0005
+        value["profile"].update(a=1, b=-1, c=0, d=0)
+        self.assertEqual({"code": "NUMERIC_DOMAIN_LIMIT"}, o.evaluate(value))
 
     def test_catalog_rejects_corruption_even_in_unselected_row(self):
         original = o.read_json(o.CATALOG)
