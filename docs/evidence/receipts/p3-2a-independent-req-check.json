@@ -1,7 +1,7 @@
 {
  "checker": "claude p3-2a-independent-req-check",
- "corpusSha256": "cb0ca2ecd5ef3e8aca4637c5539e8fe799edb194dfa7389d4f28db982f632dd1",
- "corpusLfSha256": "0e262d2cff5ac2c0e29c671d3fbb79259142d5bb6b1a61c93f941ac0740145d4",
+ "corpusSha256": "148a5cdbea35b75c2d45e6bb303ff45188067a3dd477d619d839e2f1cc41b99f",
+ "corpusLfSha256": "2f5a4f10f5e1e472ea9eb253bc07230c806ad908002d59ab4db19b90cce1efbd",
  "cases": 80,
  "mismatches": 0,
  "maxDiffOverTol": 0.024571988888055785,

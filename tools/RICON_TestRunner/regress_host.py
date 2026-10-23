@@ -55,6 +55,9 @@ run("object rf profile", [str(O / "object_rf_profile_oracle.py"), "--check", str
 run("object rf profile vectors", [str(O / "build_object_rf_profile_vectors.py"), "--check"], "OBJECT_RF_PROFILE_VECTORS_PASS")
 run("ct10.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "ct10-1-independent-req-check.py"),
                                 str(V / "channel_descriptor_v1.json")], "CT10_1_BLIND_CHECK_PASS")
+run("p3.2a checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2a-independent-req-check.py"),
+                               str(V / "material_slab_v1.json")], "P3_2A_BLIND_CHECK_PASS")
+run("material slab", [str(O / "material_slab_oracle.py"), "--check", str(V / "material_slab_v1.json")], "PASS")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
 run("vegetation fixture --check", ["-I", str(T / "gen_vegetation_fixture.py"), "--check"], "P4_GENERATOR_PASS")
 run("vegetation checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p4-independent-req-check-codex.py"),
@@ -91,7 +94,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_channel_descriptor_fixture.py", V / "channel_descriptor_v1.json",
                        TESTS / "RICON_ChannelDescriptorFixtures.c"),
                       ("gen_object_rf_profile_fixture.py", V / "object_rf_profile_v1.json",
-                       TESTS / "RICON_ObjectRfProfileFixtures.c")):
+                       TESTS / "RICON_ObjectRfProfileFixtures.c"),
+                      ("gen_material_slab_fixture.py", V / "material_slab_v1.json",
+                       TESTS / "RICON_MaterialSlabFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes

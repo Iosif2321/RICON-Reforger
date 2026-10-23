@@ -262,7 +262,7 @@ EXTRA = [
 ]
 
 
-def main(corpus, out):
+def main(corpus, out=None):
     raw = Path(corpus).read_bytes()
     doc = json.loads(raw)
     rows, bad, maxdiff, emu = [], 0, 0.0, {}
@@ -292,7 +292,8 @@ def main(corpus, out):
               "corpusLfSha256": hashlib.sha256(raw.replace(bytes([13, 10]), bytes([10]))).hexdigest(),
               "cases": len(rows), "mismatches": bad, "maxDiffOverTol": maxdiff, "invariants": inv,
               "emulationNative": emu, "extras": extras, "rows": rows}
-    Path(out).write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
+    if out:
+        Path(out).write_text(json.dumps(report, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(f"cases {len(rows)} mismatches {bad} maxDiff/tol {maxdiff:.3g}")
     for r in rows:
         if not r["ok"]:
@@ -319,8 +320,9 @@ def main(corpus, out):
             line += "  f32 " + " ".join(f"{n}:{v['err']:+.2e}{'' if v['withinTol'] else '!'}" if not v.get("failure")
                                         else f"{n}:FAIL" for n, v in row["emulation"].items())
         print(line, "|", row["note"])
+    print("P3_2A_BLIND_CHECK_PASS" if bad == 0 else "P3_2A_BLIND_CHECK_FAIL")
     return 0 if bad == 0 else 1
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1], sys.argv[2]))
+    sys.exit(main(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None))
