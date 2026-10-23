@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""P4 oracle (claude): vegetation layer as a model ensemble (REQ-vegetation v0.2).
+"""P4 oracle (claude): vegetation layer as a model ensemble (REQ-vegetation v0.3).
 
 ORACLE level: pure Python, binary64 over binary32-typed inputs (P2 PO03). Models: P.833-10 eq. (1), (7);
-DoD ECAC ESD-TR-81-101 MED eq. (6a)/(6b) and Jansky & Bailey eq. (11) with TABLE 13; EXD eq. (35) diagnostic only.
-The catalog is ASSUMED_CONFIG, TEST_ONLY here. Usage: python vegetation_oracle.py --check vectors/vegetation_v1.json"""
+DoD ECAC ESD-TR-81-101 MED eq. (6a)/(6b) and Jansky & Bailey eq. (11) with TABLE 13; LIN-gamma (profile specific
+attenuation times depth, P.833 section 2.1 / ECAC appendix A form) for the bands no other model covers; EXD eq. (35)
+diagnostic only. The catalog is ASSUMED_CONFIG, TEST_ONLY here.
+Usage: python vegetation_oracle.py --check vectors/vegetation_v1.json"""
 from __future__ import annotations
 
 import argparse
@@ -16,7 +18,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import path_observation_oracle as po  # noqa: E402
 
 MILE_M = 1609.344
-CLIMATES = ("TEMPERATE", "TROPICAL")
+CLIMATES = ("TEMPERATE", "TROPICAL", "UNSPECIFIED")
+LEAF = ("IN_LEAF", "LEAFLESS", "UNKNOWN")
+DENSITY = ("DENSE", "SPARSE", "UNKNOWN")
+MOISTURE = ("DRY", "WET", "UNKNOWN")
+PROVENANCE = ("MEASURED_TABLE", "STANDARD_FIGURE", "ASSUMED_CONFIG")
+POLARIZATIONS = ("V", "H")
+LIN_MAX_DEPTH_M = 400.0  # VG07 ASSUMED: same depth ceiling as MED; deeper paths need the lateral-wave slice
 # ECAC ESD-TR-81-101 TABLE 13: f MHz -> (alpha, A, B) for V and H polarization.
 JB_TABLE = {
     "V": ((25, 0.0, 0.0, 0.00212), (50, 0.0, 0.0, 0.00106), (100, 0.045, 0.615, 0.000529),
@@ -26,32 +34,66 @@ JB_TABLE = {
 }
 CODES = ("INVALID_OBSERVATION", "INVALID_INPUT", "VEGETATION_COVERAGE_INCOMPLETE", "VEGETATION_UNKNOWN",
          "NO_VEGETATION", "VEGETATION_MIXED_PROFILE", "NO_MODEL_FOR_SCENARIO", "NUMERIC_FAILURE", "OK")
-SCENARIOS = {"S1": ("M3", "M1"), "S2": ("M4", "M3"), "S3": ("M3", "M2")}
+SCENARIOS = {"S1": ("M3", "M1", "M5"), "S2": ("M4", "M3", "M5"), "S3": ("M3", "M2")}
+DEPTH_TREND = {"M1": "SATURATING", "M2": "LINEAR", "M3": "SUBLINEAR", "M4": "EMPIRICAL", "M5": "LINEAR"}
+# VG12: what the excess is measured against; J&B subtracts free space only, so ground effects stay inside it.
+BASELINE = {"M1": "OTHER_MECHANISMS", "M2": "OTHER_MECHANISMS", "M3": "OTHER_MECHANISMS", "M4": "FREE_SPACE",
+            "M5": "OTHER_MECHANISMS"}
 
 
 # ---------------------------------------------------------------- catalog and inputs (VG08, VG09)
 
-def typed_profile(p):
-    if type(p) is not dict or type(p.get("negligible")) is not bool:
-        return None
-    if p["negligible"]:
-        return {"negligible": True} if set(p) == {"negligible"} else None
-    if set(p) != {"negligible", "climate", "gammaTable", "amA1", "amAlpha", "amMinMHz", "amMaxMHz"}:
-        return None
-    if p["climate"] not in CLIMATES or type(p["gammaTable"]) is not list or not 2 <= len(p["gammaTable"]) <= 32:
+def typed_table(rows):
+    if type(rows) is not list or not 2 <= len(rows) <= 32:
         return None
     table = []
-    for row in p["gammaTable"]:
+    for row in rows:
         if type(row) is not list or len(row) != 2:
             return None
         f, g = po.typed(row[0]), po.typed(row[1])
         if f is None or g is None or f <= 0 or g <= 0 or (table and f <= table[-1][0]):
             return None
         table.append((f, g))
-    a1, alpha, lo, hi = (po.typed(p[k]) for k in ("amA1", "amAlpha", "amMinMHz", "amMaxMHz"))
-    if None in (a1, alpha, lo, hi) or a1 <= 0 or not 0 < lo < hi:
+    return table
+
+
+def typed_am(am):
+    if am is None:
+        return None, True
+    if type(am) is not dict or set(am) != {"a1", "alpha", "minMHz", "maxMHz", "provenance"}:
+        return None, False
+    a1, alpha, lo, hi = (po.typed(am[k]) for k in ("a1", "alpha", "minMHz", "maxMHz"))
+    if None in (a1, alpha, lo, hi) or a1 <= 0 or not 0 < lo < hi or am["provenance"] not in PROVENANCE:
+        return None, False
+    return {"a1": a1, "alpha": alpha, "lo": lo, "hi": hi, "provenance": am["provenance"]}, True
+
+
+def typed_profile(p):
+    if type(p) is not dict or type(p.get("negligible")) is not bool:
         return None
-    return {"negligible": False, "climate": p["climate"], "gamma": table, "a1": a1, "alpha": alpha, "lo": lo, "hi": hi}
+    if p["negligible"]:
+        return {"negligible": True} if set(p) == {"negligible"} else None
+    if set(p) != {"negligible", "climate", "leafState", "density", "moisture", "gammaTables", "gammaProvenance", "am"}:
+        return None
+    if (p["climate"] not in CLIMATES or p["leafState"] not in LEAF or p["density"] not in DENSITY
+            or p["moisture"] not in MOISTURE or p["gammaProvenance"] not in PROVENANCE):
+        return None
+    tables = p["gammaTables"]
+    if type(tables) is not dict or not tables or not set(tables) <= {"V", "H", "ANY"}:
+        return None
+    if "ANY" in tables and len(tables) != 1:
+        return None
+    gamma = {}
+    for k, rows in tables.items():
+        t = typed_table(rows)
+        if t is None:
+            return None
+        gamma[k] = t
+    am, ok = typed_am(p["am"])
+    if not ok:
+        return None
+    return {"negligible": False, "climate": p["climate"], "leaf": p["leafState"], "density": p["density"],
+            "moisture": p["moisture"], "gamma": gamma, "gammaProvenance": p["gammaProvenance"], "am": am}
 
 
 def typed_inputs(inp):
@@ -67,7 +109,7 @@ def typed_inputs(inp):
         if t is None:
             return None
         catalog[k] = t
-    if inp["polarization"] not in ("V", "H"):
+    if inp["polarization"] not in POLARIZATIONS:
         return None
     heights = []
     for key in ("txHeightM", "rxHeightM"):
@@ -84,37 +126,48 @@ def typed_inputs(inp):
 
 # ---------------------------------------------------------------- models (VG03-VG07)
 
-def gamma_at(profile, f_mhz):
-    table = profile["gamma"]
-    if not table[0][0] <= f_mhz <= table[-1][0]:
-        return None
+def gamma_at(profile, f_mhz, pol):
+    """VG08: (gamma, source) from the polarization table, else ANY; interpolation in (ln f, ln gamma), no extrapolation."""
+    table = profile["gamma"].get(pol) or profile["gamma"].get("ANY")
+    if table is None or not table[0][0] <= f_mhz <= table[-1][0]:
+        return None, "NONE"
+    for f, g in table:
+        if f == f_mhz:
+            return g, "TABLE_POINT"
     for (f0, g0), (f1, g1) in zip(table, table[1:]):
-        if f0 <= f_mhz <= f1:
+        if f0 < f_mhz < f1:
             t = (math.log(f_mhz) - math.log(f0)) / (math.log(f1) - math.log(f0))
-            return math.exp(math.log(g0) + t * (math.log(g1) - math.log(g0)))
-    return None
+            return math.exp(math.log(g0) + t * (math.log(g1) - math.log(g0))), "INTERPOLATED"
+    return None, "NONE"
 
 
-def m1(profile, f_mhz, d):
-    """P.833-10 eq. (1) with Am of eq. (2)."""
-    g = gamma_at(profile, f_mhz)
-    if g is None or not profile["lo"] <= f_mhz <= profile["hi"]:
+def m1(profile, f_mhz, d, pol):
+    """P.833-10 eq. (1) with Am of eq. (2); needs the profile Am block."""
+    g, _ = gamma_at(profile, f_mhz, pol)
+    am = profile["am"]
+    if g is None or am is None or not am["lo"] <= f_mhz <= am["hi"]:
         return None
-    am = profile["a1"] * f_mhz ** profile["alpha"]
-    return am * (1.0 - math.exp(-d * g / am))
+    a_max = am["a1"] * f_mhz ** am["alpha"]
+    return a_max * (1.0 - math.exp(-d * g / a_max))
 
 
-def m2(profile, f_mhz, d):
-    """P.833-10 eq. (7), f <= 1 GHz, no cap."""
-    g = gamma_at(profile, f_mhz)
+def m2(profile, f_mhz, d, pol):
+    """P.833-10 eq. (7), f <= 1 GHz, no cap (capApplied = false)."""
+    g, _ = gamma_at(profile, f_mhz, pol)
     if g is None or f_mhz > 1000.0:
         return None
     return d * g
 
 
+def med_conditions(profile):
+    """VG05: MED data are dense, dry, in-leaf temperate trees; every condition must be asserted by the profile."""
+    return (profile["climate"] == "TEMPERATE" and profile["leaf"] == "IN_LEAF" and profile["density"] == "DENSE"
+            and profile["moisture"] == "DRY")
+
+
 def m3(profile, f_mhz, d):
-    """MED, ECAC eq. (36a)/(36b); temperate in-leaf forest, 230 MHz-95 GHz, 0 < d <= 400 m."""
-    if profile["climate"] != "TEMPERATE" or not 230.0 <= f_mhz <= 95000.0 or not 0.0 < d <= 400.0:
+    """MED, ECAC eq. (36a)/(36b); 230 MHz-95 GHz, 0 < d <= 400 m, profile under MED conditions."""
+    if not med_conditions(profile) or not 230.0 <= f_mhz <= 95000.0 or not 0.0 < d <= 400.0:
         return None
     f = f_mhz / 1000.0
     return 1.33 * f ** 0.284 * d ** 0.588 if d >= 14.0 else 0.45 * f ** 0.284 * d
@@ -141,6 +194,14 @@ def m4(profile, f_mhz, d, pol, tx_h, rx_h):
     excess = lb - (36.57 + 20.0 * math.log10(f_mhz) + 20.0 * math.log10(dm))
     # VG06: a negative excess (short H-polarized paths, 75-150 MHz) is a fit artefact; the candidate is excluded.
     return excess if excess >= 0 else None
+
+
+def m5(profile, f_mhz, d, pol):
+    """LIN-gamma: profile specific attenuation times depth, no saturation; d <= LIN_MAX_DEPTH_M."""
+    g, _ = gamma_at(profile, f_mhz, pol)
+    if g is None or not 0.0 < d <= LIN_MAX_DEPTH_M:
+        return None
+    return d * g
 
 
 def exd(f_mhz, d):
@@ -189,24 +250,33 @@ def vegetation_layer(inp) -> dict:
             elif d <= 400.0:
                 scenario = "S3"
             else:
-                return {"code": "NO_MODEL_FOR_SCENARIO"}
-            models = {"M1": lambda: m1(prof, f_mhz, d), "M2": lambda: m2(prof, f_mhz, d),
-                      "M3": lambda: m3(prof, f_mhz, d), "M4": lambda: m4(prof, f_mhz, d, pol, tx_h, rx_h)}
+                scenario = "S3+"
+            models = {"M1": lambda: m1(prof, f_mhz, d, pol), "M2": lambda: m2(prof, f_mhz, d, pol),
+                      "M3": lambda: m3(prof, f_mhz, d), "M4": lambda: m4(prof, f_mhz, d, pol, tx_h, rx_h),
+                      "M5": lambda: m5(prof, f_mhz, d, pol)}
             candidates = []
-            for name in SCENARIOS[scenario]:
+            for name in SCENARIOS.get(scenario, ()):
                 v = models[name]()
                 if v is not None:
                     candidates.append({"model": name, "lossDb": v})
             if not candidates:
-                return {"code": "NO_MODEL_FOR_SCENARIO"}
+                return {"code": "NO_MODEL_FOR_SCENARIO", "interval": {"startM": start, "endM": end, "scenario": scenario}}
             losses = [c["lossDb"] for c in candidates]
+            g, g_src = gamma_at(prof, f_mhz, pol)
+            primary = candidates[0]["model"]
             row = {"startM": start, "endM": end, "materialId": mat, "scenario": scenario,
-                   "primaryModel": candidates[0]["model"], "primaryLossDb": candidates[0]["lossDb"],
-                   "candidates": candidates, "spreadMinDb": min(losses), "spreadMaxDb": max(losses),
-                   "exdDb": exd(f_mhz, d), "capApplied": False}
+                   "primaryModel": primary, "primaryLossDb": candidates[0]["lossDb"],
+                   "depthTrend": DEPTH_TREND[primary], "excessBaseline": BASELINE[primary],
+                   "candidates": candidates,
+                   "spreadMinDb": min(losses), "spreadMaxDb": max(losses), "exdDiagnosticDb": exd(f_mhz, d),
+                   "gammaDbPerM": g, "gammaSource": g_src,
+                   "gammaProvenance": prof["gammaProvenance"] if g is not None else None,
+                   "amProvenance": prof["am"]["provenance"] if prof["am"] is not None else None,
+                   "capApplied": False}
             rows.append(row)
             total += row["primaryLossDb"]
-        values = [total] + [v for r in rows for v in (r["primaryLossDb"], r["spreadMinDb"], r["spreadMaxDb"], r["exdDb"])]
+        values = [total] + [v for r in rows for v in (r["primaryLossDb"], r["spreadMinDb"], r["spreadMaxDb"],
+                                                      r["exdDiagnosticDb"])]
         if not all(math.isfinite(v) and 0 <= v <= po.F32_MAX for v in values):
             return {"code": "NUMERIC_FAILURE"}
     except (ValueError, ZeroDivisionError, OverflowError):
