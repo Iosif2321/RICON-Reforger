@@ -1,9 +1,9 @@
 {
   "schema": "ricon.oracle.material_slab",
   "version": 1,
-  "revision": 1,
+  "revision": 2,
   "source": "docs/req/REQ-material-slab.md",
-  "requirementsLfSha256": "e7aa98f05fe1f6f6c5fed15f7f5b35e5fa252bb1f1bde74d4d166058592e2123",
+  "requirementsLfSha256": "02e6c12d6c3d2c3ac28ffb80d32cd032226f78e5039fa502eeee6b793f917259",
   "note": "DRAFT; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
   "cases": [
     {
@@ -1371,6 +1371,488 @@
       },
       "expect": {
         "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MS060",
+      "note": "E01: произведение округляется к 500",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 3,
+        "thicknessM": 166.6666717529297,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 1.5068075346460894,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS061",
+      "note": "E02: произведение округляется вниз",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 76,
+        "thicknessM": 6.5789475440979,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 1.5068076561545352,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS062",
+      "note": "E03: второй случай округления к 500",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 7,
+        "thicknessM": 71.42857360839844,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 1.5068075346460836,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS063",
+      "note": "E04: приоритет INVALID_INPUT",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 0,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": null
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MS064",
+      "note": "E05: приоритет INVALID_PROFILE",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 0.5,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 0.5,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MS065",
+      "note": "E06: область частоты раньше численного предела",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 0.5,
+        "thicknessM": 2000,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MS066",
+      "note": "E07: область профиля раньше epsilon-limit",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 100.00000762939453,
+          "conductivitySm": 0.0,
+          "minMHz": 200,
+          "maxMHz": 300,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MS067",
+      "note": "E08: параллельное падение",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": 0.2,
+        "cosIncidence": 0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_DOMAIN_LIMIT"
+      }
+    },
+    {
+      "id": "MS068",
+      "note": "E09: переполнение binary32",
+      "native": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 1e+39,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MS069",
+      "note": "E10: округление в Inf",
+      "native": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 3.4028236e+38,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MS070",
+      "note": "E11: конечный FLT_MAX вне области",
+      "native": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 3.4028235e+38,
+        "thicknessM": 0.2,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MS071",
+      "note": "E12: фаза около верхнего предела",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": 5,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 100,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 13.190136521546096,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS072",
+      "note": "E13: сопоставимые интерфейс и поглощение",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 30,
+        "thicknessM": 7e-11,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 7.305697535723499,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS073",
+      "note": "E14: очень малое поглощение",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 1,
+        "thicknessM": 5e-13,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 0.08144519095511062,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS074",
+      "note": "E15: TM при наклонном падении",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 30,
+        "thicknessM": 1e-12,
+        "cosIncidence": 0.05,
+        "polarization": "TM",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 0.008178971274354132,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS075",
+      "note": "E16: тонкий диэлектрик с потерями",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": 1e-06,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 1,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 0.001636410522737617,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS076",
+      "note": "E17: отрицательный ноль",
+      "native": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": -0.0,
+        "cosIncidence": 1.0,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 0,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS077",
+      "note": "Узкий lossless-резонанс",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 100.0,
+        "thicknessM": 3.9173684120178223,
+        "cosIncidence": 0.05,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 100,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 3.010875843391583,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS078",
+      "note": "Тонкий TE-лист: контроль запрещённых вычитаний",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "thicknessM": 1e-11,
+        "cosIncidence": 0.05,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 13.567324761796545,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS079",
+      "note": "Тонкий TE-лист: контроль запрещённых вычитаний",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "thicknessM": 5e-13,
+        "cosIncidence": 0.05,
+        "polarization": "TE",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 1.4993731947937448,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "MS080",
+      "note": "TM-лист на нижней границе частоты",
+      "native": true,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 1,
+        "thicknessM": 1e-12,
+        "cosIncidence": 0.05,
+        "polarization": "TM",
+        "material": {
+          "epsilonReal": 1,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1.0,
+          "maxMHz": 450000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "lossDb": 0.008178971273966228,
+        "provenance": "TEST_ONLY"
       }
     }
   ]

@@ -138,6 +138,13 @@ class SlabTests(unittest.TestCase):
         path = Path(__file__).with_name("vectors") / "material_slab_v1.json"
         self.assertEqual(0, o.check(path))
         source = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(80, len(source["cases"]))
+        self.assertEqual(71, sum(c["native"] for c in source["cases"]))
+        for case in source["cases"]:
+            value = copy.deepcopy(case["input"])
+            before = copy.deepcopy(value)
+            o.evaluate(value)
+            self.assertEqual(before, value, case["id"])
         with tempfile.TemporaryDirectory(prefix="ricon-slab-check-") as directory:
             candidate = Path(directory) / "bad.json"
             for field, bad in (("version", True), ("requirementsLfSha256", "0" * 64)):
@@ -150,6 +157,21 @@ class SlabTests(unittest.TestCase):
             candidate.write_text(json.dumps(source), encoding="utf-8")
             with self.assertRaises(ValueError):
                 o.check(candidate)
+
+    def test_sharp_resonance_and_grazing_sheet(self):
+        v = inputs(thicknessM=3.9173684120178223, cosIncidence=.05)
+        v["material"]["epsilonReal"] = 100
+        c, d = o.f32(.05), o.f32(v["thicknessM"])
+        p = math.sqrt(100 - 1 + c * c)
+        r = (c - p) / (c + p)
+        phase = 2 * math.pi * 100e6 / o.C * d * p
+        airy = 10 * math.log10(1 + 4 * r * r / (1 - r * r) ** 2 * math.sin(phase) ** 2)
+        self.assertAlmostEqual(airy, o.evaluate(v)["lossDb"], delta=1e-8)
+        for d in (1e-11, 5e-13):
+            v = inputs(frequencyMHz=1, thicknessM=d, cosIncidence=.05)
+            v["material"].update(epsilonReal=1, conductivitySm=1e8)
+            sheet = 20 * math.log10(1 + (2 * math.pi * 17.98e9 / o.C) * o.f32(1e8) * o.f32(d) / (2 * c))
+            self.assertAlmostEqual(sheet, o.evaluate(v)["lossDb"], delta=1e-8)
 
 
 if __name__ == "__main__":

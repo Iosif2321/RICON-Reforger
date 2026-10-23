@@ -99,7 +99,7 @@ def check(path):
         fields(case, "id note native provenance input expect")
         expected = case["expect"]
         if (type(case["id"]) is not str or re.fullmatch(r"MS[0-9]{3}", case["id"]) is None
-                or type(case["native"]) is not bool or case["provenance"] not in ("HAND_DERIVED", "ORACLE_DERIVED")
+                or type(case["native"]) is not bool or case["provenance"] not in ("HAND_DERIVED", "ORACLE_DERIVED", "CROSS_CHECKED")
                 or type(expected) is not dict or type(expected.get("code")) is not str or expected["code"] not in CODES):
             raise ValueError("Неверный случай корпуса")
         fields(expected, "code lossDb provenance" if expected["code"] == "OK" else "code")
