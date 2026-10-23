@@ -45,6 +45,9 @@ run("vegetation", [str(O / "vegetation_oracle.py"), "--check", str(V / "vegetati
 run("p1b checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p1b-independent-req-check.py"),
                             str(V / "channel_fading_v1.json")], "P1B_BLIND_CHECK_PASS")
 run("vegetation vectors", [str(O / "build_vegetation_vectors.py"), "--check"], "PASS")
+run("vegetation overcanopy", [str(O / "vegetation_overcanopy_oracle.py"), "--check",
+                               str(V / "vegetation_overcanopy_v1.json")], "PASS")
+run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
 run("vegetation fixture --check", ["-I", str(T / "gen_vegetation_fixture.py"), "--check"], "P4_GENERATOR_PASS")
 run("vegetation checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p4-independent-req-check-codex.py"),
                                   str(V / "vegetation_v1.json")], "P4_INDEPENDENT_CHECK_PASS")
