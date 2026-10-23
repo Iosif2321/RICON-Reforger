@@ -1,10 +1,12 @@
 {
- "checker": "claude ct10-1-independent-req-check (REQ v0.1 + JSON only)",
- "corpusSha256": "2f44d6a9292750ce7ebbcc7c9920ad026aee15b3ba20ac1a5be1dc0417f2c904",
+ "checker": "claude ct10-1-independent-req-check (REQ v0.1 AGENT-REVIEWED + JSON only)",
+ "corpusSha256": "95208dd198cee4680763e6813cb66374832ef241ea1b5590e20799d834f2aa27",
  "cases": 54,
  "native": 46,
  "errors": [],
  "continuityChecks": 54,
+ "compositionChecks": 20,
+ "goldenHex": true,
  "byteFlipControls": "48/48",
  "sizes": {
   "structMax": 5111,

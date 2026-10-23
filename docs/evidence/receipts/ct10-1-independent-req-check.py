@@ -19,7 +19,7 @@ spec = importlib.util.spec_from_file_location("p1b", Path(__file__).with_name("p
 p1b = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(p1b)
 
-EXPECTED_SHA = "2f44d6a9292750ce7ebbcc7c9920ad026aee15b3ba20ac1a5be1dc0417f2c904"
+EXPECTED_SHA = "95208dd198cee4680763e6813cb66374832ef241ea1b5590e20799d834f2aa27"  # freeze 2483033; DRAFT was 2f44d6a9...2904
 HOST_ONLY = {"D17", "D18", "D19", "D20", "D21", "D31", "D47", "D54"}
 CASES = 54
 MODEL = "FINITE_MULTIPATH_V1"
@@ -279,6 +279,25 @@ def main(argv):
             back = decode({"bytes": got["bytes"], "maxBytes": 65535})
             if not same(back, got):
                 errors.append(f"{c['id']}: round trip")
+    # Root goldenHex (manual CD07 frame) must equal my encoding of D01 and decode back to it.
+    by = {c["id"]: c for c in doc["cases"]}
+    golden = doc.get("goldenHex", "")
+    mine = encode_bytes(typed_descriptor(by["D01"]["input"]["descriptor"])).hex()
+    if golden != mine or decode({"bytes": list(bytes.fromhex(golden)), "maxBytes": 65535}).get("code") != "OK":
+        errors.append("goldenHex")
+    # CD06 composition: Rebase(Rebase(D, t1), t2) == Rebase(D, t2) for admissible t1 <= t2.
+    composed = 0
+    for cid in ("D42", "D43", "D44", "D49", "D50"):
+        base = by[cid]["input"]
+        D0 = typed_descriptor(base["descriptor"])
+        lo, hi = D0["validFromMs"], D0["validUntilMs"] - 1
+        for t1, t2 in ((lo, hi), (lo, (lo + hi) // 2), ((lo + hi) // 2, hi), (hi, hi)):
+            once = rebase({"descriptor": base["descriptor"], "anchorMs": t2})
+            mid = rebase({"descriptor": base["descriptor"], "anchorMs": t1})
+            twice = rebase({"descriptor": mid["descriptor"], "anchorMs": t2})
+            if not same(once, twice):
+                errors.append(f"{cid}: composition {t1}->{t2}")
+            composed += 1
     # Controls: corrupting one byte of every OK frame must not decode to the same descriptor.
     caught = total = 0
     for c in doc["cases"]:
@@ -292,9 +311,9 @@ def main(argv):
                 caught += r["code"] != "OK" or r["descriptor"] != e["descriptor"]
     big = {"modelId": "x" * 64, "profileId": "p" * 64, "components": [{"componentId": "%064d" % i} for i in range(64)]}
     sizes = {"structMax": size_formula(big), "modelMax": size_formula(dict(big, modelId=MODEL))}
-    summary = {"checker": "claude ct10-1-independent-req-check (REQ v0.1 + JSON only)", "corpusSha256": sha,
+    summary = {"checker": "claude ct10-1-independent-req-check (REQ v0.1 AGENT-REVIEWED + JSON only)", "corpusSha256": sha,
                "cases": len(codes), "native": len(codes) - len(HOST_ONLY), "errors": errors,
-               "continuityChecks": cont, "byteFlipControls": f"{caught}/{total}", "sizes": sizes,
+               "continuityChecks": cont, "compositionChecks": composed, "goldenHex": golden == mine, "byteFlipControls": f"{caught}/{total}", "sizes": sizes,
                "codes": sorted(set(codes.values()))}
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     if "--json" in argv:
