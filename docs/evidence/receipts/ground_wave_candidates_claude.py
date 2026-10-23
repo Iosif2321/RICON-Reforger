@@ -79,17 +79,6 @@ def c4(f, d, h1, h2, eps, sigma, pol):
             "domain": "ASSUMED_EXPERIMENTAL" if f < 30.0 else "PRODUCTION_L2_DOMAIN"}
 
 
-def rounded(v):
-    """Receipt precision 1e-4 dB, far below the dB-level differences being compared."""
-    if isinstance(v, float):
-        return round(v, 4)
-    if isinstance(v, dict):
-        return {k: rounded(x) for k, x in v.items()}
-    if isinstance(v, list):
-        return [rounded(x) for x in v]
-    return v
-
-
 def parse(line):
     head, *kv = line.split()
     return head, {k: v for k, v in (x.split("=", 1) for x in kv)}
@@ -148,7 +137,9 @@ def run(exe, out):
     doc = {"schema": "ground-wave-candidates/1", "tool": "TOOL_ONLY claude", "exeSha256":
            hashlib.sha256(Path(exe).read_bytes()).hexdigest(), "earthRadiusKm": EARTH_RADIUS_KM, "kFactor": K_FACTOR,
            "N_s": N_S, "climate": CLIMATE, "cells": cells}
-    text = json.dumps(rounded(doc), separators=(",", ":"), ensure_ascii=False).replace('{"fMHz"', '\n{"fMHz"')
+    # Full repr precision for inputs and outputs: the receipt must describe exactly the computation that ran.
+    # (codex #3798: an earlier 4-digit rounding had turned the S0 water sigma at 10 MHz into 0.0.)
+    text = json.dumps(doc, separators=(",", ":"), ensure_ascii=False).replace('{"fMHz"', '\n{"fMHz"')
     Path(out).write_text(text + "\n", encoding="utf-8", newline="\n")
     return doc
 
