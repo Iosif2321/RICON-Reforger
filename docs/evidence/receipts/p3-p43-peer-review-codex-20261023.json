@@ -1,0 +1,24 @@
+[
+  {
+    "model": "p3",
+    "peerLogSha256": "05ee2bda755c5ef5519dc6bb7068f54465c40c7dc5c3c86cb7735944bed98302",
+    "identicalRows": 43,
+    "crcs": {
+      "RICON_ObjectRfProfile.c": "8dd3d098",
+      "RICON_ObjectRfProfileFixtureSupport.c": "99cb6d09",
+      "RICON_ObjectRfProfileFixtures.c": "c4556322",
+      "RICON_ObjectRfProfileProbePlugin.c": "b833a706"
+    }
+  },
+  {
+    "model": "p43",
+    "peerLogSha256": "f7244ba5e686e4bb0015f39140db969d34e992b800acab6a8c9adec2902b866b",
+    "identicalRows": 66,
+    "crcs": {
+      "RICON_VegetationPathLayer.c": "1be952b5",
+      "RICON_VegetationPathFixtureSupport.c": "e04e42d4",
+      "RICON_VegetationPathFixtures.c": "a7c24e38",
+      "RICON_VegetationPathProbePlugin.c": "e9d4e1fb"
+    }
+  }
+]

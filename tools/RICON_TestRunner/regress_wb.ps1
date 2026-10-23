@@ -13,7 +13,7 @@ $plugins = @("RICON_TestRunnerPlugin", "RICON_L0ProbePlugin", "RICON_LinkPhysics
 	"RICON_RadioDeviceProbePlugin", "RICON_PairServiceProbePlugin", "RICON_LinkPublicationProbePlugin",
 	"RICON_ChannelCutoffProbePlugin", "RICON_ChannelFadingProbePlugin", "RICON_VegetationProbePlugin",
 	"RICON_ChannelDescriptorProbePlugin", "RICON_OvercanopyProbePlugin",
-	"RICON_ObjectRfProfileProbePlugin")
+	"RICON_ObjectRfProfileProbePlugin", "RICON_VegetationPathProbePlugin")
 # FAIL и суффикс _FAIL — ошибки тестов; значение NUMERIC_FAILURE ошибкой теста не является.
 $taggedFailPattern = '\[RICON_[^\]]+\].*(?<![A-Za-z])FAIL(?![A-Za-z])'
 $failed = 0

@@ -1,0 +1,12 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 14,
+  "cases": 40,
+  "strictScalarFieldsPerCase": 5,
+  "nativeControls": 6,
+  "nativeExtras": 2,
+  "hostOnly": 7,
+  "logSha256": "05ee2bda755c5ef5519dc6bb7068f54465c40c7dc5c3c86cb7735944bed98302",
+  "status": "NATIVE_LOG_PASS",
+  "processReceiptChecked": false
+}

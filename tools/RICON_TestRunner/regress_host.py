@@ -51,6 +51,8 @@ run("vegetation path", [str(O / "vegetation_path_oracle.py"), "--check", str(V /
 run("vegetation path vectors", [str(O / "build_vegetation_path_vectors.py"), "--check"], "PASS")
 run("p3.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-1-independent-req-check.py"),
                               str(V / "object_rf_profile_v1.json")], "P3_1_BLIND_CHECK_PASS")
+run("object rf profile", [str(O / "object_rf_profile_oracle.py"), "--check", str(V / "object_rf_profile_v1.json")], "OBJECT_RF_PROFILE_PASS")
+run("object rf profile vectors", [str(O / "build_object_rf_profile_vectors.py"), "--check"], "OBJECT_RF_PROFILE_VECTORS_PASS")
 run("ct10.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "ct10-1-independent-req-check.py"),
                                 str(V / "channel_descriptor_v1.json")], "CT10_1_BLIND_CHECK_PASS")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
@@ -60,6 +62,9 @@ run("vegetation checker (codex)", ["-I", str(repo / "docs" / "evidence" / "recei
 run("overcanopy fixture --check", ["-I", str(T / "gen_overcanopy_fixture.py"), "--check"], "P42_GENERATOR_PASS")
 run("overcanopy checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p42-independent-req-check-codex.py"),
                                   str(V / "vegetation_overcanopy_v1.json")], "P42_INDEPENDENT_CHECK_PASS")
+run("vegetation path fixture --check", ["-I", str(T / "gen_vegetation_path_fixture.py"), "--check"], "P43_GENERATOR_PASS")
+run("vegetation path checker (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p43-independent-req-check-codex.py"),
+                                      str(V / "vegetation_path_v1.json")], "P43_INDEPENDENT_CHECK_PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
 run("p527 checker (codex)", ["-I", str(T / "check_p527_complex.py")], "PASS")
