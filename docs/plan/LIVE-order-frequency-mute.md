@@ -61,9 +61,12 @@ authority — первый вызов не с `null`; результат `m_iTun
 `RICON_Core` и `RICON_CoreTests` ничего не добавляется; CT-VON-S-010 не затрагивается). Подключается только на время
 сессии через `-addonsDir`; после END не используется и не публикуется.
 
-Хук без правки миров и префабов: `modded class` ванильного класса, доступного в любом сценарии (кандидаты —
-`SCR_BaseGameMode.OnPlayerSpawned` на authority и `SCR_PlayerController` на клиенте; точный выбор — после чтения
-ванильных сигнатур через `RICON_WbReader`, не наугад). Прибор по таймеру (разрешён в этом аддоне) раз в 1 с находит
+Хук без правки миров, префабов и без `modded class` — штатные invokers, подтверждённые чтением исходников
+(`E-von-windows-ea.md`): `SCR_BaseGameMode.GetOnPlayerSpawned()` (authority, жизненный цикл),
+`SCR_VoNComponent.GetOnVoNUsed()` (сервер, «кто говорит»), `m_OnCaptureVON.Invoke(transmitter)` и
+`m_OnReceivedVON.Invoke(playerId, receiver, frequency, quality)` на компоненте локального игрока (клиент).
+Ванильное меню VON вызывает `BaseTransceiver.SetMuteState` с клиента (`SCR_VONEntryRadio.c:240–242`) — вызов с
+клиента штатен, эффект/репликация — runtime. Прибор по таймеру (разрешён в этом аддоне) раз в 1 с находит
 рации локального игрока и пишет в обычный лог игры строки с префиксом `[RICON_LIVE]`:
 `side=server|client build=<ver> t=<ms> player=<id> device=<id> transceiver=<idx> raw=<int> min=<int> max=<int>
 res=<int> powered=<bool> muted=<bool>`. Для Q-M — отдельная команда (консоль/клавиша прибора): `mute on|off` →
