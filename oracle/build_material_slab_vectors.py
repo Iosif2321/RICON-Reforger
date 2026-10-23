@@ -1,4 +1,5 @@
-"""Сборка чернового корпуса P3.2a; после freeze регенерация требует новой ревизии."""
+"""Сборка корпуса P3.2a; --check сверяет frozen-файл без записи."""
+import argparse
 import copy
 import hashlib
 import json
@@ -120,16 +121,23 @@ def cases():
     return rows
 
 
-def build():
+def build(check=False):
     req = ROOT / "docs/req/REQ-material-slab.md"
     result = {"schema": "ricon.oracle.material_slab", "version": 1, "revision": 2,
               "source": "docs/req/REQ-material-slab.md", "requirementsLfSha256": hashlib.sha256(req.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
               "note": "FROZEN rev2; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
               "cases": cases()}
     path = ROOT / "oracle/vectors/material_slab_v1.json"
-    path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Корпус: {len(result['cases'])}, native: {sum(c['native'] for c in result['cases'])}")
+    text = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
+    if check:
+        if path.read_text(encoding="utf-8") != text:
+            raise SystemExit("MATERIAL_SLAB_VECTORS_FAIL: frozen корпус отличается")
+    else:
+        path.write_text(text, encoding="utf-8")
+    print(f"MATERIAL_SLAB_VECTORS_PASS: {len(result['cases'])}, native: {sum(c['native'] for c in result['cases'])}")
 
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true')
+    build(check=parser.parse_args().check)

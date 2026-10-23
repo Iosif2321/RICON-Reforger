@@ -7,7 +7,9 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
+import build_material_slab_vectors as builder
 import material_slab_oracle as o
 
 
@@ -33,6 +35,17 @@ def direct_transfer(value):
 
 
 class SlabTests(unittest.TestCase):
+    def test_frozen_builder_check_never_writes(self):
+        target = builder.ROOT / "oracle/vectors/material_slab_v1.json"
+        before = target.read_bytes()
+        with patch.object(Path, "write_text") as write:
+            builder.build(check=True)
+            with patch.object(Path, "read_text", return_value="{}\n"):
+                with self.assertRaises(SystemExit):
+                    builder.build(check=True)
+            write.assert_not_called()
+        self.assertEqual(before, target.read_bytes())
+
     def test_identity_and_normal_polarizations(self):
         for angle in (1, .5, o.MIN_COSINE):
             for pol in ("TE", "TM"):
