@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P4 oracle (claude): vegetation layer as a model ensemble (REQ-vegetation v0.3).
+"""P4 oracle (claude): vegetation layer as a model ensemble (REQ-vegetation v0.4).
 
 ORACLE level: pure Python, binary64 over binary32-typed inputs (P2 PO03). Models: P.833-10 eq. (1), (7);
 DoD ECAC ESD-TR-81-101 MED eq. (6a)/(6b) and Jansky & Bailey eq. (11) with TABLE 13; LIN-gamma (profile specific
@@ -36,6 +36,9 @@ CODES = ("INVALID_OBSERVATION", "INVALID_INPUT", "VEGETATION_COVERAGE_INCOMPLETE
          "NO_VEGETATION", "VEGETATION_MIXED_PROFILE", "NO_MODEL_FOR_SCENARIO", "NUMERIC_FAILURE", "OK")
 SCENARIOS = {"S1": ("M3", "M1", "M5"), "S2": ("M4", "M3", "M5"), "S3": ("M3", "M2")}
 DEPTH_TREND = {"M1": "SATURATING", "M2": "LINEAR", "M3": "SUBLINEAR", "M4": "EMPIRICAL", "M5": "LINEAR"}
+# VG02a: M1/M3/M4 inside the domain stated by their source; M2 needs the bypass cap (not applied); M5 extends
+# P.833 short-path gamma to depth by a RICON assumption. Only SOURCE_DOMAIN closes a mandatory scenario.
+STATUS = {"M1": "SOURCE_DOMAIN", "M2": "UNCAPPED", "M3": "SOURCE_DOMAIN", "M4": "SOURCE_DOMAIN", "M5": "ASSUMED_EXTENSION"}
 # VG12: what the excess is measured against; J&B subtracts free space only, so ground effects stay inside it.
 BASELINE = {"M1": "OTHER_MECHANISMS", "M2": "OTHER_MECHANISMS", "M3": "OTHER_MECHANISMS", "M4": "FREE_SPACE",
             "M5": "OTHER_MECHANISMS"}
@@ -192,7 +195,8 @@ def m4(profile, f_mhz, d, pol, tx_h, rx_h):
     dm = d / MILE_M
     lb = 36.57 + 20.0 * math.log10(f_mhz) - 20.0 * math.log10(a * math.exp(-1609.0 * alpha * dm) / dm + b / dm ** 2)
     excess = lb - (36.57 + 20.0 * math.log10(f_mhz) + 20.0 * math.log10(dm))
-    # VG06: a negative excess (short H-polarized paths, 75-150 MHz) is a fit artefact; the candidate is excluded.
+    # VG06: a negative excess over free space is unfit for a nonnegative vegetation layer; the candidate is excluded.
+    # This is not a claim that the measured field cannot exceed free space (ground and multipath can raise it).
     return excess if excess >= 0 else None
 
 
@@ -209,6 +213,14 @@ def exd(f_mhz, d):
 
 
 # ---------------------------------------------------------------- layer (VG10-VG12)
+
+def guarded(fn):
+    """None = model not applicable; an applicable model whose arithmetic raises gives +Inf (NUMERIC_FAILURE later)."""
+    try:
+        return fn()
+    except (ValueError, ZeroDivisionError, OverflowError):
+        return math.inf
+
 
 def vegetation_layer(inp) -> dict:
     obs = po.typed_observation(inp.get("observation") if type(inp) is dict else None)
@@ -236,52 +248,56 @@ def vegetation_layer(inp) -> dict:
     if any(len(m[2]) > 1 for m in merged):
         return {"code": "VEGETATION_MIXED_PROFILE"}
     f_mhz, length = obs["frequencyMHz"], obs["lengthM"]
-    rows, total = [], 0.0
-    try:
-        for start, end, mats in merged:
-            mat = next(iter(mats))
-            prof = catalog[mat]
-            d = end - start
-            at_tx, at_rx = start == 0, end == length
-            if at_tx and at_rx:
-                scenario = "S2"
-            elif at_tx or at_rx:
-                scenario = "S1"
-            elif d <= 400.0:
-                scenario = "S3"
-            else:
-                scenario = "S3+"
-            models = {"M1": lambda: m1(prof, f_mhz, d, pol), "M2": lambda: m2(prof, f_mhz, d, pol),
-                      "M3": lambda: m3(prof, f_mhz, d), "M4": lambda: m4(prof, f_mhz, d, pol, tx_h, rx_h),
-                      "M5": lambda: m5(prof, f_mhz, d, pol)}
-            candidates = []
-            for name in SCENARIOS.get(scenario, ()):
-                v = models[name]()
-                if v is not None:
-                    candidates.append({"model": name, "lossDb": v})
-            if not candidates:
-                return {"code": "NO_MODEL_FOR_SCENARIO", "interval": {"startM": start, "endM": end, "scenario": scenario}}
-            losses = [c["lossDb"] for c in candidates]
-            g, g_src = gamma_at(prof, f_mhz, pol)
-            primary = candidates[0]["model"]
-            row = {"startM": start, "endM": end, "materialId": mat, "scenario": scenario,
-                   "primaryModel": primary, "primaryLossDb": candidates[0]["lossDb"],
-                   "depthTrend": DEPTH_TREND[primary], "excessBaseline": BASELINE[primary],
-                   "candidates": candidates,
-                   "spreadMinDb": min(losses), "spreadMaxDb": max(losses), "exdDiagnosticDb": exd(f_mhz, d),
-                   "gammaDbPerM": g, "gammaSource": g_src,
-                   "gammaProvenance": prof["gammaProvenance"] if g is not None else None,
-                   "amProvenance": prof["am"]["provenance"] if prof["am"] is not None else None,
-                   "capApplied": False}
-            rows.append(row)
-            total += row["primaryLossDb"]
-        values = [total] + [v for r in rows for v in (r["primaryLossDb"], r["spreadMinDb"], r["spreadMaxDb"],
-                                                      r["exdDiagnosticDb"])]
-        if not all(math.isfinite(v) and 0 <= v <= po.F32_MAX for v in values):
-            return {"code": "NUMERIC_FAILURE"}
-    except (ValueError, ZeroDivisionError, OverflowError):
+    # VG12: every interval is classified first, so NO_MODEL_FOR_SCENARIO of any interval outranks NUMERIC_FAILURE
+    # of another; an applicable model whose arithmetic fails yields +Inf and is caught by the numeric check below.
+    rows = []
+    for start, end, mats in merged:
+        mat = next(iter(mats))
+        prof = catalog[mat]
+        d = end - start
+        at_tx, at_rx = start == 0, end == length
+        if at_tx and at_rx:
+            scenario = "S2"
+        elif at_tx or at_rx:
+            scenario = "S1"
+        elif d <= 400.0:
+            scenario = "S3"
+        else:
+            scenario = "S3+"
+        models = {"M1": lambda: m1(prof, f_mhz, d, pol), "M2": lambda: m2(prof, f_mhz, d, pol),
+                  "M3": lambda: m3(prof, f_mhz, d), "M4": lambda: m4(prof, f_mhz, d, pol, tx_h, rx_h),
+                  "M5": lambda: m5(prof, f_mhz, d, pol)}
+        candidates = []
+        for name in SCENARIOS.get(scenario, ()):
+            v = guarded(models[name])
+            if v is not None:
+                candidates.append({"model": name, "lossDb": v, "status": STATUS[name]})
+        if not candidates:
+            return {"code": "NO_MODEL_FOR_SCENARIO", "interval": {"startM": start, "endM": end, "scenario": scenario}}
+        losses = [c["lossDb"] for c in candidates]
+        g, g_src = gamma_at(prof, f_mhz, pol)
+        primary = candidates[0]["model"]
+        rows.append({"startM": start, "endM": end, "materialId": mat, "scenario": scenario,
+                     "primaryModel": primary, "primaryLossDb": candidates[0]["lossDb"],
+                     "primaryStatus": STATUS[primary],
+                     # S3 stays open until the bypass cap exists (capApplied is always false in v0.4).
+                     "scenarioClosed": STATUS[primary] == "SOURCE_DOMAIN" and scenario in ("S1", "S2"),
+                     "depthTrend": DEPTH_TREND[primary], "excessBaseline": BASELINE[primary],
+                     "candidates": candidates,
+                     "spreadMinDb": min(losses), "spreadMaxDb": max(losses),
+                     "exdDiagnosticDb": guarded(lambda: exd(f_mhz, d)),
+                     "gammaDbPerM": g, "gammaSource": g_src,
+                     "gammaProvenance": prof["gammaProvenance"] if g is not None else None,
+                     "amProvenance": prof["am"]["provenance"] if prof["am"] is not None else None,
+                     "capApplied": False})
+    total = sum(r["primaryLossDb"] for r in rows)
+    # VG12: every numeric output must be a finite nonnegative binary32 value.
+    values = [total] + [v for r in rows for v in (r["primaryLossDb"], r["spreadMinDb"], r["spreadMaxDb"],
+                                                  r["exdDiagnosticDb"], *(c["lossDb"] for c in r["candidates"]))]
+    values += [r["gammaDbPerM"] for r in rows if r["gammaDbPerM"] is not None]
+    if not all(math.isfinite(v) and 0 <= v <= po.F32_MAX for v in values):
         return {"code": "NUMERIC_FAILURE"}
-    return {"code": "OK", "lossDb": total, "intervals": rows}
+    return {"code": "OK", "lossDb": total, "intervals": rows, "allScenariosClosed": all(r["scenarioClosed"] for r in rows)}
 
 
 def evaluate(case) -> dict:

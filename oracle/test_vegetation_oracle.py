@@ -1,4 +1,4 @@
-"""P4 oracle tests (claude): source-anchored model checks, frequency-scenario matrix and corpus integrity (v0.3)."""
+"""P4 oracle tests (claude): source-anchored model checks, frequency-scenario matrix and corpus integrity (v0.4)."""
 import copy
 import json
 import math
@@ -27,6 +27,12 @@ MATRIX = {
     30000.0: "M3+M5 OPEN M3+M5 OPEN M3 | M5 OPEN M5 OPEN OPEN",
 }
 CELLS = (("S1", 100.0), ("S1", 600.0), ("S2", 300.0), ("S2", 800.0), ("S3", 20.0))
+# VG10a: closed cells (primary inside its source domain, S1/S2 only).
+CLOSED = ({(f, "T", "S1", 100.0) for f in (150.0, 230.0, 466.475, 1500.0, 3000.0, 30000.0)}
+          | {(f, "T", "S1", 600.0) for f in (150.0, 230.0, 466.475, 1500.0)}
+          | {(f, "T", "S2", 300.0) for f in (230.0, 466.475, 1500.0, 3000.0, 30000.0)}
+          | {(f, "R", "S2", 300.0) for f in (30.0, 60.0, 88.0, 150.0, 230.0)}
+          | {(f, "R", "S2", 800.0) for f in (30.0, 60.0, 88.0, 150.0, 230.0)})
 
 
 def applicable(prof, f, scenario, d):
@@ -110,6 +116,21 @@ class ModelTest(unittest.TestCase):
                   " ".join(applicable(TROP_FIG2, f, s, d) for s, d in CELLS)
             self.assertEqual(want, got, f)
 
+    def test_only_source_domain_primary_closes_s1_s2(self):
+        """VG10a: a cell is closed only when its primary is M1/M3/M4 in S1/S2; M5-only, M2 and S3 cells stay open."""
+        closed = set()
+        for f in MATRIX:
+            for name, prof in (("T", MED_OK_AM), ("R", TROP_FIG2)):
+                for s, d in CELLS:
+                    first = applicable(prof, f, s, d).split("+")[0]
+                    if v.STATUS.get(first) == "SOURCE_DOMAIN" and s in ("S1", "S2"):
+                        closed.add((f, name, s, d))
+        self.assertEqual(CLOSED, closed)
+
+    def test_statuses(self):
+        self.assertEqual({"M1": "SOURCE_DOMAIN", "M2": "UNCAPPED", "M3": "SOURCE_DOMAIN", "M4": "SOURCE_DOMAIN",
+                          "M5": "ASSUMED_EXTENSION"}, v.STATUS)
+
 
 MED_OK_AM = v.typed_profile(b.profile("TEMPERATE", b.FIG2, "STANDARD_FIGURE", b.AM_SPB))
 TROP_FIG2 = v.typed_profile(b.profile("TROPICAL", b.FIG2, "STANDARD_FIGURE", moisture="WET"))
@@ -134,6 +155,10 @@ class CorpusTest(unittest.TestCase):
         self.assertEqual({"S1", "S2", "S3+"}, open_scenarios)
         low_vhf = {c["id"] for c in self.cases if c["input"]["observation"]["frequencyMHz"] in (30.0, 60.0)}
         self.assertGreaterEqual(len(low_vhf), 7)
+        ok = [c["expect"] for c in self.cases if c["expect"]["code"] == "OK"]
+        self.assertTrue(any(e["allScenariosClosed"] for e in ok) and not all(e["allScenariosClosed"] for e in ok))
+        by_id = {c["id"]: c["expect"] for c in self.cases}
+        self.assertEqual("S3+", by_id["V55"]["interval"]["scenario"])  # NO_MODEL outranks NUMERIC of V55's first interval
 
     def test_exd_is_never_a_candidate_and_cap_is_never_applied(self):
         for r in self.rows:
@@ -141,6 +166,8 @@ class CorpusTest(unittest.TestCase):
             self.assertFalse(r["capApplied"])
             self.assertEqual(r["primaryModel"], r["candidates"][0]["model"])
             self.assertEqual(r["excessBaseline"] == "FREE_SPACE", r["primaryModel"] == "M4")
+            self.assertEqual(r["scenarioClosed"], r["primaryStatus"] == "SOURCE_DOMAIN" and r["scenario"] != "S3")
+            self.assertEqual([v.STATUS[c["model"]] for c in r["candidates"]], [c["status"] for c in r["candidates"]])
 
     def test_check_detects_corruption(self):
         self.assertEqual(0, v.check(VECTORS))

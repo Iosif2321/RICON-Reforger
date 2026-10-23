@@ -68,6 +68,8 @@ BAD_GAMMA = dict(TEMPERATE, gammaTables={"ANY": [[500.0, 0.1], [400.0, 0.2]]})
 HUGE = dict(TROPICAL, gammaTables={"ANY": [[25.0, 3.0e38], [400.0, 3.0e38]]})
 ANY_AND_V = dict(TEMPERATE, gammaTables={"ANY": TABLE1, "V": TABLE1})
 BAD_AM = dict(TEMPERATE, am=dict(AM_SPB, provenance="GUESS"))
+EQUAL_AM = dict(TEMPERATE, am=dict(AM_SPB, minMHz=500.0, maxMHz=500.0))
+EXTRA_FIELD = dict(TEMPERATE, season="SUMMER")
 FIG2_MAT = "woodland.p833_fig2"
 
 CASES = [
@@ -83,7 +85,7 @@ CASES = [
      case(200, 100.0, [veg(0, 200, "forest.tropical")], tx_h=3.0, rx_h=4.0)),
     ("V09", "S2: тропики без высот антенн — J&B неприменима, остаётся LIN-γ", case(200, 100.0, [veg(0, 200, "forest.tropical")])),
     ("V10", "S2: умеренный лес, 300 м, 466 МГц — MED", case(300, 466.475, [veg(0, 300)], tx_h=3.0, rx_h=3.0)),
-    ("V11", "S2: H 100 МГц, 10 м — отрицательный избыток J&B исключён",
+    ("V11", "S2: H 100 МГц, 10 м — отрицательный избыток J&B непригоден для неотрицательного слоя",
      case(10, 100.0, [veg(0, 10, "forest.tropical")], pol="H", tx_h=3.0, rx_h=3.0)),
     ("V12", "S2: тропики 1 ГГц — J&B вне области", case(200, 1000.0, [veg(0, 200, "forest.tropical")], tx_h=3.0, rx_h=3.0)),
     ("V13", "S2: J&B на частоте таблицы 250 МГц, граница 1600 м",
@@ -136,7 +138,15 @@ CASES = [
     ("V52", "S2 тропики 60 МГц V, 200 м — J&B основная, LIN-γ сверка",
      case(200, 60.0, [veg(0, 200, "forest.tropical")], tx_h=3.0, rx_h=3.0)),
     ("V53", "S1: разреженный лес — MED вне условий", case(1000, 466.475, [veg(0, 50, "forest.mixed_spb_sparse")])),
-    ("V54", "S1 29.9 МГц — ниже таблиц γ (HF), модели нет", case(1000, 29.9, [veg(0, 100, FIG2_MAT)])),
+    ("V54", "S1 29.9 МГц — у профиля рис. 2 нет γ ниже 30 МГц, модели нет", case(1000, 29.9, [veg(0, 100, FIG2_MAT)])),
+    ("V55", "NO_MODEL позднего интервала важнее NUMERIC раннего",
+     case(2000, 150.0, [veg(0, 10, "forest.tropical"), veg(500, 1000, key="trees.2")],
+          catalog=dict(CATALOG, **{"forest.tropical": HUGE}))),
+    ("V56", "S1 HF 20 МГц, Rice-71 — LIN-γ, ASSUMED_EXTENSION", case(1000, 20.0, [veg(0, 100, "woodland.rice71")])),
+    ("V57", "S1 HF 9 МГц — ниже таблицы Rice-71, модели нет", case(1000, 9.0, [veg(0, 100, "woodland.rice71")])),
+    ("V58", "Каталог: am с minMHz = maxMHz", case(1000, 466.475, [veg(100, 120)], catalog=dict(CATALOG, **{"forest.mixed_spb": EQUAL_AM}))),
+    ("V59", "Каталог: лишнее поле в неиспользуемой записи", case(1000, 466.475, [veg(100, 120, FIG2_MAT)],
+     catalog=dict(CATALOG, **{"forest.mixed_spb_sparse": EXTRA_FIELD}))),
 ]
 
 
@@ -147,7 +157,7 @@ def build() -> bytes:
         c["expect"] = v.evaluate(c)
         cases.append(c)
     doc = {"schema": "ricon.oracle.vegetation", "version": 1,
-           "source": "docs/req/REQ-vegetation.md v0.3; DoD ECAC ESD-TR-81-101; ITU-R P.833-10",
+           "source": "docs/req/REQ-vegetation.md v0.4; DoD ECAC ESD-TR-81-101; ITU-R P.833-10",
            "note": "DRAFT; каталог TEST_ONLY; не наблюдения мира.", "cases": cases}
     # One case per line: the full catalog repeats in every case, indented output would be ~350 KB.
     head = json.dumps({k: v for k, v in doc.items() if k != "cases"}, ensure_ascii=False)[:-1]
