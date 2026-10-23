@@ -1,0 +1,540 @@
+{
+  "schema": "ricon.material_profiles.p2040",
+  "version": 1,
+  "source": "https://www.itu.int/rec/R-REC-P.2040-4-202509-I/en",
+  "note": "Численные примеры Table 3; каждый ID выбирается явно. Полосы в МГц, частота в степенных формулах — ГГц. Это не назначения материалов игровым объектам.",
+  "profiles": {
+    "p2040.air.01": {
+      "labelRu": "Воздух",
+      "sourceRow": 1,
+      "profile": {
+        "a": 1,
+        "b": 0,
+        "c": 0,
+        "d": 0,
+        "minMHz": 1,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.concrete.01": {
+      "labelRu": "Бетон, образец 1",
+      "sourceRow": 2,
+      "profile": {
+        "a": 5.24,
+        "b": 0,
+        "c": 0.0462,
+        "d": 0.7822,
+        "minMHz": 1000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.concrete.02": {
+      "labelRu": "Бетон, образец 2",
+      "sourceRow": 3,
+      "profile": {
+        "a": 5.17,
+        "b": 0,
+        "c": 0.0145,
+        "d": 1.09,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.brick.01": {
+      "labelRu": "Кирпич, образец 1",
+      "sourceRow": 4,
+      "profile": {
+        "a": 3.91,
+        "b": 0,
+        "c": 0.0238,
+        "d": 0.16,
+        "minMHz": 1000,
+        "maxMHz": 40000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.brick.02": {
+      "labelRu": "Кирпич, образец 2",
+      "sourceRow": 5,
+      "profile": {
+        "a": 4.15,
+        "b": 0,
+        "c": 0.0006,
+        "d": 1.5712,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plasterboard.01": {
+      "labelRu": "Гипсокартон, образец 1",
+      "sourceRow": 6,
+      "profile": {
+        "a": 2.73,
+        "b": 0,
+        "c": 0.0085,
+        "d": 0.9395,
+        "minMHz": 1000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plasterboard.02": {
+      "labelRu": "Гипсокартон, образец 2",
+      "sourceRow": 7,
+      "profile": {
+        "a": 2.56,
+        "b": 0,
+        "c": 0.0001,
+        "d": 1.7799,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plasterboard.03": {
+      "labelRu": "Гипсокартон, образец 3",
+      "sourceRow": 8,
+      "profile": {
+        "a": 2.65,
+        "b": 0,
+        "c": 0.0002,
+        "d": 1.598,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.wood.01": {
+      "labelRu": "Древесина, образец 1",
+      "sourceRow": 9,
+      "profile": {
+        "a": 1.99,
+        "b": 0,
+        "c": 0.0047,
+        "d": 1.0718,
+        "minMHz": 1,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.wood.02": {
+      "labelRu": "Древесина, образец 2",
+      "sourceRow": 10,
+      "profile": {
+        "a": 1.82,
+        "b": 0,
+        "c": 0.004,
+        "d": 1.0761,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.wood.03": {
+      "labelRu": "Древесина, образец 3",
+      "sourceRow": 11,
+      "profile": {
+        "a": 2.1183,
+        "b": 0,
+        "c": 0.0055,
+        "d": 1.1113,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.glass.01": {
+      "labelRu": "Стекло, образец 1",
+      "sourceRow": 12,
+      "profile": {
+        "a": 6.31,
+        "b": 0,
+        "c": 0.0036,
+        "d": 1.3394,
+        "minMHz": 100,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.glass.02": {
+      "labelRu": "Стекло, образец 2",
+      "sourceRow": 13,
+      "profile": {
+        "a": 5.79,
+        "b": 0,
+        "c": 0.0004,
+        "d": 1.658,
+        "minMHz": 220000,
+        "maxMHz": 450000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.glass.03": {
+      "labelRu": "Стекло, образец 3",
+      "sourceRow": 14,
+      "profile": {
+        "a": 6.5767,
+        "b": 0,
+        "c": 0.0012,
+        "d": 1.4697,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.acrylic.01": {
+      "labelRu": "Прозрачный акрил",
+      "sourceRow": 15,
+      "profile": {
+        "a": 2.58,
+        "b": 0,
+        "c": 0.0001,
+        "d": 1.6524,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ceilingboard.01": {
+      "labelRu": "Потолочная плита, образец 1",
+      "sourceRow": 16,
+      "profile": {
+        "a": 1.48,
+        "b": 0,
+        "c": 0.0011,
+        "d": 1.075,
+        "minMHz": 1000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ceilingboard.02": {
+      "labelRu": "Потолочная плита, образец 2",
+      "sourceRow": 17,
+      "profile": {
+        "a": 1.52,
+        "b": 0,
+        "c": 0.0029,
+        "d": 1.029,
+        "minMHz": 220000,
+        "maxMHz": 450000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ceilingboard.03": {
+      "labelRu": "Потолочная плита, образец 3",
+      "sourceRow": 18,
+      "profile": {
+        "a": 1.2567,
+        "b": 0,
+        "c": 0.00013,
+        "d": 1.454,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.chipboard.01": {
+      "labelRu": "ДСП, образец 1",
+      "sourceRow": 19,
+      "profile": {
+        "a": 2.58,
+        "b": 0,
+        "c": 0.0217,
+        "d": 0.78,
+        "minMHz": 1000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.chipboard.02": {
+      "labelRu": "ДСП, образец 2",
+      "sourceRow": 20,
+      "profile": {
+        "a": 2.16,
+        "b": 0,
+        "c": 0.0023,
+        "d": 1.359,
+        "minMHz": 100000,
+        "maxMHz": 200000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plywood.01": {
+      "labelRu": "Фанера, образец 1",
+      "sourceRow": 21,
+      "profile": {
+        "a": 2.71,
+        "b": 0,
+        "c": 0.33,
+        "d": 0,
+        "minMHz": 1000,
+        "maxMHz": 40000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plywood.02": {
+      "labelRu": "Фанера, образец 2",
+      "sourceRow": 22,
+      "profile": {
+        "a": 1.94,
+        "b": 0,
+        "c": 0.0067,
+        "d": 0.9982,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.plywood.03": {
+      "labelRu": "Фанера, образец 3",
+      "sourceRow": 23,
+      "profile": {
+        "a": 2.17,
+        "b": 0,
+        "c": 0.0063,
+        "d": 1.045,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.marble.01": {
+      "labelRu": "Мрамор, образец 1",
+      "sourceRow": 24,
+      "profile": {
+        "a": 7.074,
+        "b": 0,
+        "c": 0.0055,
+        "d": 0.9262,
+        "minMHz": 1000,
+        "maxMHz": 60000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.marble.02": {
+      "labelRu": "Мрамор, образец 2",
+      "sourceRow": 25,
+      "profile": {
+        "a": 7.94,
+        "b": 0,
+        "c": 0.0001,
+        "d": 1.733,
+        "minMHz": 110000,
+        "maxMHz": 330000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.marble.03": {
+      "labelRu": "Мрамор, образец 3",
+      "sourceRow": 26,
+      "profile": {
+        "a": 8.62,
+        "b": 0,
+        "c": 0.0027,
+        "d": 1.15,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.floorboard.01": {
+      "labelRu": "Напольная доска, образец 1",
+      "sourceRow": 27,
+      "profile": {
+        "a": 3.66,
+        "b": 0,
+        "c": 0.0044,
+        "d": 1.3515,
+        "minMHz": 50000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.floorboard.02a": {
+      "labelRu": "Напольная доска, образец 2, нижняя полоса",
+      "sourceRow": 28,
+      "profile": {
+        "a": 5.27,
+        "b": 0,
+        "c": 2.22e-17,
+        "d": 7.3413,
+        "minMHz": 220000,
+        "maxMHz": 300000,
+        "maxInclusive": false,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.floorboard.02b": {
+      "labelRu": "Напольная доска, образец 2, средняя полоса",
+      "sourceRow": 29,
+      "profile": {
+        "a": 5.27,
+        "b": 0,
+        "c": 0.0003,
+        "d": 2.0298,
+        "minMHz": 300000,
+        "maxMHz": 400000,
+        "maxInclusive": false,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.floorboard.02c": {
+      "labelRu": "Напольная доска, образец 2, верхняя полоса",
+      "sourceRow": 30,
+      "profile": {
+        "a": 5.27,
+        "b": 0,
+        "c": 49.8726,
+        "d": 0,
+        "minMHz": 400000,
+        "maxMHz": 450000,
+        "maxInclusive": false,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.floorboard.03": {
+      "labelRu": "Напольная доска, образец 3",
+      "sourceRow": 31,
+      "profile": {
+        "a": 3.1575,
+        "b": 0,
+        "c": 0.001675,
+        "d": 1.32775,
+        "minMHz": 100000,
+        "maxMHz": 400000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.vinyl.01": {
+      "labelRu": "Виниловая плитка",
+      "sourceRow": 32,
+      "profile": {
+        "a": 3.62,
+        "b": 0,
+        "c": 0.0051,
+        "d": 0.8422,
+        "minMHz": 1000,
+        "maxMHz": 40000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.carpet.01": {
+      "labelRu": "Ковровая плитка",
+      "sourceRow": 33,
+      "profile": {
+        "a": 2.08,
+        "b": 0,
+        "c": 0.0009,
+        "d": 0.82,
+        "minMHz": 1000,
+        "maxMHz": 40000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.asphalt.01": {
+      "labelRu": "Асфальтобетон",
+      "sourceRow": 34,
+      "profile": {
+        "a": 4.83,
+        "b": 0,
+        "c": 0.0108,
+        "d": 1.3969,
+        "minMHz": 1000,
+        "maxMHz": 40000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.metal.01": {
+      "labelRu": "Металл",
+      "sourceRow": 35,
+      "profile": {
+        "a": 1,
+        "b": 0,
+        "c": 10000000,
+        "d": 0,
+        "minMHz": 1000,
+        "maxMHz": 100000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ground.dry": {
+      "labelRu": "Очень сухой грунт",
+      "sourceRow": 36,
+      "profile": {
+        "a": 3,
+        "b": 0,
+        "c": 0.00015,
+        "d": 2.52,
+        "minMHz": 1000,
+        "maxMHz": 10000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ground.medium": {
+      "labelRu": "Умеренно сухой грунт",
+      "sourceRow": 37,
+      "profile": {
+        "a": 15,
+        "b": -0.1,
+        "c": 0.035,
+        "d": 1.63,
+        "minMHz": 1000,
+        "maxMHz": 10000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    },
+    "p2040.ground.wet": {
+      "labelRu": "Влажный грунт",
+      "sourceRow": 38,
+      "profile": {
+        "a": 30,
+        "b": -0.4,
+        "c": 0.15,
+        "d": 1.3,
+        "minMHz": 1000,
+        "maxMHz": 10000,
+        "maxInclusive": true,
+        "provenance": "SOURCE_DOMAIN"
+      }
+    }
+  }
+}

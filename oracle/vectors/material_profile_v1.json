@@ -1,0 +1,6046 @@
+{
+  "schema": "ricon.oracle.material_profile",
+  "version": 1,
+  "revision": 2,
+  "source": "docs/req/REQ-material-profile.md",
+  "requirementsLfSha256": "2385e37bcb24f8183eaee84e477bf6211a17f557c808d7a011998dbdfb9597dd",
+  "catalogLfSha256": "9d5b720157407d2562b5f0f8756052f1cacd1f3d43d3688f34b26c1a679649e9",
+  "note": "P3.2b: профили отдельных строк Table 3 и граничные случаи, без игры/геометрии.",
+  "cases": [
+    {
+      "id": "MP001",
+      "note": "p2040.air.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 0.0,
+          "minMHz": 1.0,
+          "maxMHz": 1.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP002",
+      "note": "p2040.air.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 316.22776601683796,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 0.0,
+          "minMHz": 316.2277526855469,
+          "maxMHz": 316.2277526855469,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP003",
+      "note": "p2040.air.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 0.0,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP004",
+      "note": "p2040.air.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 0.9999999403953552,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP005",
+      "note": "p2040.air.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP006",
+      "note": "p2040.concrete.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 5.24,
+          "b": 0,
+          "c": 0.0462,
+          "d": 0.7822,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.239999771118164,
+          "conductivitySm": 0.04619999974966049,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP007",
+      "note": "p2040.concrete.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0,
+        "profile": {
+          "a": 5.24,
+          "b": 0,
+          "c": 0.0462,
+          "d": 0.7822,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.239999771118164,
+          "conductivitySm": 0.279796302318573,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP008",
+      "note": "p2040.concrete.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 5.24,
+          "b": 0,
+          "c": 0.0462,
+          "d": 0.7822,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.239999771118164,
+          "conductivitySm": 1.6945013999938965,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP009",
+      "note": "p2040.concrete.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 5.24,
+          "b": 0,
+          "c": 0.0462,
+          "d": 0.7822,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP010",
+      "note": "p2040.concrete.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 5.24,
+          "b": 0,
+          "c": 0.0462,
+          "d": 0.7822,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP011",
+      "note": "p2040.concrete.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 5.17,
+          "b": 0,
+          "c": 0.0145,
+          "d": 1.09,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.170000076293945,
+          "conductivitySm": 2.4349277019500732,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP012",
+      "note": "p2040.concrete.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 5.17,
+          "b": 0,
+          "c": 0.0145,
+          "d": 1.09,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.170000076293945,
+          "conductivitySm": 4.43115758895874,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP013",
+      "note": "p2040.concrete.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 5.17,
+          "b": 0,
+          "c": 0.0145,
+          "d": 1.09,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.170000076293945,
+          "conductivitySm": 8.063958168029785,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP014",
+      "note": "p2040.concrete.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 5.17,
+          "b": 0,
+          "c": 0.0145,
+          "d": 1.09,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP015",
+      "note": "p2040.concrete.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 5.17,
+          "b": 0,
+          "c": 0.0145,
+          "d": 1.09,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP016",
+      "note": "p2040.brick.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 3.91,
+          "b": 0,
+          "c": 0.0238,
+          "d": 0.16,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.9100000858306885,
+          "conductivitySm": 0.023800000548362732,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP017",
+      "note": "p2040.brick.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 6324.555320336759,
+        "profile": {
+          "a": 3.91,
+          "b": 0,
+          "c": 0.0238,
+          "d": 0.16,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.9100000858306885,
+          "conductivitySm": 0.031969934701919556,
+          "minMHz": 6324.55517578125,
+          "maxMHz": 6324.55517578125,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP018",
+      "note": "p2040.brick.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000,
+        "profile": {
+          "a": 3.91,
+          "b": 0,
+          "c": 0.0238,
+          "d": 0.16,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.9100000858306885,
+          "conductivitySm": 0.04294440150260925,
+          "minMHz": 40000.0,
+          "maxMHz": 40000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP019",
+      "note": "p2040.brick.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 3.91,
+          "b": 0,
+          "c": 0.0238,
+          "d": 0.16,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP020",
+      "note": "p2040.brick.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000.00390625,
+        "profile": {
+          "a": 3.91,
+          "b": 0,
+          "c": 0.0238,
+          "d": 0.16,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP021",
+      "note": "p2040.brick.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 4.15,
+          "b": 0,
+          "c": 0.0006,
+          "d": 1.5712,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.150000095367432,
+          "conductivitySm": 0.9673585891723633,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP022",
+      "note": "p2040.brick.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 4.15,
+          "b": 0,
+          "c": 0.0006,
+          "d": 1.5712,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.150000095367432,
+          "conductivitySm": 2.2930524349212646,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP023",
+      "note": "p2040.brick.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 4.15,
+          "b": 0,
+          "c": 0.0006,
+          "d": 1.5712,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.150000095367432,
+          "conductivitySm": 5.435511112213135,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP024",
+      "note": "p2040.brick.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 4.15,
+          "b": 0,
+          "c": 0.0006,
+          "d": 1.5712,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP025",
+      "note": "p2040.brick.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 4.15,
+          "b": 0,
+          "c": 0.0006,
+          "d": 1.5712,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP026",
+      "note": "p2040.plasterboard.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 2.73,
+          "b": 0,
+          "c": 0.0085,
+          "d": 0.9395,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7300000190734863,
+          "conductivitySm": 0.008500000461935997,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP027",
+      "note": "p2040.plasterboard.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0,
+        "profile": {
+          "a": 2.73,
+          "b": 0,
+          "c": 0.0085,
+          "d": 0.9395,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7300000190734863,
+          "conductivitySm": 0.07394672185182571,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP028",
+      "note": "p2040.plasterboard.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.73,
+          "b": 0,
+          "c": 0.0085,
+          "d": 0.9395,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7300000190734863,
+          "conductivitySm": 0.6433079242706299,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP029",
+      "note": "p2040.plasterboard.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 2.73,
+          "b": 0,
+          "c": 0.0085,
+          "d": 0.9395,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP030",
+      "note": "p2040.plasterboard.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 2.73,
+          "b": 0,
+          "c": 0.0085,
+          "d": 0.9395,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP031",
+      "note": "p2040.plasterboard.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 2.56,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.7799,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.559999942779541,
+          "conductivitySm": 0.430006206035614,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP032",
+      "note": "p2040.plasterboard.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 2.56,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.7799,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.559999942779541,
+          "conductivitySm": 1.143112063407898,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP033",
+      "note": "p2040.plasterboard.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 2.56,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.7799,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.559999942779541,
+          "conductivitySm": 3.0388050079345703,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP034",
+      "note": "p2040.plasterboard.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 2.56,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.7799,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP035",
+      "note": "p2040.plasterboard.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 2.56,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.7799,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP036",
+      "note": "p2040.plasterboard.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.65,
+          "b": 0,
+          "c": 0.0002,
+          "d": 1.598,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.6500000953674316,
+          "conductivitySm": 0.3140726387500763,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP037",
+      "note": "p2040.plasterboard.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 2.65,
+          "b": 0,
+          "c": 0.0002,
+          "d": 1.598,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.6500000953674316,
+          "conductivitySm": 0.9507712125778198,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP038",
+      "note": "p2040.plasterboard.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 2.65,
+          "b": 0,
+          "c": 0.0002,
+          "d": 1.598,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.6500000953674316,
+          "conductivitySm": 2.878206729888916,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP039",
+      "note": "p2040.plasterboard.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 2.65,
+          "b": 0,
+          "c": 0.0002,
+          "d": 1.598,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP040",
+      "note": "p2040.plasterboard.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 2.65,
+          "b": 0,
+          "c": 0.0002,
+          "d": 1.598,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP041",
+      "note": "p2040.wood.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "profile": {
+          "a": 1.99,
+          "b": 0,
+          "c": 0.0047,
+          "d": 1.0718,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.9900000095367432,
+          "conductivitySm": 2.8621861929423176e-06,
+          "minMHz": 1.0,
+          "maxMHz": 1.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP042",
+      "note": "p2040.wood.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 316.22776601683796,
+        "profile": {
+          "a": 1.99,
+          "b": 0,
+          "c": 0.0047,
+          "d": 1.0718,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.9900000095367432,
+          "conductivitySm": 0.0013683519791811705,
+          "minMHz": 316.2277526855469,
+          "maxMHz": 316.2277526855469,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP043",
+      "note": "p2040.wood.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1.99,
+          "b": 0,
+          "c": 0.0047,
+          "d": 1.0718,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.9900000095367432,
+          "conductivitySm": 0.6541808843612671,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP044",
+      "note": "p2040.wood.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 0.9999999403953552,
+        "profile": {
+          "a": 1.99,
+          "b": 0,
+          "c": 0.0047,
+          "d": 1.0718,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP045",
+      "note": "p2040.wood.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 1.99,
+          "b": 0,
+          "c": 0.0047,
+          "d": 1.0718,
+          "minMHz": 1,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP046",
+      "note": "p2040.wood.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 1.82,
+          "b": 0,
+          "c": 0.004,
+          "d": 1.0761,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.8200000524520874,
+          "conductivitySm": 0.629220187664032,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP047",
+      "note": "p2040.wood.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 1.82,
+          "b": 0,
+          "c": 0.004,
+          "d": 1.0761,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.8200000524520874,
+          "conductivitySm": 1.1363648176193237,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP048",
+      "note": "p2040.wood.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 1.82,
+          "b": 0,
+          "c": 0.004,
+          "d": 1.0761,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.8200000524520874,
+          "conductivitySm": 2.0522620677948,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP049",
+      "note": "p2040.wood.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 1.82,
+          "b": 0,
+          "c": 0.004,
+          "d": 1.0761,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP050",
+      "note": "p2040.wood.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 1.82,
+          "b": 0,
+          "c": 0.004,
+          "d": 1.0761,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP051",
+      "note": "p2040.wood.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.1183,
+          "b": 0,
+          "c": 0.0055,
+          "d": 1.1113,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.118299961090088,
+          "conductivitySm": 0.9182536602020264,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP052",
+      "note": "p2040.wood.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 2.1183,
+          "b": 0,
+          "c": 0.0055,
+          "d": 1.1113,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.118299961090088,
+          "conductivitySm": 1.983797311782837,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP053",
+      "note": "p2040.wood.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 2.1183,
+          "b": 0,
+          "c": 0.0055,
+          "d": 1.1113,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.118299961090088,
+          "conductivitySm": 4.285800457000732,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP054",
+      "note": "p2040.wood.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 2.1183,
+          "b": 0,
+          "c": 0.0055,
+          "d": 1.1113,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP055",
+      "note": "p2040.wood.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 2.1183,
+          "b": 0,
+          "c": 0.0055,
+          "d": 1.1113,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP056",
+      "note": "p2040.glass.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100,
+        "profile": {
+          "a": 6.31,
+          "b": 0,
+          "c": 0.0036,
+          "d": 1.3394,
+          "minMHz": 100,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.309999942779541,
+          "conductivitySm": 0.00016477922326885164,
+          "minMHz": 100.0,
+          "maxMHz": 100.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP057",
+      "note": "p2040.glass.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 3162.2776601683795,
+        "profile": {
+          "a": 6.31,
+          "b": 0,
+          "c": 0.0036,
+          "d": 1.3394,
+          "minMHz": 100,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.309999942779541,
+          "conductivitySm": 0.01682683825492859,
+          "minMHz": 3162.277587890625,
+          "maxMHz": 3162.277587890625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP058",
+      "note": "p2040.glass.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 6.31,
+          "b": 0,
+          "c": 0.0036,
+          "d": 1.3394,
+          "minMHz": 100,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.309999942779541,
+          "conductivitySm": 1.718314290046692,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP059",
+      "note": "p2040.glass.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99.99999237060547,
+        "profile": {
+          "a": 6.31,
+          "b": 0,
+          "c": 0.0036,
+          "d": 1.3394,
+          "minMHz": 100,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP060",
+      "note": "p2040.glass.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 6.31,
+          "b": 0,
+          "c": 0.0036,
+          "d": 1.3394,
+          "minMHz": 100,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP061",
+      "note": "p2040.glass.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 220000,
+        "profile": {
+          "a": 5.79,
+          "b": 0,
+          "c": 0.0004,
+          "d": 1.658,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.789999961853027,
+          "conductivitySm": 3.0605309009552,
+          "minMHz": 220000.0,
+          "maxMHz": 220000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP062",
+      "note": "p2040.glass.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 314642.65445104544,
+        "profile": {
+          "a": 5.79,
+          "b": 0,
+          "c": 0.0004,
+          "d": 1.658,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.789999961853027,
+          "conductivitySm": 5.539129734039307,
+          "minMHz": 314642.65625,
+          "maxMHz": 314642.65625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP063",
+      "note": "p2040.glass.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000,
+        "profile": {
+          "a": 5.79,
+          "b": 0,
+          "c": 0.0004,
+          "d": 1.658,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.789999961853027,
+          "conductivitySm": 10.025044441223145,
+          "minMHz": 450000.0,
+          "maxMHz": 450000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP064",
+      "note": "p2040.glass.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 219999.984375,
+        "profile": {
+          "a": 5.79,
+          "b": 0,
+          "c": 0.0004,
+          "d": 1.658,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP065",
+      "note": "p2040.glass.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000.03125,
+        "profile": {
+          "a": 5.79,
+          "b": 0,
+          "c": 0.0004,
+          "d": 1.658,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP066",
+      "note": "p2040.glass.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 6.5767,
+          "b": 0,
+          "c": 0.0012,
+          "d": 1.4697,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.576700210571289,
+          "conductivitySm": 1.0437133312225342,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP067",
+      "note": "p2040.glass.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 6.5767,
+          "b": 0,
+          "c": 0.0012,
+          "d": 1.4697,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.576700210571289,
+          "conductivitySm": 2.8907132148742676,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP068",
+      "note": "p2040.glass.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 6.5767,
+          "b": 0,
+          "c": 0.0012,
+          "d": 1.4697,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.576700210571289,
+          "conductivitySm": 8.006243705749512,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP069",
+      "note": "p2040.glass.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 6.5767,
+          "b": 0,
+          "c": 0.0012,
+          "d": 1.4697,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP070",
+      "note": "p2040.glass.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 6.5767,
+          "b": 0,
+          "c": 0.0012,
+          "d": 1.4697,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP071",
+      "note": "p2040.acrylic.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.6524,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 0.23615507781505585,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP072",
+      "note": "p2040.acrylic.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.6524,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 0.5853220820426941,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP073",
+      "note": "p2040.acrylic.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.6524,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 1.4507496356964111,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP074",
+      "note": "p2040.acrylic.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.6524,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP075",
+      "note": "p2040.acrylic.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.6524,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP076",
+      "note": "p2040.ceilingboard.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 1.48,
+          "b": 0,
+          "c": 0.0011,
+          "d": 1.075,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.4800000190734863,
+          "conductivitySm": 0.0010999999940395355,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP077",
+      "note": "p2040.ceilingboard.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0,
+        "profile": {
+          "a": 1.48,
+          "b": 0,
+          "c": 0.0011,
+          "d": 1.075,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.4800000190734863,
+          "conductivitySm": 0.013073526322841644,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP078",
+      "note": "p2040.ceilingboard.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1.48,
+          "b": 0,
+          "c": 0.0011,
+          "d": 1.075,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.4800000190734863,
+          "conductivitySm": 0.15537916123867035,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP079",
+      "note": "p2040.ceilingboard.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 1.48,
+          "b": 0,
+          "c": 0.0011,
+          "d": 1.075,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP080",
+      "note": "p2040.ceilingboard.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 1.48,
+          "b": 0,
+          "c": 0.0011,
+          "d": 1.075,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP081",
+      "note": "p2040.ceilingboard.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 220000,
+        "profile": {
+          "a": 1.52,
+          "b": 0,
+          "c": 0.0029,
+          "d": 1.029,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.5199999809265137,
+          "conductivitySm": 0.7460209727287292,
+          "minMHz": 220000.0,
+          "maxMHz": 220000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP082",
+      "note": "p2040.ceilingboard.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 314642.65445104544,
+        "profile": {
+          "a": 1.52,
+          "b": 0,
+          "c": 0.0029,
+          "d": 1.029,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.5199999809265137,
+          "conductivitySm": 1.0780835151672363,
+          "minMHz": 314642.65625,
+          "maxMHz": 314642.65625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP083",
+      "note": "p2040.ceilingboard.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000,
+        "profile": {
+          "a": 1.52,
+          "b": 0,
+          "c": 0.0029,
+          "d": 1.029,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.5199999809265137,
+          "conductivitySm": 1.5579509735107422,
+          "minMHz": 450000.0,
+          "maxMHz": 450000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP084",
+      "note": "p2040.ceilingboard.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 219999.984375,
+        "profile": {
+          "a": 1.52,
+          "b": 0,
+          "c": 0.0029,
+          "d": 1.029,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP085",
+      "note": "p2040.ceilingboard.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000.03125,
+        "profile": {
+          "a": 1.52,
+          "b": 0,
+          "c": 0.0029,
+          "d": 1.029,
+          "minMHz": 220000,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP086",
+      "note": "p2040.ceilingboard.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1.2567,
+          "b": 0,
+          "c": 0.00013,
+          "d": 1.454,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.256700038909912,
+          "conductivitySm": 0.1051824688911438,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP087",
+      "note": "p2040.ceilingboard.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 1.2567,
+          "b": 0,
+          "c": 0.00013,
+          "d": 1.454,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.256700038909912,
+          "conductivitySm": 0.28816482424736023,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP088",
+      "note": "p2040.ceilingboard.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 1.2567,
+          "b": 0,
+          "c": 0.00013,
+          "d": 1.454,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.256700038909912,
+          "conductivitySm": 0.7894753217697144,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP089",
+      "note": "p2040.ceilingboard.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 1.2567,
+          "b": 0,
+          "c": 0.00013,
+          "d": 1.454,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP090",
+      "note": "p2040.ceilingboard.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 1.2567,
+          "b": 0,
+          "c": 0.00013,
+          "d": 1.454,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP091",
+      "note": "p2040.chipboard.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0217,
+          "d": 0.78,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 0.021700000390410423,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP092",
+      "note": "p2040.chipboard.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0217,
+          "d": 0.78,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 0.13075542449951172,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP093",
+      "note": "p2040.chipboard.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0217,
+          "d": 0.78,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.5799999237060547,
+          "conductivitySm": 0.7878792881965637,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP094",
+      "note": "p2040.chipboard.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0217,
+          "d": 0.78,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP095",
+      "note": "p2040.chipboard.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 2.58,
+          "b": 0,
+          "c": 0.0217,
+          "d": 0.78,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP096",
+      "note": "p2040.chipboard.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.16,
+          "b": 0,
+          "c": 0.0023,
+          "d": 1.359,
+          "minMHz": 100000,
+          "maxMHz": 200000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1600000858306885,
+          "conductivitySm": 1.201511025428772,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP097",
+      "note": "p2040.chipboard.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 141421.35623730952,
+        "profile": {
+          "a": 2.16,
+          "b": 0,
+          "c": 0.0023,
+          "d": 1.359,
+          "minMHz": 100000,
+          "maxMHz": 200000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1600000858306885,
+          "conductivitySm": 1.9243216514587402,
+          "minMHz": 141421.359375,
+          "maxMHz": 141421.359375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP098",
+      "note": "p2040.chipboard.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000,
+        "profile": {
+          "a": 2.16,
+          "b": 0,
+          "c": 0.0023,
+          "d": 1.359,
+          "minMHz": 100000,
+          "maxMHz": 200000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1600000858306885,
+          "conductivitySm": 3.0819637775421143,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP099",
+      "note": "p2040.chipboard.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 2.16,
+          "b": 0,
+          "c": 0.0023,
+          "d": 1.359,
+          "minMHz": 100000,
+          "maxMHz": 200000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP100",
+      "note": "p2040.chipboard.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.015625,
+        "profile": {
+          "a": 2.16,
+          "b": 0,
+          "c": 0.0023,
+          "d": 1.359,
+          "minMHz": 100000,
+          "maxMHz": 200000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP101",
+      "note": "p2040.plywood.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 2.71,
+          "b": 0,
+          "c": 0.33,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7100000381469727,
+          "conductivitySm": 0.33000001311302185,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP102",
+      "note": "p2040.plywood.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 6324.555320336759,
+        "profile": {
+          "a": 2.71,
+          "b": 0,
+          "c": 0.33,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7100000381469727,
+          "conductivitySm": 0.33000001311302185,
+          "minMHz": 6324.55517578125,
+          "maxMHz": 6324.55517578125,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP103",
+      "note": "p2040.plywood.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000,
+        "profile": {
+          "a": 2.71,
+          "b": 0,
+          "c": 0.33,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.7100000381469727,
+          "conductivitySm": 0.33000001311302185,
+          "minMHz": 40000.0,
+          "maxMHz": 40000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP104",
+      "note": "p2040.plywood.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 2.71,
+          "b": 0,
+          "c": 0.33,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP105",
+      "note": "p2040.plywood.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000.00390625,
+        "profile": {
+          "a": 2.71,
+          "b": 0,
+          "c": 0.33,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP106",
+      "note": "p2040.plywood.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 1.94,
+          "b": 0,
+          "c": 0.0067,
+          "d": 0.9982,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.940000057220459,
+          "conductivitySm": 0.7307906150817871,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP107",
+      "note": "p2040.plywood.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 1.94,
+          "b": 0,
+          "c": 0.0067,
+          "d": 0.9982,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.940000057220459,
+          "conductivitySm": 1.2645156383514404,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP108",
+      "note": "p2040.plywood.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 1.94,
+          "b": 0,
+          "c": 0.0067,
+          "d": 0.9982,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.940000057220459,
+          "conductivitySm": 2.1880407333374023,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP109",
+      "note": "p2040.plywood.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 1.94,
+          "b": 0,
+          "c": 0.0067,
+          "d": 0.9982,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP110",
+      "note": "p2040.plywood.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 1.94,
+          "b": 0,
+          "c": 0.0067,
+          "d": 0.9982,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP111",
+      "note": "p2040.plywood.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 2.17,
+          "b": 0,
+          "c": 0.0063,
+          "d": 1.045,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1700000762939453,
+          "conductivitySm": 0.7750691771507263,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP112",
+      "note": "p2040.plywood.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 2.17,
+          "b": 0,
+          "c": 0.0063,
+          "d": 1.045,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1700000762939453,
+          "conductivitySm": 1.599251627922058,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP113",
+      "note": "p2040.plywood.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 2.17,
+          "b": 0,
+          "c": 0.0063,
+          "d": 1.045,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.1700000762939453,
+          "conductivitySm": 3.29984188079834,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP114",
+      "note": "p2040.plywood.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 2.17,
+          "b": 0,
+          "c": 0.0063,
+          "d": 1.045,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP115",
+      "note": "p2040.plywood.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 2.17,
+          "b": 0,
+          "c": 0.0063,
+          "d": 1.045,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP116",
+      "note": "p2040.marble.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 7.074,
+          "b": 0,
+          "c": 0.0055,
+          "d": 0.9262,
+          "minMHz": 1000,
+          "maxMHz": 60000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.073999881744385,
+          "conductivitySm": 0.005499999970197678,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP117",
+      "note": "p2040.marble.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 7745.966692414834,
+        "profile": {
+          "a": 7.074,
+          "b": 0,
+          "c": 0.0055,
+          "d": 0.9262,
+          "minMHz": 1000,
+          "maxMHz": 60000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.073999881744385,
+          "conductivitySm": 0.036628954112529755,
+          "minMHz": 7745.966796875,
+          "maxMHz": 7745.966796875,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP118",
+      "note": "p2040.marble.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 60000,
+        "profile": {
+          "a": 7.074,
+          "b": 0,
+          "c": 0.0055,
+          "d": 0.9262,
+          "minMHz": 1000,
+          "maxMHz": 60000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.073999881744385,
+          "conductivitySm": 0.24394185841083527,
+          "minMHz": 60000.0,
+          "maxMHz": 60000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP119",
+      "note": "p2040.marble.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 7.074,
+          "b": 0,
+          "c": 0.0055,
+          "d": 0.9262,
+          "minMHz": 1000,
+          "maxMHz": 60000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP120",
+      "note": "p2040.marble.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 60000.00390625,
+        "profile": {
+          "a": 7.074,
+          "b": 0,
+          "c": 0.0055,
+          "d": 0.9262,
+          "minMHz": 1000,
+          "maxMHz": 60000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP121",
+      "note": "p2040.marble.02: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 7.94,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.733,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.940000057220459,
+          "conductivitySm": 0.34493207931518555,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP122",
+      "note": "p2040.marble.02: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 190525.5888325765,
+        "profile": {
+          "a": 7.94,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.733,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.940000057220459,
+          "conductivitySm": 0.8936330080032349,
+          "minMHz": 190525.59375,
+          "maxMHz": 190525.59375,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP123",
+      "note": "p2040.marble.02: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000,
+        "profile": {
+          "a": 7.94,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.733,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 7.940000057220459,
+          "conductivitySm": 2.3151798248291016,
+          "minMHz": 330000.0,
+          "maxMHz": 330000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP124",
+      "note": "p2040.marble.02: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 109999.9921875,
+        "profile": {
+          "a": 7.94,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.733,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP125",
+      "note": "p2040.marble.02: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 330000.03125,
+        "profile": {
+          "a": 7.94,
+          "b": 0,
+          "c": 0.0001,
+          "d": 1.733,
+          "minMHz": 110000,
+          "maxMHz": 330000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP126",
+      "note": "p2040.marble.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 8.62,
+          "b": 0,
+          "c": 0.0027,
+          "d": 1.15,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 8.619999885559082,
+          "conductivitySm": 0.5387207865715027,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP127",
+      "note": "p2040.marble.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 8.62,
+          "b": 0,
+          "c": 0.0027,
+          "d": 1.15,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 8.619999885559082,
+          "conductivitySm": 1.1954962015151978,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP128",
+      "note": "p2040.marble.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 8.62,
+          "b": 0,
+          "c": 0.0027,
+          "d": 1.15,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 8.619999885559082,
+          "conductivitySm": 2.6529722213745117,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP129",
+      "note": "p2040.marble.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 8.62,
+          "b": 0,
+          "c": 0.0027,
+          "d": 1.15,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP130",
+      "note": "p2040.marble.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 8.62,
+          "b": 0,
+          "c": 0.0027,
+          "d": 1.15,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP131",
+      "note": "p2040.floorboard.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 50000,
+        "profile": {
+          "a": 3.66,
+          "b": 0,
+          "c": 0.0044,
+          "d": 1.3515,
+          "minMHz": 50000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.6600000858306885,
+          "conductivitySm": 0.8701831698417664,
+          "minMHz": 50000.0,
+          "maxMHz": 50000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP132",
+      "note": "p2040.floorboard.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 70710.67811865476,
+        "profile": {
+          "a": 3.66,
+          "b": 0,
+          "c": 0.0044,
+          "d": 1.3515,
+          "minMHz": 50000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.6600000858306885,
+          "conductivitySm": 1.3900542259216309,
+          "minMHz": 70710.6796875,
+          "maxMHz": 70710.6796875,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP133",
+      "note": "p2040.floorboard.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 3.66,
+          "b": 0,
+          "c": 0.0044,
+          "d": 1.3515,
+          "minMHz": 50000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.6600000858306885,
+          "conductivitySm": 2.2205100059509277,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP134",
+      "note": "p2040.floorboard.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 49999.99609375,
+        "profile": {
+          "a": 3.66,
+          "b": 0,
+          "c": 0.0044,
+          "d": 1.3515,
+          "minMHz": 50000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP135",
+      "note": "p2040.floorboard.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 3.66,
+          "b": 0,
+          "c": 0.0044,
+          "d": 1.3515,
+          "minMHz": 50000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP136",
+      "note": "p2040.floorboard.02a: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 220000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 2.22e-17,
+          "d": 7.3413,
+          "minMHz": 220000,
+          "maxMHz": 300000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 3.4896399974823,
+          "minMHz": 220000.0,
+          "maxMHz": 220000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP137",
+      "note": "p2040.floorboard.02a: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 256904.65157330257,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 2.22e-17,
+          "d": 7.3413,
+          "minMHz": 220000,
+          "maxMHz": 300000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 10.894618034362793,
+          "minMHz": 256904.65625,
+          "maxMHz": 256904.65625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP138",
+      "note": "p2040.floorboard.02a: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 300000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 2.22e-17,
+          "d": 7.3413,
+          "minMHz": 220000,
+          "maxMHz": 300000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP139",
+      "note": "p2040.floorboard.02a: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 219999.984375,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 2.22e-17,
+          "d": 7.3413,
+          "minMHz": 220000,
+          "maxMHz": 300000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP140",
+      "note": "p2040.floorboard.02a: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 300000.03125,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 2.22e-17,
+          "d": 7.3413,
+          "minMHz": 220000,
+          "maxMHz": 300000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP141",
+      "note": "p2040.floorboard.02b: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 300000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 0.0003,
+          "d": 2.0298,
+          "minMHz": 300000,
+          "maxMHz": 400000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 32.002349853515625,
+          "minMHz": 300000.0,
+          "maxMHz": 300000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP142",
+      "note": "p2040.floorboard.02b: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 346410.16151377547,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 0.0003,
+          "d": 2.0298,
+          "minMHz": 300000,
+          "maxMHz": 400000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 42.853092193603516,
+          "minMHz": 346410.15625,
+          "maxMHz": 346410.15625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP143",
+      "note": "p2040.floorboard.02b: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 0.0003,
+          "d": 2.0298,
+          "minMHz": 300000,
+          "maxMHz": 400000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP144",
+      "note": "p2040.floorboard.02b: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 299999.96875,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 0.0003,
+          "d": 2.0298,
+          "minMHz": 300000,
+          "maxMHz": 400000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP145",
+      "note": "p2040.floorboard.02b: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 0.0003,
+          "d": 2.0298,
+          "minMHz": 300000,
+          "maxMHz": 400000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP146",
+      "note": "p2040.floorboard.02c: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 49.8726,
+          "d": 0,
+          "minMHz": 400000,
+          "maxMHz": 450000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 49.87260055541992,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP147",
+      "note": "p2040.floorboard.02c: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 424264.0687119285,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 49.8726,
+          "d": 0,
+          "minMHz": 400000,
+          "maxMHz": 450000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 5.269999980926514,
+          "conductivitySm": 49.87260055541992,
+          "minMHz": 424264.0625,
+          "maxMHz": 424264.0625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP148",
+      "note": "p2040.floorboard.02c: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 49.8726,
+          "d": 0,
+          "minMHz": 400000,
+          "maxMHz": 450000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP149",
+      "note": "p2040.floorboard.02c: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 399999.96875,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 49.8726,
+          "d": 0,
+          "minMHz": 400000,
+          "maxMHz": 450000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP150",
+      "note": "p2040.floorboard.02c: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 450000.03125,
+        "profile": {
+          "a": 5.27,
+          "b": 0,
+          "c": 49.8726,
+          "d": 0,
+          "minMHz": 400000,
+          "maxMHz": 450000,
+          "maxInclusive": false,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP151",
+      "note": "p2040.floorboard.03: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 3.1575,
+          "b": 0,
+          "c": 0.001675,
+          "d": 1.32775,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.1575000286102295,
+          "conductivitySm": 0.7577304244041443,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP152",
+      "note": "p2040.floorboard.03: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 200000.0,
+        "profile": {
+          "a": 3.1575,
+          "b": 0,
+          "c": 0.001675,
+          "d": 1.32775,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.1575000286102295,
+          "conductivitySm": 1.9019858837127686,
+          "minMHz": 200000.0,
+          "maxMHz": 200000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP153",
+      "note": "p2040.floorboard.03: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000,
+        "profile": {
+          "a": 3.1575,
+          "b": 0,
+          "c": 0.001675,
+          "d": 1.32775,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.1575000286102295,
+          "conductivitySm": 4.774191856384277,
+          "minMHz": 400000.0,
+          "maxMHz": 400000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP154",
+      "note": "p2040.floorboard.03: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 99999.9921875,
+        "profile": {
+          "a": 3.1575,
+          "b": 0,
+          "c": 0.001675,
+          "d": 1.32775,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP155",
+      "note": "p2040.floorboard.03: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 400000.03125,
+        "profile": {
+          "a": 3.1575,
+          "b": 0,
+          "c": 0.001675,
+          "d": 1.32775,
+          "minMHz": 100000,
+          "maxMHz": 400000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP156",
+      "note": "p2040.vinyl.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 3.62,
+          "b": 0,
+          "c": 0.0051,
+          "d": 0.8422,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.619999885559082,
+          "conductivitySm": 0.005100000184029341,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP157",
+      "note": "p2040.vinyl.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 6324.555320336759,
+        "profile": {
+          "a": 3.62,
+          "b": 0,
+          "c": 0.0051,
+          "d": 0.8422,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.619999885559082,
+          "conductivitySm": 0.02411002293229103,
+          "minMHz": 6324.55517578125,
+          "maxMHz": 6324.55517578125,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP158",
+      "note": "p2040.vinyl.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000,
+        "profile": {
+          "a": 3.62,
+          "b": 0,
+          "c": 0.0051,
+          "d": 0.8422,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.619999885559082,
+          "conductivitySm": 0.11397906392812729,
+          "minMHz": 40000.0,
+          "maxMHz": 40000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP159",
+      "note": "p2040.vinyl.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 3.62,
+          "b": 0,
+          "c": 0.0051,
+          "d": 0.8422,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP160",
+      "note": "p2040.vinyl.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000.00390625,
+        "profile": {
+          "a": 3.62,
+          "b": 0,
+          "c": 0.0051,
+          "d": 0.8422,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP161",
+      "note": "p2040.carpet.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 2.08,
+          "b": 0,
+          "c": 0.0009,
+          "d": 0.82,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.0799999237060547,
+          "conductivitySm": 0.0008999999845400453,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP162",
+      "note": "p2040.carpet.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 6324.555320336759,
+        "profile": {
+          "a": 2.08,
+          "b": 0,
+          "c": 0.0009,
+          "d": 0.82,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.0799999237060547,
+          "conductivitySm": 0.004084012936800718,
+          "minMHz": 6324.55517578125,
+          "maxMHz": 6324.55517578125,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP163",
+      "note": "p2040.carpet.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000,
+        "profile": {
+          "a": 2.08,
+          "b": 0,
+          "c": 0.0009,
+          "d": 0.82,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.0799999237060547,
+          "conductivitySm": 0.01853240095078945,
+          "minMHz": 40000.0,
+          "maxMHz": 40000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP164",
+      "note": "p2040.carpet.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 2.08,
+          "b": 0,
+          "c": 0.0009,
+          "d": 0.82,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP165",
+      "note": "p2040.carpet.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000.00390625,
+        "profile": {
+          "a": 2.08,
+          "b": 0,
+          "c": 0.0009,
+          "d": 0.82,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP166",
+      "note": "p2040.asphalt.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4.83,
+          "b": 0,
+          "c": 0.0108,
+          "d": 1.3969,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.829999923706055,
+          "conductivitySm": 0.01080000028014183,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP167",
+      "note": "p2040.asphalt.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 6324.555320336759,
+        "profile": {
+          "a": 4.83,
+          "b": 0,
+          "c": 0.0108,
+          "d": 1.3969,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.829999923706055,
+          "conductivitySm": 0.14203082025051117,
+          "minMHz": 6324.55517578125,
+          "maxMHz": 6324.55517578125,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP168",
+      "note": "p2040.asphalt.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000,
+        "profile": {
+          "a": 4.83,
+          "b": 0,
+          "c": 0.0108,
+          "d": 1.3969,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.829999923706055,
+          "conductivitySm": 1.8678476810455322,
+          "minMHz": 40000.0,
+          "maxMHz": 40000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP169",
+      "note": "p2040.asphalt.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 4.83,
+          "b": 0,
+          "c": 0.0108,
+          "d": 1.3969,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP170",
+      "note": "p2040.asphalt.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 40000.00390625,
+        "profile": {
+          "a": 4.83,
+          "b": 0,
+          "c": 0.0108,
+          "d": 1.3969,
+          "minMHz": 1000,
+          "maxMHz": 40000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP171",
+      "note": "p2040.metal.01: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 10000000,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 10000000.0,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP172",
+      "note": "p2040.metal.01: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 10000000,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 10000000.0,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP173",
+      "note": "p2040.metal.01: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 10000000,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 10000000.0,
+          "minMHz": 100000.0,
+          "maxMHz": 100000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP174",
+      "note": "p2040.metal.01: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 10000000,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP175",
+      "note": "p2040.metal.01: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100000.0078125,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 10000000,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 100000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP176",
+      "note": "p2040.ground.dry: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 3,
+          "b": 0,
+          "c": 0.00015,
+          "d": 2.52,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.0,
+          "conductivitySm": 0.0001500000071246177,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP177",
+      "note": "p2040.ground.dry: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 3162.2776601683795,
+        "profile": {
+          "a": 3,
+          "b": 0,
+          "c": 0.00015,
+          "d": 2.52,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.0,
+          "conductivitySm": 0.0027295511681586504,
+          "minMHz": 3162.277587890625,
+          "maxMHz": 3162.277587890625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP178",
+      "note": "p2040.ground.dry: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000,
+        "profile": {
+          "a": 3,
+          "b": 0,
+          "c": 0.00015,
+          "d": 2.52,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 3.0,
+          "conductivitySm": 0.049669668078422546,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP179",
+      "note": "p2040.ground.dry: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 3,
+          "b": 0,
+          "c": 0.00015,
+          "d": 2.52,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP180",
+      "note": "p2040.ground.dry: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0009765625,
+        "profile": {
+          "a": 3,
+          "b": 0,
+          "c": 0.00015,
+          "d": 2.52,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP181",
+      "note": "p2040.ground.medium: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 15,
+          "b": -0.1,
+          "c": 0.035,
+          "d": 1.63,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 0.03500000014901161,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP182",
+      "note": "p2040.ground.medium: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 3162.2776601683795,
+        "profile": {
+          "a": 15,
+          "b": -0.1,
+          "c": 0.035,
+          "d": 1.63,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 13.36876392364502,
+          "conductivitySm": 0.22859568893909454,
+          "minMHz": 3162.277587890625,
+          "maxMHz": 3162.277587890625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP183",
+      "note": "p2040.ground.medium: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000,
+        "profile": {
+          "a": 15,
+          "b": -0.1,
+          "c": 0.035,
+          "d": 1.63,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 11.914923667907715,
+          "conductivitySm": 1.4930282831192017,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP184",
+      "note": "p2040.ground.medium: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 15,
+          "b": -0.1,
+          "c": 0.035,
+          "d": 1.63,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP185",
+      "note": "p2040.ground.medium: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0009765625,
+        "profile": {
+          "a": 15,
+          "b": -0.1,
+          "c": 0.035,
+          "d": 1.63,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP186",
+      "note": "p2040.ground.wet: нижняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 30,
+          "b": -0.4,
+          "c": 0.15,
+          "d": 1.3,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 30.0,
+          "conductivitySm": 0.15000000596046448,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP187",
+      "note": "p2040.ground.wet: внутри полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 3162.2776601683795,
+        "profile": {
+          "a": 30,
+          "b": -0.4,
+          "c": 0.15,
+          "d": 1.3,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 18.928720474243164,
+          "conductivitySm": 0.6700253486633301,
+          "minMHz": 3162.277587890625,
+          "maxMHz": 3162.277587890625,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP188",
+      "note": "p2040.ground.wet: верхняя граница",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000,
+        "profile": {
+          "a": 30,
+          "b": -0.4,
+          "c": 0.15,
+          "d": 1.3,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 11.943215370178223,
+          "conductivitySm": 2.9928932189941406,
+          "minMHz": 10000.0,
+          "maxMHz": 10000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP189",
+      "note": "p2040.ground.wet: сразу ниже полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 999.9999389648438,
+        "profile": {
+          "a": 30,
+          "b": -0.4,
+          "c": 0.15,
+          "d": 1.3,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP190",
+      "note": "p2040.ground.wet: сразу выше полосы",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 10000.0009765625,
+        "profile": {
+          "a": 30,
+          "b": -0.4,
+          "c": 0.15,
+          "d": 1.3,
+          "minMHz": 1000,
+          "maxMHz": 10000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP191",
+      "note": "Константы и происхождение SOURCE_DOMAIN",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.25,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "SOURCE_DOMAIN"
+        }
+      }
+    },
+    {
+      "id": "MP192",
+      "note": "Константы и происхождение ASSUMED_CONFIG",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "ASSUMED_CONFIG"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.25,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "ASSUMED_CONFIG"
+        }
+      }
+    },
+    {
+      "id": "MP193",
+      "note": "Константы и происхождение TEST_ONLY",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.25,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP194",
+      "note": "Единица MHz→GHz, положительные показатели",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 2000,
+        "profile": {
+          "a": 1,
+          "b": 1,
+          "c": 0.125,
+          "d": 2,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.0,
+          "conductivitySm": 0.5,
+          "minMHz": 2000.0,
+          "maxMHz": 2000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP195",
+      "note": "Отрицательные показатели",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 2000,
+        "profile": {
+          "a": 4,
+          "b": -1,
+          "c": 0.25,
+          "d": -2,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 2.0,
+          "conductivitySm": 0.0625,
+          "minMHz": 2000.0,
+          "maxMHz": 2000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP196",
+      "note": "Воздух при огромном показателе проводимости",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 2000,
+        "profile": {
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 3e+38,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 1.0,
+          "conductivitySm": 0.0,
+          "minMHz": 2000.0,
+          "maxMHz": 2000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP197",
+      "note": "Показатели при fGHz=1",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 3e+38,
+          "c": 0.25,
+          "d": -3e+38,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.25,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP198",
+      "note": "Точечный профиль",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 1000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 0.25,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP199",
+      "note": "Пустая полуоткрытая полоса",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1000,
+          "maxMHz": 1000,
+          "maxInclusive": false,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP200",
+      "note": "Глобальная нижняя область",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 0.5,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP201",
+      "note": "Глобальная верхняя область",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 500000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 1000000.0,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OUT_OF_MODEL_DOMAIN"
+      }
+    },
+    {
+      "id": "MP202",
+      "note": "Оба численных предела MS03",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 100,
+          "b": 0,
+          "c": 100000000.0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 100.0,
+          "conductivitySm": 100000000.0,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP203",
+      "note": "ε меньше единицы",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 0.5,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_DOMAIN_LIMIT"
+      }
+    },
+    {
+      "id": "MP204",
+      "note": "ε больше 100",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 100.00000762939453,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_DOMAIN_LIMIT"
+      }
+    },
+    {
+      "id": "MP205",
+      "note": "σ больше 1e8",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 100000008.0,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_DOMAIN_LIMIT"
+      }
+    },
+    {
+      "id": "MP206",
+      "note": "Малая положительная σ без вычисления степени",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 1.401298464324817e-45,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 1.401298464324817e-45,
+          "minMHz": 1000.0,
+          "maxMHz": 1000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP207",
+      "note": "Потеря положительной σ при underflow",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 1e-30,
+          "d": 100,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "MP208",
+      "note": "Переполнение σ",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 1,
+          "d": 100,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "MP209",
+      "note": "Потеря ε при underflow",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1,
+        "profile": {
+          "a": 1,
+          "b": 100,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "MP210",
+      "note": "Переполнение ε",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 1,
+          "b": 100,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "MP211",
+      "note": "Конечное произведение при непредставимой отдельной степени",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 110000,
+        "profile": {
+          "a": 1e-38,
+          "b": 19,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 6.115908622741699,
+          "conductivitySm": 0.25,
+          "minMHz": 110000.0,
+          "maxMHz": 110000.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP212",
+      "note": "Сначала представимость обоих, затем предел ε",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 100000,
+        "profile": {
+          "a": 0.5,
+          "b": 0,
+          "c": 0.25,
+          "d": 100,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "MP213",
+      "note": "Профиль до частотной области",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 0.5,
+        "profile": {
+          "a": 0,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP214",
+      "note": "Частота до профиля",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 0,
+        "profile": {
+          "a": 0,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP215",
+      "note": "Неверное значение a",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 0,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP216",
+      "note": "Неверное значение c",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": -1,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP217",
+      "note": "Неверное значение minMHz",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 0,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP218",
+      "note": "Неверное значение maxMHz",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 0,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP219",
+      "note": "Неверное значение provenance",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "UNKNOWN"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP220",
+      "note": "Переставленные границы",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 2000,
+          "maxMHz": 1000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP221",
+      "note": "Отсутствующий объект профиля",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": null
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP222",
+      "note": "Неверный JSON-тип/диапазон a",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": true,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP223",
+      "note": "Неверный JSON-тип/диапазон b",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": "0",
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP224",
+      "note": "Неверный JSON-тип/диапазон c",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": null,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP225",
+      "note": "Неверный JSON-тип/диапазон d",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 1e+40,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP226",
+      "note": "Неверный JSON-тип/диапазон maxInclusive",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": 1,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP227",
+      "note": "Неверный JSON-вход частоты",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": true,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP228",
+      "note": "Неверный JSON-вход частоты",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": null,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP229",
+      "note": "Неверный JSON-вход частоты",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": "1000",
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP230",
+      "note": "Неверный JSON-вход частоты",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1e+40,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP231",
+      "note": "Лишнее поле профиля",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY",
+          "extra": 1
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP232",
+      "note": "Отсутствующее поле профиля",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_PROFILE"
+      }
+    },
+    {
+      "id": "MP233",
+      "note": "Лишнее поле входа",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 0.25,
+          "d": 0,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        },
+        "extra": 1
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP234",
+      "note": "Отсутствующее поле входа",
+      "native": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1000
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "MP235",
+      "note": "Вычисленная положительная субнормальная σ binary32",
+      "native": true,
+      "provenance": "ORACLE_DERIVED",
+      "input": {
+        "frequencyMHz": 100,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 1e-30,
+          "d": 10,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "material": {
+          "epsilonReal": 4.0,
+          "conductivitySm": 9.99994610111476e-41,
+          "minMHz": 100.0,
+          "maxMHz": 100.0,
+          "provenance": "TEST_ONLY"
+        }
+      }
+    },
+    {
+      "id": "MP236",
+      "note": "Положительная σ binary64 теряется только при округлении binary32",
+      "native": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 100,
+        "profile": {
+          "a": 4,
+          "b": 0,
+          "c": 1e-30,
+          "d": 16,
+          "minMHz": 1,
+          "maxMHz": 450000,
+          "maxInclusive": true,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    }
+  ]
+}
