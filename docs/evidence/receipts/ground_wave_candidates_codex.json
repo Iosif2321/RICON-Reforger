@@ -1,0 +1,28 @@
+{
+  "level": "TOOL_ONLY_REPLAY_NOT_PHYSICAL_ACCEPTANCE",
+  "sourceSha256": "16af4dbc50961a5357856fbb0b24c86c65ffd872a938a81130eb7e6f0095f9df",
+  "exeSha256": "e3dc0246de37be9d44833fb72cf133ebf2ed157b4aba679ee73035e34ef590f8",
+  "checkerSha256": "cb9b0701cbefe0f860fe6c29580a4a576871c9a3a8be5fd0bfcf37053c6b421c",
+  "cells": 1296,
+  "maxDifferenceDb": {
+    "C1": 0.0,
+    "C2": 0.0,
+    "C3": 0.0,
+    "C4": 2.842170943040401e-14
+  },
+  "returnCodes": {
+    "C1": {
+      "0": 720,
+      "34": 576
+    },
+    "C3": {
+      "1009": 288,
+      "1": 624,
+      "0": 384
+    }
+  },
+  "powerMetamorphic": "PASS",
+  "itmMdvar": 1,
+  "result": "PASS",
+  "note": "C1/C3 перепроверены своим stdin-adapter; C2/C4 используют ранее проверенные общие L2 primitives. Это не новая независимая физическая модель."
+}
