@@ -103,6 +103,19 @@ class MaterialProfileTests(unittest.TestCase):
                 value["profile"][field] = bad
                 self.assertEqual({"code": "INVALID_PROFILE"}, o.evaluate(value))
 
+    def test_native_power_regressions_without_arbitrary_log_cutoffs(self):
+        for coefficient, exponent, frequency, expected in ((9e-36, 10, 100, o.f32(1e-45)),
+                                                          (1e38, 15, 1, o.f32(o.f32(1e38) * .001 ** 15))):
+            value = builder.baseline()
+            value["frequencyMHz"] = frequency
+            value["profile"].update(c=coefficient, d=exponent)
+            result = o.evaluate(value)
+            self.assertEqual("OK", result["code"])
+            self.assertEqual(expected, result["material"]["conductivitySm"])
+        value = builder.baseline()
+        value["profile"].update(c=3.4e38, d=1)
+        self.assertEqual({"code": "NUMERIC_DOMAIN_LIMIT"}, o.evaluate(value))
+
     def test_catalog_rejects_corruption_even_in_unselected_row(self):
         original = o.read_json(o.CATALOG)
         with tempfile.TemporaryDirectory() as tmp:
