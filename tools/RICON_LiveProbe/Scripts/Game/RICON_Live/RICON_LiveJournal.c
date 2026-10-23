@@ -7,7 +7,8 @@ class RICON_LiveEvent
 	int m_iSeq;
 	int m_iTimeMs;      //!< время источника (сторона указана в m_sSide), не общая аудиошкала
 	string m_sSide;     //!< "server" | "client" | "probe"
-	string m_sKind;     //!< TX_START, TX_STOP, TX_SEEN, RX_EVENT, RADIO_STATE, MUTE_CALL, GAP, NOTE
+	string m_sKind;     //!< TX_CAPTURE (OnCapture — колбэк каждый кадр записи, не фронт), TX_SEEN, RX_EVENT,
+	                    //!< RADIO_STATE, MUTE_CALL, GAP, NOTE; TX_START/TX_STOP — только после отдельной детекции фронта
 	int m_iPlayerId;
 	int m_iDeviceId;    //!< RplId рации или -1
 	int m_iTransceiver; //!< индекс трансивера или -1

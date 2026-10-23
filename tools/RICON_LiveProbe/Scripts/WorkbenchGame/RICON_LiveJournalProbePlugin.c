@@ -43,9 +43,30 @@ class RICON_LiveJournalProbePlugin : WorkbenchPlugin
 		string line = RICON_LiveJournal.Format(last);
 		Check(line == "[RICON_LIVE] seq=19 t=1019 side=server kind=TX_SEEN player=7 device=-1 tr=-1 value=-1 text=von", "line format");
 		Check(line.IndexOf("FAIL") < 0, "line has no FAIL token");
+		// codex #3960: дефект первого переполнения должен ловиться сразу на 9-м событии, а не только итогом.
+		RICON_LiveJournal e = new RICON_LiveJournal(8);
+		for (int n = 0; n < 9; n++)
+		{
+			e.Add(2000 + n, "client", "RX_EVENT", 3, 5, 1, n, "q");
+		}
+		Check(e.Count() == 8 && e.Dropped() == 2, "ninth add keeps capacity and drops two");
+		RICON_LiveEvent g = e.At(0);
+		Check(g.m_sKind == "GAP" && g.m_iValue == 2 && g.m_iSeq == 0 && g.m_iTimeMs == 2001, "GAP after ninth add covers seq 0 and 1");
+		RICON_LiveEvent kept = e.At(1);
+		Check(kept.m_iSeq == 2 && e.At(7).m_iSeq == 8, "kept order after ninth add");
+		// Минимальная ёмкость 2: один слот GAP, один слот для новейшего события.
+		RICON_LiveJournal tiny = new RICON_LiveJournal(2);
+		for (int m = 0; m < 5; m++)
+		{
+			tiny.Add(3000 + m, "server", "TX_CAPTURE", 1, -1, -1, -1, "c");
+		}
+		RICON_LiveEvent tinyGap = tiny.At(0);
+		RICON_LiveEvent tinyLast = tiny.At(1);
+		Check(tiny.Count() == 2 && tiny.Dropped() == 4 && tinyGap.m_sKind == "GAP" && tinyGap.m_iValue == 4 && tinyLast.m_iSeq == 4,
+			"capacity 2 keeps GAP and the newest event");
 		j.Dump();
 		PrintFormat("[RICON_LIVEJ] checks=%1 passed=%2 count=%3 dropped=%4", m_iChecks, m_iPassed, j.Count(), j.Dropped());
-		if (m_iChecks == m_iPassed && m_iChecks == 15)
+		if (m_iChecks == m_iPassed && m_iChecks == 19)
 		{
 			Print("[RICON_LIVEJ] done: PASS");
 			Workbench.Exit(0);
