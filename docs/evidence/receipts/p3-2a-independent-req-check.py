@@ -277,7 +277,7 @@ def main(corpus, out):
             ok = diff <= tol
             maxdiff = max(maxdiff, diff / tol)
             if case["native"]:
-                emu[case["id"]] = emulate(case["input"], exp["lossDb"])
+                emu[case["id"]] = {"expected": exp["lossDb"], "variants": emulate(case["input"], exp["lossDb"])}
         bad += not ok
         rows.append({"id": case["id"], "native": case["native"], "ok": ok, "expect": exp, "got": got, "absDiff": diff})
     extras = []
@@ -303,11 +303,11 @@ def main(corpus, out):
     for name in VARIANTS:
         worst, outside = 0.0, []
         for cid, res in emu.items():
-            v = res[name]
+            v = res["variants"][name]
             if v.get("failure"):
                 outside.append(cid + ":FAIL")
                 continue
-            ratio = abs(v["err"]) / native_tol(rows[int(cid[2:]) - 1]["expect"]["lossDb"])
+            ratio = abs(v["err"]) / native_tol(res["expected"])
             worst = max(worst, ratio)
             if not v["withinTol"]:
                 outside.append(f"{cid}:{v['err']:+.3g}")
