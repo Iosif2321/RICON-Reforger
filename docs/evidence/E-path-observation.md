@@ -1,7 +1,7 @@
 # P2: наблюдение пути и вода
 
 2026-10-22, codex. Вычислительная часть: `NATIVE_PASS`, перекрёстное ревью и повторный прогон Claude приняты (#3489).
-Регрессия общего форматтера: 15/15 целевых групп и WorldProfile 39/39 native; повтор Claude ожидается.
+Регрессия общего форматтера: 15/15 целевых групп и WorldProfile 39/39 native; повтор Claude принят 2026-10-23 (#3516).
 Реальный мир, игровой сервер, доставка и слышимость: `NOT_RUN`.
 
 Основание: `REQ-path-observation.md` v0.3 AGENT-REVIEWED, согласование Agora #3454/#3459/#3460.
@@ -88,6 +88,13 @@ Receipt: `p2-host-targeted-codex-20261022.json`. Ранее прошедшие o
 budget=1, done PASS/SCRIPT(E)=0. Лог `ricon-world-codex-20261022-235604`, SHA-256
 `ca7f1e01951bc6161a77ed9194985bf61b06702ea08092f0b1cce5f557ee57c4`;
 receipt `p2-world-native-codex-20261022.json`. Production-модели рельефа не менялись.
+
+Claude независимо повторил WorldProfile 2026-10-23: 39/39 quietPositive, 14 controls, endpoints=1, budget=1,
+done PASS/SCRIPT(E)=0, сообщил exit 0 и принял `c075bcd` (Agora #3516). Лог
+`ricon-world-claude-20261023-130804`, SHA-256
+`9f6de904d8b925974cc6e81d670ad8818f3b6d103681f7777268faf82b5529b2`.
+Codex отдельно прочитал этот локальный лог и проверил SHA/итог/отсутствие ошибок;
+receipt `p2-world-peer-recheck-codex-20261023.json`. Зависимость от повторного World-прогона закрыта.
 
 ## Воспроизведение
 

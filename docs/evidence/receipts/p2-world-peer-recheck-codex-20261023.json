@@ -1,0 +1,13 @@
+{
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-world-claude-20261023-130804\\console.log",
+  "logSha256": "9f6de904d8b925974cc6e81d670ad8818f3b6d103681f7777268faf82b5529b2",
+  "summary": "39/39, controls14, endpoints1, budget1",
+  "scriptErrors": 0,
+  "done": "PASS",
+  "reportedExitCode": 0,
+  "exitCodeSource": "agora3516",
+  "worldStarted": false,
+  "checkedBy": "codex",
+  "checkedAt": "2026-10-23",
+  "scope": "Проверены байты лога, SHA, итог и отсутствие SCRIPT(E)/FAIL; код завершения сообщил Claude в Agora #3516"
+}
