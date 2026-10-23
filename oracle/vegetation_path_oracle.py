@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.3).
+"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.4).
 
 ORACLE level: binary64 over binary32-typed inputs. Calls the frozen P4 v1 layer (vegetation_oracle.vegetation_layer)
 and the frozen P4.2 layer (vegetation_overcanopy_oracle.over_canopy) on the same input; the base budgets L0/L2 for the
@@ -117,8 +117,9 @@ def select(inp) -> dict:
         return {"code": "NUMERIC_FAILURE"}
     if not t_branch["present"] and not o_branch["present"]:
         return {"code": "UNRESOLVED", "reason": "NO_BRANCH", "through": t_branch, "over": o_branch}
-    # VP06a: binary32 sums; a difference within the native tolerance TIE_DB counts as equal and selects THROUGH.
-    if t_branch["present"] and (not o_branch["present"] or t_branch["totalDb"] <= o_branch["totalDb"] + TIE_DB):
+    # VP06a: binary32 sums and a binary32 comparison f32(T - O) <= f32(TIE_DB): within the band THROUGH is chosen.
+    if t_branch["present"] and (not o_branch["present"]
+                                or po.f32(t_branch["totalDb"] - o_branch["totalDb"]) <= po.f32(TIE_DB)):
         selected = "THROUGH"
     else:
         selected = "OVER"

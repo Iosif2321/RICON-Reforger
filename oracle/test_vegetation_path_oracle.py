@@ -29,18 +29,19 @@ class CorpusTest(unittest.TestCase):
         reasons = {e[b]["reason"] for e in self.ok for b in ("through", "over") if not e[b]["present"]}
         self.assertEqual({"NO_MODEL_FOR_SCENARIO", "BASE_BUDGET_MISSING", "MID_PATH_VEGETATION", "OUT_OF_MODEL_DOMAIN"}, reasons)
 
-    def test_total_is_the_minimum_branch_never_a_sum(self):
-        """VP06: the result is one full budget; the over-canopy correction is never added to a through loss."""
+    def test_total_is_the_selected_branch_never_a_sum(self):
+        """VP06/VP06a: the result is the full budget of the branch selected by the band rule (THROUGH may exceed the
+        minimum by at most TIE_DB); the over-canopy correction is never added to a through loss."""
         for e in self.ok:
-            present = [e[b]["totalDb"] for b in ("through", "over") if e[b]["present"]]
-            self.assertEqual(min(present), e["totalLossDb"])
             chosen = e["through"] if e["selected"] == "THROUGH" else e["over"]
             self.assertTrue(chosen["present"])
             self.assertEqual(chosen["totalDb"], e["totalLossDb"])
+            present = [e[b]["totalDb"] for b in ("through", "over") if e[b]["present"]]
+            self.assertLessEqual(e["totalLossDb"] - min(present), p.TIE_DB + 1e-9)
             if e["through"]["present"] and e["over"]["present"]:
-                self.assertEqual(e["selected"] == "THROUGH", e["through"]["totalDb"] <= e["over"]["totalDb"] + p.TIE_DB)
-                gap = abs(e["through"]["totalDb"] - e["over"]["totalDb"] - p.TIE_DB)
-                self.assertGreater(gap, 0.0009)  # no corpus case sits on the tie-band edge (VP06a)
+                diff = p.po.f32(e["through"]["totalDb"] - e["over"]["totalDb"])
+                self.assertEqual(e["selected"] == "THROUGH", diff <= p.po.f32(p.TIE_DB))
+                self.assertGreater(abs(diff - p.TIE_DB), 0.0009)  # no corpus case sits on the band edge
 
     def test_closure_rule(self):
         for e in self.ok:

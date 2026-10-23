@@ -90,7 +90,7 @@ def build() -> bytes:
         c["expect"] = p.evaluate(c)
         cases.append(c)
     doc = {"schema": "ricon.oracle.vegetation_path", "version": 1,
-           "source": "docs/req/REQ-vegetation-path.md v0.3; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
+           "source": "docs/req/REQ-vegetation-path.md v0.4; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
            "note": "DRAFT; каталог, кроны и базовые бюджеты TEST_ONLY.", "hostOnly": ["P18", "P27"]}
     head = json.dumps(doc, ensure_ascii=False)[:-1]
     body = ",\n".join(json.dumps(c, ensure_ascii=False) for c in cases)
