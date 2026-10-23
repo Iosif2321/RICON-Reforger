@@ -68,16 +68,27 @@ def run():
     assert all(v["code"] == "NO_MODEL_FOR_SCENARIO" for v in byf[3]["vegetation"])
     assert all(math.isfinite(r["waterBulkDbPerM_T20_S0_TEST_ONLY"]) for r in rows)
 
+    # Другая алгебраическая форма проверки таблицы партнёра, не независимая физическая модель.
+    k_rows = []
+    for name, eps, sigma in [("dry", 4, .001), ("medium", 15, .01), ("wet", 30, .02),
+                             ("sea", 70, 5), ("fresh", 80, .01)]:
+        for f in (.1, .3, 1, 3, 10, 20, 30, 76):
+            eta = complex(eps, -18000 * sigma / f)
+            k_value = .36 * abs(eta) / ((8500 * f) ** (1 / 3) * math.sqrt(abs(eta - 1)))
+            config = {"permittivity": eps, "conductivitySm": sigma, "polarization": "VERTICAL"}
+            assert math.isclose(k_value, l2.surface_k(8500, f, config), rel_tol=1e-14)
+            k_rows.append({"surfaceTEST_ONLY": name, "frequencyMHz": f, "kVertical": k_value})
+
     tracked = [Path(__file__).relative_to(ROOT)] + [Path("oracle") / (m.__name__ + ".py") for m in (rf, l2, veg, water)]
     tracked += [Path("oracle/vectors") / (n + ".json") for n in ("l2_terrain_v1", "vegetation_v1")]
     return {"schema": "ricon.audit.bands.codex.v1", "level": "HOST_DIAGNOSTIC_NOT_CALIBRATION",
             "note": "Вода T=20 C, S=0; шум B=25 кГц, NF=6 дБ; каталоги и рельеф — TEST_ONLY. Это не профили устройств.",
             "sha256": {str(p).replace("\\", "/"): hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in tracked},
-            "rows": rows, "selfCheck": "PASS"}
+            "rows": rows, "kChecksTEST_ONLY": k_rows, "selfCheck": "PASS"}
 
 
 if __name__ == "__main__":
     result = run()
     target = Path(__file__).with_suffix(".json")
     target.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"PASS: {len(result['rows'])} частот; binary32 границы, FSPL, шум, L2, растительность, объёмные свойства воды. {target.name}")
+    print(f"PASS: {len(result['rows'])} частот и {len(result['kChecksTEST_ONLY'])} проверок K; binary32 границы, FSPL, шум, L2, растительность, объёмные свойства воды. {target.name}")

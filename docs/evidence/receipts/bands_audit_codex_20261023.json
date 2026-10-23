@@ -3,7 +3,7 @@
   "level": "HOST_DIAGNOSTIC_NOT_CALIBRATION",
   "note": "Вода T=20 C, S=0; шум B=25 кГц, NF=6 дБ; каталоги и рельеф — TEST_ONLY. Это не профили устройств.",
   "sha256": {
-    "docs/evidence/receipts/bands_audit_codex_20261023.py": "2ec02e0e507e5eb2c6da52e6639f9d26d236f6109c6219dbcfd59b73e8410eef",
+    "docs/evidence/receipts/bands_audit_codex_20261023.py": "4f8ed91ebdda5a949012ec8e450352ca11ebae87b57a6a69ef018eb3a552b5c9",
     "oracle/ricon_oracle.py": "b0b9916a6d5633c148bf7e117aa5847d852df92a746b4612ee88ded261a64080",
     "oracle/l2_terrain_oracle.py": "931ddad25729f340a0c076383aff47bdc245447bac7d261275049e7d15d77267",
     "oracle/vegetation_oracle.py": "da51c9ba17e12a8f89b9cc3dcfa91b39373af912f5c99f2af3f5c90ba310c92e",
@@ -1983,6 +1983,208 @@
         }
       ],
       "waterBulkDbPerM_T20_S0_TEST_ONLY": 395.77388167102356
+    }
+  ],
+  "kChecksTEST_ONLY": [
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 0.1,
+      "kVertical": 0.5099678875936428
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 0.3,
+      "kVertical": 0.20443563411346272
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 1,
+      "kVertical": 0.07614205474021586
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 3,
+      "kVertical": 0.03405291680208917
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 10,
+      "kVertical": 0.019200831581656103
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 20,
+      "kVertical": 0.015055186223797647
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 30,
+      "kVertical": 0.01312789601676779
+    },
+    {
+      "surfaceTEST_ONLY": "dry",
+      "frequencyMHz": 76,
+      "kVertical": 0.009619290687504336
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 0.1,
+      "kVertical": 1.6124055687099625
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 0.3,
+      "kVertical": 0.64556698337368
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 1,
+      "kVertical": 0.23712665503662284
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 3,
+      "kVertical": 0.09636957479105486
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 10,
+      "kVertical": 0.04017428860869092
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 20,
+      "kVertical": 0.027865080237769763
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 30,
+      "kVertical": 0.023500153447619646
+    },
+    {
+      "surfaceTEST_ONLY": "medium",
+      "frequencyMHz": 76,
+      "kVertical": 0.016782982592062165
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 0.1,
+      "kVertical": 2.28028331621537
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 0.3,
+      "kVertical": 0.9129605538519303
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 1,
+      "kVertical": 0.33531109055475017
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 3,
+      "kVertical": 0.13615955507002148
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 10,
+      "kVertical": 0.05643231885772179
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 20,
+      "kVertical": 0.03891605016388595
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 30,
+      "kVertical": 0.03274263541595245
+    },
+    {
+      "surfaceTEST_ONLY": "wet",
+      "frequencyMHz": 76,
+      "kVertical": 0.023332920186597664
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 0.1,
+      "kVertical": 36.05377805593146
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 0.3,
+      "kVertical": 14.432771659932751
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 1,
+      "kVertical": 5.291971717352111
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 3,
+      "kVertical": 2.118444102791219
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 10,
+      "kVertical": 0.7767671804745282
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 20,
+      "kVertical": 0.4359661776464855
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 30,
+      "kVertical": 0.3109881495172362
+    },
+    {
+      "surfaceTEST_ONLY": "sea",
+      "frequencyMHz": 76,
+      "kVertical": 0.1434373390309317
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 0.1,
+      "kVertical": 1.6131893667911732
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 0.3,
+      "kVertical": 0.6483732659519074
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 1,
+      "kVertical": 0.24782776810511156
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 3,
+      "kVertical": 0.12279932115753522
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 10,
+      "kVertical": 0.07458783967407584
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 20,
+      "kVertical": 0.058671462613703776
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 30,
+      "kVertical": 0.05116729122040955
+    },
+    {
+      "surfaceTEST_ONLY": "fresh",
+      "frequencyMHz": 76,
+      "kVertical": 0.03749103821393177
     }
   ],
   "selfCheck": "PASS"
