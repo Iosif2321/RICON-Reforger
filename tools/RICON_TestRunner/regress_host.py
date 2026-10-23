@@ -41,6 +41,8 @@ run("link_publication", [str(O / "link_publication_oracle.py"), "--check", str(V
 run("channel_cutoff", [str(O / "channel_cutoff_oracle.py"), "--check", str(V / "channel_cutoff_v1.json")], "PASS")
 run("path_observation", [str(O / "path_observation_oracle.py"), "--check", str(V / "path_observation_v1.json")], "PASS")
 run("path_observation vectors", [str(O / "build_path_observation_vectors.py"), "--check"], "PASS")
+run("vegetation", [str(O / "vegetation_oracle.py"), "--check", str(V / "vegetation_v1.json")], "PASS")
+run("vegetation vectors", [str(O / "build_vegetation_vectors.py"), "--check"], "PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
 run("p527 checker (codex)", ["-I", str(T / "check_p527_complex.py")], "PASS")

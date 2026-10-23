@@ -1,0 +1,4334 @@
+{
+ "schema": "ricon.oracle.vegetation",
+ "version": 1,
+ "source": "docs/req/REQ-vegetation.md v0.2; DoD ECAC ESD-TR-81-101; ITU-R P.833-10",
+ "note": "DRAFT; каталог TEST_ONLY; не наблюдения мира.",
+ "cases": [
+  {
+   "id": "V01",
+   "title": "Нет растительности на пути",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": []
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NO_VEGETATION",
+    "lossDb": 0.0
+   }
+  },
+  {
+   "id": "V02",
+   "title": "Только трава — по решению владельца без потерь",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 140,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "grass",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NO_VEGETATION",
+    "lossDb": 0.0
+   }
+  },
+  {
+   "id": "V03",
+   "title": "S1: TX в умеренном лесу 50 м, 466 МГц — MED основная, P.833 ур. 1 сверка",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 50,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 10.685460990460673,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 50.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M3",
+      "primaryLossDb": 10.685460990460673,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 10.685460990460673
+       },
+       {
+        "model": "M1",
+        "lossDb": 5.106784493736425
+       }
+      ],
+      "spreadMinDb": 5.106784493736425,
+      "spreadMaxDb": 10.685460990460673,
+      "exdDb": 7.226719599267378,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V04",
+   "title": "S1: 150 МГц — MED вне области, остаётся P.833 ур. 1",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 50,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 2.3120590061311272,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 50.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M1",
+      "primaryLossDb": 2.3120590061311272,
+      "candidates": [
+       {
+        "model": "M1",
+        "lossDb": 2.3120590061311272
+       }
+      ],
+      "spreadMinDb": 2.3120590061311272,
+      "spreadMaxDb": 2.3120590061311272,
+      "exdDb": 3.0167104088184415,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V05",
+   "title": "S1: 600 м леса — MED вне области по глубине",
+   "input": {
+    "observation": {
+     "frequencyMHz": 949.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 600,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 24.01558974618998,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 600.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M1",
+      "primaryLossDb": 24.01558974618998,
+      "candidates": [
+       {
+        "model": "M1",
+        "lossDb": 24.01558974618998
+       }
+      ],
+      "spreadMinDb": 24.01558974618998,
+      "spreadMaxDb": 24.01558974618998,
+      "exdDb": 149.83717692518363,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V06",
+   "title": "S1: 3 ГГц — P.833 табл. вне области, остаётся MED",
+   "input": {
+    "observation": {
+     "frequencyMHz": 3000.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 940,
+       "endM": 1000,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 20.179342543818592,
+    "intervals": [
+     {
+      "startM": 940.0,
+      "endM": 1000.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M3",
+      "primaryLossDb": 20.179342543818592,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 20.179342543818592
+       }
+      ],
+      "spreadMinDb": 20.179342543818592,
+      "spreadMaxDb": 20.179342543818592,
+      "exdDb": 36.35029707342124,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V07",
+   "title": "S1: 100 ГГц — ни одна модель не в области",
+   "input": {
+    "observation": {
+     "frequencyMHz": 100000.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 30,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V08",
+   "title": "S2: тропический лес, 200 м, 100 МГц V, высоты 3/4 м — Jansky & Bailey",
+   "input": {
+    "observation": {
+     "frequencyMHz": 100.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       200,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 200,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 3.0,
+    "rxHeightM": 4.0
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 47.26471122720975,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 200.0,
+      "materialId": "forest.tropical",
+      "scenario": "S2",
+      "primaryModel": "M4",
+      "primaryLossDb": 47.26471122720975,
+      "candidates": [
+       {
+        "model": "M4",
+        "lossDb": 47.26471122720975
+       }
+      ],
+      "spreadMinDb": 47.26471122720975,
+      "spreadMaxDb": 47.26471122720975,
+      "exdDb": 8.830866992801072,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V09",
+   "title": "S2: тропики без высот антенн — модели нет",
+   "input": {
+    "observation": {
+     "frequencyMHz": 100.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       200,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 200,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V10",
+   "title": "S2: умеренный лес, 300 м, 466 МГц — MED",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       300,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 300,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 30.644052548205245,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 300.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S2",
+      "primaryModel": "M3",
+      "primaryLossDb": 30.644052548205245,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 30.644052548205245
+       }
+      ],
+      "spreadMinDb": 30.644052548205245,
+      "spreadMaxDb": 30.644052548205245,
+      "exdDb": 43.36031759560427,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V11",
+   "title": "S2: H 100 МГц, 10 м — отрицательный избыток J&B исключён",
+   "input": {
+    "observation": {
+     "frequencyMHz": 100.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       10,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 10,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "H",
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V12",
+   "title": "S2: тропики 1 ГГц — J&B вне области",
+   "input": {
+    "observation": {
+     "frequencyMHz": 1000.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       200,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 200,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 3.0,
+    "rxHeightM": 3.0
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V13",
+   "title": "S2: J&B на частоте таблицы 250 МГц, граница 1600 м",
+   "input": {
+    "observation": {
+     "frequencyMHz": 250.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1600,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 1600,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 2.0,
+    "rxHeightM": 7.0
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 67.02134742462961,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 1600.0,
+      "materialId": "forest.tropical",
+      "scenario": "S2",
+      "primaryModel": "M4",
+      "primaryLossDb": 67.02134742462961,
+      "candidates": [
+       {
+        "model": "M4",
+        "lossDb": 67.02134742462961
+       }
+      ],
+      "spreadMinDb": 67.02134742462961,
+      "spreadMaxDb": 67.02134742462961,
+      "exdDb": 143.05634908653334,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V14",
+   "title": "S2: J&B 175 МГц — интерполяция констант по lg f",
+   "input": {
+    "observation": {
+     "frequencyMHz": 175.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       500,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 500,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "H",
+    "txHeightM": 5.0,
+    "rxHeightM": 5.0
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 41.86696784386811,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 500.0,
+      "materialId": "forest.tropical",
+      "scenario": "S2",
+      "primaryModel": "M4",
+      "primaryLossDb": 41.86696784386811,
+      "candidates": [
+       {
+        "model": "M4",
+        "lossDb": 41.86696784386811
+       }
+      ],
+      "spreadMinDb": 41.86696784386811,
+      "spreadMaxDb": 41.86696784386811,
+      "exdDb": 33.9689912210674,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V15",
+   "title": "S3: крона 20 м посреди пути, 466 МГц — MED основная, ур. 7 сверка, без ограничения",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 420,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 6.234541757239713,
+    "intervals": [
+     {
+      "startM": 400.0,
+      "endM": 420.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 6.234541757239713,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 6.234541757239713
+       },
+       {
+        "model": "M2",
+        "lossDb": 2.3999999463558193
+       }
+      ],
+      "spreadMinDb": 2.3999999463558193,
+      "spreadMaxDb": 6.234541757239713,
+      "exdDb": 2.8906878397069513,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V16",
+   "title": "S3: 1.5 ГГц — ур. 7 вне области",
+   "input": {
+    "observation": {
+     "frequencyMHz": 1500.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 420,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 8.686947482972734,
+    "intervals": [
+     {
+      "startM": 400.0,
+      "endM": 420.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 8.686947482972734,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 8.686947482972734
+       }
+      ],
+      "spreadMinDb": 8.686947482972734,
+      "spreadMaxDb": 8.686947482972734,
+      "exdDb": 7.105483137111617,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V17",
+   "title": "S3: 150 МГц — MED вне области, остаётся ур. 7",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 420,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 1.0354235056302172,
+    "intervals": [
+     {
+      "startM": 400.0,
+      "endM": 420.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M2",
+      "primaryLossDb": 1.0354235056302172,
+      "candidates": [
+       {
+        "model": "M2",
+        "lossDb": 1.0354235056302172
+       }
+      ],
+      "spreadMinDb": 1.0354235056302172,
+      "spreadMaxDb": 1.0354235056302172,
+      "exdDb": 1.2066841635273766,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V18",
+   "title": "S3+: 500 м леса посреди пути — нужен путь над кронами",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       2000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 500,
+       "endM": 1000,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V19",
+   "title": "MED: ветвь d < 14 м",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 410,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 3.623762892020996,
+    "intervals": [
+     {
+      "startM": 400.0,
+      "endM": 410.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 3.623762892020996,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 3.623762892020996
+       },
+       {
+        "model": "M2",
+        "lossDb": 1.1999999731779096
+       }
+      ],
+      "spreadMinDb": 1.1999999731779096,
+      "spreadMaxDb": 3.623762892020996,
+      "exdDb": 1.4453439198534757,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V20",
+   "title": "MED: граница d = 14 м",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 414,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 5.055011938369609,
+    "intervals": [
+     {
+      "startM": 400.0,
+      "endM": 414.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 5.055011938369609,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 5.055011938369609
+       },
+       {
+        "model": "M2",
+        "lossDb": 1.6799999624490736
+       }
+      ],
+      "spreadMinDb": 1.6799999624490736,
+      "spreadMaxDb": 5.055011938369609,
+      "exdDb": 2.023481487794866,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V21",
+   "title": "UNKNOWN — неизвестная растительность",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "UNKNOWN",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "VEGETATION_UNKNOWN"
+   }
+  },
+  {
+   "id": "V22",
+   "title": "HINT_ONLY не даёт модели",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "HINT_ONLY",
+       "materialId": "",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "VEGETATION_UNKNOWN"
+   }
+  },
+  {
+   "id": "V23",
+   "title": "materialId вне каталога",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.unknown_mod",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "VEGETATION_UNKNOWN"
+   }
+  },
+  {
+   "id": "V24",
+   "title": "Покрытие растительности неполное",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "PARTIAL",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "VEGETATION_COVERAGE_INCOMPLETE"
+   }
+  },
+  {
+   "id": "V25",
+   "title": "Перекрытие разных пород — смешение не моделируется",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 130,
+       "entityKey": "a.tree",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      },
+      {
+       "family": "VEGETATION",
+       "startM": 120,
+       "endM": 150,
+       "entityKey": "b.tree",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "VEGETATION_MIXED_PROFILE"
+   }
+  },
+  {
+   "id": "V26",
+   "title": "Перекрытие одной породы сливается",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 130,
+       "entityKey": "a.tree",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      },
+      {
+       "family": "VEGETATION",
+       "startM": 120,
+       "endM": 150,
+       "entityKey": "b.tree",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 10.685460990460673,
+    "intervals": [
+     {
+      "startM": 100.0,
+      "endM": 150.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 10.685460990460673,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 10.685460990460673
+       },
+       {
+        "model": "M2",
+        "lossDb": 5.999999865889548
+       }
+      ],
+      "spreadMinDb": 5.999999865889548,
+      "spreadMaxDb": 10.685460990460673,
+      "exdDb": 7.226719599267378,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V27",
+   "title": "Два интервала: у конца и посреди пути — сумма основных",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 40,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      },
+      {
+       "family": "VEGETATION",
+       "startM": 500,
+       "endM": 520,
+       "entityKey": "trees.2",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 15.606064760113629,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 40.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M3",
+      "primaryLossDb": 9.371523002873916,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 9.371523002873916
+       },
+       {
+        "model": "M1",
+        "lossDb": 4.216195508453922
+       }
+      ],
+      "spreadMinDb": 4.216195508453922,
+      "spreadMaxDb": 9.371523002873916,
+      "exdDb": 5.781375679413903,
+      "capApplied": false
+     },
+     {
+      "startM": 500.0,
+      "endM": 520.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 6.234541757239713,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 6.234541757239713
+       },
+       {
+        "model": "M2",
+        "lossDb": 2.3999999463558193
+       }
+      ],
+      "spreadMinDb": 2.3999999463558193,
+      "spreadMaxDb": 6.234541757239713,
+      "exdDb": 2.8906878397069513,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V28",
+   "title": "Каталог: частоты γ не возрастают",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        500.0,
+        0.1
+       ],
+       [
+        400.0,
+        0.2
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "V29",
+   "title": "Неизвестная поляризация",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "X",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "V30",
+   "title": "Отрицательная высота антенны",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 120,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": -1.0,
+    "rxHeightM": 3.0
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "V31",
+   "title": "S2: высота 8 м вне области J&B",
+   "input": {
+    "observation": {
+     "frequencyMHz": 100.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       200,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 200,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 8.0,
+    "rxHeightM": 3.0
+   },
+   "expect": {
+    "code": "NO_MODEL_FOR_SCENARIO"
+   }
+  },
+  {
+   "id": "V32",
+   "title": "Трава под деревом отбрасывается до объединения",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 100,
+       "endM": 140,
+       "entityKey": "a.grass",
+       "knowledge": "RULE",
+       "materialId": "grass",
+       "openings": false
+      },
+      {
+       "family": "VEGETATION",
+       "startM": 110,
+       "endM": 130,
+       "entityKey": "b.tree",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 6.234541757239713,
+    "intervals": [
+     {
+      "startM": 110.0,
+      "endM": 130.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S3",
+      "primaryModel": "M3",
+      "primaryLossDb": 6.234541757239713,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 6.234541757239713
+       },
+       {
+        "model": "M2",
+        "lossDb": 2.3999999463558193
+       }
+      ],
+      "spreadMinDb": 2.3999999463558193,
+      "spreadMaxDb": 6.234541757239713,
+      "exdDb": 2.8906878397069513,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V33",
+   "title": "Переполнение binary32",
+   "input": {
+    "observation": {
+     "frequencyMHz": 150.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 400,
+       "endM": 410,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        3e+38
+       ],
+       [
+        400.0,
+        3e+38
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "V34",
+   "title": "Наблюдение неверно",
+   "input": {
+    "observation": {
+     "frequencyMHz": 466.475,
+     "environmentRevision": 0,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": []
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "INVALID_OBSERVATION"
+   }
+  },
+  {
+   "id": "V35",
+   "title": "S1 у RX: 949 МГц, 80 м — MED и ур. 1",
+   "input": {
+    "observation": {
+     "frequencyMHz": 949.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       1000,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 920,
+       "endM": 1000,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.mixed_spb",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": null,
+    "rxHeightM": null
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 17.235034522211272,
+    "intervals": [
+     {
+      "startM": 920.0,
+      "endM": 1000.0,
+      "materialId": "forest.mixed_spb",
+      "scenario": "S1",
+      "primaryModel": "M3",
+      "primaryLossDb": 17.235034522211272,
+      "candidates": [
+       {
+        "model": "M3",
+        "lossDb": 17.235034522211272
+       },
+       {
+        "model": "M1",
+        "lossDb": 10.424572754525487
+       }
+      ],
+      "spreadMinDb": 10.424572754525487,
+      "spreadMaxDb": 17.235034522211272,
+      "exdDb": 19.978290256691153,
+      "capApplied": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "V36",
+   "title": "S2: J&B 25 МГц (A = 0), 8 м",
+   "input": {
+    "observation": {
+     "frequencyMHz": 25.0,
+     "environmentRevision": 1,
+     "tx": {
+      "position": [
+       0,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "rx": {
+      "position": [
+       8,
+       2.0,
+       0.0
+      ],
+      "medium": "AIR",
+      "depthM": 0
+     },
+     "coverage": {
+      "TERRAIN": "COMPLETE",
+      "WATER": "COMPLETE",
+      "STRUCTURE": "COMPLETE",
+      "VEGETATION": "COMPLETE",
+      "VEHICLE": "COMPLETE"
+     },
+     "segments": [
+      {
+       "family": "VEGETATION",
+       "startM": 0,
+       "endM": 8,
+       "entityKey": "trees.1",
+       "knowledge": "RULE",
+       "materialId": "forest.tropical",
+       "openings": false
+      }
+     ]
+    },
+    "catalog": {
+     "forest.mixed_spb": {
+      "negligible": false,
+      "climate": "TEMPERATE",
+      "gammaTable": [
+       [
+        105.9,
+        0.04
+       ],
+       [
+        466.475,
+        0.12
+       ],
+       [
+        949.0,
+        0.17
+       ],
+       [
+        1852.2,
+        0.3
+       ],
+       [
+        2117.5,
+        0.34
+       ]
+      ],
+      "amA1": 1.37,
+      "amAlpha": 0.42,
+      "amMinMHz": 105.9,
+      "amMaxMHz": 2117.5
+     },
+     "forest.tropical": {
+      "negligible": false,
+      "climate": "TROPICAL",
+      "gammaTable": [
+       [
+        25.0,
+        0.02
+       ],
+       [
+        400.0,
+        0.1
+       ]
+      ],
+      "amA1": 1.15,
+      "amAlpha": 0.43,
+      "amMinMHz": 25.0,
+      "amMaxMHz": 400.0
+     },
+     "grass": {
+      "negligible": true
+     },
+     "bush.small": {
+      "negligible": true
+     }
+    },
+    "polarization": "V",
+    "txHeightM": 2.0,
+    "rxHeightM": 2.0
+   },
+   "expect": {
+    "code": "OK",
+    "lossDb": 7.402104817236335,
+    "intervals": [
+     {
+      "startM": 0.0,
+      "endM": 8.0,
+      "materialId": "forest.tropical",
+      "scenario": "S2",
+      "primaryModel": "M4",
+      "primaryLossDb": 7.402104817236335,
+      "candidates": [
+       {
+        "model": "M4",
+        "lossDb": 7.402104817236335
+       }
+      ],
+      "spreadMinDb": 7.402104817236335,
+      "spreadMaxDb": 7.402104817236335,
+      "exdDb": 0.12147226839027836,
+      "capApplied": false
+     }
+    ]
+   }
+  }
+ ]
+}
