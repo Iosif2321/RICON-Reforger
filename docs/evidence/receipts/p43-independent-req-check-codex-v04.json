@@ -1,0 +1,27 @@
+{
+  "checker": "codex: только REQ v0.4, JSON, собственные checker P4/P4.2",
+  "corpusSha256": "d9e3b7e7d01c8149b090e3e7642917e542f994632f18b5f54aaa12e6ca0bab51",
+  "cases": 31,
+  "matched": 31,
+  "errors": [],
+  "negativeControls": 17,
+  "native": 29,
+  "hostOnly": [
+    "P18",
+    "P27"
+  ],
+  "freezeRecommended": true,
+  "resolvedCounters": [
+    3685,
+    3692,
+    3695
+  ],
+  "nearTie": {
+    "referenceSelected": "THROUGH",
+    "nativeSelected": "THROUGH",
+    "referenceThroughDb": 91.27999877929688,
+    "referenceOverDb": 91.27999877929688,
+    "nativeThroughDb": 91.27999877929688,
+    "nativeOverDb": 91.27999877929688
+  }
+}

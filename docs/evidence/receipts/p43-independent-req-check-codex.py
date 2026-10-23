@@ -11,15 +11,13 @@ SPEC = importlib.util.spec_from_file_location('codex_p42', Path(__file__).with_n
 P42 = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(P42)
 P4, P2 = P42.P4, P42.P2
-SHA = '1bffd636582e62b5b7ca77537b94828a13c06e2ff922aea64ef3f36054f51514'
+SHA = 'd9e3b7e7d01c8149b090e3e7642917e542f994632f18b5f54aaa12e6ca0bab51'
 COMMON = 'observation catalog polarization txHeightM rxHeightM'
 ERRORS = {'INVALID_OBSERVATION','INVALID_INPUT','VEGETATION_COVERAGE_INCOMPLETE','VEGETATION_UNKNOWN','VEGETATION_MIXED_PROFILE'}
 
 
 def plus(a, b):
-    result = a + b
-    P4.check_finite(result)
-    return result
+    return P2.number(a + b)
 
 
 def mid_path(value):
@@ -71,8 +69,9 @@ def evaluate(value):
                 through=dict(present=False,reason='BASE_BUDGET_MISSING')
             else:
                 base=budget['fsplDb'] if jb else plus(budget['fsplDb'],budget['l2Db'])
-                through=dict(present=True,reason=None,baseDb=base,vegetationDb=through_result['lossDb'],
-                             totalDb=plus(base,through_result['lossDb']),closed=through_result['allScenariosClosed'],
+                loss=P2.number(through_result['lossDb'])
+                through=dict(present=True,reason=None,baseDb=base,vegetationDb=loss,
+                             totalDb=plus(base,loss),closed=through_result['allScenariosClosed'],
                              budgetMode='FREE_SPACE_PLUS_JB' if jb else 'BASE_PLUS_EXCESS')
         if mid_path(value):
             over=dict(present=False,reason='MID_PATH_VEGETATION')
@@ -82,13 +81,14 @@ def evaluate(value):
             over=dict(present=False,reason='BASE_BUDGET_MISSING')
         else:
             base=plus(budget['fsplOverDb'],budget['l2OverDb'])
-            over=dict(present=True,reason=None,baseDb=base,canopyDb=over_result['totalAhDb'],
-                      totalDb=plus(base,over_result['totalAhDb']),closed=over_result['status']=='SOURCE_DOMAIN')
-    except ArithmeticError:
+            loss=P2.number(over_result['totalAhDb'])
+            over=dict(present=True,reason=None,baseDb=base,canopyDb=loss,
+                      totalDb=plus(base,loss),closed=over_result['status']=='SOURCE_DOMAIN')
+    except (ArithmeticError,ValueError):
         return {'code':'NUMERIC_FAILURE'}
     if not through['present'] and not over['present']:
         return dict(code='UNRESOLVED',reason='NO_BRANCH',through=through,over=over)
-    if through['present'] and (not over['present'] or through['totalDb']<=over['totalDb']):
+    if through['present'] and (not over['present'] or P2.number(through['totalDb']-over['totalDb'])<=P2.number(.001)):
         selected='THROUGH'
         total=through['totalDb']
     else:
@@ -134,7 +134,7 @@ def main():
     sha=hashlib.sha256(raw).hexdigest()
     assert sha==SHA,'Корпус изменён'
     doc=json.loads(raw);cases=doc['cases']
-    assert len(cases)==29 and [c['id'] for c in cases]==[f'P{i:02}' for i in range(1,30)]
+    assert len(cases)==31 and [c['id'] for c in cases]==[f'P{i:02}' for i in range(1,32)]
     assert doc['hostOnly']==['P18','P27']
     controls=self_test(cases)
     errors=[]
@@ -145,16 +145,16 @@ def main():
             assert c['input']==before,'Вход изменён'
         except AssertionError as e:
             errors.append(dict(id=c['id'],error=str(e)))
-    # Контрпример #3692: входы binary32, выбор double и native суммы различается.
+    # Контрпример #3692 закрыт: одинаковая binary32 арифметика даёт THROUGH.
     near=copy.deepcopy(cases[27]['input'])
     near['budget'].update(fsplOverDb=91.279998779296875,l2OverDb=0)
     e=evaluate(near)
     through_native=P2.number(e['through']['totalDb']);over_native=P2.number(e['over']['totalDb'])
     native_choice='THROUGH' if through_native<=over_native else 'OVER'
-    assert e['selected']=='OVER' and native_choice=='THROUGH'
-    report=dict(checker='codex: только REQ v0.2, JSON, собственные checker P4/P4.2',corpusSha256=sha,
-                cases=29,matched=29-len(errors),errors=errors,negativeControls=controls,native=27,hostOnly=['P18','P27'],
-                freezeApproved=False,pendingCounter=3692,
+    assert e['selected']==native_choice=='THROUGH'
+    report=dict(checker='codex: только REQ v0.4, JSON, собственные checker P4/P4.2',corpusSha256=sha,
+                cases=31,matched=31-len(errors),errors=errors,negativeControls=controls,native=29,hostOnly=['P18','P27'],
+                freezeRecommended=not errors,resolvedCounters=[3685,3692,3695],
                 nearTie=dict(referenceSelected=e['selected'],nativeSelected=native_choice,
                              referenceThroughDb=e['through']['totalDb'],referenceOverDb=e['over']['totalDb'],
                              nativeThroughDb=through_native,nativeOverDb=over_native))
