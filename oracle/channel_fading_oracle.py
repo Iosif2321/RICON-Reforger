@@ -158,6 +158,8 @@ def evaluate(raw):
     if total_weight == 0:
         return result("EMPTY_MEDIUM", 0.0, 0.0)
     normalizer = f32(math.sqrt(total_weight))
+    if not math.isfinite(normalizer) or normalizer <= 0:
+        return result("NUMERIC_FAILURE")
     real, imag, phases = 0.0, 0.0, []
     for c in d["components"]:
         phase = phase_at(c, q["nowMs"] - d["anchorMs"], q["subUs"])
@@ -166,11 +168,13 @@ def evaluate(raw):
         cosine, sine = phasor(phase)
         real = f32(real + f32(amplitude * cosine))
         imag = f32(imag + f32(amplitude * sine))
-    envelope = envelope32(real, imag)
-    if not all(math.isfinite(x) for x in (normalizer, real, imag, envelope)):
+    if not all(math.isfinite(x) for x in (real, imag)):
         return result("NUMERIC_FAILURE")
-    if envelope == 0:
+    if real == 0 and imag == 0:
         return result("ZERO_AT_SAMPLE", 0.0, 0.0, phases=phases)
+    envelope = envelope32(real, imag)
+    if not math.isfinite(envelope) or envelope <= 0:
+        return result("NUMERIC_FAILURE")
     gain = 20 * math.log10(envelope)
     if not math.isfinite(f32(gain)):
         return result("NUMERIC_FAILURE")

@@ -23,6 +23,12 @@ def burst_input():
     return data
 
 
+def poor_static_input():
+    data = baseline()
+    data["descriptor"]["components"] = [component("a"), component("b", phase=M // 2 + M // 1024)]
+    return data
+
+
 def build():
     cases, host_only = [], []
 
@@ -85,7 +91,33 @@ def build():
     add("Частоты совпадают после binary32", lambda x: x["descriptor"].update(frequencyMHz=150.000001))
     for time in (0, 380, 390, 400, 410, 670, 680, 690, 700, 1000, 1230):
         add(f"TEST_ONLY неравномерное окно, t={time} ms", lambda x, t=time: x["query"].update(nowMs=t), burst_input())
-    return dict(schema="ricon-channel-fading-v1", version=1, requirement="REQ-channel-fading v0.1 DRAFT",
+    add("Фаза отсчитывается от anchor, который раньше validFrom", lambda x: (x["descriptor"].update(
+        anchorMs=0, validFromMs=1000, staticChannel=False), x["descriptor"]["components"][0].update(dopplerQ=1074)))
+    add("Другая физическая пара", lambda x: x["query"]["rx"].update(deviceId=30))
+    add("Другая полоса", lambda x: x["query"].update(bandwidthHz=12500))
+    add("Другой профиль", lambda x: x["query"].update(profileId="OTHER_PROFILE"))
+    add("Якорь позже начала интервала", lambda x: x["descriptor"].update(anchorMs=1001))
+    add("Пустой временной интервал", lambda x: x["descriptor"].update(validUntilMs=1000))
+    add("Время вне int32", lambda x: x["query"].update(nowMs=2147483648), host=True)
+    add("65 компонентов превышают вычислительный лимит", lambda x: x["descriptor"].update(
+        components=[component(f"p{i:02}") for i in range(65)]))
+    add("Конечный вес больше единицы", lambda x: x["descriptor"]["components"][0].update(powerWeight=1.001))
+    add("Отрицательная фаза", lambda x: x["descriptor"]["components"][0].update(phaseQ=-1))
+    add("Нулевой deviceId", lambda x: x["descriptor"]["a"].update(deviceId=0))
+    add("Отрицательный transceiverIndex", lambda x: x["query"]["tx"].update(transceiverIndex=-1))
+    add("Пустой ключ", lambda x: x["descriptor"]["components"][0].update(componentId=""))
+    add("Ключ длиннее 64 символов", lambda x: x["descriptor"]["components"][0].update(componentId="a" * 65))
+    add("Слушатель 20: слабый статичный канал при t=2000", lambda x: x["query"].update(nowMs=2000), poor_static_input())
+    other = baseline()
+    other["descriptor"]["b"]["deviceId"] = other["query"]["rx"]["deviceId"] = 30
+    other["descriptor"]["components"] = [component("a"), component("b")]
+    add("Слушатель 30: другой канал в тот же момент", lambda x: x["query"].update(nowMs=2000), other)
+    for time in (1000, 3000, 4999):
+        add(f"TEST_ONLY устойчиво плохой статичный канал, t={time} ms", lambda x, t=time: x["query"].update(nowMs=t), poor_static_input())
+    add("1000.0 не является JSON-int", lambda x: x["query"].update(nowMs=1000.0), host=True)
+    add("f32 конструктивная сумма чуть выше 8, без обрезания", lambda x: x["descriptor"].update(
+        components=[component(f"p{i:02}", weight=0.1) for i in range(64)]))
+    return dict(schema="ricon-channel-fading-v1", version=1, requirement="REQ-channel-fading v0.2 DRAFT",
                 note="TEST_ONLY. Не профиль рации, не доказательство доставки или точного Rayleigh/Rice finite-N.",
                 hostOnly=host_only, cases=cases)
 

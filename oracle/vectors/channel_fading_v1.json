@@ -1,13 +1,15 @@
 {
   "schema": "ricon-channel-fading-v1",
   "version": 1,
-  "requirement": "REQ-channel-fading v0.1 DRAFT",
+  "requirement": "REQ-channel-fading v0.2 DRAFT",
   "note": "TEST_ONLY. Не профиль рации, не доказательство доставки или точного Rayleigh/Rice finite-N.",
   "hostOnly": [
     "F27",
     "F28",
     "F29",
-    "F30"
+    "F30",
+    "F57",
+    "F70"
   ],
   "cases": [
     {
@@ -3500,6 +3502,2140 @@
           59267674,
           934885141,
           925678353
+        ]
+      }
+    },
+    {
+      "id": "F51",
+      "title": "Фаза отсчитывается от anchor, который раньше validFrom",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 0,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": false,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 1074
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 0.9999988675117493,
+        "imag": 0.0015107608633115888,
+        "gainDb": -5.177193818643528e-07,
+        "phasesQ": [
+          258176
+        ]
+      }
+    },
+    {
+      "id": "F52",
+      "title": "Другая физическая пара",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 30,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F53",
+      "title": "Другая полоса",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 12500,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F54",
+      "title": "Другой профиль",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "OTHER_PROFILE",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "CONTEXT_MISMATCH",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F55",
+      "title": "Якорь позже начала интервала",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1001,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F56",
+      "title": "Пустой временной интервал",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 1000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F57",
+      "title": "Время вне int32",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 2147483648,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F58",
+      "title": "65 компонентов превышают вычислительный лимит",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "p00",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p01",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p02",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p03",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p04",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p05",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p06",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p07",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p08",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p09",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p10",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p11",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p12",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p13",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p14",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p15",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p16",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p17",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p18",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p19",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p20",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p21",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p22",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p23",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p24",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p25",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p26",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p27",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p28",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p29",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p30",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p31",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p32",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p33",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p34",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p35",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p36",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p37",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p38",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p39",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p40",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p41",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p42",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p43",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p44",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p45",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p46",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p47",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p48",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p49",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p50",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p51",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p52",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p53",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p54",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p55",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p56",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p57",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p58",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p59",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p60",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p61",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p62",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p63",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p64",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F59",
+      "title": "Конечный вес больше единицы",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.001,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F60",
+      "title": "Отрицательная фаза",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": -1,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F61",
+      "title": "Нулевой deviceId",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 0,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F62",
+      "title": "Отрицательный transceiverIndex",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": -1
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F63",
+      "title": "Пустой ключ",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F64",
+      "title": "Ключ длиннее 64 символов",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F65",
+      "title": "Слушатель 20: слабый статичный канал при t=2000",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 537919488,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 2000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.329183578491211e-05,
+        "imag": -0.004338725935667753,
+        "gainDb": -47.252715556021876,
+        "phasesQ": [
+          0,
+          537919488
+        ]
+      }
+    },
+    {
+      "id": "F66",
+      "title": "Слушатель 30: другой канал в тот же момент",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 30,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 30,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 2000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.4142135381698608,
+        "imag": 0.0,
+        "gainDb": 3.010299807987141,
+        "phasesQ": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "F67",
+      "title": "TEST_ONLY устойчиво плохой статичный канал, t=1000 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 537919488,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.329183578491211e-05,
+        "imag": -0.004338725935667753,
+        "gainDb": -47.252715556021876,
+        "phasesQ": [
+          0,
+          537919488
+        ]
+      }
+    },
+    {
+      "id": "F68",
+      "title": "TEST_ONLY устойчиво плохой статичный канал, t=3000 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 537919488,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 3000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.329183578491211e-05,
+        "imag": -0.004338725935667753,
+        "gainDb": -47.252715556021876,
+        "phasesQ": [
+          0,
+          537919488
+        ]
+      }
+    },
+    {
+      "id": "F69",
+      "title": "TEST_ONLY устойчиво плохой статичный канал, t=4999 ms",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "a",
+              "powerWeight": 1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "b",
+              "powerWeight": 1,
+              "phaseQ": 537919488,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 4999,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 1.329183578491211e-05,
+        "imag": -0.004338725935667753,
+        "gainDb": -47.252715556021876,
+        "phasesQ": [
+          0,
+          537919488
+        ]
+      }
+    },
+    {
+      "id": "F70",
+      "title": "1000.0 не является JSON-int",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "direct",
+              "powerWeight": 1.0,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000.0,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT",
+        "real": null,
+        "imag": null,
+        "gainDb": null,
+        "phasesQ": []
+      }
+    },
+    {
+      "id": "F71",
+      "title": "f32 конструктивная сумма чуть выше 8, без обрезания",
+      "input": {
+        "descriptor": {
+          "modelId": "FINITE_MULTIPATH_V1",
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "a": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "b": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "environmentRevision": 1,
+          "anchorMs": 1000,
+          "validFromMs": 1000,
+          "validUntilMs": 5000,
+          "staticChannel": true,
+          "coverageComplete": true,
+          "resourceExhausted": false,
+          "components": [
+            {
+              "componentId": "p00",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p01",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p02",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p03",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p04",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p05",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p06",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p07",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p08",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p09",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p10",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p11",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p12",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p13",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p14",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p15",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p16",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p17",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p18",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p19",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p20",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p21",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p22",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p23",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p24",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p25",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p26",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p27",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p28",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p29",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p30",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p31",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p32",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p33",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p34",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p35",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p36",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p37",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p38",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p39",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p40",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p41",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p42",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p43",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p44",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p45",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p46",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p47",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p48",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p49",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p50",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p51",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p52",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p53",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p54",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p55",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p56",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p57",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p58",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p59",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p60",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p61",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p62",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            },
+            {
+              "componentId": "p63",
+              "powerWeight": 0.1,
+              "phaseQ": 0,
+              "dopplerQ": 0
+            }
+          ]
+        },
+        "query": {
+          "tx": {
+            "deviceId": 10,
+            "transceiverIndex": 0
+          },
+          "rx": {
+            "deviceId": 20,
+            "transceiverIndex": 0
+          },
+          "frequencyMHz": 150.0,
+          "bandwidthHz": 25000.0,
+          "profileId": "TEST_ONLY",
+          "profileVersion": 1,
+          "environmentRevision": 1,
+          "nowMs": 1000,
+          "subUs": 0
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "real": 8.000000953674316,
+        "imag": 0.0,
+        "gainDb": 18.061800775277543,
+        "phasesQ": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
         ]
       }
     }

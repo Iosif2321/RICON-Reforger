@@ -4,9 +4,10 @@ import copy
 import math
 import random
 import unittest
+from unittest.mock import patch
 
 import channel_fading_oracle as oracle
-from build_channel_fading_vectors import burst_input, component
+from build_channel_fading_vectors import burst_input, component, poor_static_input
 
 
 def physical_sum(data):
@@ -153,6 +154,45 @@ class ChannelFadingTest(unittest.TestCase):
         self.assertEqual(oracle.evaluate(data)["code"], "INVALID_INPUT")
         data["descriptor"]["components"] = [component("small", weight=2**-149)]
         self.assertEqual(oracle.evaluate(data)["gainDb"], 0)
+
+    def test_anchor_is_independent_of_validity_window(self):
+        data = burst_input()
+        data["query"]["nowMs"] = 2500
+        expected = oracle.evaluate(data)
+        data["descriptor"]["validFromMs"] = 2000
+        self.assertEqual(oracle.evaluate(data), expected)
+
+    def test_nonzero_coefficients_with_bad_hypot_are_numeric_failure(self):
+        for broken in (0.0, math.nan, math.inf):
+            with self.subTest(broken=broken), patch.object(oracle, "envelope32", return_value=broken):
+                self.assertEqual(oracle.evaluate(oracle.baseline())["code"], "NUMERIC_FAILURE")
+        data = oracle.baseline()
+        data["descriptor"]["components"] = [component("a"), component("b", phase=oracle.M // 2)]
+        with patch.object(oracle, "envelope32", side_effect=AssertionError("hypot не нужен для точного нуля")):
+            self.assertEqual(oracle.evaluate(data)["code"], "ZERO_AT_SAMPLE")
+
+    def test_distinct_listeners_and_persistent_bad_channel(self):
+        poor = poor_static_input()
+        poor["query"]["nowMs"] = 2000
+        expected = oracle.evaluate(poor)
+        self.assertLess(expected["gainDb"], -40)
+        other = oracle.baseline()
+        other["descriptor"]["b"]["deviceId"] = other["query"]["rx"]["deviceId"] = 30
+        other["query"]["nowMs"] = 2000
+        self.assertEqual(oracle.evaluate(other)["gainDb"], 0)
+        for time in (4999, 1000, 2000, 3000):
+            poor["query"]["nowMs"] = time
+            self.assertEqual(oracle.evaluate(poor), expected)
+
+    def test_integer_syntax_and_other_context_fields(self):
+        for value in (1000.0, 2147483648):
+            data = oracle.baseline()
+            data["query"]["nowMs"] = value
+            self.assertEqual(oracle.evaluate(data)["code"], "INVALID_INPUT")
+        for field, value in (("bandwidthHz", 12500), ("profileId", "other")):
+            data = oracle.baseline()
+            data["query"][field] = value
+            self.assertEqual(oracle.evaluate(data)["code"], "CONTEXT_MISMATCH")
 
     def test_conditional_rayleigh_and_rician_reference_moments(self):
         # TEST_ONLY ансамбль независимых равномерных фаз; не утверждение о конкретной карте/рации.
