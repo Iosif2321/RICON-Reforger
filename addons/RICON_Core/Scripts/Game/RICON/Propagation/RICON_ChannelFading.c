@@ -247,7 +247,21 @@ class RICON_FiniteMultipath
 	//! CF03–CF05 целиком, до любого успешного или иного кода: дефект последней записи запрещает ранний результат.
 	protected static bool Valid(RICON_FadingDescriptor d, RICON_FadingQuery q)
 	{
-		if (!d || !q || !ValidKey(d.m_sModelId) || !ValidKey(d.m_sProfileId) || d.m_iProfileVersion < 1)
+		if (!ValidDescriptor(d) || !q)
+			return false;
+		if (!ValidEndpoint(q.m_Tx) || !ValidEndpoint(q.m_Rx) || Same(q.m_Tx, q.m_Rx))
+			return false;
+		if (!PositiveFinite(q.m_fFrequencyMHz) || !PositiveFinite(q.m_fBandwidthHz) || !ValidKey(q.m_sProfileId))
+			return false;
+		if (q.m_iProfileVersion < 1 || q.m_iEnvironmentRevision < 1 || q.m_iNowMs < 0 || q.m_iSubUs < 0 || q.m_iSubUs > 999)
+			return false;
+		return true;
+	}
+
+	//! CF03/CF04 только для descriptor; общий для ядра и кодека CT10.1 (REQ-channel-descriptor CD02).
+	static bool ValidDescriptor(RICON_FadingDescriptor d)
+	{
+		if (!d || !ValidKey(d.m_sModelId) || !ValidKey(d.m_sProfileId) || d.m_iProfileVersion < 1)
 			return false;
 		if (!ValidEndpoint(d.m_A) || !ValidEndpoint(d.m_B) || !Less(d.m_A, d.m_B))
 			return false;
@@ -270,12 +284,6 @@ class RICON_FiniteMultipath
 				return false;
 			previous = c;
 		}
-		if (!ValidEndpoint(q.m_Tx) || !ValidEndpoint(q.m_Rx) || Same(q.m_Tx, q.m_Rx))
-			return false;
-		if (!PositiveFinite(q.m_fFrequencyMHz) || !PositiveFinite(q.m_fBandwidthHz) || !ValidKey(q.m_sProfileId))
-			return false;
-		if (q.m_iProfileVersion < 1 || q.m_iEnvironmentRevision < 1 || q.m_iNowMs < 0 || q.m_iSubUs < 0 || q.m_iSubUs > 999)
-			return false;
 		return true;
 	}
 

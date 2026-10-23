@@ -11,7 +11,8 @@ $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $plugins = @("RICON_TestRunnerPlugin", "RICON_L0ProbePlugin", "RICON_LinkPhysicsProbePlugin", "RICON_P526MatrixProbePlugin",
 	"RICON_RouteProbePlugin", "RICON_SnapshotProbePlugin", "RICON_SensitivityProbePlugin", "RICON_WorldProfileProbePlugin",
 	"RICON_RadioDeviceProbePlugin", "RICON_PairServiceProbePlugin", "RICON_LinkPublicationProbePlugin",
-	"RICON_ChannelCutoffProbePlugin", "RICON_ChannelFadingProbePlugin", "RICON_VegetationProbePlugin")
+	"RICON_ChannelCutoffProbePlugin", "RICON_ChannelFadingProbePlugin", "RICON_VegetationProbePlugin",
+	"RICON_ChannelDescriptorProbePlugin")
 # FAIL и суффикс _FAIL — ошибки тестов; значение NUMERIC_FAILURE ошибкой теста не является.
 $taggedFailPattern = '\[RICON_[^\]]+\].*(?<![A-Za-z])FAIL(?![A-Za-z])'
 $failed = 0
