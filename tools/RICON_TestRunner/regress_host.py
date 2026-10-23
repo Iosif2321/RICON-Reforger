@@ -49,6 +49,8 @@ run("vegetation overcanopy", [str(O / "vegetation_overcanopy_oracle.py"), "--che
                                str(V / "vegetation_overcanopy_v1.json")], "PASS")
 run("vegetation path", [str(O / "vegetation_path_oracle.py"), "--check", str(V / "vegetation_path_v1.json")], "PASS")
 run("vegetation path vectors", [str(O / "build_vegetation_path_vectors.py"), "--check"], "PASS")
+run("p3.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-1-independent-req-check.py"),
+                              str(V / "object_rf_profile_v1.json")], "P3_1_BLIND_CHECK_PASS")
 run("ct10.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "ct10-1-independent-req-check.py"),
                                 str(V / "channel_descriptor_v1.json")], "CT10_1_BLIND_CHECK_PASS")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
@@ -82,7 +84,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_channel_fading_fixture.py", V / "channel_fading_v1.json",
                        TESTS / "RICON_ChannelFadingFixtures.c"),
                       ("gen_channel_descriptor_fixture.py", V / "channel_descriptor_v1.json",
-                       TESTS / "RICON_ChannelDescriptorFixtures.c")):
+                       TESTS / "RICON_ChannelDescriptorFixtures.c"),
+                      ("gen_object_rf_profile_fixture.py", V / "object_rf_profile_v1.json",
+                       TESTS / "RICON_ObjectRfProfileFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes
