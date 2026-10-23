@@ -250,6 +250,20 @@ class RICON_ObjectRfProfileRun
 			m_Base.m_aPrefabParents.Insert(null);
 			ok = ok && RICON_ObjectRfProfileResolver.Resolve(m_Base).m_eCode == RICON_EObjectProfileCode.INVALID_INPUT;
 			m_Base.m_aPrefabParents.Remove(m_Base.m_aPrefabParents.Count() - 1);
+			// Дубли узла и правила выразимы только в native-массивах (JSON dict их не хранит), codex #3708.
+			RICON_ProfileGraphNode firstNode = m_Base.m_aPrefabParents[0];
+			AddNode(m_Base.m_aPrefabParents, firstNode.m_sId, firstNode.m_bHasParent, firstNode.m_sParentId);
+			ok = ok && RICON_ObjectRfProfileResolver.Resolve(m_Base).m_eCode == RICON_EObjectProfileCode.INVALID_INPUT;
+			m_Base.m_aPrefabParents.Remove(m_Base.m_aPrefabParents.Count() - 1);
+			if (!m_Base.m_aClassRules.IsEmpty())
+			{
+				RICON_ProfileRule firstRule = m_Base.m_aClassRules[0];
+				AddRule(m_Base.m_aClassRules, firstRule.m_sNodeId, firstRule.m_sProfileId);
+				ok = ok && RICON_ObjectRfProfileResolver.Resolve(m_Base).m_eCode == RICON_EObjectProfileCode.INVALID_INPUT;
+				m_Base.m_aClassRules.Remove(m_Base.m_aClassRules.Count() - 1);
+			}
+			else
+				ok = false;
 			ok = ok && RICON_ObjectRfProfileResolver.Resolve(m_Base).m_eCode == RICON_EObjectProfileCode.RESOLVED;
 		}
 		Require(ok, "object profile graphs", "цепь 5000 узлов, цикл/висячий родитель/null-узел в неиспользуемой ветви");

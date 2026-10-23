@@ -33,8 +33,8 @@ Production-вызовов нет; P2 `RICON_PathObservation` и адаптеры
 - 2 дополнительные проверки:
   1. порядок: у всех native-случаев с входом графы, правила и реестр переставлены в обратном порядке; результат
      тот же, вход восстановлен;
-  2. графы: цепь из 5000 узлов разрешается до правила на корне; цикл, висячий родитель и null-узел в
-     неиспользуемой ветви дают INVALID_INPUT при известном профиле компонента.
+  2. графы: цепь из 5000 узлов разрешается до правила на корне; цикл, висячий родитель, null-узел, дубль
+     узла и дубль правила дают INVALID_INPUT при известном профиле компонента.
 
 Генератор `gen_object_rf_profile_fixture.py`:
 - закреплён за LF SHA, 40 native-случаев;
@@ -49,7 +49,7 @@ SHA-256 по LF-содержимому:
 | Файл | SHA-256 |
 |---|---|
 | `RICON_ObjectRfProfile.c` | `99184b464d709c3eff29a37346d1e3b1469ed8be59ed0a916888d9a43e96835d` |
-| `RICON_ObjectRfProfileFixtureSupport.c` | `c44dfbd1507fac354265158c39f187623f9c6d1a3d280168a0fc025bab3188f1` |
+| `RICON_ObjectRfProfileFixtureSupport.c` | `74c3f48f191a363002119009940ad50881df5632fcc9ad4038164bc3fbe2620d` |
 | `RICON_ObjectRfProfileFixtures.c` | `c0670138a99a2ebee7a145f2e627b5b524a73b6703e5139442fb27e4d7a9551d` |
 | `RICON_ObjectRfProfileProbePlugin.c` | `f6b607fbd83ce0ad40e094a725bf3f47208e37b287315ec341032fa99dbb8cfd` |
 | `gen_object_rf_profile_fixture.py` | `9843b907df2ffaafff2d348105b2136e7df80854f08b09373e9915e9959c876f` |
@@ -61,6 +61,7 @@ SHA-256 по LF-содержимому:
 | Запуск | Итог | SHA-256 |
 |---|---|---|
 | `ricon-objprofile-claude-20261023-165827` | мой дефект: метод стенда `Node(...)` без `t.` перекрыт глобальным `Node` движка («Too many parameters»); переименован в `AddNode`/`AddRule` | `acc9ea86f296c9b7b3467ee82b4286b7e454d9d0e0617bc75d07190a8af41781` |
+| `ricon-objprofile-claude-20261023-170914` (после codex #3708: дубль узла и правила в CheckGraphs) | exit 0, SCRIPT(E) 0, PASS; 40/40, controls 6, extras 2; Support CRC обновлён, остальные прежние | `05ee2bda755c5ef5519dc6bb7068f54465c40c7dc5c3c86cb7735944bed98302` |
 | `ricon-objprofile-claude-20261023-165857` | exit 0, SCRIPT(E) 0, один done: PASS; `cases=40 match=40 immutable=40 controls=6 extras=2 hostOnly=7` | `a036b703f2716642728e19eb7db6dd83ce404dea6a33063fa22d28114b7562b3` |
 
 CRC: ObjectRfProfile 8dd3d098, Support 8dbb6564, Fixtures c4556322, Probe b833a706.
