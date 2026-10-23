@@ -1,86 +1,96 @@
-P3.2a Workbench receipt (claude), 2026-10-23. Log: C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-p32a-claude-20261023-191727-RICON_MaterialSlabProbePlugin/console.log
-exit=0 scriptErrors=0 full-log sha256=8235d295bb7f757fcb021d5b9172e88b31a65919265386cb91c27a177e106e79 bytes=877528
-Filtered lines ([RICON_SLAB*], [RICON_TEST], SCRIPT (E)):
-19:17:28.969   ENGINE       : Initializing engine, version 192142
-19:17:29.876   RENDER       :   version        : 32.0.15.8253
-19:17:29.876   RENDER       :   version        : 10.0.19041.3636
-19:17:29.877   RENDER       : GPU_NVIDIA (0x10DE) (NVIDIA GeForce GTX 1060 6GB) with 1 GPU detected, VRAM 6029MB (fast 0MB), shared 16355MB, driver version 582.53
-19:17:30.204    RENDER       : Enfusion shader version 13
-19:17:33.944   INIT         : Creating game instance(ArmaReforgerScripted), version 1.8.0.13 built 2026-08-21 14:30:18 UTC.
-19:17:36.214  SCRIPT       : [RICON_SLAB] source=2f5a4f10f5e1e472ea9eb253bc07230c806ad908002d59ab4db19b90cce1efbd
-19:17:36.215  SCRIPT       : [RICON_SLAB] id=MS001 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.215  SCRIPT       : [RICON_SLAB] id=MS002 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.215  SCRIPT       : [RICON_SLAB] id=MS003 code=OK loss=1.938199997 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.215  SCRIPT       : [RICON_SLAB] id=MS004 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.216  SCRIPT       : [RICON_SLAB] id=MS005 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.216  SCRIPT       : [RICON_SLAB] id=MS006 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.216  SCRIPT       : [RICON_SLAB] id=MS007 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.216  SCRIPT       : [RICON_SLAB] id=MS008 code=OK loss=3.621682644 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.217  SCRIPT       : [RICON_SLAB] id=MS009 code=OK loss=0.022037551 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.217  SCRIPT       : [RICON_SLAB] id=MS010 code=OK loss=16.483453751 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.217  SCRIPT       : [RICON_SLAB] id=MS011 code=OK loss=5.460569382 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.217  SCRIPT       : [RICON_SLAB] id=MS012 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.218  SCRIPT       : [RICON_SLAB] id=MS013 code=OK loss=9.570213318 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.218  SCRIPT       : [RICON_SLAB] id=MS014 code=OK loss=111.881736755 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.218  SCRIPT       : [RICON_SLAB] id=MS015 code=OK loss=115.624359131 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.218  SCRIPT       : [RICON_SLAB] id=MS016 code=OK loss=129.282730103 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.219  SCRIPT       : [RICON_SLAB] id=MS017 code=OK loss=243.112579346 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.220  SCRIPT       : [RICON_SLAB] id=MS018 code=OK loss=364.697662354 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.220  SCRIPT       : [RICON_SLAB] id=MS019 code=OK loss=1776.565185547 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.220  SCRIPT       : [RICON_SLAB] id=MS020 code=OK loss=3705.494140625 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.220  SCRIPT       : [RICON_SLAB] id=MS021 code=OK loss=172675.468750000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.221  SCRIPT       : [RICON_SLAB] id=MS022 code=OK loss=0.162135109 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.221  SCRIPT       : [RICON_SLAB] id=MS023 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.222  SCRIPT       : [RICON_SLAB] id=MS024 code=OK loss=115.661941528 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.222  SCRIPT       : [RICON_SLAB] id=MS025 code=OK loss=115.661964417 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.223  SCRIPT       : [RICON_SLAB] id=MS026 code=OK loss=1.175937414 provenance=SOURCE_DOMAIN match=1 immutable=1
-19:17:36.223  SCRIPT       : [RICON_SLAB] id=MS027 code=OK loss=1.175937414 provenance=ASSUMED_CONFIG match=1 immutable=1
-19:17:36.224  SCRIPT       : [RICON_SLAB] id=MS028 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.224  SCRIPT       : [RICON_SLAB] id=MS029 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.224  SCRIPT       : [RICON_SLAB] id=MS030 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.225  SCRIPT       : [RICON_SLAB] id=MS031 code=OK loss=1.785032153 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.225  SCRIPT       : [RICON_SLAB] id=MS032 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.225  SCRIPT       : [RICON_SLAB] id=MS033 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.225  SCRIPT       : [RICON_SLAB] id=MS034 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.225  SCRIPT       : [RICON_SLAB] id=MS035 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.226  SCRIPT       : [RICON_SLAB] id=MS036 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.226  SCRIPT       : [RICON_SLAB] id=MS037 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.227  SCRIPT       : [RICON_SLAB] id=MS038 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.227  SCRIPT       : [RICON_SLAB] id=MS039 code=OK loss=1.506810427 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.227  SCRIPT       : [RICON_SLAB] id=MS040 code=OK loss=1.506808519 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.227  SCRIPT       : [RICON_SLAB] id=MS041 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.228  SCRIPT       : [RICON_SLAB] id=MS042 code=OK loss=12.886583328 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.228  SCRIPT       : [RICON_SLAB] id=MS043 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.228  SCRIPT       : [RICON_SLAB] id=MS044 code=OK loss=345300.437500000 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.228  SCRIPT       : [RICON_SLAB] id=MS045 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.229  SCRIPT       : [RICON_SLAB] id=MS046 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.229  SCRIPT       : [RICON_SLAB] id=MS047 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.229  SCRIPT       : [RICON_SLAB] id=MS048 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.229  SCRIPT       : [RICON_SLAB] id=MS049 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS050 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS051 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS052 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS053 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS057 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS060 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.230  SCRIPT       : [RICON_SLAB] id=MS061 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.231  SCRIPT       : [RICON_SLAB] id=MS062 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.231  SCRIPT       : [RICON_SLAB] id=MS063 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.231  SCRIPT       : [RICON_SLAB] id=MS064 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.231  SCRIPT       : [RICON_SLAB] id=MS065 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.232  SCRIPT       : [RICON_SLAB] id=MS066 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.232  SCRIPT       : [RICON_SLAB] id=MS067 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
-19:17:36.232  SCRIPT       : [RICON_SLAB] id=MS071 code=OK loss=13.190137863 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.232  SCRIPT       : [RICON_SLAB] id=MS072 code=OK loss=7.305697918 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.233  SCRIPT       : [RICON_SLAB] id=MS073 code=OK loss=0.081443876 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.234  SCRIPT       : [RICON_SLAB] id=MS074 code=OK loss=0.008178703 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.234  SCRIPT       : [RICON_SLAB] id=MS075 code=OK loss=0.001636970 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.234  SCRIPT       : [RICON_SLAB] id=MS077 code=OK loss=3.006999493 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.234  SCRIPT       : [RICON_SLAB] id=MS078 code=OK loss=13.567325592 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.235  SCRIPT       : [RICON_SLAB] id=MS079 code=OK loss=1.499376416 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.235  SCRIPT       : [RICON_SLAB] id=MS080 code=OK loss=0.008182698 provenance=TEST_ONLY match=1 immutable=1
-19:17:36.235  SCRIPT       : [RICON_SLAB_TETM] eps=5.300000191 sigma=0.029999999 d=0.200000003 te=5.624226570 tm=5.624227047 ok=1
-19:17:36.236  SCRIPT       : [RICON_SLAB_TETM] eps=4.000000000 sigma=1.000000000 d=0.050000001 te=27.347900391 tm=27.347900391 ok=1
-19:17:36.236  SCRIPT       : [RICON_SLAB_TETM] eps=100.000000000 sigma=0.500000000 d=0.100000001 te=16.872211456 tm=16.872211456 ok=1
-19:17:36.237  SCRIPT       : [RICON_SLAB] cases=71 match=71 immutable=71 controls=5 extras=3 hostOnly=9 maxDeviationDb=0.031250000
-19:17:36.238  SCRIPT       : [RICON_SLAB] done: PASS
+P3.2a Workbench receipt (claude), 2026-10-23, final sources f6ede47. Log: C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin/console.log
+exit=0 scriptErrors=0 full-log sha256=afd2404f7646c37012f9f2aebe89df47e2209b64182a272483c45456d37acb04 bytes=877564
+Source snapshot (sha256, identical before/after the run):
+1c892c45d3ece2da6904d396d0ee6f6611f5866fb979d0fbdc06e07718d0ba39 *addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_MaterialSlab.c
+b0cc0d134a24dbf92fbac14fe3d4d1b11968c7cf941e70c4a331d9640aaac7a1 *addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtureSupport.c
+52574ef50ec0779e40e5eaa82a521c6e103ac3c2e466f6f48670219a4e73faf1 *addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtures.c
+f7011fa137dfd50c3d3fc592a59fec2d09908150fc8f26093a86a9e9604686c4 *tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_MaterialSlabProbePlugin.c
+Filtered lines (script checksums of RICON_MaterialSlab*, [RICON_SLAB*], [RICON_TEST], SCRIPT (E), engine version):
+Log C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin\console.log started at 2026-10-23 19:24:33 (2026-10-23 16:24:33 UTC)
+19:24:33.341   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin' to filesystem under name logs
+19:24:34.363   ENGINE       : Initializing engine, version 192142
+19:24:34.363   ENGINE       : CLI Params: -gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons -noBackend -wbModule ScriptEditor -plugin RICON_MaterialSlabProbePlugin -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum -logsDir ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin 
+19:24:34.630   RESOURCES    : ResourceDB: loading cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin/resourceDatabase.rdb)
+19:24:35.088   RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin/resourceDatabase.rdb)
+19:24:37.338    SCRIPT    (V): Script file: 'Scripts/Game/RICON/Propagation/RICON_MaterialSlab.c' CRC: 1a2872d5
+19:24:37.346    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtureSupport.c' CRC: e0f763a5
+19:24:37.347    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtures.c' CRC: 05a6d52b
+19:24:39.108    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_MaterialSlabProbePlugin.c' CRC: c4011313
+19:24:41.636  SCRIPT       : [RICON_SLAB] source=2f5a4f10f5e1e472ea9eb253bc07230c806ad908002d59ab4db19b90cce1efbd
+19:24:41.637  SCRIPT       : [RICON_SLAB] id=MS001 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.637  SCRIPT       : [RICON_SLAB] id=MS002 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.638  SCRIPT       : [RICON_SLAB] id=MS003 code=OK loss=1.938199997 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.639  SCRIPT       : [RICON_SLAB] id=MS004 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.639  SCRIPT       : [RICON_SLAB] id=MS005 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.640  SCRIPT       : [RICON_SLAB] id=MS006 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.641  SCRIPT       : [RICON_SLAB] id=MS007 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.642  SCRIPT       : [RICON_SLAB] id=MS008 code=OK loss=3.621682644 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.642  SCRIPT       : [RICON_SLAB] id=MS009 code=OK loss=0.022037551 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.643  SCRIPT       : [RICON_SLAB] id=MS010 code=OK loss=16.483453751 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.643  SCRIPT       : [RICON_SLAB] id=MS011 code=OK loss=5.460569382 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.644  SCRIPT       : [RICON_SLAB] id=MS012 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.644  SCRIPT       : [RICON_SLAB] id=MS013 code=OK loss=9.570213318 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.645  SCRIPT       : [RICON_SLAB] id=MS014 code=OK loss=111.881736755 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.645  SCRIPT       : [RICON_SLAB] id=MS015 code=OK loss=115.624359131 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.645  SCRIPT       : [RICON_SLAB] id=MS016 code=OK loss=129.282730103 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.646  SCRIPT       : [RICON_SLAB] id=MS017 code=OK loss=243.112579346 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.646  SCRIPT       : [RICON_SLAB] id=MS018 code=OK loss=364.697662354 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.646  SCRIPT       : [RICON_SLAB] id=MS019 code=OK loss=1776.565185547 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.646  SCRIPT       : [RICON_SLAB] id=MS020 code=OK loss=3705.494140625 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.647  SCRIPT       : [RICON_SLAB] id=MS021 code=OK loss=172675.468750000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.647  SCRIPT       : [RICON_SLAB] id=MS022 code=OK loss=0.162135109 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.647  SCRIPT       : [RICON_SLAB] id=MS023 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.647  SCRIPT       : [RICON_SLAB] id=MS024 code=OK loss=115.661941528 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.648  SCRIPT       : [RICON_SLAB] id=MS025 code=OK loss=115.661964417 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.648  SCRIPT       : [RICON_SLAB] id=MS026 code=OK loss=1.175937414 provenance=SOURCE_DOMAIN match=1 immutable=1
+19:24:41.648  SCRIPT       : [RICON_SLAB] id=MS027 code=OK loss=1.175937414 provenance=ASSUMED_CONFIG match=1 immutable=1
+19:24:41.648  SCRIPT       : [RICON_SLAB] id=MS028 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.649  SCRIPT       : [RICON_SLAB] id=MS029 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.649  SCRIPT       : [RICON_SLAB] id=MS030 code=OK loss=0.000000000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.649  SCRIPT       : [RICON_SLAB] id=MS031 code=OK loss=1.785032153 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.649  SCRIPT       : [RICON_SLAB] id=MS032 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.650  SCRIPT       : [RICON_SLAB] id=MS033 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.650  SCRIPT       : [RICON_SLAB] id=MS034 code=OK loss=1.175937414 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.650  SCRIPT       : [RICON_SLAB] id=MS035 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.651  SCRIPT       : [RICON_SLAB] id=MS036 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.652  SCRIPT       : [RICON_SLAB] id=MS037 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.653  SCRIPT       : [RICON_SLAB] id=MS038 code=OK loss=21.245330811 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.654  SCRIPT       : [RICON_SLAB] id=MS039 code=OK loss=1.506810427 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.654  SCRIPT       : [RICON_SLAB] id=MS040 code=OK loss=1.506808519 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.654  SCRIPT       : [RICON_SLAB] id=MS041 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.655  SCRIPT       : [RICON_SLAB] id=MS042 code=OK loss=12.886583328 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.655  SCRIPT       : [RICON_SLAB] id=MS043 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.655  SCRIPT       : [RICON_SLAB] id=MS044 code=OK loss=345300.437500000 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.655  SCRIPT       : [RICON_SLAB] id=MS045 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.656  SCRIPT       : [RICON_SLAB] id=MS046 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.656  SCRIPT       : [RICON_SLAB] id=MS047 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.656  SCRIPT       : [RICON_SLAB] id=MS048 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.657  SCRIPT       : [RICON_SLAB] id=MS049 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.657  SCRIPT       : [RICON_SLAB] id=MS050 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.658  SCRIPT       : [RICON_SLAB] id=MS051 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.658  SCRIPT       : [RICON_SLAB] id=MS052 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.658  SCRIPT       : [RICON_SLAB] id=MS053 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.659  SCRIPT       : [RICON_SLAB] id=MS057 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.659  SCRIPT       : [RICON_SLAB] id=MS060 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.660  SCRIPT       : [RICON_SLAB] id=MS061 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.660  SCRIPT       : [RICON_SLAB] id=MS062 code=OK loss=1.506805539 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.661  SCRIPT       : [RICON_SLAB] id=MS063 code=INVALID_INPUT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.661  SCRIPT       : [RICON_SLAB] id=MS064 code=INVALID_PROFILE loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.662  SCRIPT       : [RICON_SLAB] id=MS065 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.662  SCRIPT       : [RICON_SLAB] id=MS066 code=OUT_OF_MODEL_DOMAIN loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.663  SCRIPT       : [RICON_SLAB] id=MS067 code=NUMERIC_DOMAIN_LIMIT loss=0.000000000 provenance=NONE match=1 immutable=1
+19:24:41.664  SCRIPT       : [RICON_SLAB] id=MS071 code=OK loss=13.190137863 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.664  SCRIPT       : [RICON_SLAB] id=MS072 code=OK loss=7.305697918 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.665  SCRIPT       : [RICON_SLAB] id=MS073 code=OK loss=0.081443876 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.665  SCRIPT       : [RICON_SLAB] id=MS074 code=OK loss=0.008178703 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.666  SCRIPT       : [RICON_SLAB] id=MS075 code=OK loss=0.001636970 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.666  SCRIPT       : [RICON_SLAB] id=MS077 code=OK loss=3.006999493 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.667  SCRIPT       : [RICON_SLAB] id=MS078 code=OK loss=13.567325592 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.668  SCRIPT       : [RICON_SLAB] id=MS079 code=OK loss=1.499376416 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.668  SCRIPT       : [RICON_SLAB] id=MS080 code=OK loss=0.008182698 provenance=TEST_ONLY match=1 immutable=1
+19:24:41.669  SCRIPT       : [RICON_SLAB_TETM] eps=5.300000191 sigma=0.029999999 d=0.200000003 te=5.624226570 tm=5.624227047 ok=1
+19:24:41.669  SCRIPT       : [RICON_SLAB_TETM] eps=4.000000000 sigma=1.000000000 d=0.050000001 te=27.347900391 tm=27.347900391 ok=1
+19:24:41.670  SCRIPT       : [RICON_SLAB_TETM] eps=100.000000000 sigma=0.500000000 d=0.100000001 te=16.872211456 tm=16.872211456 ok=1
+19:24:41.671  SCRIPT       : [RICON_SLAB] cases=71 match=71 immutable=71 controls=5 extras=3 hostOnly=9 maxDeviationDb=0.031250000
+19:24:41.671  SCRIPT       : [RICON_SLAB] done: PASS
+19:24:41.816 RESOURCES    : ResourceDB: saving cache (id=6 name=logs path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin/resourceDatabase.rdb)

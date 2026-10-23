@@ -43,17 +43,24 @@
 ## Результат Workbench
 
 Запуск `ArmaReforgerWorkbenchSteamDiag -wbModule=ScriptEditor -plugin=RICON_MaterialSlabProbePlugin -wbSilent
--exitAfterInit -noThrow -logLevel verbose -log-scr-checksum` (engine 192142), слот по ACK codex #3827:
-- лог `ricon-p32a-claude-20261023-191727-RICON_MaterialSlabProbePlugin/console.log`, 877 528 байт, sha256
-  `8235d295bb7f757fcb021d5b9172e88b31a65919265386cb91c27a177e106e79`; выжимка —
+-exitAfterInit -noThrow -logLevel verbose -log-scr-checksum` (engine 192142). Финальный прогон на исходниках
+`f6ede47`, слот по ACK codex #3851:
+- лог `ricon-p32a-claude-final-20261023-192432-RICON_MaterialSlabProbePlugin/console.log`, 877 564 байт, sha256
+  `afd2404f7646c37012f9f2aebe89df47e2209b64182a272483c45456d37acb04`; выжимка со snapshot исходников —
   `receipts/p3-2a-wb-claude-20261023.txt`;
+- CRC скриптов движка: `RICON_MaterialSlab.c` 1a2872d5, `RICON_MaterialSlabFixtureSupport.c` e0f763a5,
+  `RICON_MaterialSlabFixtures.c` 05a6d52b, `RICON_MaterialSlabProbePlugin.c` c4011313; sha256 четырёх файлов до и
+  после прогона идентичны, `git diff HEAD` по ним пуст;
 - exit 0, SCRIPT (E) 0, `[RICON_SLAB] cases=71 match=71 immutable=71 controls=5 extras=3 hostOnly=9
   maxDeviationDb=0.031250000`, одна строка `done: PASS`;
-- независимый разбор лога `receipts/p3-2a-log-check-claude.py`: `P3_2A_LOG_CHECK_PASS`, worst |dev| 0.0316 дБ.
+- независимый разбор лога `receipts/p3-2a-log-check-claude.py` (с `--self-check`: 25 порч отвергнуты, codex
+  #3837): `P3_2A_LOG_CHECK_PASS`, worst |dev| 0.0316 дБ.
 
-Первый запуск (лог `…-191432-…`) упал на компиляции: `RICON_MaterialSlab.c:149 Formula too complex` — вложенная
+История запусков: `…-191432-…` упал на компиляции (`RICON_MaterialSlab.c:149 Formula too complex` — вложенная
 схема Горнера в `OneMinusExpNeg`; переписана пошаговыми присваиваниями, остальные вложенные выражения разбиты на
-локальные переменные. Codex увидел тот же разбор (#3833, #3834).
+локальные переменные; codex #3833, #3834); `…-191727-…` — PASS с теми же числами (sha256 `8235d295…`), но до правки
+комментария остатка ряда (#3830), поэтому CRC ядра там e90bb12e; приёмка относится к финальному прогону.
+Повтор codex на тех же исходниках: `ricon-slab-codex-20261023-192217` PASS, CRC ядра 1a2872d5 (#3845, #3846).
 
 ## Точность native против binary64-ожиданий
 
