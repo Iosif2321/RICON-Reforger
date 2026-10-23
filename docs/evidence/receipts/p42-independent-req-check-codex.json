@@ -1,0 +1,28 @@
+{
+  "checker": "codex: только REQ v0.1, JSON и P.2108-1; без эталона автора",
+  "corpusSha256": "00d7da2115f5d27445ae40502ef6fa3541e027e85a4275b7ba80264664a99cf2",
+  "cases": 31,
+  "matched": 31,
+  "errors": [],
+  "negativeControls": 20,
+  "monotonicityChecks": 50,
+  "priorityChecks": 7,
+  "codes": [
+    "INVALID_INPUT",
+    "INVALID_OBSERVATION",
+    "NO_TERMINAL_IN_VEGETATION",
+    "NO_VEGETATION",
+    "NUMERIC_FAILURE",
+    "OK",
+    "OUT_OF_MODEL_DOMAIN",
+    "VEGETATION_COVERAGE_INCOMPLETE",
+    "VEGETATION_MIXED_PROFILE",
+    "VEGETATION_UNKNOWN"
+  ],
+  "native": 30,
+  "hostOnly": [
+    "O28"
+  ],
+  "integrationClosed": false,
+  "physicalAcceptance": false
+}
