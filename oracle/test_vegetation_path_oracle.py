@@ -24,7 +24,7 @@ class CorpusTest(unittest.TestCase):
 
     def test_every_code_status_and_branch_is_covered(self):
         self.assertEqual(set(p.CODES), {c["expect"]["code"] for c in self.cases.values()})
-        self.assertEqual({"CLOSED", "BOUNDED_BY_OVER", "OPEN"}, {e["status"] for e in self.ok})
+        self.assertEqual({"CLOSED", "OVER_REFERENCE_ONLY", "OPEN"}, {e["status"] for e in self.ok})
         self.assertEqual({"THROUGH", "OVER"}, {e["selected"] for e in self.ok})
         reasons = {e[b]["reason"] for e in self.ok for b in ("through", "over") if not e[b]["present"]}
         self.assertEqual({"NO_MODEL_FOR_SCENARIO", "BASE_BUDGET_MISSING", "MID_PATH_VEGETATION", "OUT_OF_MODEL_DOMAIN"}, reasons)
@@ -44,19 +44,23 @@ class CorpusTest(unittest.TestCase):
         for e in self.ok:
             t, o = e["through"], e["over"]
             both = t["present"] and o["present"] and t["closed"] and o["closed"]
-            want = "CLOSED" if both else "BOUNDED_BY_OVER" if o["present"] and o["closed"] else "OPEN"
+            want = "CLOSED" if both else "OVER_REFERENCE_ONLY" if o["present"] and o["closed"] else "OPEN"
             self.assertEqual(want, e["status"])
 
     def test_target_cells(self):
-        """Deep temperate forest at low VHF: through has no model, over is source-backed -> BOUNDED_BY_OVER, not CLOSED."""
+        """Deep temperate forest at low VHF: through has no model, over is source-backed -> OVER_REFERENCE_ONLY, not CLOSED."""
         e = self.cases["P02"]["expect"]
-        self.assertEqual(("OVER", "BOUNDED_BY_OVER", "NO_MODEL_FOR_SCENARIO"), (e["selected"], e["status"], e["through"]["reason"]))
+        self.assertEqual(("OVER", "OVER_REFERENCE_ONLY", "NO_MODEL_FOR_SCENARIO"), (e["selected"], e["status"], e["through"]["reason"]))
+        tie = self.cases["P28"]["expect"]
+        self.assertEqual(tie["through"]["totalDb"], tie["over"]["totalDb"])
+        self.assertEqual("THROUGH", tie["selected"])
+        self.assertEqual("NUMERIC_FAILURE", self.cases["P29"]["expect"]["code"])
         jb = self.cases["P04"]["expect"]["through"]
         self.assertEqual("FREE_SPACE_PLUS_JB", jb["budgetMode"])
         self.assertEqual(self.cases["P04"]["input"]["budget"]["fsplDb"], jb["baseDb"])  # no L2 under J&B
 
     def test_check_detects_corruption(self):
-        for cid, mutate in (("P01", lambda e: e.update(status="BOUNDED_BY_OVER")),
+        for cid, mutate in (("P01", lambda e: e.update(status="OVER_REFERENCE_ONLY")),
                             ("P02", lambda e: e.update(selected="THROUGH")),
                             ("P04", lambda e: e["through"].update(baseDb=e["through"]["baseDb"] + 5.0)),
                             ("P06", lambda e: e.update(totalLossDb=e["totalLossDb"] + 1e-3))):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.1).
+"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.2).
 
 ORACLE level: binary64 over binary32-typed inputs. Calls the frozen P4 v1 layer (vegetation_oracle.vegetation_layer)
 and the frozen P4.2 layer (vegetation_overcanopy_oracle.over_canopy) on the same input; the base budgets L0/L2 for the
@@ -77,6 +77,8 @@ def select(inp) -> dict:
         if budget["l2Db"] is None:
             return {"code": "UNRESOLVED", "reason": "BASE_BUDGET_MISSING"}
         total = budget["fsplDb"] + budget["l2Db"]
+        if not (math.isfinite(total) and total <= po.F32_MAX):
+            return {"code": "NUMERIC_FAILURE"}
         return {"code": "NO_VEGETATION", "totalLossDb": total}
     # Through branch (REQ VP04).
     t_branch = {"present": False, "reason": None}
@@ -117,12 +119,12 @@ def select(inp) -> dict:
     else:
         selected = "OVER"
     total = t_branch["totalDb"] if selected == "THROUGH" else o_branch["totalDb"]
-    # VP06: closure. Both branches present and closed -> CLOSED. The over branch alone (closed) bounds the loss from
-    # above (P.833 §2.1: Am is limited by propagation over the top) -> BOUNDED_BY_OVER. Otherwise OPEN.
+    # VP06: closure. Both branches present and closed -> CLOSED. Only the over branch is source-backed ->
+    # OVER_REFERENCE_ONLY: over.totalDb is an engineering median reference, not a bound of the result (codex #3685).
     if t_branch["present"] and o_branch["present"] and t_branch["closed"] and o_branch["closed"]:
         status = "CLOSED"
     elif o_branch["present"] and o_branch["closed"]:
-        status = "BOUNDED_BY_OVER"
+        status = "OVER_REFERENCE_ONLY"
     else:
         status = "OPEN"
     return {"code": "OK", "selected": selected, "totalLossDb": total, "status": status,

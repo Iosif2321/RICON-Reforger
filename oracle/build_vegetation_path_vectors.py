@@ -72,6 +72,10 @@ CASES = [
     ("P25", "Антенна выше крон — A_h = 0, поверх = база опорной геометрии", case(1000, 466.475, [veg(0, 50, SPB)], tx_h=20.0)),
     ("P26", "Только трава", case(1000, 60.0, [veg(0, 100, "grass")])),
     ("P27", "Лишнее поле корня", mutate(case(1000, 60.0, [veg(0, 100)]), lambda x: x.update(extra=1))),
+    # Точное равенство: сквозь = 90 + 64·f32(0.02) (LIN-γ, 30 МГц), поверх = 90 + тот же binary32 при A_h = 0 (h ≥ R).
+    ("P28", "Точное равенство полных потерь — выбирается THROUGH",
+     case(1000, 30.0, [veg(0, 64)], tx_h=20.0, bud=budget(90.0, 0.0, 90.0, 64 * 0.019999999552965164))),
+    ("P29", "Нет растительности, сумма бюджета переполняется", case(1000, 60.0, [], bud=budget(3.0e38, 3.0e38))),
 ]
 
 
@@ -82,7 +86,7 @@ def build() -> bytes:
         c["expect"] = p.evaluate(c)
         cases.append(c)
     doc = {"schema": "ricon.oracle.vegetation_path", "version": 1,
-           "source": "docs/req/REQ-vegetation-path.md v0.1; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
+           "source": "docs/req/REQ-vegetation-path.md v0.2; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
            "note": "DRAFT; каталог, кроны и базовые бюджеты TEST_ONLY.", "hostOnly": ["P18", "P27"]}
     head = json.dumps(doc, ensure_ascii=False)[:-1]
     body = ",\n".join(json.dumps(c, ensure_ascii=False) for c in cases)
