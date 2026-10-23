@@ -21,14 +21,10 @@ FLOATS = {'intervalStartM': 'IntervalStartM', 'intervalEndM': 'IntervalEndM', 'a
           'canopyHeightM': 'CanopyHeightM', 'hdifM': 'HdifM', 'thetaDeg': 'ThetaDeg', 'nu': 'Nu', 'jDb': 'JDb', 'ahDb': 'AhDb'}
 
 
-def case_lines(index, c, profiles):
-    need(set(c) == {'id', 'title', 'input', 'expect'} and re.fullmatch(r'O[0-9]{2}', c['id']), 'Неверный случай')
-    inp, exp = c['input'], c['expect']
+def input_lines(inp, profiles):
+    """Общий типизированный вход P4.2/P4.3; только перенос полей frozen JSON."""
     need(set(inp) == {'observation', 'catalog', 'polarization', 'txHeightM', 'rxHeightM', 'canopy'}, 'Неверный вход')
-    need(exp['code'] in CODES, 'Неверный код')
-    need(set(exp) == ({'code', 'model', 'status', 'budgetMode', 'integrationClosed', 'totalAhDb', 'terminals'}
-                     if exp['code'] == 'OK' else {'code'}), 'Неверные поля результата')
-    lines = [f'\tprotected static void Case{index}(RICON_OvercanopyRun t)', '\t{'] + observation_lines('observation', inp['observation'])
+    lines = observation_lines('observation', inp['observation'])
     lines += ['\t\tRICON_OvercanopyInput input = new RICON_OvercanopyInput();', '\t\tinput.m_Observation = observation;',
               f'\t\tinput.m_sPolarization = {text(inp["polarization"])};']
     for key, field in (('txHeightM', 'TxHeight'), ('rxHeightM', 'RxHeight')):
@@ -44,6 +40,16 @@ def case_lines(index, c, profiles):
         if entry['heightM'] is not None:
             lines += [f'\t\t{name}.m_bHasHeight = true;', f'\t\t{name}.m_fHeightM = {value_literal(entry["heightM"], "float")};']
         lines.append(f'\t\tinput.m_aCanopy.Insert({name});')
+    return lines
+
+
+def case_lines(index, c, profiles):
+    need(set(c) == {'id', 'title', 'input', 'expect'} and re.fullmatch(r'O[0-9]{2}', c['id']), 'Неверный случай')
+    inp, exp = c['input'], c['expect']
+    need(exp['code'] in CODES, 'Неверный код')
+    need(set(exp) == ({'code', 'model', 'status', 'budgetMode', 'integrationClosed', 'totalAhDb', 'terminals'}
+                     if exp['code'] == 'OK' else {'code'}), 'Неверные поля результата')
+    lines = [f'\tprotected static void Case{index}(RICON_OvercanopyRun t)', '\t{'] + input_lines(inp, profiles)
     lines += ['\t\tRICON_OvercanopyResult expected = new RICON_OvercanopyResult();',
               f'\t\texpected.m_eCode = RICON_EOvercanopyCode.{exp["code"]};']
     if exp['code'] == 'OK':

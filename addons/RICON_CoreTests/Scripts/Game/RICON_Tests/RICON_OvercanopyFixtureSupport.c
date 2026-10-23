@@ -47,7 +47,7 @@ class RICON_OvercanopyRun
 		return true;
 	}
 
-	protected static void Capture(RICON_OvercanopyInput input, out string text, notnull array<float> floats)
+	static void Capture(RICON_OvercanopyInput input, out string text, notnull array<float> floats)
 	{
 		RICON_VegetationRun.Capture(input, text, floats);
 		text += "|canopy:" + input.m_aCanopy.Count().ToString();
