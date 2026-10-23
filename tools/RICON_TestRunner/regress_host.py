@@ -58,6 +58,7 @@ run("ct10.1 checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts
 run("p3.2a checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2a-independent-req-check.py"),
                                str(V / "material_slab_v1.json")], "P3_2A_BLIND_CHECK_PASS")
 run("material slab", [str(O / "material_slab_oracle.py"), "--check", str(V / "material_slab_v1.json")], "PASS")
+run("material slab vectors", [str(O / "build_material_slab_vectors.py"), "--check"], "MATERIAL_SLAB_VECTORS_PASS")
 run("p3.2a log self-check (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2a-log-check-claude.py"),
                                      "--self-check", str(V / "material_slab_v1.json")], "P3_2A_LOG_SELFCHECK_PASS")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")
