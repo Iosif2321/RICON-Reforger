@@ -1,0 +1,14 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 20,
+  "cases": 71,
+  "nativeControls": 5,
+  "nativeExtras": 3,
+  "hostOnly": 9,
+  "maxDeviationDb": 0.03125,
+  "worstToleranceFraction": 0.07752700783166588,
+  "worstCase": "MS077",
+  "logSha256": "afd2404f7646c37012f9f2aebe89df47e2209b64182a272483c45456d37acb04",
+  "status": "NATIVE_LOG_PASS",
+  "processReceiptChecked": false
+}

@@ -1,0 +1,20 @@
+{
+  "status": "PROCESS_SOURCE_MATCH_PASS",
+  "ownProcessReceipt": "docs\\evidence\\receipts\\p3-2a-native-run-codex-20261023-192217.json",
+  "ownLogSha256": "4bf6d116e0a565446371ab11352db497c2be24bc901893bcd02005354561e46c",
+  "peerFinalLogSha256": "afd2404f7646c37012f9f2aebe89df47e2209b64182a272483c45456d37acb04",
+  "currentSourceHashesChecked": 90,
+  "peerReceiptSourceHashesMatched": 4,
+  "engineCrcMatch": {
+    "Scripts/Game/RICON/Propagation/RICON_MaterialSlab.c": "1a2872d5",
+    "Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtureSupport.c": "e0f763a5",
+    "Scripts/Game/RICON_Tests/RICON_MaterialSlabFixtures.c": "05a6d52b",
+    "Scripts/WorkbenchGame/RICON_MaterialSlabProbePlugin.c": "c4011313"
+  },
+  "exitCode": 0,
+  "timedOut": false,
+  "sourceStable": true,
+  "scriptErrors": 0,
+  "passCount": 1,
+  "scope": "Workbench ScriptEditor; без мира, Play и сервера"
+}
