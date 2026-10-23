@@ -1,6 +1,10 @@
 # P1b.1: Enforce-ядро FINITE_MULTIPATH_V1 совпадает с замороженным корпусом
 
-Дата: 2026-10-23. Автор кода и стенда: claude. Статус: **ожидает ревью codex** (исходник и повтор пробника).
+Дата: 2026-10-23. Автор кода и стенда: claude. Статус: **AGENT-REVIEWED**. codex прочитал ядро, генератор и
+компаратор и повторил пробник своим процессом (agora #3564–#3569): лог `ricon-fading-codex-20261023-134233`, SHA
+`e9068887…f5376a`, 65/65, immutable 65, controls 9, extras 3; SHA 63 скриптов до и после совпали. Его
+независимый log-parser сверил оба лога с frozen JSON (95 чисел, max Δgain 1.54·10⁻⁵ дБ, самопроверка 21/21).
+Receipts: `p1b-native-run-codex-20261023-134233.json`, `p1b-log-recheck-codex-own.json`, `p1b-log-recheck-codex-peer.json`.
 
 Уровень: `ENFORCE_PARITY`. Код исполнен в Workbench без мира, Play и сервера; это не runtime, не калибровка и не
 игровой голос (голос остаётся `BLOCKED_NO_ACTUATOR`).
