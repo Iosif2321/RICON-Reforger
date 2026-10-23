@@ -13,7 +13,7 @@ class RICON_PathObservationRun
 		m_bOk = RICON_TestSupport.Expect(condition, id, what) && m_bOk;
 	}
 
-	protected static bool Close(float actual, float expected)
+	static bool Close(float actual, float expected)
 	{
 		return RICON_Num.IsFinite(actual) && RICON_Num.IsFinite(expected)
 			&& Math.AbsFloat(actual - expected) <= Math.Max(0.001, 0.00001 * Math.AbsFloat(expected));
@@ -52,7 +52,7 @@ class RICON_PathObservationRun
 		return endpoint.m_eMedium.ToString();
 	}
 
-	protected static void Capture(RICON_PathObservation input, RICON_WaterProfile profile, out string text, notnull array<float> floats)
+	static void Capture(RICON_PathObservation input, RICON_WaterProfile profile, out string text, notnull array<float> floats)
 	{
 		text = "null";
 		if (input)

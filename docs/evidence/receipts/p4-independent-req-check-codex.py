@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Независимый пересчёт P4 по REQ v0.3 и первоисточникам, без импорта эталона автора."""
+"""Независимый пересчёт P4 по REQ v0.4 и первоисточникам, без импорта эталона автора."""
 from __future__ import annotations
 
 import argparse
@@ -17,8 +17,9 @@ sys.dont_write_bytecode = True
 SPEC = importlib.util.spec_from_file_location("codex_p2_check", P2_PATH)
 P2 = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(P2)
-SHA = "d130f2f085cc333f2e80ff6b61e06ab1442880d82758b68db648cf3185777560"
+SHA = "576fed29dd79f83ec045fabb10ded6a52103a33a53935d2ee270299668657ca9"
 PROVENANCE = ("MEASURED_TABLE", "STANDARD_FIGURE", "ASSUMED_CONFIG")
+STATUS = {"M1": "SOURCE_DOMAIN", "M2": "UNCAPPED", "M3": "SOURCE_DOMAIN", "M4": "SOURCE_DOMAIN", "M5": "ASSUMED_EXTENSION"}
 JB_FREQ = (25, 50, 100, 250, 400)
 # ECAC ESD-TR-81-101, табл. 13: alpha, A, B; расстояние в статутных милях.
 JB = {
@@ -67,7 +68,7 @@ def profile(value):
     if am is not None:
         P2.fields(am, "a1 alpha minMHz maxMHz provenance")
         am = dict(am, **{key: P2.number(am[key]) for key in ("a1", "alpha", "minMHz", "maxMHz")})
-        if not (am["a1"] > 0 and 0 < am["minMHz"] <= am["maxMHz"] and am["provenance"] in PROVENANCE):
+        if not (am["a1"] > 0 and 0 < am["minMHz"] < am["maxMHz"] and am["provenance"] in PROVENANCE):
             raise ValueError("Неверный Am")
     return dict(value, gammaTables=typed_tables, am=am)
 
@@ -128,11 +129,14 @@ def interval_result(start, end, material, length, frequency, pol, heights, p):
         candidates.append({"model": "M5", "lossDb": depth * gamma})
     if not candidates:
         return {"code": "NO_MODEL_FOR_SCENARIO", "interval": {"startM": start, "endM": end, "scenario": scenario}}
+    for candidate in candidates:
+        candidate["status"] = STATUS[candidate["model"]]
     model, loss = candidates[0]["model"], candidates[0]["lossDb"]
     losses = [c["lossDb"] for c in candidates]
     return {
         "startM": start, "endM": end, "materialId": material, "scenario": scenario,
         "primaryModel": model, "primaryLossDb": loss,
+        "primaryStatus": STATUS[model], "scenarioClosed": STATUS[model] == "SOURCE_DOMAIN" and scenario in ("S1", "S2"),
         "depthTrend": {"M1": "SATURATING", "M2": "LINEAR", "M3": "SUBLINEAR", "M4": "EMPIRICAL", "M5": "LINEAR"}[model],
         "excessBaseline": "FREE_SPACE" if model == "M4" else "OTHER_MECHANISMS",
         "candidates": candidates, "spreadMinDb": min(losses), "spreadMaxDb": max(losses),
@@ -222,7 +226,7 @@ def evaluate(value):
     total = sum(i["primaryLossDb"] for i in results)
     if not math.isfinite(total) or total > P2.FLOAT_MAX:
         return {"code": "NUMERIC_FAILURE"}
-    return {"code": "OK", "lossDb": total, "intervals": results}
+    return {"code": "OK", "lossDb": total, "intervals": results, "allScenariosClosed": all(i["scenarioClosed"] for i in results)}
 
 
 def frequency_matrix(base):
@@ -257,6 +261,10 @@ def frequency_matrix(base):
                 assert got == models.split(), (climate, frequency, start, end, got, models)
                 if not models:
                     assert result["code"] == "NO_MODEL_FOR_SCENARIO"
+                expected_closed = bool(models and models.split()[0] in ("M1", "M3", "M4") and start == 0)
+                if models:
+                    assert result["scenarioClosed"] == expected_closed
+                    assert result["primaryStatus"] == STATUS[models.split()[0]]
                 count += 1
     return count
 
@@ -266,13 +274,14 @@ def self_test(cases):
     actual = evaluate(base)
     assert actual["code"] == "OK" and actual["intervals"][0]["primaryModel"] == "M3"
     controls = []
-    for key, replacement in (("code", "NO_VEGETATION"), ("lossDb", 0), ("intervals", [])):
+    for key, replacement in (("code", "NO_VEGETATION"), ("lossDb", 0), ("intervals", []), ("allScenariosClosed", False)):
         changed = copy.deepcopy(actual)
         changed[key] = replacement
         controls.append(changed)
     for key, replacement in (("primaryModel", "M5"), ("capApplied", True), ("capApplied", 0), ("excessBaseline", "FREE_SPACE"),
                              ("gammaSource", "NONE"), ("gammaProvenance", "ASSUMED_CONFIG"),
-                             ("spreadMaxDb", 0), ("candidates", []), ("startM", 1), ("amProvenance", None)):
+                             ("spreadMaxDb", 0), ("candidates", []), ("startM", 1), ("amProvenance", None),
+                             ("primaryStatus", "ASSUMED_EXTENSION"), ("scenarioClosed", False)):
         changed = copy.deepcopy(actual)
         changed["intervals"][0][key] = replacement
         controls.append(changed)
@@ -303,7 +312,7 @@ def main():
     if sha != SHA:
         raise SystemExit("SHA корпуса изменён; требуется новое согласование")
     cases = json.loads(raw)["cases"]
-    assert len(cases) == 54 and [c["id"] for c in cases] == [f"V{i:02}" for i in range(1, 55)]
+    assert len(cases) == 59 and [c["id"] for c in cases] == [f"V{i:02}" for i in range(1, 60)]
     controls, matrix_cells = self_test(cases)
     errors, models, codes = [], set(), set()
     for case in cases:
@@ -316,13 +325,13 @@ def main():
             assert case["input"] == original, "Вход изменён"
         except AssertionError as exc:
             errors.append({"id": case["id"], "error": str(exc)})
-    report = {"checker": "codex: REQ v0.3, JSON и первоисточники; без эталона автора", "corpusSha256": sha,
+    report = {"checker": "codex: REQ v0.4, JSON и первоисточники; без эталона автора", "corpusSha256": sha,
               "cases": len(cases), "matched": len(cases) - len(errors), "errors": errors,
               "negativeControls": controls, "frequencyMatrixCells": matrix_cells,
               "models": sorted(models), "codes": sorted(codes),
-              "physicalAcceptance": False, "freeze": "PENDING_REVIEW"}
+              "physicalAcceptance": False, "native": 58, "hostOnly": ["V59"]}
     if args.receipt:
-        args.receipt.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        args.receipt.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     print("P4_INDEPENDENT_CHECK_PASS" if not errors else "P4_INDEPENDENT_CHECK_FAIL")
     return bool(errors)

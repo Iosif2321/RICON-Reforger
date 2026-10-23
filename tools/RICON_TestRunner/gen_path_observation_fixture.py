@@ -44,40 +44,46 @@ def endpoint(lines, name, value):
               f"\t\t{name}.m_fDepthM = {value_literal(value['depthM'], 'float')};"]
 
 
+def observation_lines(name, obs):
+    """Общее наблюдение P2 для генераторов водного и растительного слоёв; только копирование."""
+    need(re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name), "Неверное имя переменной")
+    need(set(obs) == {"frequencyMHz", "environmentRevision", "tx", "rx", "coverage", "segments"}, "Неверные поля наблюдения")
+    lines = [f"\t\tRICON_PathObservation {name} = new RICON_PathObservation();",
+             f"\t\t{name}.m_fFrequencyMHz = {value_literal(obs['frequencyMHz'], 'float')};",
+             f"\t\t{name}.m_iEnvironmentRevision = {value_literal(obs['environmentRevision'], 'int')};"]
+    endpoint(lines, f"{name}.m_Tx", obs["tx"])
+    endpoint(lines, f"{name}.m_Rx", obs["rx"])
+    need(set(obs["coverage"]) <= set(FAMILIES), "Неизвестное семейство покрытия")
+    for family in FAMILIES:
+        if family in obs["coverage"]:
+            lines.append(f"\t\t{name}.m_aCoverage.Insert({enum(obs['coverage'][family], COVERAGE)});")
+    for i, segment in enumerate(obs["segments"]):
+        need(set(segment) == {"family", "startM", "endM", "entityKey", "knowledge", "materialId", "openings"}, "Неверные поля сегмента")
+        seg = f"segment{i}"
+        lines += [f"\t\tRICON_PathSegment {seg} = new RICON_PathSegment();",
+                  f"\t\t{seg}.m_eFamily = {enum(segment['family'], FAMILIES)};",
+                  f"\t\t{seg}.m_fStartM = {value_literal(segment['startM'], 'float')};",
+                  f"\t\t{seg}.m_fEndM = {value_literal(segment['endM'], 'float')};",
+                  f"\t\t{seg}.m_sEntityKey = {text(segment['entityKey'])};",
+                  f"\t\t{seg}.m_eKnowledge = {enum(segment['knowledge'], KNOWLEDGE)};",
+                  f"\t\t{seg}.m_sMaterialId = {text(segment['materialId'])};",
+                  f"\t\t{seg}.m_bOpenings = {value_literal(segment['openings'], 'bool')};",
+                  f"\t\t{name}.m_aSegments.Insert({seg});"]
+    return lines
+
+
 def case_lines(index, case):
     need(set(case) == {"id", "title", "input", "expect"}, "Неверные поля случая")
     inp, expected = case["input"], case["expect"]
     need(set(inp) == {"observation", "profile"}, "Неверные поля входа")
     obs, profile = inp["observation"], inp["profile"]
-    need(set(obs) == {"frequencyMHz", "environmentRevision", "tx", "rx", "coverage", "segments"}, "Неверные поля наблюдения")
     need(set(profile) == {"tempC", "salinityPpt"}, "Неверные поля профиля")
     need(set(expected) == {"observationCode", "water"}, "Неверные поля ожидания")
     water = expected["water"]
     need(water["code"] in CODES, "Неверный код воды")
     need(expected["observationCode"] == ("INVALID_OBSERVATION" if water["code"] == "INVALID_OBSERVATION" else "VALID"),
          "Несогласованные ожидаемые коды")
-    lines = [f"\tprotected static void Case{index}(RICON_PathObservationRun t)", "\t{",
-             "\t\tRICON_PathObservation input = new RICON_PathObservation();",
-             f"\t\tinput.m_fFrequencyMHz = {value_literal(obs['frequencyMHz'], 'float')};",
-             f"\t\tinput.m_iEnvironmentRevision = {value_literal(obs['environmentRevision'], 'int')};"]
-    endpoint(lines, "input.m_Tx", obs["tx"])
-    endpoint(lines, "input.m_Rx", obs["rx"])
-    need(set(obs["coverage"]) <= set(FAMILIES), "Неизвестное семейство покрытия")
-    for family in FAMILIES:
-        if family in obs["coverage"]:
-            lines.append(f"\t\tinput.m_aCoverage.Insert({enum(obs['coverage'][family], COVERAGE)});")
-    for i, segment in enumerate(obs["segments"]):
-        need(set(segment) == {"family", "startM", "endM", "entityKey", "knowledge", "materialId", "openings"}, "Неверные поля сегмента")
-        name = f"segment{i}"
-        lines += [f"\t\tRICON_PathSegment {name} = new RICON_PathSegment();",
-                  f"\t\t{name}.m_eFamily = {enum(segment['family'], FAMILIES)};",
-                  f"\t\t{name}.m_fStartM = {value_literal(segment['startM'], 'float')};",
-                  f"\t\t{name}.m_fEndM = {value_literal(segment['endM'], 'float')};",
-                  f"\t\t{name}.m_sEntityKey = {text(segment['entityKey'])};",
-                  f"\t\t{name}.m_eKnowledge = {enum(segment['knowledge'], KNOWLEDGE)};",
-                  f"\t\t{name}.m_sMaterialId = {text(segment['materialId'])};",
-                  f"\t\t{name}.m_bOpenings = {value_literal(segment['openings'], 'bool')};",
-                  f"\t\tinput.m_aSegments.Insert({name});"]
+    lines = [f"\tprotected static void Case{index}(RICON_PathObservationRun t)", "\t{"] + observation_lines("input", obs)
     lines += ["\t\tRICON_WaterProfile profile = new RICON_WaterProfile();",
               f"\t\tprofile.m_fTempC = {value_literal(profile['tempC'], 'float')};",
               f"\t\tprofile.m_fSalinityPpt = {value_literal(profile['salinityPpt'], 'float')};",

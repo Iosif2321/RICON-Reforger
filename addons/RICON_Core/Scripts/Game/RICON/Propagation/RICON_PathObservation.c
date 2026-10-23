@@ -69,7 +69,7 @@ class RICON_PathObservationModel
 {
 	static const int MAX_SEGMENTS = 1024;
 
-	protected static bool ValidKey(string key)
+	static bool ValidKey(string key)
 	{
 		if (key.Length() < 1 || key.Length() > 64)
 			return false;

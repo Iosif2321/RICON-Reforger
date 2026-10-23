@@ -1,0 +1,284 @@
+{
+    "head":  "a55ac3acfd569de88274321327740e84bc699219",
+    "pid":  27160,
+    "exitCode":  0,
+    "timedOut":  false,
+    "prefix":  "ricon-vegetation-codex-20261023-140256",
+    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-vegetation-codex-20261023-140256\\console.log",
+    "logSha256":  "e76522a4af8cc2590d7d28aad91fcfd13f6b4e23bf2b2d1dfa7635ea0f7b7c8b",
+    "sourceStable":  true,
+    "sources":  [
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+                        "sha256":  "c2644e9d25503d47c73ba9760068d6392cca132b19eb65fb8d38b605a0d5be36"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+                        "sha256":  "3f159470916f75d92118774ede66980133696d1d0cfc8f74d299129b315b9f4a"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+                        "sha256":  "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+                        "sha256":  "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c",
+                        "sha256":  "dfaad918d251206d35dd5dc5fc8371fd2a9b69a38d164e3121ffbcb8ca985c14"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+                        "sha256":  "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+                        "sha256":  "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+                        "sha256":  "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_AntennaPattern.c",
+                        "sha256":  "8d447e40e483e75bf248f181b3fc9bd5fef3a536575348e5305a74d11e914763"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+                        "sha256":  "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+                        "sha256":  "ae4ea448f61072e4daeb0cdaf668f1800097d487d5c555e90aeff2d6cce6aafe"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_IntelligibilityModel.c",
+                        "sha256":  "90e7d6ad589f231f38f7c5438c4f2fc7669e620c8002bc216ff6918a9e4d7676"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+                        "sha256":  "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_NoiseModel.c",
+                        "sha256":  "8eb1f8c2a19356f93cd5b78c3b98056e1d06d620231c956d9a8edd42997ef5ce"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PathObservation.c",
+                        "sha256":  "2594bdae2878a75d0610de321b1684cf244cffa597501681efd4d6ebe48b7d1a"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c",
+                        "sha256":  "27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_TerrainDiffractionModel.c",
+                        "sha256":  "a8996f6d7e7859b9644ef1e13b631d17ea4ad786e9663ca8a9df41ebbd4aaf51"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_VegetationLayer.c",
+                        "sha256":  "6a32e7ac8ec3833e6b5818ad4d98cca7637b2b1026fba5eec97b81ff40209b74"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WaterLayer.c",
+                        "sha256":  "e1b6cad38517f6d926152c852df81749a15d9ac7ece203acdfaf43e89bbb945d"
+                    },
+                    {
+                        "path":  "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+                        "sha256":  "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelCutoffFixtures.c",
+                        "sha256":  "fcb43022fdebfba8a3c97d9a4400034afc81ff391927fba0b62c39710277e35b"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelCutoffFixtureSupport.c",
+                        "sha256":  "55f472f47f4b7285c9df93e754dc63de7fe2ea0a55538c81625e6f77e6c97a99"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelFadingFixtures.c",
+                        "sha256":  "b4fed18e339469ff7b6c884b5c94e7a7e6b4cc13db51dc4bb307a3daece3c73c"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ChannelFadingFixtureSupport.c",
+                        "sha256":  "77a6c05b7fc5ceb713277b34af2480e7921bf01859a83a016fd402fc36e94df7"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_ExtFixtures.c",
+                        "sha256":  "5f3f2642e333abeb84e4524dd8be2b4efde440ab2143043f16a2707b19cc6b56"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_L0Fixtures.c",
+                        "sha256":  "4b13d55d0824e273b92a4a609ccc35e1df3fa86ff8e0801649525d9b96410d20"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_L0FixtureSupport.c",
+                        "sha256":  "a430c8521a28a18fd9ca1328363eb1ccd93c1309edf8fd00ebffc2f37a7face3"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_L2Fixtures.c",
+                        "sha256":  "31c47fd01fa40cfe4c586f50578fe584773820932ce35767e950ff8ce05e0523"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_L2FixtureSupport.c",
+                        "sha256":  "4ffb8fb58a9cd84e521cd0f4aa8d2232f5852857985c6b96b55305ed98253b81"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleFixtures.c",
+                        "sha256":  "4d7d614f9d6efe22bbbfd26ceabb99029dc1d0f9c9d1600bacefec282cbb21db"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleFixtureSupport.c",
+                        "sha256":  "34ba90f909a444376bf7b20a3345779eec55b6b2ed765c76a730e7d072e01eb1"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LinkPublicationFixtures.c",
+                        "sha256":  "03d7b37832a986d6eb23dad568f41fd90fcf1dbf72348c3711cb87df097c45b0"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LinkPublicationFixtureSupport.c",
+                        "sha256":  "96fab662465769a70ed4afeca667e5c981d1967290b6db319856e5894cd6d0a5"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PairServiceFixtures.c",
+                        "sha256":  "be4dc9554d0f48c359b566e9d9db69aaf2b56b09c06989106ddd85085c801a5c"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PairServiceFixtureSupport.c",
+                        "sha256":  "4f7d210b5e53b9405363625f81ac484636913cb8a85ee106c43cd047e06c780e"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PathObservationFixtures.c",
+                        "sha256":  "e8375e886ab2325b66fd3b5a58e3888e7d5e1cb1680835117efdb9a0a9463b71"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PathObservationFixtureSupport.c",
+                        "sha256":  "9142edd87d961569ccf80a31ee1db9f4d4ef087a97fde2a1c497efec667812de"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_RadioDeviceFixtures.c",
+                        "sha256":  "5bbdac774fad8b83df2159d920f087364e64afa956b4962df3bc70460256894d"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_RadioDeviceFixtureSupport.c",
+                        "sha256":  "dde074c8ad5989a3fbf174298004b182e4d7495a8e955a96f3dd0729d8bac29b"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_RouteFixtures.c",
+                        "sha256":  "4ae6ca89ae872ff06e09e85b1c30877fbd6b4d5a3eb4d28a0290f3118c5e2dd4"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_RouteFixtureSupport.c",
+                        "sha256":  "293b7b530540471ff1217d036377ba4b996dfdda18958ca4ec7062dad481381b"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_SnapshotFixtures.c",
+                        "sha256":  "5916e51832dc82d7288881d63efe22e573b32597239e0dab463ffbba5f3c21ec"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_SnapshotFixtureSupport.c",
+                        "sha256":  "751bec2d946f802bbd1cf50d356503abfe34244d857dc9bc82b14c15fec49209"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TestSupport.c",
+                        "sha256":  "d3741f72de00c5e7f67930551d58fbcd221e50e9ad045628d71ebca54448ae5e"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VegetationFixtures.c",
+                        "sha256":  "a30f2b8bc871af803ea01e91c50d73748710525076671207119902436a7d9aaf"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VegetationFixtureSupport.c",
+                        "sha256":  "3851077aebc1166b925340741a5c108532e93e3da4f591cba68139c907a95a5b"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtures.c",
+                        "sha256":  "b8e18ff16d744ee4f9ce798aa494c06379e8b2beb8cbab1a20c6643c48639a75"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtureSupport.c",
+                        "sha256":  "5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_WorldProfileFixtures.c",
+                        "sha256":  "dddc9e60aebf91f4fa69d3090dbb7dea37e69d13aa2e36c8f7c9f2eaf121bdaa"
+                    },
+                    {
+                        "path":  "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_WorldProfileFixtureSupport.c",
+                        "sha256":  "a4995f398f106e5c8229fce1afce43debde760375f4c5079eb35df2159398874"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_ChannelCutoffProbePlugin.c",
+                        "sha256":  "65a7e0845241fb5fceac560733e55247f85aa41bea81f25fb39b1b3ffd3e6ccc"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_ChannelFadingProbePlugin.c",
+                        "sha256":  "ecebd604bad77577513adf4953fe13cfc1200143401a26c85b72a94a0397e26b"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_L0ProbePlugin.c",
+                        "sha256":  "ba02a32611d383773c435e44b638b118a0692031407ef67f7e15af10a9f9124c"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_LinkPhysicsProbePlugin.c",
+                        "sha256":  "b2cf41a57f28d8249af89cbe9ef84e67832c19341d8bb81de0ca2f5f04be3eb7"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_LinkPublicationProbePlugin.c",
+                        "sha256":  "88a914cf5bede1ad9252b86d3f9d056443723f30d07e9f01ae860ab5c710a4b4"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_P526MatrixPoints.c",
+                        "sha256":  "75b71b25b1ea7b301842d1b0a46d88098c8ddd4a49bffa0dee535ee5551bc551"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_P526MatrixProbePlugin.c",
+                        "sha256":  "8d382cfb4f3938e616c7c03d5989a48f6cd432a2e6a07a058747d89928587539"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_PairServiceProbePlugin.c",
+                        "sha256":  "b650483081b848bc53826c7405ee673a851d416dd8bac2b7b1cd99e8ae6c98d3"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_PathObservationProbePlugin.c",
+                        "sha256":  "046930fcb21613e7111eef58a5ebc3dbe4d7c6806da8ff80ab145779e7f5748e"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_RadioDeviceProbePlugin.c",
+                        "sha256":  "76dce5c24c9bd5aad6aedced114078fd47432ec6690c4bd9c6331fc0bc3b961e"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_RouteProbePlugin.c",
+                        "sha256":  "3d9479e3890135de3afe832fdcd2bb916824b7eb291f14e66e79c314e9d618eb"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_SensitivityPoints.c",
+                        "sha256":  "6d982a6414fbc2a05565a6a04e6e9bddf6779e49085ef091fc832d551e9b180c"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_SensitivityProbePlugin.c",
+                        "sha256":  "9f9824cf4b970cd14597990c0b3013befe75b4ad040da6dde43fb2317075b0a7"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_SnapshotProbePlugin.c",
+                        "sha256":  "8fd51f374b3a7ddb932593e3b9db2667059861876d42ff3b7273e5f72a1db108"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TestRunnerPlugin.c",
+                        "sha256":  "6edc9477476b112b4d8e28fd934a45258570195d73f46092d35462f74787d8bf"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_VegetationProbePlugin.c",
+                        "sha256":  "342363fd6237cf206cf507f0295b90d561a9ddf86ae89e7690068b0cbdf83fd0"
+                    },
+                    {
+                        "path":  "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_WorldProfileProbePlugin.c",
+                        "sha256":  "19da459c03e553d9f75051b1e43a35bd3bb9b18825dc3919bd71434ad9a09b5b"
+                    }
+                ],
+    "worldStarted":  false,
+    "donePass":  1,
+    "scriptErrors":  0,
+    "taggedFails":  0
+}

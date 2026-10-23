@@ -1,10 +1,10 @@
 {
-  "checker": "codex: REQ v0.3, JSON и первоисточники; без эталона автора",
-  "corpusSha256": "d130f2f085cc333f2e80ff6b61e06ab1442880d82758b68db648cf3185777560",
-  "cases": 54,
-  "matched": 54,
+  "checker": "codex: REQ v0.4, JSON и первоисточники; без эталона автора",
+  "corpusSha256": "576fed29dd79f83ec045fabb10ded6a52103a33a53935d2ee270299668657ca9",
+  "cases": 59,
+  "matched": 59,
   "errors": [],
-  "negativeControls": 13,
+  "negativeControls": 16,
   "frequencyMatrixCells": 90,
   "models": [
     "M1",
@@ -25,5 +25,8 @@
     "VEGETATION_UNKNOWN"
   ],
   "physicalAcceptance": false,
-  "freeze": "PENDING_REVIEW"
+  "native": 58,
+  "hostOnly": [
+    "V59"
+  ]
 }
