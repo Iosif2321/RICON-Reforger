@@ -144,11 +144,103 @@
 4. `SCR_VONEntryRadio.ToggleMuteEntry()` возвращает false без трансивера; какой native-вызов он делает дальше
    (`SetMuteState`?) — не прочитано — следующее окно.
 
-Не прочитано и потому не утверждается: тела `ActivateVON(EVONTransmitType)`, `DeactivateVON(...)`, `OnCapture`,
-продолжение `SetActiveTransmit` для DIRECT, тело `ToggleMuteEntry` после проверки, getter `GetOnPlayerSpawned`.
-Предложенные дочитки (по одному окну): `SCR_VONController.c` grep `void ActivateVON` C7 и `void DeactivateVON` C7;
-`SCR_VoNComponent.c` grep `void OnCapture` C7; `SCR_VONEntryRadio.c` line 240 C7; `SCR_BaseGameMode.c` grep
-`GetOnPlayerSpawned` C3.
+Не прочитано в первой серии: тела `ActivateVON(EVONTransmitType)`, `DeactivateVON(...)`, `OnCapture`, продолжение
+`SetActiveTransmit` для DIRECT, тело `ToggleMuteEntry` после проверки, getter `GetOnPlayerSpawned` — закрыто второй
+серией ниже, кроме DIRECT-ветви `SetActiveTransmit` и тела перегрузки `ActivateVON(entry, type)`.
+
+## Вторая серия: адресные дочитки ea8–ea12 (ACK codex #3953, тот же метод)
+
+| Окно | Папка лога | sha256 | Строк |
+|---|---|---|---|
+| ea8 `SCR_VONController.c` grep `void ActivateVON` C7 | `ricon-wbreader-ea8-activatevon-def-20261023-203658` | `851b2463cb87327b59a13db654e25d739fd1fff6b107e0659b2316c594486f8d` | 15 |
+| ea9 `SCR_VONController.c` grep `void DeactivateVON` C7 | `ricon-wbreader-ea9-deactivatevon-def-20261023-203714` | `1dd8919757f967f12e80069a5f60b1f1b453479d2ab719996c297bfd50be8dca` | 15 |
+| ea10 `SCR_VoNComponent.c` grep `void OnCapture` C7 | `ricon-wbreader-ea10-oncapture-def-20261023-203726` | `aa3e6c344f4c5731ae5b71842efcf95d81d5d98234a69e8ea6559faa39705cda` | 15 |
+| ea11 `SCR_VONEntryRadio.c` line 240 C7 | `ricon-wbreader-ea11-togglemute-240-20261023-203735` | `c803759f100ea795383cb8bf5747b295218185620b115d2ff063d5a11b2e545f` | 15 |
+| ea12 `SCR_BaseGameMode.c` grep `GetOnPlayerSpawned` C3 | `ricon-wbreader-ea12-getonplayerspawned-20261023-203747` | `13bee42bb3615ecc523396b6d3af2ee51bfd9ddd2decce22af15e28cb510aac5` | 7 |
+
+**ea8 — `SCR_VONController.c:517–531`:**
+```
+518:        SetVONLongRange(!m_bIsLongRangeToggled);
+522:    //! VON activation
+523:    //! \param[in] transmitType type of entry to be activated
+524:    protected void ActivateVON(EVONTransmitType transmitType)
+525:    {
+526:        SCR_VONEntry entry = GetEntryByTransmitType(transmitType);
+527:        if (!entry)
+528:            return;
+530:        ActivateVON(entry, transmitType);
+531:    }
+```
+
+**ea9 — `SCR_VONController.c:578–591`:**
+```
+578:        m_VONComp.SetCapture(true);
+579:        m_bIsActive = true;
+580:        return true;
+581:    }
+584:    //! Current VON deactivation
+585:    protected void DeactivateVON(EVONTransmitType transmitType = EVONTransmitType.NONE)
+586:    {
+587:        if (!m_VONComp)
+588:            return; 
+590:        if (transmitType != EVONTransmitType.NONE && transmitType != m_eVONType)    // only deactivate target type, in case other type was activated already
+591:            return;
+```
+
+**ea10 — `SCR_VoNComponent.c:55–69`:**
+```
+55:     //! \return true if recently active
+56:     bool IsTransmitingRadio()
+57:     {
+58:         return m_fTransmitRadioTimeout > GetGame().GetWorld().GetWorldTime();
+59:     }
+62:     override protected event void OnCapture(BaseTransceiver transmitter)
+63:     {
+64:         SCR_VonDisplay display = GetDisplay();
+66:         if (display)
+67:             display.OnCapture(transmitter);
+69:         m_OnCaptureVON.Invoke(transmitter);
+```
+
+**ea11 — `SCR_VONEntryRadio.c:240–254`:**
+```
+240:        bool state = !m_RadioTransceiver.IsMuted();
+241:        m_RadioTransceiver.SetMuteState(state);
+242:        SetMuted(state);
+244:        return state;
+245:    }
+248:    bool GetIsMuted()
+249:    {
+250:        // Constructor allows the entry to not have m_RadioTransceiver assigned
+251:        if (!m_RadioTransceiver)
+252:            return true;
+254:        // m_RadioTransceiver can't be used directly if this is called on a entry that is not the active entry.
+```
+
+**ea12 — `SCR_BaseGameMode.c:626–632`:**
+```
+629:    ScriptInvokerBase<SCR_BaseGameMode_PlayerIdAndEntity> GetOnPlayerSpawned()
+630:    {
+631:        return m_OnPlayerSpawned;
+632:    }
+```
+
+Следствия второй серии (только прочитанное):
+5. `OnCapture` вызывает `m_OnCaptureVON.Invoke(transmitter)` — наблюдатель `TX_START/TX_STOP` прибора получает
+   передатчик (по DOC — null при прямой речи); сам `OnCapture` — событие по кадрам записи, окончание выводится по
+   таймауту (`TRANSMISSION_TIMEOUT_MS = 500`, `IsTransmitingRadio()` по `m_fTransmitRadioTimeout`).
+6. Ванильный UI меню VON сам вызывает `m_RadioTransceiver.SetMuteState(state)` на клиенте (`ToggleMuteEntry`,
+   :240–242) и дублирует состояние в entry (`SetMuted`). Это SOURCE-подтверждение, что вызов с клиента штатен; смысл
+   результата, направление RX/TX, сохранение и репликация по-прежнему runtime. Оговорка :254: трансивер entry
+   нельзя использовать напрямую, если entry не активна.
+7. `ActivateVON(type)` → `GetEntryByTransmitType` → перегрузка `ActivateVON(entry, type)` (тело не прочитано; её
+   хвост :578–580 — `SetCapture(true); m_bIsActive = true`). `DeactivateVON(type)` возвращается без `m_VONComp` и
+   при несовпадении типа с `m_eVONType` — радио и direct деактивируются раздельно.
+8. `SCR_BaseGameMode.GetOnPlayerSpawned()` публичен — lifecycle-хук прибора без `modded class`.
+
+Для прибора фазы A остаются непрочитанными: тело `ActivateVON(entry, type)` (где именно `SetActiveTransmit`),
+DIRECT-ветвь `SetActiveTransmit` после :636, таймаут/окончание в `OnCapture`. Воспроизведение второй серии —
+`docs/evidence/receipts/ea-windows2-claude.ps1`.
 
 Воспроизведение: `docs/evidence/receipts/ea-windows-claude.ps1` → по одному `tools/RICON_WbReader/run.ps1 -Name
 ea<N>-… -Root '$ArmaReforger:scripts' -Ext c -Grep <…> -PathFilter <файл> -Context <N> -MaxFiles 1 [-Line <N>]`.
