@@ -1,0 +1,29 @@
+{
+  "checker": "codex: REQ v0.3, JSON и первоисточники; без эталона автора",
+  "corpusSha256": "d130f2f085cc333f2e80ff6b61e06ab1442880d82758b68db648cf3185777560",
+  "cases": 54,
+  "matched": 54,
+  "errors": [],
+  "negativeControls": 13,
+  "frequencyMatrixCells": 90,
+  "models": [
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5"
+  ],
+  "codes": [
+    "INVALID_INPUT",
+    "INVALID_OBSERVATION",
+    "NO_MODEL_FOR_SCENARIO",
+    "NO_VEGETATION",
+    "NUMERIC_FAILURE",
+    "OK",
+    "VEGETATION_COVERAGE_INCOMPLETE",
+    "VEGETATION_MIXED_PROFILE",
+    "VEGETATION_UNKNOWN"
+  ],
+  "physicalAcceptance": false,
+  "freeze": "PENDING_REVIEW"
+}
