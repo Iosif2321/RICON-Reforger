@@ -128,11 +128,15 @@ def run(exe, out):
         lf_lb = float(lf["A_btl"]) if lf_ok else None
         it_lb = float(it["A"]) if it_ok else None
         c["FSPL"] = fspl
-        # P.368-10 NOTE 1 / LFMF: reference antenna is a short monopole on perfect ground (4.77 dBi each end), so the
-        # isotropic-convention value is A_btl - 20 log10(2) while both antennas are near the ground (h << lambda).
-        c["C1_LFMF"] = {"Lb": lf_lb, "LbIsoNearGround": None if lf_lb is None else lf_lb - MONOPOLE_IMAGE_DB,
-                        "excess": None if lf_lb is None else lf_lb - fspl, "method": int(lf["method"]),
+        # P.368-10 Annex 1: reference antenna is a short vertical monopole on perfect ground (LFMF: 4.77 dBi each end).
+        # A_btl stays raw. A_btl - 20 log10(2) is only an ASSUMED_DIAGNOSTIC isotropic re-reference (codex #3790): it
+        # presumes both antennas near the ground, h << lambda, which is not quantified; max(h)/lambda is reported instead
+        # of a verdict. P.368 describes the vertical field component, so H is implementation output, not the P.368 source.
+        c["C1_LFMF"] = {"Lb": lf_lb, "excess": None if lf_lb is None else lf_lb - fspl, "method": int(lf["method"]),
                         "rc": int(lf["rc"]), "domain": lf_dom,
+                        "sourceMechanism": "P368_VERTICAL" if c["pol"] == "VERTICAL" else "IMPLEMENTATION_ONLY_H",
+                        "diagIsoAssumed": None if lf_lb is None else lf_lb - MONOPOLE_IMAGE_DB,
+                        "diagMaxHOverLambda": max(h1, h2) / lam,
                         # P.368-10 recommends 3 NOTE 1: if eps_r << 60 lambda sigma, usable up to h = 1.2 sqrt(sigma)
                         # lambda^1.5. "<<" is not quantified, so only the ratio and the height are reported.
                         "p368Ratio60LambdaSigmaOverEps": 60.0 * lam * c["sigma"] / c["eps"],
