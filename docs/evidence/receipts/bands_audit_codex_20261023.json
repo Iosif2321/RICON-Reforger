@@ -1,0 +1,1989 @@
+{
+  "schema": "ricon.audit.bands.codex.v1",
+  "level": "HOST_DIAGNOSTIC_NOT_CALIBRATION",
+  "note": "Вода T=20 C, S=0; шум B=25 кГц, NF=6 дБ; каталоги и рельеф — TEST_ONLY. Это не профили устройств.",
+  "sha256": {
+    "docs/evidence/receipts/bands_audit_codex_20261023.py": "2ec02e0e507e5eb2c6da52e6639f9d26d236f6109c6219dbcfd59b73e8410eef",
+    "oracle/ricon_oracle.py": "b0b9916a6d5633c148bf7e117aa5847d852df92a746b4612ee88ded261a64080",
+    "oracle/l2_terrain_oracle.py": "931ddad25729f340a0c076383aff47bdc245447bac7d261275049e7d15d77267",
+    "oracle/vegetation_oracle.py": "da51c9ba17e12a8f89b9cc3dcfa91b39373af912f5c99f2af3f5c90ba310c92e",
+    "oracle/path_observation_oracle.py": "d86daf972730ec36d4d52a84d80ccb18f61cdc3fd416edda8a1119ce0445d098",
+    "oracle/vectors/l2_terrain_v1.json": "91d095471c80ed4ada896fc545a63fa5355c42399829e24e2b98d204aad465a2",
+    "oracle/vectors/vegetation_v1.json": "576fed29dd79f83ec045fabb10ded6a52103a33a53935d2ee270299668657ca9"
+  },
+  "rows": [
+    {
+      "frequencyMHz": 0.03,
+      "wavelengthM": 9993.081933333333,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9993.081933333333
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9993.081933333333
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9993.081933333333
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 21.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.0369289049987185e-08
+    },
+    {
+      "frequencyMHz": 0.1,
+      "wavelengthM": 2997.92458,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 2997.92458
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 2997.92458
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 2997.92458
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 32.44778322188338,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.485476561018522e-07
+    },
+    {
+      "frequencyMHz": 0.15,
+      "wavelengthM": 1998.6163866666666,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1998.6163866666666
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1998.6163866666666
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1998.6163866666666
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 35.969608402997,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 1.0092322262009916e-06
+    },
+    {
+      "frequencyMHz": 0.29999998211860657,
+      "wavelengthM": 999.3082528967468,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.3082528967468
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.3082528967468
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.99020779855724,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 41.990207798557236,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.036928422955957e-06
+    },
+    {
+      "frequencyMHz": 0.3,
+      "wavelengthM": 999.3081933333333,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.3081933333333
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.3081933333333
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.99020831627662,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 41.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 81.68374124426535,
+        "noiseDbm": -48.312045775384135,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.03692890419537e-06
+    },
+    {
+      "frequencyMHz": 0.30000004172325134,
+      "wavelengthM": 999.308054352063,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.308054352063
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 999.308054352063
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 21.990209524288392,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 41.99020952428839,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 81.68373957116904,
+        "noiseDbm": -48.31204744848041,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.0369300270874435e-06
+    },
+    {
+      "frequencyMHz": 1,
+      "wavelengthM": 299.792458,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 299.792458
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 299.792458
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 32.44778322188338,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 52.44778322188338,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 67.2,
+        "noiseDbm": -62.79578464057896,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.4854765511006494e-05
+    },
+    {
+      "frequencyMHz": 1.7,
+      "wavelengthM": 176.34850470588236,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 176.34850470588236
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 176.34850470588236
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 37.05676164944885,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 57.056761649448845,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 60.81656487782182,
+        "noiseDbm": -69.17921150215662,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.0001296302717796127
+    },
+    {
+      "frequencyMHz": 2,
+      "wavelengthM": 149.896229,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 149.896229
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 149.896229
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 38.468383135162995,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 58.468383135163,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 58.86146912010773,
+        "noiseDbm": -71.13430116031145,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.00017941906084185965
+    },
+    {
+      "frequencyMHz": 3,
+      "wavelengthM": 99.93081933333333,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 99.93081933333333
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 21.99020831627662,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 41.99020831627662,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 61.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 53.98374124426535,
+        "noiseDbm": -76.0119941287702,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.0004036928823860604
+    },
+    {
+      "frequencyMHz": 10,
+      "wavelengthM": 29.9792458,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 29.9792458
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 32.44778322188338,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 52.44778322188338,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 72.44778322188337,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 39.5,
+        "noiseDbm": -90.49433471462467,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.004485475559313678
+    },
+    {
+      "frequencyMHz": 20,
+      "wavelengthM": 14.9896229,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 14.9896229
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 38.468383135162995,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 58.468383135163,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 78.468383135163,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 31.161469120107725,
+        "noiseDbm": -98.82442073000568,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.017941890215607645
+    },
+    {
+      "frequencyMHz": 25,
+      "wavelengthM": 11.99169832,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 11.99169832
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 40.40658339532413,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 60.40658339532413,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 80.40658339532413,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 28.47706175978456,
+        "noiseDbm": -101.50037970410148,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.02803418937403963
+    },
+    {
+      "frequencyMHz": 29.999998092651367,
+      "wavelengthM": 9.993082568676412,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9.993082568676412
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 41.990207764042616,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 61.990207764042616,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 81.99020776404261,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 26.283742009109453,
+        "noiseDbm": -103.68168775373033,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OUT_OF_DOMAIN_FREQUENCY",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.040369202770840114
+    },
+    {
+      "frequencyMHz": 30,
+      "wavelengthM": 9.993081933333333,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9.993081933333333
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 41.99020831627663,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 61.99020831627662,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 81.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 26.283741244265357,
+        "noiseDbm": -103.68168851324678,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.04036920790403988
+    },
+    {
+      "frequencyMHz": 30.000001907348633,
+      "wavelengthM": 9.993081297990335,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 9.993081297990335
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 41.99020886851059,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 61.99020886851059,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 81.99020886851059,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 26.283740479421304,
+        "noiseDbm": -103.6816892727632,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.040369213037239955
+    },
+    {
+      "frequencyMHz": 60,
+      "wavelengthM": 4.996540966666666,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 4.996540966666666
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 48.01080822955625,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 68.01080822955625,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 88.01080822955625,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 17.945210364373075,
+        "noiseDbm": -111.84759951877193,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.16147585787345772
+    },
+    {
+      "frequencyMHz": 76,
+      "wavelengthM": 3.944637605263158,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 3.944637605263158
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 50.064055067499204,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 70.0640550674992,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 90.0640550674992,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 15.10146349382208,
+        "noiseDbm": -114.5117278413,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.2590777839828287
+    },
+    {
+      "frequencyMHz": 88,
+      "wavelengthM": 3.4067324772727274,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 3.4067324772727274
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 51.33743666488675,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 71.33743666488675,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 91.33743666488675,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 13.33782998144033,
+        "noiseDbm": -116.0956724921784,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.34734929724106745
+    },
+    {
+      "frequencyMHz": 100,
+      "wavelengthM": 2.99792458,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 2.99792458
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 52.44778322188338,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 72.44778322188337,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 92.44778322188337,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 11.800000000000004,
+        "noiseDbm": -117.41499996979755,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.448537638334351
+    },
+    {
+      "frequencyMHz": 105.9,
+      "wavelengthM": 2.830901397544854,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 2.830901397544854
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 52.94570242403307,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 72.94570242403307,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 92.94570242403307,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 11.11038190502267,
+        "noiseDbm": -117.98334573813992,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M1",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 0.5030250744106165
+    },
+    {
+      "frequencyMHz": 150,
+      "wavelengthM": 1.9986163866666666,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1.9986163866666666
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 55.969608402997004,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 75.969608402997,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 95.969608402997,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 6.9222721241576295,
+        "noiseDbm": -121.01729473184069,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M1",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 1.0091815129961668
+    },
+    {
+      "frequencyMHz": 230,
+      "wavelengthM": 1.3034454695652173,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1.3034454695652173
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 59.68233994223523,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 79.68233994223523,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 99.68233994223523,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 1.780138942312675,
+        "noiseDbm": -123.47552283579697,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 2.3725367954104915
+    },
+    {
+      "frequencyMHz": 249.99998474121094,
+      "wavelengthM": 1.1991699051915226,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1.1991699051915226
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 60.40658286517947,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 80.40658286517947,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 100.40658286517947,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.777062494034908,
+        "noiseDbm": -123.7871391812971,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 2.803031245629938
+    },
+    {
+      "frequencyMHz": 250,
+      "wavelengthM": 1.199169832,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1.199169832
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 60.40658339532413,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 80.40658339532413,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 100.40658339532413,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.7770617597845728,
+        "noiseDbm": -123.7871393915227,
+        "noiseModelInDomain": true
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 2.8030315877491168
+    },
+    {
+      "frequencyMHz": 250.00001525878906,
+      "wavelengthM": 1.1991697588084864,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.984197280441926,
+          "effectiveDistanceM": 1.1991697588084864
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 60.40658392546874,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 80.40658392546874,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 100.40658392546874,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 2.803031929868315
+    },
+    {
+      "frequencyMHz": 300,
+      "wavelengthM": 0.9993081933333333,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 21.99020831627662,
+          "effectiveDistanceM": 1.0
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 61.99020831627662,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 81.99020831627662,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 101.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 4.036117643490611
+    },
+    {
+      "frequencyMHz": 400,
+      "wavelengthM": 0.749481145,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 24.48898304844262,
+          "effectiveDistanceM": 1.0
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 64.48898304844262,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 84.48898304844262,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 104.48898304844262,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S2",
+              "primaryModel": "M4",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 7.1741990040831105
+    },
+    {
+      "frequencyMHz": 466.475,
+      "wavelengthM": 0.642676366364757,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 25.824350689300775,
+          "effectiveDistanceM": 1.0
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 65.82435068930079,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 85.82435068930079,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 105.82435068930079,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 9.755608165502977
+    },
+    {
+      "frequencyMHz": 1000,
+      "wavelengthM": 0.299792458,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 32.44778322188338,
+          "effectiveDistanceM": 1.0
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 72.44778322188337,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 92.44778322188337,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 112.44778322188337,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M5",
+              "primaryStatus": "ASSUMED_EXTENSION",
+              "scenarioClosed": false
+            }
+          ]
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 44.754859753945425
+    },
+    {
+      "frequencyMHz": 3000,
+      "wavelengthM": 0.09993081933333334,
+      "fspl": [
+        {
+          "distanceM": 1,
+          "lossDb": 41.99020831627662,
+          "effectiveDistanceM": 1.0
+        },
+        {
+          "distanceM": 100,
+          "lossDb": 81.99020831627662,
+          "effectiveDistanceM": 100.0
+        },
+        {
+          "distanceM": 1000,
+          "lossDb": 101.99020831627662,
+          "effectiveDistanceM": 1000.0
+        },
+        {
+          "distanceM": 10000,
+          "lossDb": 121.99020831627662,
+          "effectiveDistanceM": 10000.0
+        }
+      ],
+      "noiseRuralTestOnly": {
+        "faDb": 0.0,
+        "noiseDbm": -123.99578710750774,
+        "noiseModelInDomain": false
+      },
+      "l2Code": "OK",
+      "vegetation": [
+        {
+          "fixture": "V03",
+          "material": "forest.mixed_spb",
+          "code": "OK",
+          "intervals": [
+            {
+              "scenario": "S1",
+              "primaryModel": "M3",
+              "primaryStatus": "SOURCE_DOMAIN",
+              "scenarioClosed": true
+            }
+          ]
+        },
+        {
+          "fixture": "V08",
+          "material": "forest.tropical",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        },
+        {
+          "fixture": "V03",
+          "material": "woodland.rice71",
+          "code": "NO_MODEL_FOR_SCENARIO",
+          "intervals": []
+        }
+      ],
+      "waterBulkDbPerM_T20_S0_TEST_ONLY": 395.77388167102356
+    }
+  ],
+  "selfCheck": "PASS"
+}
