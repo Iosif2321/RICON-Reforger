@@ -1,0 +1,88 @@
+{
+    "head":  "7b297253772963b6454447532c025d81c1f24ced",
+    "started":  "2026-10-23T21:40:21.9052955+03:00",
+    "ended":  "2026-10-23T21:40:31.5487296+03:00",
+    "executable":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\ArmaReforgerWorkbenchSteamDiag.exe",
+    "fileVersion":  "1.8.0.13",
+    "arguments":  [
+                      "-gproj",
+                      "\"C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\addon.gproj\"",
+                      "-addonsDir",
+                      "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\addons,C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\addons,C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\addons\"",
+                      "-noBackend",
+                      "-wbModule=ScriptEditor",
+                      "-plugin=RICON_LiveObserverProbePlugin",
+                      "-wbSilent",
+                      "-exitAfterInit",
+                      "-noThrow",
+                      "-logLevel",
+                      "verbose",
+                      "-log-scr-checksum",
+                      "-logsDir",
+                      "ricon-liveobserver-codex-20261023-214021"
+                  ],
+    "pid":  22148,
+    "exitCode":  0,
+    "timedOut":  false,
+    "prefix":  "ricon-liveobserver-codex-20261023-214021",
+    "logPath":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-liveobserver-codex-20261023-214021\\console.log",
+    "logExists":  true,
+    "logSha256":  "39512040131a139ecc6b9252cbd3d2679afab5f50ba0d5e594abfb9d478e9d1a",
+    "sourceStable":  true,
+    "sources":  [
+                    {
+                        "path":  "tools/RICON_LiveProbe/addon.gproj",
+                        "sha256":  "8b47f08ce19736da62a06f25b5af521c6e71828aa087fa63197ca2617acf0e90"
+                    },
+                    {
+                        "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c",
+                        "sha256":  "2802d1f9212c8adfa536a02de1c398f86c0c92051544808b09e2ac3fd3c8ed02"
+                    },
+                    {
+                        "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c",
+                        "sha256":  "5594c10cfddb4857d5e3b30f9d4087ae3772ca94253d98adcfcd173a7bcf6f9d"
+                    },
+                    {
+                        "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c",
+                        "sha256":  "0bd5ee05308b090832c3863a369c310661237ad1f9a3564f939500ab7e5cc2e8"
+                    },
+                    {
+                        "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c",
+                        "sha256":  "861dab2acc6aeee610875ccb5fca1fe991fdfcee76d9f9962f38f37aa9996d58"
+                    },
+                    {
+                        "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c",
+                        "sha256":  "c99e8f63df690292cb6be1c70cfc3a8eafa9954f49d4435635a7240668a9d131"
+                    }
+                ],
+    "sourcesAfter":  [
+                         {
+                             "path":  "tools/RICON_LiveProbe/addon.gproj",
+                             "sha256":  "8b47f08ce19736da62a06f25b5af521c6e71828aa087fa63197ca2617acf0e90"
+                         },
+                         {
+                             "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c",
+                             "sha256":  "2802d1f9212c8adfa536a02de1c398f86c0c92051544808b09e2ac3fd3c8ed02"
+                         },
+                         {
+                             "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c",
+                             "sha256":  "5594c10cfddb4857d5e3b30f9d4087ae3772ca94253d98adcfcd173a7bcf6f9d"
+                         },
+                         {
+                             "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c",
+                             "sha256":  "0bd5ee05308b090832c3863a369c310661237ad1f9a3564f939500ab7e5cc2e8"
+                         },
+                         {
+                             "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c",
+                             "sha256":  "861dab2acc6aeee610875ccb5fca1fe991fdfcee76d9f9962f38f37aa9996d58"
+                         },
+                         {
+                             "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c",
+                             "sha256":  "c99e8f63df690292cb6be1c70cfc3a8eafa9954f49d4435635a7240668a9d131"
+                         }
+                     ],
+    "scriptErrors":  0,
+    "passCount":  1,
+    "failCount":  0,
+    "scope":  "Workbench ScriptEditor; без мира, Play и сервера"
+}

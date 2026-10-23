@@ -1,0 +1,22 @@
+{
+  "status": "NATIVE_OBSERVER_TEST_PASS_PENDING_REVIEW",
+  "checks": 30,
+  "eventsVerified": 6,
+  "directCallbacksIgnored": 2,
+  "sourceHashesChecked": 6,
+  "sourceStable": true,
+  "engineCrc": {
+    "Scripts/Game/RICON_Live/RICON_LiveJournal.c": "d7a51e30",
+    "Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "7a99a0e5",
+    "Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
+    "Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0"
+  },
+  "logSha256": "014c4358c5060197031889d97f959fec2e2268d1c0fc06f1e39e30a42f515acb",
+  "processReceipt": "docs\\evidence\\receipts\\live-observer-native-run-codex-20261023-214249.json",
+  "limitations": [
+    "Реальные трансиверы и звук не проверялись",
+    "Компонент запуска только скомпилирован: Play и его жизненный цикл не выполнялись",
+    "Финальное ревью Claude ожидается"
+  ]
+}
