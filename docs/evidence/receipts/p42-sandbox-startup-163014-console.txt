@@ -1,0 +1,324 @@
+16:30:14.998   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\profile' to filesystem under name profile
+16:30:14.998   ENGINE       : FileSystem: Current working directory: 'C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\'
+16:30:15.000  PROFILING    : Workbench Create Engine took: 8.788500 ms
+16:30:16.009   INIT         : INIT         : Workbench Init Engine
+16:30:16.009   DEFAULT      : Change in Qt version detected (unknown -> 6.8.3). Clearing layouts registry.
+16:30:16.011   ENGINE       : Initializing engine, version 192142
+16:30:16.011   ENGINE       : CLI Params: -gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons -noBackend -wbModule ScriptEditor -plugin RICON_OvercanopyProbePlugin -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum -logsDir ricon-overcanopy-codex-20261023-163014 
+16:30:16.015   ENGINE       : Addon dirs:
+16:30:16.016    ENGINE       : dir: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/'
+16:30:16.016    ENGINE       : dir: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons'
+16:30:16.016    ENGINE       : dir: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger Tools/Workbench/addons'
+16:30:16.016    ENGINE       : dir: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons'
+16:30:16.016    ENGINE       : dir: './addons'
+16:30:16.016    ENGINE       : dir: 'C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/addons'
+16:30:16.016   ENGINE       : Available addons:
+16:30:16.016    ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/addon.gproj' guid: '9B37B2E855AAE105'
+16:30:16.016    ENGINE       : gproj: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C' (packed)
+16:30:16.017    ENGINE       : gproj: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859' (packed)
+16:30:16.017    ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/addon.gproj' guid: '7C060DB9E8B90AC7'
+16:30:16.017    ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/addon.gproj' guid: '4AAF52C605FC2CC6'
+16:30:16.017   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner' to filesystem under name RICON_TestRunner
+16:30:16.017   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_CoreTests' to filesystem under name RICON_CoreTests
+16:30:16.018   ENGINE       : FileSystem: Adding relative directory 'C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_Core' to filesystem under name RICON_Core
+16:30:16.183   ENGINE       : FileSystem: Adding package 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/data/' (pak count: 14) to filesystem under name ArmaReforger
+16:30:16.188   ENGINE       : FileSystem: Adding package 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/core/' (pak count: 2) to filesystem under name core
+16:30:16.188   ENGINE       : CPU vendor         : GenuineIntel
+16:30:16.188   ENGINE       : CPU type           : 1
+16:30:16.188   ENGINE       : CPU name           : Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz
+16:30:16.188   ENGINE       : CPU cache info     : L1 [Inst 32KB, Data 32KB], L2 [Unif 256KB], L3 [Unif 8192KB]
+16:30:16.188   ENGINE       : CPU count logical  : 8
+16:30:16.188   ENGINE       : CPU count physical : 4
+16:30:16.188   ENGINE       : CPU features       : mmx sse sse2 sse3 ssse3 sse4_1 sse4_2 popcnt aesni pclmulqdq osxsave avx avx2
+16:30:16.189   RESOURCES    : ResourceDB: loading cache (id=0 name=RICON_TestRunner path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner/resourceDatabase.rdb)
+16:30:16.189   RESOURCES (V): ResourceDB: reserving space for 82 items
+16:30:16.189   RESOURCES    : ResourceDB: loading cache (id=1 name=RICON_CoreTests path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_CoreTests/resourceDatabase.rdb)
+16:30:16.190   RESOURCES (V): ResourceDB: reserving space for 38 items
+16:30:16.190   RESOURCES    : ResourceDB: loading cache (id=2 name=RICON_Core path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_Core/resourceDatabase.rdb)
+16:30:16.191   RESOURCES (V): ResourceDB: reserving space for 32 items
+16:30:16.191   RESOURCES    : ResourceDB: loading cache (id=3 name=ArmaReforger path=C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/data/resourceDatabase.rdb)
+16:30:16.192   RESOURCES (V): ResourceDB: reserving space for 116390 items
+16:30:16.320   RESOURCES    : ResourceDB: loading cache (id=4 name=core path=C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/core/resourceDatabase.rdb)
+16:30:16.321   RESOURCES (V): ResourceDB: reserving space for 1194 items
+16:30:16.321   RESOURCES    : ResourceDB: loading cache (id=5 name=profile path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+16:30:16.322   RESOURCES (V): ResourceDB: reserving space for 5 items
+16:30:16.322   RESOURCES (V): ResourceDB: cache load allocated: 47159389 bytes
+16:30:16.489    RESOURCES    : RESOURCES    : ResourceDB: full scan
+16:30:16.494     RESOURCES    : RESOURCES    : scanning...
+16:30:16.494      RESOURCES    : RESOURCES    : scanning @"RICON_TestRunner"
+16:30:16.495      RESOURCES    : RESOURCES    : scanning @"RICON_CoreTests"
+16:30:16.495      RESOURCES    : RESOURCES    : scanning @"RICON_Core"
+16:30:16.496      RESOURCES    : RESOURCES    : scanning @"ArmaReforger"
+16:30:16.496      RESOURCES (V): ResourceDB: filesystem ArmaReforger is a PAK. Using cached data instead of scanning
+16:30:16.620      RESOURCES    : RESOURCES    : scanning @"core"
+16:30:16.620      RESOURCES (V): ResourceDB: filesystem core is a PAK. Using cached data instead of scanning
+16:30:16.622      RESOURCES    : RESOURCES    : scanning @"profile"
+16:30:16.623     RESOURCES    : RESOURCES    : processing meta-files...
+16:30:16.678     RESOURCES (V): 99071 meta-files cached, 0 loaded again
+16:30:16.678     RESOURCES    : RESOURCES    : processing files...
+16:30:16.687     RESOURCES    : RESOURCES    : processing folders...
+16:30:16.693     RESOURCES    : RESOURCES    : creating GUID-item mapping...
+16:30:16.710     RESOURCES    : RESOURCES    : building tree...
+16:30:16.775   PROFILING    : ResourceDB: full scan took: 286.653900 ms
+16:30:16.777   RESOURCES    : ResourceDB: saving cache (id=0 name=RICON_TestRunner path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_TestRunner/resourceDatabase.rdb)
+16:30:16.778   RESOURCES    : ResourceDB: written 4579/4579 bytes
+16:30:16.778   RESOURCES    : ResourceDB: cache successfully saved
+16:30:16.779   RESOURCES    : ResourceDB: saving cache (id=1 name=RICON_CoreTests path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_CoreTests/resourceDatabase.rdb)
+16:30:16.780   RESOURCES    : ResourceDB: written 2671/2671 bytes
+16:30:16.780   RESOURCES    : ResourceDB: cache successfully saved
+16:30:16.781   RESOURCES    : ResourceDB: saving cache (id=2 name=RICON_Core path=C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons\RICON_Core/resourceDatabase.rdb)
+16:30:16.783   RESOURCES    : ResourceDB: written 1992/1992 bytes
+16:30:16.783   RESOURCES    : ResourceDB: cache successfully saved
+16:30:16.783   RESOURCES    : ResourceDB: saving cache (id=5 name=profile path=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\profile/resourceDatabase.rdb)
+16:30:16.788 INIT         : Workbench startup
+16:30:16.788  INIT         : Workbench Init Engine
+16:30:16.788   RESOURCES (E): ResourceDB: could not open cache file
+16:30:16.788   ENGINE       : GameProject load
+16:30:16.788    ENGINE       : Loaded addons:
+16:30:16.788     ENGINE       : gproj: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/core/core.gproj' guid: '5614BBCCBB55ED1C'
+16:30:16.788     ENGINE       : gproj: 'C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger/addons/data/ArmaReforger.gproj' guid: '58D0FB3206B6F859'
+16:30:16.788     ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/addon.gproj' guid: '7C060DB9E8B90AC7'
+16:30:16.788     ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/addon.gproj' guid: '4AAF52C605FC2CC6'
+16:30:16.788     ENGINE       : gproj: 'C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/addon.gproj' guid: '9B37B2E855AAE105'
+16:30:16.790   ENGINE       : No Enfusion settings file loaded. Continuing with defaults
+16:30:16.908   RENDER       : (OK) Adapter 'NVIDIA GeForce GTX 1060 6GB' supports feature level 12_0
+16:30:16.910   RENDER       : Basic screen setup:
+16:30:16.910   RENDER       :   Back buffer format	       : TEXFMT_R8G8B8A8_SRGB (29)
+16:30:16.910   RENDER       :   MSAA                      : none
+16:30:16.918   RENDER       : Driver for NVIDIA GeForce GTX 1060 6GB is from 15.4.2026 (6 months, 11 days old)
+16:30:16.918   RENDER       :   provider       : NVIDIA
+16:30:16.918   RENDER       :   version        : 32.0.15.8253
+16:30:16.920   RENDER       :   manufacturer   : NVIDIA
+16:30:16.920   RENDER       :   device ID      : pci\ven_10de&dev_1c03
+16:30:16.920   RENDER       :   date           : 15.4.2026 (6 months, 11 days old)
+16:30:16.920   RENDER       :   installed      : 26.5.2026 (4 months, 30 days old)
+16:30:16.920   RENDER       : Driver for Microsoft Basic Display Driver is from 21.6.2006 (20 years, 4 months, 5 days old)
+16:30:16.921   RENDER       :   provider       : Microsoft
+16:30:16.921   RENDER       :   version        : 10.0.19041.3636
+16:30:16.921   RENDER       :   manufacturer   : (Стандартные типы дисплеев)
+16:30:16.921   RENDER       :   device ID      : ROOT\BasicDisplay
+16:30:16.921   RENDER       :   date           : 21.6.2006 (20 years, 4 months, 5 days old)
+16:30:16.922   RENDER       :   installed      : 4.1.2026 (9 months, 19 days old)
+16:30:16.922   RENDER       : GPU_NVIDIA (0x10DE) (NVIDIA GeForce GTX 1060 6GB) with 1 GPU detected, VRAM 6029MB (fast 0MB), shared 16355MB, driver version 582.53
+16:30:16.922   RENDER       : Detected output devices:
+16:30:16.922   RENDER       :  * 1 device/s connected to NVIDIA GeForce GTX 1060 6GB:
+16:30:16.922   RENDER       :    Generic PnP Monitor (\\.\DISPLAY1), 1920x1080 (offset 0x0), 60Hz
+16:30:16.922   RENDER       :   Concurrent frames limit 2
+16:30:17.227   RENDER       : Graphics device features
+16:30:17.227   RENDER       :  Needed:
+16:30:17.227   RENDER       :  * Highest supported shader model: 6.5 (6.0 needed)
+16:30:17.227   RENDER       :  Optional:
+16:30:17.227   RENDER       :  * Allow tearing (VSYNC) : 1
+16:30:17.227   RENDER       :  * 16 bits : 0
+16:30:17.227   RENDER       :  * Resource heap tier : 3
+16:30:17.227   RENDER       :  * Persistent heaps (DRED) : 1
+16:30:17.227   RENDER       :  * DRED 1.2 is supported by compiler
+16:30:17.294   RENDER       : Main RT format setup.
+16:30:17.294   RENDER       :   Main RT format for quality 0	: TEXFMT_R11G11B10_FLOAT (26)
+16:30:17.294   RENDER       :   Main RT format for quality 1	: TEXFMT_R16G16B16A16_FLOAT (10)
+16:30:17.297   ENGINE       : Job system settings: coreCount=8, shortJobContextCount=8, shortJobThreadCount=7, longJobThreadCount=8
+16:30:17.320   PROFILING    : Settings changed took: 0.020600 ms
+16:30:17.338 AUDIO        : Endpoint: Динамики (USB PnP Sound Device)
+16:30:17.338 AUDIO        :  Format: Channels: 8, Sample rate: 48kHz, Avg. bytes: 1536kB, Sample bits: 32, Block align: 32B
+16:30:17.338 AUDIO     (D): Endpoint physical speakers: Front Left,Front Right,Front Center,LFE,Back Left,Back Right,Side Left,Side Right
+16:30:17.338 AUDIO        : Audio client:
+16:30:17.339 AUDIO        :  Format: Channels: 8, Sample rate: 48kHz, Buffer size: 1536B, Frame: 512
+16:30:17.339 AUDIO     (D): Audio loop enter
+16:30:17.339   AUDIO     (D): Audio -> Start
+16:30:17.344   INPUT     (V): NPClient: Track IR DLL Location key not present
+16:30:17.344    RENDER       : RENDER       : Reload shaders
+16:30:17.344    RENDER       : Enfusion shader version 13
+16:30:17.344     INIT         : INIT         : ShaderListReload
+16:30:17.345    PROFILING    : ShaderListReload took: 0.002500 ms
+16:30:17.345 AUDIO     (D): Audio capture device initialization failed, result = 7
+16:30:17.660    RENDER       : Loaded 3752 newer shader binaries
+16:30:17.660   PROFILING    : Reload shaders took: 316.403300 ms
+16:30:17.660   ENGINE       : Initializing inputs.
+16:30:17.699   DEFAULT   (V): Clusters size 24x16x32
+16:30:17.699   DEFAULT   (V): Updating pipeline settings
+16:30:17.699   NETWORK      : Initializing networking.
+16:30:17.699   NETWORK      : Using new GameRplScheduler.
+16:30:17.700    SCRIPT       : SCRIPT       : Initializing scripts
+16:30:17.700    SCRIPT    (D): Using custom script configuration 'workbench'
+16:30:17.700     SCRIPT       : SCRIPT       : ScriptProjectManager init
+16:30:18.441    PROFILING    : ScriptProjectManager init took: 739.537800 ms
+16:30:18.442    SCRIPT    (V): Script file: 'scripts/Core/attributes.c' CRC: 264ba84d
+16:30:18.442    SCRIPT    (V): Script file: 'scripts/Core/constants.c' CRC: a8a3e0b2
+16:30:18.442    SCRIPT    (V): Script file: 'scripts/Core/generated/Animation/EAnimControllerUpdateFlags.c' CRC: f5267a04
+16:30:18.442    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/Attribute.c' CRC: d16cf692
+16:30:18.443    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/BaseContainerCustomTitle.c' CRC: 3a88cc31
+16:30:18.443    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/BaseContainerProps.c' CRC: eda2c5a3
+16:30:18.443    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/BaseContainerVersion.c' CRC: f2e0674d
+16:30:18.444    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/CommonEditorProps.c' CRC: 30f9bbf4
+16:30:18.444    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/ComponentEditorProps.c' CRC: 82ed326e
+16:30:18.444    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/EntityEditorProps.c' CRC: 5f1341fb
+16:30:18.444    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/EnumBitFlag.c' CRC: 4295c6df
+16:30:18.444    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/EnumLinear.c' CRC: 43899f79
+16:30:18.445    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/Friend.c' CRC: e76bb66d
+16:30:18.445    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/InheritedAttribute.c' CRC: 0c7715bd
+16:30:18.445    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/Obsolete.c' CRC: 9754214a
+16:30:18.446    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/SortAttribute.c' CRC: d6cc6f60
+16:30:18.446    SCRIPT    (V): Script file: 'scripts/Core/generated/Attributes/UniqueAttribute.c' CRC: 63a1d5c1
+16:30:18.446    SCRIPT    (V): Script file: 'scripts/Core/generated/Audio/AudioSystem.c' CRC: 0717b8bc
+16:30:18.446    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/BaseContainer.c' CRC: 6eeb7449
+16:30:18.447    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/BaseContainerList.c' CRC: 50e38ff6
+16:30:18.447    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/BaseContainerTools.c' CRC: 0ad95883
+16:30:18.447    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/DataVarType.c' CRC: eb3aaad1
+16:30:18.447    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/IEntityComponentSource.c' CRC: 79b948c6
+16:30:18.448    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/IEntitySource.c' CRC: 42fa810c
+16:30:18.448    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/UserSettings.c' CRC: ffa381c3
+16:30:18.448    SCRIPT    (V): Script file: 'scripts/Core/generated/Containers/WidgetSource.c' CRC: 8a02f86b
+16:30:18.448    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DbgUI.c' CRC: 38dbd553
+16:30:18.449    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/Debug.c' CRC: f49ea6a3
+16:30:18.449    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DebugText.c' CRC: ffde0898
+16:30:18.449    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DebugTextFlags.c' CRC: 8ba7fb76
+16:30:18.449    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DebugTextScreenSpace.c' CRC: a4ac9581
+16:30:18.450    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DebugTextWorldSpace.c' CRC: 945f3d09
+16:30:18.450    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/DiagMenu.c' CRC: 12ee031c
+16:30:18.450    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/LogLevel.c' CRC: c1361081
+16:30:18.450    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/Shape.c' CRC: 78965760
+16:30:18.451    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/ShapeContrastMode.c' CRC: 45464309
+16:30:18.451    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/ShapeFlags.c' CRC: 57f6d31a
+16:30:18.451    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/ShapeType.c' CRC: 0e82c50e
+16:30:18.452    SCRIPT    (V): Script file: 'scripts/Core/generated/Debug/ShapeUtils.c' CRC: 50356926
+16:30:18.452    SCRIPT    (V): Script file: 'scripts/Core/generated/EScaleWidgetMode.c' CRC: d8f9af10
+16:30:18.452    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EAddChildFlags.c' CRC: 324faa1e
+16:30:18.452    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EntityComponentPrefabData.c' CRC: 60195978
+16:30:18.453    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EntityEvent.c' CRC: d4f8e6fb
+16:30:18.453    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EntityFlags.c' CRC: 8dbf8685
+16:30:18.453    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EntityPrefabData.c' CRC: 0dc940c5
+16:30:18.453    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/EntityVisualizerType.c' CRC: 90fb9eda
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/IEntity.c' CRC: 3552772b
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Entities/NativeComponent.c' CRC: 50c2091b
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Input/GamepadTrigger.c' CRC: 467745f1
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Input/GamepadTriggerEffect.c' CRC: 9489d7cf
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Input/JoystickFFEffectType.c' CRC: f9572f45
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Input/KeyCode.c' CRC: 9d107ecf
+16:30:18.454    SCRIPT    (V): Script file: 'scripts/Core/generated/Input/MouseState.c' CRC: 1b02e377
+16:30:18.455    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/CurveColor.c' CRC: 80bb9719
+16:30:18.455    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/CurveFloat.c' CRC: fc482705
+16:30:18.455    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/CurveVector.c' CRC: 7b80fdb2
+16:30:18.455    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/ECurveEnds.c' CRC: fc2d772a
+16:30:18.456    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/ECurveType.c' CRC: b4ec1e15
+16:30:18.456    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/Math.c' CRC: a608833c
+16:30:18.456    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/Math2D.c' CRC: cd73a185
+16:30:18.456    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/Math3D.c' CRC: b53b5022
+16:30:18.457    SCRIPT    (V): Script file: 'scripts/Core/generated/Math/WindingOrder.c' CRC: 15fab5d5
+16:30:18.457    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/ActiveState.c' CRC: b59b2cb7
+16:30:18.457    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/Contact.c' CRC: 0d8169f5
+16:30:18.458    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/Physics.c' CRC: 2938871d
+16:30:18.458    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/Physics6DOFJoint.c' CRC: b71112d8
+16:30:18.458    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/Physics6DOFSpringJoint.c' CRC: bdf03c86
+16:30:18.458    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsBallSocketJoint.c' CRC: 7b1cd93c
+16:30:18.458    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsBlock.c' CRC: 3b3e3011
+16:30:18.459    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsConeTwistJoint.c' CRC: e970cf5e
+16:30:18.459    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsFixedJoint.c' CRC: fcf103d4
+16:30:18.459    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsGeom.c' CRC: bbe6406d
+16:30:18.459    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsGeomDef.c' CRC: 61a6496c
+16:30:18.460    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsHingeJoint.c' CRC: e343fe13
+16:30:18.460    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsJoint.c' CRC: 84200662
+16:30:18.460    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsMaterial.c' CRC: 8cde9742
+16:30:18.460    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsRagdoll.c' CRC: 626ade06
+16:30:18.461    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsSliderJoint.c' CRC: a05fed4b
+16:30:18.461    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/PhysicsWorld.c' CRC: 8dd0d5ab
+16:30:18.461    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/SimulationState.c' CRC: 873624e7
+16:30:18.461    SCRIPT    (V): Script file: 'scripts/Core/generated/Physics/SurfaceProperties.c' CRC: f370d9c8
+16:30:18.461    SCRIPT    (V): Script file: 'scripts/Core/generated/RectangleCorner.c' CRC: 19604f01
+16:30:18.462    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/Replication.c' CRC: af9cfc9e
+16:30:18.462    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplChannel.c' CRC: bd29fc9f
+16:30:18.462    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplCondition.c' CRC: 5e4b6a7b
+16:30:18.462    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplConnectionStats.c' CRC: 192cbe4a
+16:30:18.463    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplError.c' CRC: 2c55b984
+16:30:18.463    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplGameState.c' CRC: d87384a4
+16:30:18.463    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplId.c' CRC: 8e9b27a0
+16:30:18.463    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplIdentity.c' CRC: 35d3afdb
+16:30:18.464    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplItemType.c' CRC: 302cc29e
+16:30:18.464    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplNode.c' CRC: e5039319
+16:30:18.464    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplRcver.c' CRC: fd3809f1
+16:30:18.464    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplRole.c' CRC: 45e90ae1
+16:30:18.464    SCRIPT    (V): Script file: 'scripts/Core/generated/Replication/RplStateOverride.c' CRC: c126f484
+16:30:18.465    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/AnimationSource.c' CRC: f466e105
+16:30:18.465    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/BaseResourceObject.c' CRC: aa451f20
+16:30:18.465    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/MeshObject.c' CRC: 2073d0e8
+16:30:18.466    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/Resource.c' CRC: 75234ba8
+16:30:18.466    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/ResourceDatabase.c' CRC: 2bd9988c
+16:30:18.466    SCRIPT    (V): Script file: 'scripts/Core/generated/Resources/VObject.c' CRC: 33f2f7ec
+16:30:18.466    SCRIPT    (V): Script file: 'scripts/Core/generated/RplKickCauseGroup.c' CRC: 28613178
+16:30:18.467    SCRIPT    (V): Script file: 'scripts/Core/generated/System/EPlatform.c' CRC: 05d2f3b5
+16:30:18.467    SCRIPT    (V): Script file: 'scripts/Core/generated/System/FileAttribute.c' CRC: 63fe8622
+16:30:18.467    SCRIPT    (V): Script file: 'scripts/Core/generated/System/FileHandle.c' CRC: ebac0b59
+16:30:18.468    SCRIPT    (V): Script file: 'scripts/Core/generated/System/FileIO.c' CRC: be9be6fb
+16:30:18.468    SCRIPT    (V): Script file: 'scripts/Core/generated/System/FileMode.c' CRC: da1aa7f5
+16:30:18.468    SCRIPT    (V): Script file: 'scripts/Core/generated/System/FilePath.c' CRC: 66983c20
+16:30:18.469    SCRIPT    (V): Script file: 'scripts/Core/generated/System/GameProject.c' CRC: 3d345ab5
+16:30:18.469    SCRIPT    (V): Script file: 'scripts/Core/generated/System/GameSessionStorage.c' CRC: bcc92128
+16:30:18.469    SCRIPT    (V): Script file: 'scripts/Core/generated/System/ParseHandle.c' CRC: ec8f5153
+16:30:18.469    SCRIPT    (V): Script file: 'scripts/Core/generated/System/PixelRawData.c' CRC: 99b18227
+16:30:18.470    SCRIPT    (V): Script file: 'scripts/Core/generated/System/ProfileData.c' CRC: f16e6bc2
+16:30:18.470    SCRIPT    (V): Script file: 'scripts/Core/generated/System/RandomGenerator.c' CRC: 52c6d65d
+16:30:18.470    SCRIPT    (V): Script file: 'scripts/Core/generated/System/ScreenshotTextureData.c' CRC: c3983457
+16:30:18.470    SCRIPT    (V): Script file: 'scripts/Core/generated/System/ScriptModule.c' CRC: 213049d4
+16:30:18.471    SCRIPT    (V): Script file: 'scripts/Core/generated/System/System.c' CRC: 81b4a447
+16:30:18.471    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/ResourceName.c' CRC: b87bd557
+16:30:18.472    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/SharedItemRef.c' CRC: 9581fdd0
+16:30:18.472    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/StaticArray.c' CRC: 282a04c7
+16:30:18.472    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/UUID.c' CRC: 5844e3ba
+16:30:18.472    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/bool.c' CRC: 3a698037
+16:30:18.473    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/float.c' CRC: 2ef16714
+16:30:18.473    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/int.c' CRC: 31e2c6c2
+16:30:18.473    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/string.c' CRC: 0cde248f
+16:30:18.473    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/typename.c' CRC: 32b3c807
+16:30:18.474    SCRIPT    (V): Script file: 'scripts/Core/generated/Types/vector.c' CRC: e5e0cf62
+16:30:18.474    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/AlignableSlot.c' CRC: 72a9e551
+16:30:18.474    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/BaseListboxWidget.c' CRC: ecdd6d76
+16:30:18.474    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/BasicGraphWidget.c' CRC: 1b1e9908
+16:30:18.475    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/BlurWidget.c' CRC: d970921b
+16:30:18.475    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ButtonSlot.c' CRC: d67d5f52
+16:30:18.475    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ButtonWidget.c' CRC: 14575914
+16:30:18.475    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/CanvasWidget.c' CRC: eda08e24
+16:30:18.476    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/CanvasWidgetBase.c' CRC: 0880ddab
+16:30:18.476    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/CheckBoxWidget.c' CRC: e98ac8a8
+16:30:18.476    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ContentWidget.c' CRC: 552fcac8
+16:30:18.476    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ControlID.c' CRC: a7a13d7d
+16:30:18.477    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/EditBoxWidget.c' CRC: efa9c7ca
+16:30:18.477    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/FrameSlot.c' CRC: cc1ebc83
+16:30:18.477    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/FrameWidget.c' CRC: 78d09424
+16:30:18.477    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/GenericListboxWidget.c' CRC: 35871d93
+16:30:18.477    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/GridLayoutWidget.c' CRC: 2d1ceef1
+16:30:18.478    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/GridSlot.c' CRC: 1662ca3e
+16:30:18.478    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/HorizontalLayoutSlot.c' CRC: 4306e918
+16:30:18.478    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/HorizontalLayoutWidget.c' CRC: 64910198
+16:30:18.478    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ImageMaskMode.c' CRC: 8a1bca08
+16:30:18.479    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ImageWidget.c' CRC: 8a86440b
+16:30:18.479    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/LayoutHorizontalAlign.c' CRC: 07988b13
+16:30:18.479    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/LayoutSizeMode.c' CRC: 147c1ce8
+16:30:18.479    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/LayoutSlot.c' CRC: 001f587e
+16:30:18.480    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/LayoutVerticalAlign.c' CRC: 8d092640
+16:30:18.480    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/LayoutWidgetBase.c' CRC: f4d6a98b
+16:30:18.480    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/MultilineEditBoxWidget.c' CRC: 0aa49acb
+16:30:18.480    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/OverlaySlot.c' CRC: afb460dd
+16:30:18.480    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/OverlayWidget.c' CRC: d0e82017
+16:30:18.481    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/PanelSlot.c' CRC: e5b6ec53
+16:30:18.481    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/PanelWidget.c' CRC: dd92cb05
+16:30:18.481    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ProgressBarWidget.c' CRC: 1e026e53
+16:30:18.481    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RTTextureSlot.c' CRC: fbeaf2da
+16:30:18.482    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RTTextureWidget.c' CRC: edce1aac
+16:30:18.482    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RenderTargetWidget.c' CRC: 0342448c
+16:30:18.482    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RenderTargetWidgetBlendMode.c' CRC: b6ee63c0
+16:30:18.482    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RenderTargetWidgetFormat.c' CRC: 57063519
+16:30:18.482    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RichTextWidget.c' CRC: c9bd562f
+16:30:18.483    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/RingBufferGraphWidget.c' CRC: e222c244
+16:30:18.483    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ScaleWidget.c' CRC: 5d54339b
+16:30:18.483    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ScriptedWidgetComponent.c' CRC: fd19d88f
+16:30:18.483    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ScriptedWidgetEventHandler.c' CRC: a73040e0
+16:30:18.484    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ScrollLayoutSlot.c' CRC: 15107632
+16:30:18.484    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ScrollLayoutWidget.c' CRC: 448b4f28
+16:30:18.484    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/SimpleListboxWidget.c' CRC: f34df733
+16:30:18.484    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/SizeLayoutSlot.c' CRC: cd66e77a
+16:30:18.485    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/SizeLayoutWidget.c' CRC: af85c06c
+16:30:18.485    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/SliderWidget.c' CRC: 215da3ef
+16:30:18.485    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/SocketWidget.c' CRC: 6310273f
+16:30:18.485    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/TextListboxWidget.c' CRC: 17d7244b
+16:30:18.486    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/TextWidget.c' CRC: d06c04b2
+16:30:18.486    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/ThreeStateCheckboxWidget.c' CRC: 419b3a11
+16:30:18.486    SCRIPT    (V): Script file: 'scripts/Core/generated/UI/TimeBasedGraphWidget.c' CRC: 841097e8

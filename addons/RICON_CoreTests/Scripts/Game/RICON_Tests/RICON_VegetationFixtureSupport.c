@@ -85,7 +85,7 @@ class RICON_VegetationRun
 		return true;
 	}
 
-	protected static void Capture(RICON_VegetationInput input, out string text, notnull array<float> floats)
+	static void Capture(RICON_VegetationInput input, out string text, notnull array<float> floats)
 	{
 		RICON_PathObservationRun.Capture(input.m_Observation, null, text, floats);
 		text += "|" + input.m_sPolarization + "|" + input.m_bHasTxHeight.ToString() + "|" + input.m_bHasRxHeight.ToString();
