@@ -112,7 +112,7 @@ class RICON_ChannelDescriptorRun
 		if (!SameDescriptor(a.m_Descriptor, b.m_Descriptor))
 			return false;
 		if (!b.m_aBytes)
-			return !a.m_aBytes;
+			return !a.m_aBytes && a.m_iSizeBytes == 0 && b.m_iSizeBytes == 0;
 		return SameBytes(a.m_aBytes, b.m_aBytes) && a.m_iSizeBytes == b.m_iSizeBytes;
 	}
 
@@ -378,6 +378,10 @@ class RICON_ChannelDescriptorRun
 				RICON_DescriptorResult step = RICON_DescriptorCodec.Rebase(m_Dynamic, firsts[i]);
 				RICON_DescriptorResult twice = RICON_DescriptorCodec.Rebase(step.m_Descriptor, seconds[i]);
 				ok = ok && SameResult(twice, once);
+				// Порча размера у OK Rebase (поля нет, норма 0) должна ловиться сравнением (codex #3662).
+				twice.m_iSizeBytes = 99999;
+				ok = ok && !SameResult(twice, once);
+				twice.m_iSizeBytes = 0;
 				array<int> times = {seconds[i], high};
 				foreach (int t : times)
 				{

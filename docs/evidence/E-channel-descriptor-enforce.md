@@ -58,7 +58,7 @@ SHA-256 по LF-содержимому:
 |---|---|
 | `RICON_ChannelDescriptor.c` | `cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343` |
 | `RICON_ChannelFading.c` (ValidDescriptor) | `21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992` |
-| `RICON_ChannelDescriptorFixtureSupport.c` | `c3ed3cb1d062886f1bf9374d0f5b680384ec2e4b29bfc6cab1ae87da3dc56ddb` |
+| `RICON_ChannelDescriptorFixtureSupport.c` | `a1d43950e4eff65887ec214ba537cfa3a3e06bea9f05d25edd9289aea784c5ad` |
 | `RICON_ChannelDescriptorFixtures.c` | `9181da803e69054e4d88aa1d825942230ebddb7a37b898bec46a9bf4f1a4cbed` |
 | `RICON_ChannelDescriptorProbePlugin.c` | `7136f975e194157779d24ac73644a3d222f43ba5c3ae4df0c3245f276917a514` |
 | `gen_channel_descriptor_fixture.py` | `23934963e9d75563f34840754a82dc025386b08f2b22681d74b967c31bac78c9` |
@@ -74,6 +74,7 @@ SHA-256 по LF-содержимому:
 | `ricon-descriptor-claude-20261023-162406` | не скомпилирован модуль Game: в дереве лежала незаконченная P4.2 fixture partner (`Unknown type RICON_OvercanopyRun`); codex её убрал (#3647) | `14282cd409401f0d0aa0ece923e8666f5e183a337549e617b4a894d518ee7951` |
 | `ricon-descriptor-claude-20261023-162523` | мой дефект: «Too many instructions per function» на литерале кадра 5066 байт | `1250b06933eb40bb40c5f034cee06170012536f0b203bbf1575fe169beaf97fe` |
 | `ricon-descriptor-claude-20261023-162623` | exit 0, SCRIPT(E) 0, один done: PASS; `cases=46 match=46 immutable=46 controls=8 extras=3 hostOnly=8`; frames 12, flips 48 | `7ae8d947bda453059d6bd9079f4779acc180310765fe6dd96d9b7556657d87c1` |
+| `ricon-descriptor-claude-20261023-163554` (после codex #3662: size у OK Rebase сравнивается, порча 99999 отвергается) | exit 0, SCRIPT(E) 0, PASS; 46/46, controls 8, extras 3; frames 12, flips 48; CRC Support новый, остальные прежние | `e3b5eede8c482492b9b1aae3347127fa3a2041c5e8b2590b8199b3005b89e6aa` |
 | `ricon-fading-claude-20261023-162642` (P1b после выделения ValidDescriptor) | 65/65, controls 9, extras 3, PASS; `P1B_LOG_CHECK_PASS` | `81589929dafc484b3602b1faab3b94005622f8cd2a6cfa8beb09d44c05dd0719` |
 
 CRC в финальном логе: ChannelDescriptor 5e90176a, ChannelFading c868ed4d, Support a4103485, Fixtures 40517a57,
