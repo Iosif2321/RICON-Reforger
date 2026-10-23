@@ -1,3 +1,15 @@
+//! TEST_ONLY: доступ к защищённой математике для численной калибровки, без нового production API.
+class RICON_VegetationMathProbe : RICON_VegetationLayer
+{
+	static float SmallRatio()
+	{
+		RICON_VegetationAm am = new RICON_VegetationAm();
+		am.m_fA1 = 340282346638528859811704183484516925440.0;
+		am.m_fAlpha = 0;
+		return WoodlandLoss(100000000000000000000.0, 0.00000000000000000001, 150, am);
+	}
+}
+
 //! TEST_ONLY: P4 frozen corpus, глубокая неизменность входа/результатов и контроль сравнения.
 class RICON_VegetationRun
 {
@@ -259,6 +271,7 @@ class RICON_VegetationRun
 		RICON_VegetationResult largeAm = RICON_VegetationLayer.Evaluate(m_Base);
 		ok = largeAm.m_eCode == RICON_EVegetationCode.OK && Close(largeAm.m_fLossDb, 2.588558764075543)
 			&& largeAm.m_aIntervals.Count() == 1 && largeAm.m_aIntervals[0].m_sPrimaryModel == "M1";
+		ok = ok && Close(RICON_VegetationMathProbe.SmallRatio(), 1);
 		observation.m_fFrequencyMHz = frequency;
 		am.m_fA1 = a1;
 		am.m_fAlpha = alpha;

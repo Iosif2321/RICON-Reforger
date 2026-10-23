@@ -259,7 +259,7 @@ class RICON_VegetationLayer
 		{
 			float x = depth * (gamma / maximum);
 			if (x < 0.1)
-				return maximum * x * ShortPathFactor(x);
+				return depth * gamma * ShortPathFactor(x);
 			return maximum * (1 - Math.Pow(Math.E, -x));
 		}
 		// Промежуточный Am может не помещаться во float32, хотя итоговая потеря конечна.

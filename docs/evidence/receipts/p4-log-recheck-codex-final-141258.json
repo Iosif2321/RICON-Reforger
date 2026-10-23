@@ -1,0 +1,12 @@
+{
+  "nativeCases": 58,
+  "intervals": 36,
+  "candidates": 57,
+  "uncovered": 8,
+  "printedNumericFields": 239,
+  "maxObservedAbsoluteError": 2.5324918695446286e-06,
+  "logSha256": "e0abe683aed0bd6fa19a093bd892d366d41a6b58f0259a1787389544985527a9",
+  "sourceStable": true,
+  "exitCode": 0,
+  "nativeExtras": 4
+}
