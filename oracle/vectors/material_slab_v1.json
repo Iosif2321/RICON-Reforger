@@ -3,8 +3,8 @@
   "version": 1,
   "revision": 2,
   "source": "docs/req/REQ-material-slab.md",
-  "requirementsLfSha256": "02e6c12d6c3d2c3ac28ffb80d32cd032226f78e5039fa502eeee6b793f917259",
-  "note": "DRAFT; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
+  "requirementsLfSha256": "9eeeb8c59571dc75b747253d2f1655475319e5a4c6d7207cc65294a4fb8e5d0d",
+  "note": "FROZEN rev2; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
   "cases": [
     {
       "id": "MS001",

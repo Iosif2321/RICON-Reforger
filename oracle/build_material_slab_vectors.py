@@ -124,7 +124,7 @@ def build():
     req = ROOT / "docs/req/REQ-material-slab.md"
     result = {"schema": "ricon.oracle.material_slab", "version": 1, "revision": 2,
               "source": "docs/req/REQ-material-slab.md", "requirementsLfSha256": hashlib.sha256(req.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
-              "note": "DRAFT; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
+              "note": "FROZEN rev2; параметры TEST_ONLY, кроме явно указанного provenance. Не полевые измерения.",
               "cases": cases()}
     path = ROOT / "oracle/vectors/material_slab_v1.json"
     path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
