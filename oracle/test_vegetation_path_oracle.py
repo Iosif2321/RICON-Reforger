@@ -38,7 +38,9 @@ class CorpusTest(unittest.TestCase):
             self.assertTrue(chosen["present"])
             self.assertEqual(chosen["totalDb"], e["totalLossDb"])
             if e["through"]["present"] and e["over"]["present"]:
-                self.assertEqual(e["selected"] == "THROUGH", e["through"]["totalDb"] <= e["over"]["totalDb"])
+                self.assertEqual(e["selected"] == "THROUGH", e["through"]["totalDb"] <= e["over"]["totalDb"] + p.TIE_DB)
+                gap = abs(e["through"]["totalDb"] - e["over"]["totalDb"] - p.TIE_DB)
+                self.assertGreater(gap, 0.0009)  # no corpus case sits on the tie-band edge (VP06a)
 
     def test_closure_rule(self):
         for e in self.ok:
@@ -55,6 +57,8 @@ class CorpusTest(unittest.TestCase):
         self.assertEqual(tie["through"]["totalDb"], tie["over"]["totalDb"])
         self.assertEqual("THROUGH", tie["selected"])
         self.assertEqual("NUMERIC_FAILURE", self.cases["P29"]["expect"]["code"])
+        self.assertEqual("THROUGH", self.cases["P30"]["expect"]["selected"])  # codex #3692 near-tie
+        self.assertEqual("OVER", self.cases["P31"]["expect"]["selected"])
         jb = self.cases["P04"]["expect"]["through"]
         self.assertEqual("FREE_SPACE_PLUS_JB", jb["budgetMode"])
         self.assertEqual(self.cases["P04"]["input"]["budget"]["fsplDb"], jb["baseDb"])  # no L2 under J&B

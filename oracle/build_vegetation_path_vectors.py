@@ -76,6 +76,10 @@ CASES = [
     ("P28", "Точное равенство полных потерь — выбирается THROUGH",
      case(1000, 30.0, [veg(0, 64)], tx_h=20.0, bud=budget(90.0, 0.0, 90.0, 64 * 0.019999999552965164))),
     ("P29", "Нет растительности, сумма бюджета переполняется", case(1000, 60.0, [], bud=budget(3.0e38, 3.0e38))),
+    ("P30", "Близкое равенство codex #3692: разница в binary64 есть, в binary32 нет — THROUGH",
+     case(1000, 30.0, [veg(0, 64)], tx_h=20.0, bud=budget(90.0, 0.0, 91.279998779296875, 0.0))),
+    ("P31", "За полосой равенства: поверх дешевле на 0.002 дБ — OVER",
+     case(1000, 30.0, [veg(0, 64)], tx_h=20.0, bud=budget(90.0, 0.0, 91.278, 0.0))),
 ]
 
 
@@ -86,7 +90,7 @@ def build() -> bytes:
         c["expect"] = p.evaluate(c)
         cases.append(c)
     doc = {"schema": "ricon.oracle.vegetation_path", "version": 1,
-           "source": "docs/req/REQ-vegetation-path.md v0.2; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
+           "source": "docs/req/REQ-vegetation-path.md v0.3; REQ-vegetation v0.4; REQ-vegetation-overcanopy v0.1",
            "note": "DRAFT; каталог, кроны и базовые бюджеты TEST_ONLY.", "hostOnly": ["P18", "P27"]}
     head = json.dumps(doc, ensure_ascii=False)[:-1]
     body = ",\n".join(json.dumps(c, ensure_ascii=False) for c in cases)

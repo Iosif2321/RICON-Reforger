@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.2).
+"""P4.3 oracle (claude): choice between the through-vegetation and over-canopy full budgets (REQ-vegetation-path v0.3).
 
 ORACLE level: binary64 over binary32-typed inputs. Calls the frozen P4 v1 layer (vegetation_oracle.vegetation_layer)
 and the frozen P4.2 layer (vegetation_overcanopy_oracle.over_canopy) on the same input; the base budgets L0/L2 for the
@@ -21,6 +21,7 @@ import vegetation_overcanopy_oracle as o  # noqa: E402
 CODES = ("INVALID_OBSERVATION", "INVALID_INPUT", "VEGETATION_COVERAGE_INCOMPLETE", "VEGETATION_UNKNOWN",
          "VEGETATION_MIXED_PROFILE", "NO_VEGETATION", "NUMERIC_FAILURE", "UNRESOLVED", "OK")
 BUDGET_FIELDS = {"fsplDb", "l2Db", "fsplOverDb", "l2OverDb"}
+TIE_DB = 0.001  # VP06a: equals the native comparison tolerance of P4/P4.2
 PASS_THROUGH = ("INVALID_OBSERVATION", "INVALID_INPUT", "VEGETATION_COVERAGE_INCOMPLETE", "VEGETATION_UNKNOWN",
                 "VEGETATION_MIXED_PROFILE")
 
@@ -76,7 +77,7 @@ def select(inp) -> dict:
     if through["code"] == "NO_VEGETATION":
         if budget["l2Db"] is None:
             return {"code": "UNRESOLVED", "reason": "BASE_BUDGET_MISSING"}
-        total = budget["fsplDb"] + budget["l2Db"]
+        total = po.f32(budget["fsplDb"] + budget["l2Db"])
         if not (math.isfinite(total) and total <= po.F32_MAX):
             return {"code": "NUMERIC_FAILURE"}
         return {"code": "NO_VEGETATION", "totalLossDb": total}
@@ -92,10 +93,11 @@ def select(inp) -> dict:
             base = None
             t_branch["reason"] = "BASE_BUDGET_MISSING"
         else:
-            base = budget["fsplDb"] + budget["l2Db"]
+            base = po.f32(budget["fsplDb"] + budget["l2Db"])
         if base is not None:
-            t_branch = {"present": True, "reason": None, "baseDb": base, "vegetationDb": through["lossDb"],
-                        "totalDb": base + through["lossDb"], "closed": through["allScenariosClosed"],
+            veg = po.f32(through["lossDb"])
+            t_branch = {"present": True, "reason": None, "baseDb": base, "vegetationDb": veg,
+                        "totalDb": po.f32(base + veg), "closed": through["allScenariosClosed"],
                         "budgetMode": "FREE_SPACE_PLUS_JB" if free_space_only else "BASE_PLUS_EXCESS"}
     # Over branch (REQ VP05).
     o_branch = {"present": False, "reason": None}
@@ -106,15 +108,17 @@ def select(inp) -> dict:
     elif budget["l2OverDb"] is None:
         o_branch["reason"] = "BASE_BUDGET_MISSING"
     else:
-        base = budget["fsplOverDb"] + budget["l2OverDb"]
-        o_branch = {"present": True, "reason": None, "baseDb": base, "canopyDb": over["totalAhDb"],
-                    "totalDb": base + over["totalAhDb"], "closed": over["status"] == "SOURCE_DOMAIN"}
+        base = po.f32(budget["fsplOverDb"] + budget["l2OverDb"])
+        canopy = po.f32(over["totalAhDb"])
+        o_branch = {"present": True, "reason": None, "baseDb": base, "canopyDb": canopy,
+                    "totalDb": po.f32(base + canopy), "closed": over["status"] == "SOURCE_DOMAIN"}
     values = [b[k] for b in (t_branch, o_branch) if b["present"] for k in ("baseDb", "totalDb")]
     if not all(math.isfinite(x) and 0 <= x <= po.F32_MAX for x in values):
         return {"code": "NUMERIC_FAILURE"}
     if not t_branch["present"] and not o_branch["present"]:
         return {"code": "UNRESOLVED", "reason": "NO_BRANCH", "through": t_branch, "over": o_branch}
-    if t_branch["present"] and (not o_branch["present"] or t_branch["totalDb"] <= o_branch["totalDb"]):
+    # VP06a: binary32 sums; a difference within the native tolerance TIE_DB counts as equal and selects THROUGH.
+    if t_branch["present"] and (not o_branch["present"] or t_branch["totalDb"] <= o_branch["totalDb"] + TIE_DB):
         selected = "THROUGH"
     else:
         selected = "OVER"
