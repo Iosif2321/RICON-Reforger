@@ -1,0 +1,17 @@
+{
+  "peerLogSha256": "e36b0c192573b90ac20225c60175c334c1cb7aa7af97aff38c4c9ca7f065b933",
+  "ownLogSha256": "e0abe683aed0bd6fa19a093bd892d366d41a6b58f0259a1787389544985527a9",
+  "identicalTaggedRows": 162,
+  "ownSourceSnapshotStillMatches": true,
+  "nativeCases": 58,
+  "immutable": 58,
+  "nativeControls": 13,
+  "nativeExtras": 4,
+  "hostOnly": ["V59"],
+  "peerExitCodeReportedInAgora": 0,
+  "peerAgreementMessage": 3620,
+  "codexAgreementMessage": 3622,
+  "peerParserRepeatedOnBothLogs": true,
+  "worldStarted": false,
+  "physicalWorldAcceptance": false
+}
