@@ -15,11 +15,15 @@ VECTORS = Path(__file__).resolve().parent / "vectors" / "vegetation_overcanopy_v
 
 class P2108Test(unittest.TestCase):
     def test_j_anchor_points(self):
-        """P.2108-1 note to eq. (1): J(-0.78) ~ 0 and J = 0 below; J(0) ~ 6.03 makes Ah continuous at h -> R."""
+        """P.2108-1 note to eq. (1): J(-0.78) ~ 0 and J = 0 below; J(0) - 6.03 ~ +0.002852 dB (rounded constants), so
+        Ah does not reach exactly 0 as h -> R from below; the h >= R branch is exactly 0 (codex #3637)."""
         self.assertAlmostEqual(0.0, o.j_nu(-0.78), delta=0.05)
         self.assertEqual(0.0, o.j_nu(-0.9))
         self.assertAlmostEqual(6.03, o.j_nu(0.0), delta=0.005)
         self.assertAlmostEqual(0.0, o.terminal_correction(60.0, 14.9999, 15.0)["ahDb"], delta=0.01)
+        self.assertAlmostEqual(0.002852208563606, o.j_nu(0.0) - 6.03, places=12)
+        self.assertEqual({"hdifM": 0.0, "thetaDeg": 0.0, "nu": 0.0, "jDb": 0.0, "ahDb": 0.0},
+                         o.terminal_correction(60.0, 15.0, 15.0))
 
     def test_worked_example_60_mhz(self):
         """f = 0.06 GHz, h = 2 m, R = 15 m, ws = 27 m, by hand from eq. (2c)-(2g)."""
