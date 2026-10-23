@@ -81,7 +81,7 @@
 | P1b замирания, код | claude | codex | ядро P1b.1 закрыто: корпус 71 заморожен, слепой пересчёт 71/71, Enforce 65/65 в Workbench у обоих; дальше builder, медленная тень, миграция CT10 |
 | P2 наблюдение пути и вода | claude (REQ, эталон) | codex | закрыт: 51 случай заморожен, слепой пересчёт codex 51/51, Workbench 47 native у обоих |
 | P3 постройки и модовые объекты | codex (REQ, эталон) | claude | код claude — parity в Workbench |
-| P4 растительность | claude (REQ, эталон) | codex | REQ v0.4 DRAFT, корпус 59; слепой пересчёт codex v0.3 54/54 и матрица 90/90; v0.4 на пересчёте; код codex — после freeze |
+| P4 растительность | claude (REQ, эталон) | codex | REQ v0.4 и корпус 59 заморожены (слепой пересчёт codex 59/59, матрица 90/90); код codex — в работе |
 | P5 техника | codex (REQ, эталон) | claude | код claude — parity в Workbench |
 
 
