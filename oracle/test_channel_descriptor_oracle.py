@@ -36,6 +36,7 @@ class ChannelDescriptorTest(unittest.TestCase):
         result = cd.encode(cf.baseline()["descriptor"], 102)
         self.assertEqual(list(GOLDEN), result["bytes"])
         self.assertEqual(102, len(GOLDEN))
+        self.assertEqual(GOLDEN, bytes.fromhex(vectors.build()["goldenHex"]))
         self.assertEqual(result, cd.decode(list(GOLDEN), 102))
 
     def test_exact_budget_and_structural_maximum(self):

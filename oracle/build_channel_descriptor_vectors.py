@@ -99,8 +99,13 @@ def build():
     add("Null frame", dict(op="DECODE", bytes=None, maxBytes=5120))
     dec("Слишком короткий заголовок", values=[82, 67])
     add("Ресурсный отказ до обхода элементов", dict(op="DECODE", bytes=[True, 999], maxBytes=1), host_only=True)
-    return dict(schema="ricon-channel-descriptor-v1", version=1, requirement="REQ-channel-descriptor v0.1 DRAFT",
-                note="TEST_ONLY. RCFD reference bytes, не Rpl/RPC/clock/audio acceptance.", hostOnly=host, cases=cases)
+    return dict(schema="ricon-channel-descriptor-v1", version=1, requirement="REQ-channel-descriptor v0.1 AGENT-REVIEWED",
+                note="TEST_ONLY. RCFD reference bytes, не Rpl/RPC/clock/audio acceptance.",
+                # Ручная разметка CD07, не результат Encode: исходный CF baseline, 102 байта.
+                goldenHex="524346440100661346494e4954455f4d554c5449504154485f563109544553545f4f4e4c59"
+                          "000000010000000a0000000000000014000000004316000046c3500000000001000003e8"
+                          "000003e8000013880301066469726563743f8000000000000000000000",
+                hostOnly=host, cases=cases)
 
 
 def canonical():
