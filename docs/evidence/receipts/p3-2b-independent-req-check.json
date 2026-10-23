@@ -1,0 +1,4295 @@
+{
+ "checker": "claude p3-2b-independent-req-check",
+ "corpusLfSha256": "5e2360e72118d945211cbfaf2df7aa44cb9c688484c6a82bd50463a793bd3807",
+ "catalogLfSha256": "9d5b720157407d2562b5f0f8756052f1cacd1f3d43d3688f34b26c1a679649e9",
+ "reqLfSha256": "4a041428213c232126543ca8712919cef0f8bffe2d972409adfd5a104d91be66",
+ "cases": 234,
+ "native": 221,
+ "mismatches": 0,
+ "directPowerMismatches": [],
+ "errors": [],
+ "rows": [
+  {
+   "id": "MP001",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 1.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 1.0,
+     "maxMHz": 1.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP002",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 316.2277526855469,
+     "maxMHz": 316.2277526855469,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 316.2277526855469,
+     "maxMHz": 316.2277526855469,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP003",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP004",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP005",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP006",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 0.04619999974966049,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 0.04619999974966049,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP007",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 0.279796302318573,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 0.279796302318573,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP008",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 1.6945013999938965,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.239999771118164,
+     "conductivitySm": 1.6945013999938965,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP009",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP010",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP011",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 2.4349277019500732,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 2.4349277019500732,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP012",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 4.43115758895874,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 4.43115758895874,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP013",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 8.063958168029785,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.170000076293945,
+     "conductivitySm": 8.063958168029785,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP014",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP015",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP016",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.023800000548362732,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.023800000548362732,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP017",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.031969934701919556,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.031969934701919556,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP018",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.04294440150260925,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.9100000858306885,
+     "conductivitySm": 0.04294440150260925,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP019",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP020",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP021",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 0.9673585891723633,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 0.9673585891723633,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP022",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 2.2930524349212646,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 2.2930524349212646,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP023",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 5.435511112213135,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.150000095367432,
+     "conductivitySm": 5.435511112213135,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP024",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP025",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP026",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.008500000461935997,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.008500000461935997,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP027",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.07394672185182571,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.07394672185182571,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP028",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.6433079242706299,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7300000190734863,
+     "conductivitySm": 0.6433079242706299,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP029",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP030",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP031",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 0.430006206035614,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 0.430006206035614,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP032",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 1.143112063407898,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 1.143112063407898,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP033",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 3.0388050079345703,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.559999942779541,
+     "conductivitySm": 3.0388050079345703,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP034",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP035",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP036",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 0.3140726387500763,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 0.3140726387500763,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP037",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 0.9507712125778198,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 0.9507712125778198,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP038",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 2.878206729888916,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.6500000953674316,
+     "conductivitySm": 2.878206729888916,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP039",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP040",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP041",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 2.8621861929423176e-06,
+     "minMHz": 1.0,
+     "maxMHz": 1.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 2.8621861929423176e-06,
+     "minMHz": 1.0,
+     "maxMHz": 1.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP042",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 0.0013683519791811705,
+     "minMHz": 316.2277526855469,
+     "maxMHz": 316.2277526855469,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 0.0013683519791811705,
+     "minMHz": 316.2277526855469,
+     "maxMHz": 316.2277526855469,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP043",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 0.6541808843612671,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.9900000095367432,
+     "conductivitySm": 0.6541808843612671,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP044",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP045",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP046",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 0.629220187664032,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 0.629220187664032,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP047",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 1.1363648176193237,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 1.1363648176193237,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP048",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 2.0522620677948,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.8200000524520874,
+     "conductivitySm": 2.0522620677948,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP049",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP050",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP051",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 0.9182536602020264,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 0.9182536602020264,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP052",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 1.983797311782837,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 1.983797311782837,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP053",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 4.285800457000732,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.118299961090088,
+     "conductivitySm": 4.285800457000732,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP054",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP055",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP056",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 0.00016477922326885164,
+     "minMHz": 100.0,
+     "maxMHz": 100.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 0.00016477922326885164,
+     "minMHz": 100.0,
+     "maxMHz": 100.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP057",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 0.01682683825492859,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 0.01682683825492859,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP058",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 1.718314290046692,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.309999942779541,
+     "conductivitySm": 1.718314290046692,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP059",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP060",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP061",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 3.0605309009552,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 3.0605309009552,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP062",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 5.539129734039307,
+     "minMHz": 314642.65625,
+     "maxMHz": 314642.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 5.539129734039307,
+     "minMHz": 314642.65625,
+     "maxMHz": 314642.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP063",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 10.025044441223145,
+     "minMHz": 450000.0,
+     "maxMHz": 450000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.789999961853027,
+     "conductivitySm": 10.025044441223145,
+     "minMHz": 450000.0,
+     "maxMHz": 450000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP064",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP065",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP066",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 1.0437133312225342,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 1.0437133312225342,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP067",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 2.8907132148742676,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 2.8907132148742676,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP068",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 8.006243705749512,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.576700210571289,
+     "conductivitySm": 8.006243705749512,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP069",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP070",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP071",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.23615507781505585,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.23615507781505585,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP072",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.5853220820426941,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.5853220820426941,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP073",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 1.4507496356964111,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 1.4507496356964111,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP074",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP075",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP076",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.0010999999940395355,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.0010999999940395355,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP077",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.013073526322841644,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.013073526322841644,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP078",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.15537916123867035,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.4800000190734863,
+     "conductivitySm": 0.15537916123867035,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP079",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP080",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP081",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 0.7460209727287292,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 0.7460209727287292,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP082",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 1.0780835151672363,
+     "minMHz": 314642.65625,
+     "maxMHz": 314642.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 1.0780835151672363,
+     "minMHz": 314642.65625,
+     "maxMHz": 314642.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP083",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 1.5579509735107422,
+     "minMHz": 450000.0,
+     "maxMHz": 450000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.5199999809265137,
+     "conductivitySm": 1.5579509735107422,
+     "minMHz": 450000.0,
+     "maxMHz": 450000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP084",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP085",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP086",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.1051824688911438,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.1051824688911438,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP087",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.28816482424736023,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.28816482424736023,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP088",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.7894753217697144,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.256700038909912,
+     "conductivitySm": 0.7894753217697144,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP089",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP090",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP091",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.021700000390410423,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.021700000390410423,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP092",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.13075542449951172,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.13075542449951172,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP093",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.7878792881965637,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.5799999237060547,
+     "conductivitySm": 0.7878792881965637,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP094",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP095",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP096",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 1.201511025428772,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 1.201511025428772,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP097",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 1.9243216514587402,
+     "minMHz": 141421.359375,
+     "maxMHz": 141421.359375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 1.9243216514587402,
+     "minMHz": 141421.359375,
+     "maxMHz": 141421.359375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP098",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 3.0819637775421143,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1600000858306885,
+     "conductivitySm": 3.0819637775421143,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP099",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP100",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP101",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP102",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP103",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.7100000381469727,
+     "conductivitySm": 0.33000001311302185,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP104",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP105",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP106",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 0.7307906150817871,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 0.7307906150817871,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP107",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 1.2645156383514404,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 1.2645156383514404,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP108",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 2.1880407333374023,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.940000057220459,
+     "conductivitySm": 2.1880407333374023,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP109",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP110",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP111",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 0.7750691771507263,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 0.7750691771507263,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP112",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 1.599251627922058,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 1.599251627922058,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP113",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 3.29984188079834,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.1700000762939453,
+     "conductivitySm": 3.29984188079834,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP114",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP115",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP116",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.005499999970197678,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.005499999970197678,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP117",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.036628954112529755,
+     "minMHz": 7745.966796875,
+     "maxMHz": 7745.966796875,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.036628954112529755,
+     "minMHz": 7745.966796875,
+     "maxMHz": 7745.966796875,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP118",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.24394185841083527,
+     "minMHz": 60000.0,
+     "maxMHz": 60000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.073999881744385,
+     "conductivitySm": 0.24394185841083527,
+     "minMHz": 60000.0,
+     "maxMHz": 60000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP119",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP120",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP121",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 0.34493207931518555,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 0.34493207931518555,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP122",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 0.8936330080032349,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 0.8936330080032349,
+     "minMHz": 190525.59375,
+     "maxMHz": 190525.59375,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP123",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 2.3151798248291016,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 7.940000057220459,
+     "conductivitySm": 2.3151798248291016,
+     "minMHz": 330000.0,
+     "maxMHz": 330000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP124",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP125",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP126",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 0.5387207865715027,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 0.5387207865715027,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP127",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 1.1954962015151978,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 1.1954962015151978,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP128",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 2.6529722213745117,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 8.619999885559082,
+     "conductivitySm": 2.6529722213745117,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP129",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP130",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP131",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 0.8701831698417664,
+     "minMHz": 50000.0,
+     "maxMHz": 50000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 0.8701831698417664,
+     "minMHz": 50000.0,
+     "maxMHz": 50000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP132",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 1.3900542259216309,
+     "minMHz": 70710.6796875,
+     "maxMHz": 70710.6796875,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 1.3900542259216309,
+     "minMHz": 70710.6796875,
+     "maxMHz": 70710.6796875,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP133",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 2.2205100059509277,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.6600000858306885,
+     "conductivitySm": 2.2205100059509277,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP134",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP135",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP136",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 3.4896399974823,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 3.4896399974823,
+     "minMHz": 220000.0,
+     "maxMHz": 220000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP137",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 10.894618034362793,
+     "minMHz": 256904.65625,
+     "maxMHz": 256904.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 10.894618034362793,
+     "minMHz": 256904.65625,
+     "maxMHz": 256904.65625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP138",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP139",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP140",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP141",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 32.002349853515625,
+     "minMHz": 300000.0,
+     "maxMHz": 300000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 32.002349853515625,
+     "minMHz": 300000.0,
+     "maxMHz": 300000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP142",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 42.853092193603516,
+     "minMHz": 346410.15625,
+     "maxMHz": 346410.15625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 42.853092193603516,
+     "minMHz": 346410.15625,
+     "maxMHz": 346410.15625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP143",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP144",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP145",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP146",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 49.87260055541992,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 49.87260055541992,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP147",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 49.87260055541992,
+     "minMHz": 424264.0625,
+     "maxMHz": 424264.0625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 5.269999980926514,
+     "conductivitySm": 49.87260055541992,
+     "minMHz": 424264.0625,
+     "maxMHz": 424264.0625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP148",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP149",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP150",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP151",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 0.7577304244041443,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 0.7577304244041443,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP152",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 1.9019858837127686,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 1.9019858837127686,
+     "minMHz": 200000.0,
+     "maxMHz": 200000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP153",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 4.774191856384277,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.1575000286102295,
+     "conductivitySm": 4.774191856384277,
+     "minMHz": 400000.0,
+     "maxMHz": 400000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP154",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP155",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP156",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.005100000184029341,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.005100000184029341,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP157",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.02411002293229103,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.02411002293229103,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP158",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.11397906392812729,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.619999885559082,
+     "conductivitySm": 0.11397906392812729,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP159",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP160",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP161",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.0008999999845400453,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.0008999999845400453,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP162",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.004084012936800718,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.004084012936800718,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP163",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.01853240095078945,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0799999237060547,
+     "conductivitySm": 0.01853240095078945,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP164",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP165",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP166",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 0.01080000028014183,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 0.01080000028014183,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP167",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 0.14203082025051117,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 0.14203082025051117,
+     "minMHz": 6324.55517578125,
+     "maxMHz": 6324.55517578125,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP168",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 1.8678476810455322,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.829999923706055,
+     "conductivitySm": 1.8678476810455322,
+     "minMHz": 40000.0,
+     "maxMHz": 40000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP169",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP170",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP171",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP172",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP173",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 10000000.0,
+     "minMHz": 100000.0,
+     "maxMHz": 100000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP174",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP175",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP176",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.0001500000071246177,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.0001500000071246177,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP177",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.0027295511681586504,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.0027295511681586504,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP178",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.049669668078422546,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 3.0,
+     "conductivitySm": 0.049669668078422546,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP179",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP180",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP181",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 15.0,
+     "conductivitySm": 0.03500000014901161,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 15.0,
+     "conductivitySm": 0.03500000014901161,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP182",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 13.36876392364502,
+     "conductivitySm": 0.22859568893909454,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 13.36876392364502,
+     "conductivitySm": 0.22859568893909454,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP183",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 11.914923667907715,
+     "conductivitySm": 1.4930282831192017,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 11.914923667907715,
+     "conductivitySm": 1.4930282831192017,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP184",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP185",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP186",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 30.0,
+     "conductivitySm": 0.15000000596046448,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 30.0,
+     "conductivitySm": 0.15000000596046448,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP187",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 18.928720474243164,
+     "conductivitySm": 0.6700253486633301,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 18.928720474243164,
+     "conductivitySm": 0.6700253486633301,
+     "minMHz": 3162.277587890625,
+     "maxMHz": 3162.277587890625,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP188",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 11.943215370178223,
+     "conductivitySm": 2.9928932189941406,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 11.943215370178223,
+     "conductivitySm": 2.9928932189941406,
+     "minMHz": 10000.0,
+     "maxMHz": 10000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP189",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP190",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP191",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "SOURCE_DOMAIN"
+    }
+   }
+  },
+  {
+   "id": "MP192",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "ASSUMED_CONFIG"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "ASSUMED_CONFIG"
+    }
+   }
+  },
+  {
+   "id": "MP193",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP194",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0,
+     "conductivitySm": 0.5,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0,
+     "conductivitySm": 0.5,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP195",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0,
+     "conductivitySm": 0.0625,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 2.0,
+     "conductivitySm": 0.0625,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP196",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 1.0,
+     "conductivitySm": 0.0,
+     "minMHz": 2000.0,
+     "maxMHz": 2000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP197",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP198",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 0.25,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP199",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP200",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP201",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   },
+   "expect": {
+    "code": "OUT_OF_MODEL_DOMAIN"
+   }
+  },
+  {
+   "id": "MP202",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 100.0,
+     "conductivitySm": 100000000.0,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 100.0,
+     "conductivitySm": 100000000.0,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP203",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   }
+  },
+  {
+   "id": "MP204",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   }
+  },
+  {
+   "id": "MP205",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   },
+   "expect": {
+    "code": "NUMERIC_DOMAIN_LIMIT"
+   }
+  },
+  {
+   "id": "MP206",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 1.401298464324817e-45,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 4.0,
+     "conductivitySm": 1.401298464324817e-45,
+     "minMHz": 1000.0,
+     "maxMHz": 1000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP207",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "MP208",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "MP209",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "MP210",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "MP211",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.115908622741699,
+     "conductivitySm": 0.25,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "TEST_ONLY"
+    }
+   },
+   "expect": {
+    "code": "OK",
+    "material": {
+     "epsilonReal": 6.115908622741699,
+     "conductivitySm": 0.25,
+     "minMHz": 110000.0,
+     "maxMHz": 110000.0,
+     "provenance": "TEST_ONLY"
+    }
+   }
+  },
+  {
+   "id": "MP212",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "NUMERIC_FAILURE"
+   },
+   "expect": {
+    "code": "NUMERIC_FAILURE"
+   }
+  },
+  {
+   "id": "MP213",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP214",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP215",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP216",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP217",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP218",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP219",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP220",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP221",
+   "native": true,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP222",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP223",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP224",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP225",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP226",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP227",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP228",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP229",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP230",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP231",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP232",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_PROFILE"
+   },
+   "expect": {
+    "code": "INVALID_PROFILE"
+   }
+  },
+  {
+   "id": "MP233",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  },
+  {
+   "id": "MP234",
+   "native": false,
+   "ok": true,
+   "got": {
+    "code": "INVALID_INPUT"
+   },
+   "expect": {
+    "code": "INVALID_INPUT"
+   }
+  }
+ ]
+}
