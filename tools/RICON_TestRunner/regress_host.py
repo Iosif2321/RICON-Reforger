@@ -42,6 +42,8 @@ run("channel_cutoff", [str(O / "channel_cutoff_oracle.py"), "--check", str(V / "
 run("path_observation", [str(O / "path_observation_oracle.py"), "--check", str(V / "path_observation_v1.json")], "PASS")
 run("path_observation vectors", [str(O / "build_path_observation_vectors.py"), "--check"], "PASS")
 run("vegetation", [str(O / "vegetation_oracle.py"), "--check", str(V / "vegetation_v1.json")], "PASS")
+run("p1b checker (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p1b-independent-req-check.py"),
+                            str(V / "channel_fading_v1.json")], "P1B_BLIND_CHECK_PASS")
 run("vegetation vectors", [str(O / "build_vegetation_vectors.py"), "--check"], "PASS")
 run("sensitivity anchors", [str(O / "sensitivity_oracle.py"), "--anchors"], "SENSITIVITY_ANCHORS_PASS")
 run("sensitivity full", [str(O / "sensitivity_oracle.py")], "SENSITIVITY_ORACLE_PASS")
@@ -63,7 +65,9 @@ for gen, src, dst in (("gen_l0_fixture.py", V / "link_eval_v1.json", TESTS / "RI
                       ("gen_link_publication_fixture.py", V / "link_publication_v1.json",
                        TESTS / "RICON_LinkPublicationFixtures.c"),
                       ("gen_channel_cutoff_fixture.py", V / "channel_cutoff_v1.json",
-                       TESTS / "RICON_ChannelCutoffFixtures.c")):
+                       TESTS / "RICON_ChannelCutoffFixtures.c"),
+                      ("gen_channel_fading_fixture.py", V / "channel_fading_v1.json",
+                       TESTS / "RICON_ChannelFadingFixtures.c")):
     run(gen + " --check", ["-I", str(T / gen), str(src), str(dst), "--check"])
 
 # generators without --check: write to a temp file and compare bytes
