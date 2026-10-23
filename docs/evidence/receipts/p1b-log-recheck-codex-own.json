@@ -1,0 +1,19 @@
+{
+  "validatorSelfTest": "PASS",
+  "negativeControls": 21,
+  "cases": 65,
+  "nativeControls": 9,
+  "nativeExtras": 3,
+  "hostOnly": 6,
+  "printedNumericFields": 95,
+  "maxObservedGainErrorDb": 1.5416328778883326e-05,
+  "subnormal": {
+    "code": "OK",
+    "gainDb": -897.069396973
+  },
+  "unprintedPhases": "Внешне сверено число; значения строго проверены native comparator по fixture",
+  "coefficientPrecision": "Печать округлена до 9 знаков; native comparator сравнивает f32 строго",
+  "logSha256": "e90688876ac7f80e1b6ca60e9db2d87e7c1b0d53f624746c4c9e36bc79f5376a",
+  "processReceiptChecked": true,
+  "status": "NATIVE_LOG_PASS"
+}
