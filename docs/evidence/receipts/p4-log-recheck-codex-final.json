@@ -1,0 +1,13 @@
+{
+  "nativeCases": 58,
+  "intervals": 36,
+  "candidates": 57,
+  "uncovered": 8,
+  "printedNumericFields": 239,
+  "maxObservedAbsoluteError": 2.5324918695446286e-06,
+  "logSha256": "49b525d0c0a13942ce1ce93b696b2b49d6df8dfa8d256754b7b1c3cfb4a60fc4",
+  "sourceStable": true,
+  "exitCode": 0,
+  "identicalCorpusRowsToPrior": true,
+  "nativeExtras": 4
+}

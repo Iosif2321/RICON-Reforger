@@ -246,6 +246,35 @@ class RICON_VegetationLayer
 		r.m_aCandidates.Insert(c);
 	}
 
+	//! (1-exp(-x))/x при x<0.1 без вычитания близких чисел.
+	protected static float ShortPathFactor(float x)
+	{
+		return 1 - x * (0.5 - x * (1.0 / 6.0 - x * (1.0 / 24.0 - x * (1.0 / 120.0 - x / 720))));
+	}
+
+	protected static float WoodlandLoss(float depth, float gamma, float frequency, RICON_VegetationAm am)
+	{
+		float maximum = am.m_fA1 * Math.Pow(frequency, am.m_fAlpha);
+		if (Positive(maximum))
+		{
+			float x = depth * (gamma / maximum);
+			if (x < 0.1)
+				return maximum * x * ShortPathFactor(x);
+			return maximum * (1 - Math.Pow(Math.E, -x));
+		}
+		// Промежуточный Am может не помещаться во float32, хотя итоговая потеря конечна.
+		float logAm = Math.Log(am.m_fA1) + am.m_fAlpha * Math.Log(frequency);
+		if (!RICON_Num.IsFinite(logAm))
+			return -1;
+		float logX = Math.Log(depth) + Math.Log(gamma) - logAm;
+		if (logX < Math.Log(0.1))
+			return depth * gamma * ShortPathFactor(Math.Pow(Math.E, logX));
+		float fraction = 1;
+		if (logX < Math.Log(32))
+			fraction = 1 - Math.Pow(Math.E, -Math.Pow(Math.E, logX));
+		return Math.Pow(Math.E, logAm + Math.Log(fraction));
+	}
+
 	//! Раздельные признаки применимости и арифметического отказа сохраняют приоритет NO_MODEL всего пути.
 	protected static bool Calculate(RICON_VegetationInterval r, RICON_VegetationInput input, RICON_VegetationProfile p)
 	{
@@ -274,17 +303,7 @@ class RICON_VegetationLayer
 		}
 		if (r.m_sScenario == "S1" && r.m_bHasGamma && p.m_Am && f >= p.m_Am.m_fMinMHz && f <= p.m_Am.m_fMaxMHz)
 		{
-			float maximum = p.m_Am.m_fA1 * Math.Pow(f, p.m_Am.m_fAlpha);
-			float loss = -1;
-			if (Positive(maximum))
-			{
-				float x = d * (r.m_fGamma / maximum);
-				if (x < 0.1)
-					loss = maximum * x * (1 - x * (0.5 - x * (1.0 / 6.0 - x * (1.0 / 24.0 - x * (1.0 / 120.0 - x / 720)))));
-				else
-					loss = maximum * (1 - Math.Pow(Math.E, -x));
-			}
-			Add(r, "M1", loss);
+			Add(r, "M1", WoodlandLoss(d, r.m_fGamma, f, p.m_Am));
 		}
 		if (r.m_sScenario == "S3" && f <= 1000 && r.m_bHasGamma)
 			Add(r, "M2", d * r.m_fGamma);

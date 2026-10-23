@@ -10,7 +10,7 @@ class RICON_VegetationProbePlugin : WorkbenchPlugin
 		t.CheckExtras();
 		PrintFormat("[RICON_VEG] cases=%1 match=%2 immutable=%3 controls=%4 extras=%5 hostOnly=%6", t.m_iCases,
 			t.m_iMatches, t.m_iImmutable, t.m_iControls, t.m_iExtras, RICON_VegetationFixtures.HOST_ONLY);
-		if (t.m_bOk && t.m_iCases == 58 && t.m_iMatches == 58 && t.m_iImmutable == 58 && t.m_iControls == 13 && t.m_iExtras == 3)
+		if (t.m_bOk && t.m_iCases == 58 && t.m_iMatches == 58 && t.m_iImmutable == 58 && t.m_iControls == 13 && t.m_iExtras == 4)
 		{
 			Print("[RICON_VEG] done: PASS");
 			Workbench.Exit(0);

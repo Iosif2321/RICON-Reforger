@@ -249,6 +249,22 @@ class RICON_VegetationRun
 		Require(ok && SameResult(RICON_VegetationLayer.Evaluate(m_Base), m_BaseExpected), "vegetation global catalog", "неиспользуемая запись тоже проверена; вход восстановлен");
 		if (ok)
 			m_iExtras++;
+		float frequency = observation.m_fFrequencyMHz;
+		RICON_VegetationAm am = catalog[0].m_Am;
+		float a1 = am.m_fA1;
+		float alpha = am.m_fAlpha;
+		observation.m_fFrequencyMHz = 150;
+		am.m_fA1 = 340282346638528859811704183484516925440.0;
+		am.m_fAlpha = 1;
+		RICON_VegetationResult largeAm = RICON_VegetationLayer.Evaluate(m_Base);
+		ok = largeAm.m_eCode == RICON_EVegetationCode.OK && Close(largeAm.m_fLossDb, 2.588558764075543)
+			&& largeAm.m_aIntervals.Count() == 1 && largeAm.m_aIntervals[0].m_sPrimaryModel == "M1";
+		observation.m_fFrequencyMHz = frequency;
+		am.m_fA1 = a1;
+		am.m_fAlpha = alpha;
+		Require(ok && SameResult(RICON_VegetationLayer.Evaluate(m_Base), m_BaseExpected), "vegetation large Am", "Am больше FLT_MAX, но конечная потеря сохраняется; вход восстановлен");
+		if (ok)
+			m_iExtras++;
 		ok = true;
 		for (int i = m_aInputs.Count() - 1; i >= 0; i--)
 			ok = ok && SameResult(RICON_VegetationLayer.Evaluate(m_aInputs[i]), m_aExpected[i]);

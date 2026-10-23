@@ -1,0 +1,44 @@
+Команда: python -X utf8 -B tools/RICON_TestRunner/regress_host.py .
+Код завершения: 0. Вывод сохранён как получен; отдельные старые дочерние команды вывели русский текст в иной кодировке.
+
+PASS | ricon_oracle link_eval | exit 0 | ORACLE_PASS: 57 vectors
+PASS | l2_terrain | exit 0 | L2_TERRAIN_ORACLE_PASS: 45 cases
+PASS | lifecycle | exit 0 | LIFECYCLE_ORACLE_PASS: 14 traces, 209 steps
+PASS | link_physics scenarios | exit 0 | LINK_PHYSICS_ORACLE_PASS
+PASS | link_physics probes | exit 0 | LINK_PHYSICS_ORACLE_PASS
+PASS | route | exit 0 | ROUTE_ORACLE_PASS: 48 vectors
+PASS | snapshot | exit 0 | SNAPSHOT_ORACLE_PASS: 46 vectors
+PASS | von_seam | exit 0 | VON_SEAM_ORACLE_PASS: 11 cases, 103 calls
+PASS | cellular | exit 0 | CELLULAR_ORACLE_PASS
+PASS | world_profile | exit 0 | WORLD_PROFILE_ORACLE_PASS: 39 cases
+PASS | radio_device | exit 0 | RADIO_DEVICE_ORACLE_PASS: 68 cases
+PASS | pair_service | exit 0 | PAIR_SERVICE_ORACLE_PASS: 72 cases
+PASS | link_publication | exit 0 | LINK_PUBLICATION_ORACLE_PASS: 106 �������
+PASS | channel_cutoff | exit 0 | CHANNEL_CUTOFF_ORACLE_PASS (27)
+PASS | path_observation | exit 0 | PATH_OBSERVATION_ORACLE_PASS: 51 cases
+PASS | path_observation vectors | exit 0 | PATH_OBSERVATION_VECTORS_PASS
+PASS | vegetation | exit 0 | VEGETATION_ORACLE_PASS: 59 cases
+PASS | p1b checker (claude) | exit 0 | P1B_BLIND_CHECK_PASS
+PASS | vegetation vectors | exit 0 | VEGETATION_VECTORS_PASS
+PASS | vegetation fixture --check | exit 0 | P4_GENERATOR_PASS: 58 native, 1 host-only
+PASS | vegetation checker (codex) | exit 0 | P4_INDEPENDENT_CHECK_PASS
+PASS | sensitivity anchors | exit 0 | SENSITIVITY_ANCHORS_PASS
+PASS | sensitivity full | exit 0 | SENSITIVITY_ORACLE_PASS
+PASS | p527 checker (codex) | exit 0 | P527_COMPLEX_CROSSCHECK_PASS: 216, real=201, rejected=15, max_abs=2.13162820728e-14
+PASS | gen_l0_fixture.py --check | exit 0 | L0_GENERATOR_PASS: 57 �������, 4 ����������� ���� effectiveDistanceM
+PASS | gen_p526_matrix.py --check | exit 0 | P526_GENERATOR_PASS: 1008, physicalSnr=840, fallback=168
+PASS | gen_route_fixture.py --check | exit 0 | ROUTE_GENERATOR_PASS
+PASS | gen_snapshot_fixture.py --check | exit 0 | SNAPSHOT_GENERATOR_PASS: 43 ������, 77 �����, 3 allocator �������������
+PASS | gen_sensitivity_points.py --check | exit 0 | SENSITIVITY_GENERATOR_PASS: 16
+PASS | gen_world_profile_fixture.py --check | exit 0 | WORLD_PROFILE_GENERATOR_PASS: 39
+PASS | gen_radio_device_fixture.py --check | exit 0 | RADIO_DEVICE_GENERATOR_PASS: 68
+PASS | gen_pair_service_fixture.py --check | exit 0 | PAIR_SERVICE_GENERATOR_PASS: 72
+PASS | gen_link_publication_fixture.py --check | exit 0 | LINK_PUBLICATION_GENERATOR_PASS: 106
+PASS | gen_channel_cutoff_fixture.py --check | exit 0 | CHANNEL_CUTOFF_GENERATOR_PASS: 24 native, 3 host-only
+PASS | gen_channel_fading_fixture.py --check | exit 0 | CHANNEL_FADING_GENERATOR_PASS: 65 native, 6 host-only
+PASS | gen_l2_fixture.py byte-compare | exit 0 | identical
+PASS | gen_lifecycle_fixture.py byte-compare | exit 0 | identical
+PASS | gen_von_seam_fixture.py byte-compare | exit 0 | identical
+PASS | unittest oracle | exit 0 | OK
+PASS | unittest tools | exit 0 | OK
+TOTAL 40/40 PASS
