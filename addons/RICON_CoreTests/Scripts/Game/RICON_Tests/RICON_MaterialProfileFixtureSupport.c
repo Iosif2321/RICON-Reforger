@@ -229,14 +229,15 @@ class RICON_MaterialProfileRun
 		return ok;
 	}
 
-	//! Контрпример Power (codex #3980/#3981): a = 4, b = 0, полоса 1..450000 включительно, TEST_ONLY; ожидание host —
-	//! σ = f32(binary64 c·fGHz^d) битами, допуск MP07 (для субнормального σ bits 1 соседи отличаются на 100 %).
-	protected void PowerExtra(int id, int fBits, int cBits, int dBits, RICON_EMaterialProfileCode code, int sigmaBits)
+	//! Контрпример Power (codex #3980/#3981/#3995): полоса 1..450000 включительно, TEST_ONLY; ожидание host —
+	//! σ = f32(binary64 c·fGHz^d) битами, допуск MP07 (для субнормального σ bits 1 соседи отличаются на 100 %);
+	//! в OK-контрпримерах b = 0, поэтому ожидаемое ε′ — сам коэффициент a.
+	protected void PowerExtra(int id, int fBits, int aBits, int bBits, int cBits, int dBits, RICON_EMaterialProfileCode code, int sigmaBits)
 	{
 		RICON_MaterialProfileInput input = NewInput();
 		input.m_fFrequencyMHz = F(fBits);
-		input.m_Profile.m_fA = 4;
-		input.m_Profile.m_fB = 0;
+		input.m_Profile.m_fA = F(aBits);
+		input.m_Profile.m_fB = F(bBits);
 		input.m_Profile.m_fC = F(cBits);
 		input.m_Profile.m_fD = F(dBits);
 		input.m_Profile.m_fMinMHz = 1;
@@ -246,7 +247,7 @@ class RICON_MaterialProfileRun
 		RICON_MaterialProfileResult expected = NewExpected(code);
 		if (code == RICON_EMaterialProfileCode.OK)
 		{
-			expected.m_Material.m_fEpsilonReal = 4;
+			expected.m_Material.m_fEpsilonReal = F(aBits);
 			expected.m_Material.m_fConductivitySm = F(sigmaBits);
 			expected.m_Material.m_fMinMHz = input.m_fFrequencyMHz;
 			expected.m_Material.m_fMaxMHz = input.m_fFrequencyMHz;
@@ -263,7 +264,7 @@ class RICON_MaterialProfileRun
 			m_iExtras++;
 	}
 
-	//! Шесть extras (codex #3986): null/восстановление, группа цепей, обратный повтор, три контрпримера Power.
+	//! Семь extras (codex #3986, #3995): null/восстановление, группа цепей, обратный повтор, четыре контрпримера Power.
 	void CheckExtras()
 	{
 		bool ok = RICON_MaterialProfileKernel.Evaluate(null).m_eCode == RICON_EMaterialProfileCode.INVALID_INPUT && m_Base != null;
@@ -297,11 +298,15 @@ class RICON_MaterialProfileRun
 		Require(ok, "material profile extras", "повтор в обратном порядке сохраняет все результаты");
 		if (ok)
 			m_iExtras++;
-		// f = 100, c = 9e-36, d = 10 → σ = 9e-46 → f32 1.4e-45 (bits 1), не ноль и не NUMERIC_FAILURE
-		PowerExtra(1, 1120403456, 88041641, 1092616192, RICON_EMaterialProfileCode.OK, 1);
-		// f = 1, c = 1e38, d = 15 → промежуточная степень 1e-45 субнормальна, произведение 9.999999406e-08 (bits 869711764)
-		PowerExtra(2, 1065353216, 2123789977, 1097859072, RICON_EMaterialProfileCode.OK, 869711764);
-		// f = 1000, c = 3.4e38, d = 1 → σ конечен (< FLT_MAX), значит NUMERIC_DOMAIN_LIMIT, а не NUMERIC_FAILURE
-		PowerExtra(3, 1148846080, 2139081118, 1065353216, RICON_EMaterialProfileCode.NUMERIC_DOMAIN_LIMIT, 0);
+		// 1: f = 100, a = 4, b = 0, c = 9e-36, d = 10 → σ = 9e-46 → f32 1.4e-45 (bits 1), не ноль и не NUMERIC_FAILURE
+		PowerExtra(1, 1120403456, 1082130432, 0, 88041641, 1092616192, RICON_EMaterialProfileCode.OK, 1);
+		// 2: f = 1, a = 4, b = 0, c = 1e38, d = 15 → промежуточная степень 1e-45 субнормальна, σ = 9.999999406e-08
+		// (bits 869711764; допуск MP07 разрешает соседний 869711765)
+		PowerExtra(2, 1065353216, 1082130432, 0, 2123789977, 1097859072, RICON_EMaterialProfileCode.OK, 869711764);
+		// 3: f = 1000, a = 4, b = 0, c = 3.4e38, d = 1 → σ конечен (< FLT_MAX): NUMERIC_DOMAIN_LIMIT, не NUMERIC_FAILURE
+		PowerExtra(3, 1148846080, 1082130432, 0, 2139081118, 1065353216, RICON_EMaterialProfileCode.NUMERIC_DOMAIN_LIMIT, 0);
+		// 4 (codex #3995): f = 1000.00048828125 (bits 1148846088), a = 1, b = −1 (bits −1082130432), c = 0, d = 0 →
+		// t = −2.07e-7, ε′ = 0.99999952 < 1 → NUMERIC_DOMAIN_LIMIT; сдвиг +20 при всех t < 0 давал бы ровно 1 → OK
+		PowerExtra(4, 1148846088, 1065353216, -1082130432, 0, 0, RICON_EMaterialProfileCode.NUMERIC_DOMAIN_LIMIT, 0);
 	}
 }

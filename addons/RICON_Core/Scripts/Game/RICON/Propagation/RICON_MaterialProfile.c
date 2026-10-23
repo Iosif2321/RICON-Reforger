@@ -44,7 +44,8 @@ class RICON_MaterialProfileKernel
 	static const float MIN_EPSILON = 1.0;
 	static const float MAX_EPSILON = 100.0;
 	static const float MAX_SIGMA = 100000000.0;
-	static const float SCALE_SHIFT = 20.0;     //!< при t < 0: 10^t = 10^(t+20) · 1e-20, см. Power
+	static const float SCALE_BELOW = -37.0;    //!< при t < −37 степень считается как 10^(t+20)·1e-20 (см. Power)
+	static const float SCALE_SHIFT = 20.0;
 	static const float SCALE_DOWN = 1.0e-20;   //!< binary32(1e-20), относительная погрешность −3.2e-8
 
 	protected static RICON_MaterialProfileResult Make(RICON_EMaterialProfileCode code)
@@ -61,12 +62,13 @@ class RICON_MaterialProfileKernel
 
 	//! MP04: coef·f^exp. Точные случаи — coef = 0 и exp = 0. Иначе только устойчивая форма 10^t,
 	//! t = log10 coef + exp·log10 f: отдельная степень f^exp не вычисляется, поэтому её переполнение или
-	//! субнормальность не портят конечное произведение. При t < 0 (результат < 1, переполнение невозможно) степень
+	//! субнормальность не портят конечное произведение. Только при t < −37 (результат около FLT_MIN и ниже) степень
 	//! берётся как 10^(t+20)·1e-20: округление к субнормальному или к нулю выполняет умножение IEEE, а не Math.Pow,
 	//! который ниже FLT_TRUE_MIN отдаёт ноль вместо округления вверх (прогон 2026-10-23 21:08:40, контрпример 1
 	//! codex #3980: 9e-46 → NUMERIC_FAILURE при ожидании bits 1), тогда как субнормальный 1e-40 он считает верно.
-	//! Порогов классификации нет — классифицируется фактический результат binary32: не конечный → переполнение
-	//! (false); ноль → underflow положительного значения (решает вызывающий по c > 0).
+	//! Сдвигать все t < 0 нельзя: f32(t + 20) теряет |t| < ~1e-6, и ε′ чуть ниже 1 становится ровно 1 (codex #3995,
+	//! контрпример 4). Это выбор устойчивого вычисления, не отсечка: классифицируется фактический результат binary32
+	//! — не конечный → переполнение (false); ноль → underflow положительного значения (решает вызывающий по c > 0).
 	protected static bool Power(float coef, float exponent, float fghz, out float value)
 	{
 		value = 0;
@@ -83,7 +85,7 @@ class RICON_MaterialProfileKernel
 		if (!RICON_Num.IsFinite(t))
 			return false;
 		float grown;
-		if (t < 0)
+		if (t < SCALE_BELOW)
 		{
 			float shifted = Math.Pow(10.0, t + SCALE_SHIFT);
 			grown = shifted * SCALE_DOWN;

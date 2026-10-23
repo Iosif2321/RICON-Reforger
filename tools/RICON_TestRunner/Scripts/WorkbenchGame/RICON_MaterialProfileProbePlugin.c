@@ -13,9 +13,9 @@ class RICON_MaterialProfileProbePlugin : WorkbenchPlugin
 			runner.m_iMatches, runner.m_iImmutable, runner.m_iControls, runner.m_iExtras, RICON_MaterialProfileFixtures.HOST_ONLY,
 			runner.m_iChains, worst.ToString(-1, 9));
 		int cases = RICON_MaterialProfileFixtures.CASES;
-		// extras = 6: null/восстановление, группа цепей (все OK-случаи с σ > 0), обратный повтор, 3 контрпримера Power.
+		// extras = 7: null/восстановление, группа цепей (все OK-случаи с σ > 0), обратный повтор, 4 контрпримера Power.
 		if (runner.m_bOk && runner.m_iCases == cases && runner.m_iMatches == cases && runner.m_iImmutable == cases
-			&& runner.m_iControls == 5 && runner.m_iExtras == 6)
+			&& runner.m_iControls == 5 && runner.m_iExtras == 7)
 		{
 			Print("[RICON_MPROF] done: PASS");
 			Workbench.Exit(0);

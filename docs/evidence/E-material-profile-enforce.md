@@ -25,8 +25,10 @@ ITU-R P.2040-4 для явно выбранного профиля, не сво�
   по коэффициентам (a > 0, c > 0), а не по результату (MP03.4); пределы MS03 ε′ ∈ [1, 100], σ ≤ 1e8; `material` с
   minMHz = maxMHz = f, provenance копируется (MP05);
 - `Power` — только устойчивая форма 10^t, t = log10 coef + exp·log10 f (MP04), точные случаи coef = 0 и exp = 0;
-  при t < 0 степень берётся как 10^(t+20)·1e-20, чтобы округление к субнормальному или к нулю выполняло умножение
-  IEEE (см. историю прогонов); порогов классификации нет: не конечный результат → переполнение, ноль → underflow.
+  только при t < −37 степень берётся как 10^(t+20)·1e-20, чтобы округление к субнормальному или к нулю выполняло
+  умножение IEEE (см. историю прогонов); сдвигать все t < 0 нельзя — f32(t+20) теряет |t| < 1e-6 и ε′ чуть ниже 1
+  становится ровно 1 (codex #3995, контрпример 4); порогов классификации нет: не конечный результат → переполнение,
+  ноль → underflow.
 
 Стенд (`addons/RICON_CoreTests/.../RICON_MaterialProfileFixtureSupport.c`, `RICON_MaterialProfileFixtures.c`,
 `tools/RICON_TestRunner/gen_material_profile_fixture.py`, `.../WorkbenchGame/RICON_MaterialProfileProbePlugin.c`):
@@ -40,29 +42,31 @@ ITU-R P.2040-4 для явно выбранного профиля, не сво�
   положительного);
 - лог печатает числа битами binary32 (codex #3978/#3982: десятичная печать движка теряет субнормальные σ и не печатает
   1e7): `[RICON_MPROF] id= code= epsBits= sigmaBits= minBits= maxBits= provenance= match= immutable=`;
-- extras = 6 (codex #3986): null вход/профиль с восстановлением; группа цепей профиль → существующее ядро пластины
+- extras = 7 (codex #3986, #3995): null вход/профиль с восстановлением; группа цепей профиль → существующее ядро пластины
   `RICON_MaterialSlabKernel` для **каждого** native OK-случая с σ > 0 (119: OK и L ≥ 0 на той же частоте,
   OUT_OF_MODEL_DOMAIN на 2f или 0,5f, потому что minMHz = maxMHz = f; толщина 0,1 м до 2000 МГц, выше 200/f, чтобы
   f·d ≤ 200 и 2f·d ≤ 400 внутри MS06; строки `[RICON_MPROF_CHAIN] fBits dBits epsBits sigmaBits slab loss shifted ok`);
   повтор всех случаев в обратном порядке; три контрпримера Power codex #3980/#3981 (a = 4, b = 0, TEST_ONLY):
   c = 9e-36, d = 10, f = 100 → σ = 9e-46 → binary32 bits 1 (OK, не ноль); c = 1e38, d = 15, f = 1 → промежуточная
-  степень 1e-45 субнормальна, σ = 9.999999406e-08 (bits 869711764); c = 3.4e38, d = 1, f = 1000 → σ конечен, значит
-  NUMERIC_DOMAIN_LIMIT, а не NUMERIC_FAILURE.
+  степень 1e-45 субнормальна, σ = 9.999999406e-08 (bits 869711764, допуск MP07 разрешает соседний 869711765);
+  c = 3.4e38, d = 1, f = 1000 → σ конечен, значит NUMERIC_DOMAIN_LIMIT, а не NUMERIC_FAILURE; четвёртый (codex #3995):
+  a = 1, b = −1, c = 0, d = 0, f = 1000.00048828125 → t = −2.07e-7, ε′ = 0.99999952 < 1 → NUMERIC_DOMAIN_LIMIT.
 
 ## Результат Workbench
 
 Запуск `ArmaReforgerWorkbenchSteamDiag -wbModule=ScriptEditor -plugin=RICON_MaterialProfileProbePlugin -wbSilent
 -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum` через `tools/RICON_TestRunner/addon.gproj`
 (slot по ACK codex #3980: один основной прогон плюс адресные исправления с явными логами). Финальный прогон:
-- лог `ricon-p32b-claude-20261023-211215-RICON_MaterialProfileProbePlugin/console.log`, 930 156 байт, sha256
-  `4f1d11b6d0c6379554c6d88109fde1954a7230cb2b38dcd21aa7e88b9438ce7b`; выжимка обоих прогонов со snapshot исходников —
-  `receipts/p3-2b-wb-claude-20261023.txt`;
-- CRC скриптов движка: `RICON_MaterialProfile.c` 3a597b37, `RICON_MaterialProfileFixtureSupport.c` d99c4a29,
-  `RICON_MaterialProfileFixtures.c` 72c5e41b, `RICON_MaterialProfileProbePlugin.c` 9ba4b825; sha256 пяти файлов
+- лог `ricon-p32b-claude-20261023-212346-RICON_MaterialProfileProbePlugin/console.log`, 930 254 байт, sha256
+  `ced9610bda1ee609e00491aae8456e90035f5e2a8abb57119df10bb405a351a3`; выжимка всех трёх прогонов со snapshot
+  исходников — `receipts/p3-2b-wb-claude-20261023.txt`;
+- CRC скриптов движка: `RICON_MaterialProfile.c` 1a2eeb69, `RICON_MaterialProfileFixtureSupport.c` 47d51590,
+  `RICON_MaterialProfileFixtures.c` 72c5e41b, `RICON_MaterialProfileProbePlugin.c` d1e038d2; sha256 пяти файлов
   (плюс генератор) до и после прогона идентичны;
-- exit 0, SCRIPT (E) 0, `[RICON_MPROF] cases=223 match=223 immutable=223 controls=5 extras=6 hostOnly=13 chains=119
-  maxRelativeError=0.000008498`, `[RICON_MPROF_POWER] id=1 … sigmaBits=1 ok=1`, `id=2 … sigmaBits=869711764 ok=1`,
-  `id=3 code=NUMERIC_DOMAIN_LIMIT … ok=1`, одна строка `done: PASS`;
+- exit 0, SCRIPT (E) 0, `[RICON_MPROF] cases=223 match=223 immutable=223 controls=5 extras=7 hostOnly=13 chains=119
+  maxRelativeError=0.000008498`, `[RICON_MPROF_POWER] id=1 … sigmaBits=1 ok=1`, `id=2 … sigmaBits=869711765 ok=1`
+  (1 ulp выше host-значения, в допуске), `id=3 code=NUMERIC_DOMAIN_LIMIT … ok=1`, `id=4 code=NUMERIC_DOMAIN_LIMIT …
+  ok=1`, одна строка `done: PASS`;
 - независимый разбор лога claude `receipts/p3-2b-log-check-claude.py` (декодирует биты, сверяет с binary64-ожиданиями
   корпуса, порядок/полноту/host-only, 119 цепей с пересчётом потерь принятым slab-оракулом по MS08, 3 контрпримера,
   сводку; `--self-check`: 44 порчи отвергнуты): `P3_2B_LOG_CHECK_PASS … worst rel 8.5e-06, worst |loss dev| 0.0195 dB`;
@@ -73,7 +77,10 @@ ITU-R P.2040-4 для явно выбранного профиля, не сво�
 та же maxRelativeError, но контрпример 1 дал `NUMERIC_FAILURE`: движковый `Math.Pow(10, −45.0458)` возвращает 0 вместо
 округления вверх к FLT_TRUE_MIN (bits 1), хотя субнормальный σ = 1e-40 корпуса (MP235, c = 1e-30, d = 10) он считает
 верно — FTZ/DAZ нет, предел именно на границе наименьшего субнормального. Это подмена положительного σ нулём (MP07),
-поэтому ядро исправлено (масштабированная форма при t < 0), `done: FAIL` первого прогона сохранён в receipt.
+поэтому ядро исправлено масштабированной формой; `done: FAIL` первого прогона сохранён в receipt. Прогон
+`…-211215-…` (sha256 `4f1d11b6…`, CRC ядра 3a597b37) масштабировал все t < 0 и прошёл 6/6 extras, но признан
+superseded: codex #3995 показал, что f32(t+20) теряет |t| < 1e-6 (ε′ = 0.99999952 → ровно 1 → OK вместо
+NUMERIC_DOMAIN_LIMIT); сдвиг ограничен t < −37, добавлен контрпример 4, финальный прогон — третий.
 До прогонов по counter codex #3978 из ядра убраны пороги `LOG10_OVERFLOW = 38.53` / `LOG10_UNDERFLOW = −45` (они
 отсекали часть конечных binary32: 3.4e38 → NUMERIC_FAILURE вместо NUMERIC_DOMAIN_LIMIT, 9e-46 → 0) и прямое
 произведение с субнормальной промежуточной степенью (c = 1e38, d = 15: f^d = 1e-45 теряет точность).
@@ -87,7 +94,8 @@ ITU-R P.2040-4 для явно выбранного профиля, не сво�
 | MP156 | vinyl 1 ГГц, d = 0.8422 | σ 5.09998761e-3 | 5.10000018e-3 | 2.5e-6 | 2e-5 |
 | MP235 | σ = 1e-40 субнормальный | bits 71362 | 9.99994610e-41 | в допуске | 2e-5 |
 | Power 1 | σ = 9e-46 → округление вверх к FLT_TRUE_MIN | bits 1 | bits 1 | 0 | точно |
-| Power 2 | промежуточная степень 1e-45 | bits 869711764 | bits 869711764 | 0 | 2e-5 |
+| Power 2 | промежуточная степень 1e-45 | bits 869711765 | bits 869711764 | 6e-8 (1 ulp) | 2e-5 |
+| Power 4 | ε′ = 0.99999952 чуть ниже 1 (codex #3995) | NUMERIC_DOMAIN_LIMIT | NUMERIC_DOMAIN_LIMIT | код | точно |
 
 Все остальные случаи ≤ 2.4e-6. Худший случай MP211 совпал с предсказанием binary32-эмуляции рецепта (корректно
 округлённые float32-операции): 8.498369e-6 против напечатанного 0.000008498 — на точках корпуса движковые

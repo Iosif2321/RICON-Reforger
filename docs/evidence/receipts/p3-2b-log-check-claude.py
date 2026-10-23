@@ -5,10 +5,11 @@ Re-reads [RICON_MPROF] lines: code, binary32 bit patterns of epsilonReal / condu
 provenance (all NONE on refusal), match and immutable flags per native case in corpus order, host-only absence,
 source LF-SHA; [RICON_MPROF_CHAIN] lines: exactly one per native OK case with sigma > 0, in corpus order, thickness
 rule d = 0.1 m (f <= 2000 MHz) else 200/f in binary32, slab=OK with finite loss >= 0 (within MS08 of the accepted slab
-oracle when --slab-oracle <oracle dir> is given), shifted=OUT_OF_MODEL_DOMAIN, ok=1; [RICON_MPROF_POWER] lines 1..3
-(codex #3980/#3981); the summary counts with a finite maxRelativeError <= 2e-5; one done: PASS; no SCRIPT (E); no
-tagged FAIL. Decoded numbers are compared with the frozen binary64 expectations: relative error <= 2e-5 for a positive
-expectation, zero exact (MP07 native tolerance, no positive sigma replaced by zero), minMHz/maxMHz bits exact.
+oracle when --slab-oracle <oracle dir> is given), shifted=OUT_OF_MODEL_DOMAIN, ok=1; [RICON_MPROF_POWER] lines 1..4 (codex #3980/#3981/#3995: id, code
+and ok exact, sigma bits decoded and compared with the MP07 tolerance, NONE on refusal); the summary counts with a
+finite maxRelativeError <= 2e-5; one done: PASS; no SCRIPT (E); no tagged FAIL. Decoded numbers are compared with the
+frozen binary64 expectations: relative error <= 2e-5 for a positive expectation, zero exact (MP07 native tolerance,
+no positive sigma replaced by zero), minMHz/maxMHz bits exact.
 NaN or Inf never passes: bit patterns must decode to finite binary32, loss is checked for finiteness explicitly.
 Usage: python -I p3-2b-log-check-claude.py <console.log> <material_profile_v1.json> [--slab-oracle <oracle dir>]
        python -I p3-2b-log-check-claude.py --self-check <material_profile_v1.json> [--slab-oracle <oracle dir>]"""
@@ -30,7 +31,10 @@ CHAIN = re.compile(r"\[RICON_MPROF_CHAIN\] fBits=(\S+) dBits=(\S+) epsBits=(\S+)
 POWER = re.compile(r"\[RICON_MPROF_POWER\] id=(\d+) code=(\w+) sigmaBits=(\S+) ok=(\w+)$")
 SUMMARY = re.compile(r"\[RICON_MPROF\] cases=(\d+) match=(\d+) immutable=(\d+) controls=(\d+) extras=(\d+) hostOnly=(\d+) "
                      r"chains=(\d+) maxRelativeError=(\S+)$")
-POWER_EXPECTED = (("1", "OK", "1"), ("2", "OK", "869711764"), ("3", "NUMERIC_DOMAIN_LIMIT", "NONE"))
+# (id, code, expected sigma as binary64 -> compared through decode + close; None = refusal, sigmaBits must be NONE)
+POWER_EXPECTED = (("1", "OK", 1.401298464324817e-45), ("2", "OK", 9.999999406318238e-08),
+                  ("3", "NUMERIC_DOMAIN_LIMIT", None), ("4", "NUMERIC_DOMAIN_LIMIT", None))
+EXTRAS = 7  # null/restore, chain group, reverse repeat, 4 Power counterexamples
 NONE5 = ("NONE",) * 5
 
 
@@ -179,14 +183,25 @@ def check(lines, raw, doc, slab=None):
             if not deviation <= slab_tolerance(expected):
                 errors.append(f"chain {cid} loss {loss} vs oracle {expected} (dev {deviation:.3g})")
     powers = [POWER.search(l).groups() for l in lines if POWER.search(l)]
-    if powers != [(i, c, b, "1") for i, c, b in POWER_EXPECTED]:
+    if len(powers) != len(POWER_EXPECTED):
         errors.append(f"power lines {powers}")
+    for (pid, code, sigma), got in zip(POWER_EXPECTED, powers):
+        gid, gcode, bits, ok = got
+        if gid != pid or gcode != code or ok != "1":
+            errors.append(f"power {pid} {got}")
+        elif sigma is None:
+            if bits != "NONE":
+                errors.append(f"power {pid} bits printed on refusal")
+        else:
+            value = decode(bits)
+            if value is None or not close(value, sigma):
+                errors.append(f"power {pid} sigma bits {bits} vs {sigma!r}")
     printed = [SUMMARY.search(l).groups() for l in lines if SUMMARY.search(l)]
     if len(printed) != 1:
         errors.append("summary")
     else:
         counts = tuple(int(v) for v in printed[0][:7])
-        if counts != (len(native), len(native), len(native), 5, 6, len(host_only), len(chained)):
+        if counts != (len(native), len(native), len(native), 5, EXTRAS, len(host_only), len(chained)):
             errors.append(f"summary counts {counts}")
         try:
             rel = float(printed[0][7])
@@ -224,9 +239,9 @@ def synthetic(doc, slab=None):
         epsilon, sigma = f32(m["epsilonReal"]), f32(m["conductivitySm"])
         loss = slab_loss(slab, frequency, thickness(frequency), epsilon, sigma, m["provenance"]) if slab else 0.0
         lines.append(chain_line(bits_of(frequency), bits_of(thickness(frequency)), bits_of(epsilon), bits_of(sigma), loss=f"{loss:.9f}"))
-    lines += [f"[RICON_MPROF_POWER] id={i} code={c} sigmaBits={b} ok=1" for i, c, b in POWER_EXPECTED]
+    lines += [f"[RICON_MPROF_POWER] id={i} code={c} sigmaBits={'NONE' if s is None else bits_of(s)} ok=1" for i, c, s in POWER_EXPECTED]
     host_only = sum(not c["native"] for c in doc["cases"])
-    lines.append(f"[RICON_MPROF] cases={len(native)} match={len(native)} immutable={len(native)} controls=5 extras=6 "
+    lines.append(f"[RICON_MPROF] cases={len(native)} match={len(native)} immutable={len(native)} controls=5 extras={EXTRAS} "
                  f"hostOnly={host_only} chains={len(chain_cases(doc))} maxRelativeError=0.000000000")
     lines.append("[RICON_MPROF] done: PASS")
     return lines
@@ -277,6 +292,12 @@ def self_check(raw, doc, slab=None):
     subnormal = next(c["id"] for c in doc["cases"] if c["native"] and c["expect"]["code"] == "OK"
                      and 0 < c["expect"]["material"]["conductivitySm"] < 1e-38)
     high = next(i for i, c in enumerate(chain_cases(doc)) if c["input"]["frequencyMHz"] > 2000)
+    power2 = bits_of(POWER_EXPECTED[1][2])
+    # positive control (codex #4000): Power 2 one ulp above the host value is within the MP07 tolerance and must pass
+    plus_one = [l.replace(f"id=2 code=OK sigmaBits={power2} ", f"id=2 code=OK sigmaBits={power2 + 1} ") for l in base]
+    if check(plus_one, raw, doc, slab)[0]:
+        print("SELF_CHECK_FAIL: Power 2 at +1 ulp rejected")
+        return 1
     mutations = {
         f"{ok_case} code": mutate_case(base, ok_case, "code", "NUMERIC_FAILURE"),
         f"{refusal} code OK": mutate_case(base, refusal, "code", "OK"),
@@ -314,10 +335,14 @@ def self_check(raw, doc, slab=None):
         "chain loss negative": mutate_chain(base, 0, "loss", "-0.100000000"),
         "chain loss text": mutate_chain(base, 0, "loss", "out_of_print_range"),
         "power code": [l.replace("id=3 code=NUMERIC_DOMAIN_LIMIT", "id=3 code=NUMERIC_FAILURE") for l in base],
-        "power bits": [l.replace("id=1 code=OK sigmaBits=1 ", "id=1 code=OK sigmaBits=0 ") for l in base],
-        "power ok 0": [l.replace("sigmaBits=869711764 ok=1", "sigmaBits=869711764 ok=0") for l in base],
+        "power 4 code OK": [l.replace("id=4 code=NUMERIC_DOMAIN_LIMIT", "id=4 code=OK") for l in base],
+        "power 1 sigma zero": [l.replace("id=1 code=OK sigmaBits=1 ", "id=1 code=OK sigmaBits=0 ") for l in base],
+        "power 1 sigma 2 ulp (100 %)": [l.replace("id=1 code=OK sigmaBits=1 ", "id=1 code=OK sigmaBits=2 ") for l in base],
+        "power 2 sigma +1000 ulp": [l.replace(f"sigmaBits={power2} ", f"sigmaBits={power2 + 1000} ") for l in base],
+        "power 3 bits printed": [l.replace("id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=NONE", "id=3 code=NUMERIC_DOMAIN_LIMIT sigmaBits=0") for l in base],
+        "power ok 0": [l.replace(f"sigmaBits={power2} ok=1", f"sigmaBits={power2} ok=0") for l in base],
         "power missing": [l for l in base if "_POWER] id=2 " not in l],
-        "summary counts": [l.replace("extras=6", "extras=5") if "cases=" in l else l for l in base],
+        "summary counts": [l.replace(f"extras={EXTRAS}", f"extras={EXTRAS - 1}") if "cases=" in l else l for l in base],
         "summary chains": [l.replace(f"chains={len(chain_cases(doc))}", "chains=3") if "cases=" in l else l for l in base],
         "summary maxRelativeError nan": [l.replace("maxRelativeError=0.000000000", "maxRelativeError=nan") if "cases=" in l else l for l in base],
         "summary maxRelativeError too large": [l.replace("maxRelativeError=0.000000000", "maxRelativeError=0.001000000") if "cases=" in l else l for l in base],
