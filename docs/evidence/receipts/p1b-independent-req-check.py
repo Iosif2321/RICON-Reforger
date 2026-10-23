@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""P1b blind checker (claude): REQ-channel-fading v0.1 CF03-CF09 re-implemented from the REQ text only.
+"""P1b blind checker (claude): REQ-channel-fading v0.2 CF03-CF09 re-implemented from the REQ text only.
 
 Inputs: the REQ and oracle/vectors/channel_fading_v1.json. The author oracle, builder and tests are NOT read.
 binary32 arithmetic via struct (every +,*,/,sqrt rounded separately; double-then-float rounding is innocuous
@@ -20,8 +20,9 @@ INT_MIN, INT_MAX = -(1 << 31), (1 << 31) - 1
 F32_MAX = struct.unpack("<f", b"\xff\xff\x7f\x7f")[0]
 F32_OVERFLOW = 2.0 ** 128 - 2.0 ** 103  # halfway between FLT_MAX and 2^128: ties-to-even goes to Inf
 KEY = re.compile(r"[A-Za-z0-9_.:-]{1,64}")
-EXPECTED_SHA = "365e94e9c9a2386caae0a8b7e171471d84e615fabf4c14882347fb660ca46321"
-HOST_ONLY = {"F27", "F28", "F29", "F30"}
+EXPECTED_SHA = "cf5030f6a4ab5e03b5c02ef63aa4211a012b6a36a059ee2b11b519491a925f61"  # v0.2; v0.1 was 365e94e9...6321
+HOST_ONLY = {"F27", "F28", "F29", "F30", "F57", "F70"}
+CASES = 71
 CODES = ("INVALID_INPUT", "UNSUPPORTED_MODEL", "RESOURCE_EXHAUSTED", "INCOMPLETE_COVERAGE", "CONTEXT_MISMATCH",
          "STALE_DESCRIPTOR", "OUT_OF_MODEL_DOMAIN", "EMPTY_MEDIUM", "NUMERIC_FAILURE", "ZERO_AT_SAMPLE", "OK")
 DESC_FIELDS = {"modelId", "profileId", "profileVersion", "a", "b", "frequencyMHz", "bandwidthHz",
@@ -212,6 +213,8 @@ def evaluate(inp):
         return {"code": "EMPTY_MEDIUM", "real": 0.0, "imag": 0.0, "gainDb": None, "phasesQ": []}
     phases = [phase_at(c[2], c[3], Qy["nowMs"], D["anchorMs"], Qy["subUs"]) for c in comps]
     sw = sqrt(w)
+    if not (math.isfinite(sw) and sw > 0):
+        return null("NUMERIC_FAILURE")  # CF08 v0.2: normalizer
     re_, im_ = 0.0, 0.0
     vals = [w, sw]
     for (cid, pw, _p, _d), qp in zip(comps, phases):
@@ -224,7 +227,9 @@ def evaluate(inp):
         return null("NUMERIC_FAILURE")
     if re_ == 0.0 and im_ == 0.0:
         return {"code": "ZERO_AT_SAMPLE", "real": 0.0, "imag": 0.0, "gainDb": None, "phasesQ": phases}
-    mag = f32(math.hypot(re_, im_))  # CF07 leaves the scaled-hypot algorithm open; gainDb carries 0.001 dB
+    mag = f32(math.hypot(re_, im_))  # CF07 v0.2: hypot algorithm non-normative within 0.001 dB
+    if not (math.isfinite(mag) and mag > 0):
+        return null("NUMERIC_FAILURE")  # nonzero coefficient with zero/non-finite modulus (FTZ/underflow)
     return {"code": "OK", "real": re_, "imag": im_, "gainDb": 20.0 * math.log10(mag), "phasesQ": phases}
 
 
@@ -256,7 +261,7 @@ def run(raw: bytes):
     if set(doc.get("hostOnly", [])) != HOST_ONLY:
         errors.append(f"hostOnly {doc.get('hostOnly')}")
     ids = [c["id"] for c in cases]
-    if len(ids) != 50 or len(set(ids)) != 50:
+    if len(ids) != CASES or len(set(ids)) != CASES:
         errors.append("case ids")
     for c in cases:
         got = evaluate(copy.deepcopy(c["input"]))
@@ -326,7 +331,7 @@ def main(argv):
     covered = sorted({c for c in report.values()})
     missing = [c for c in CODES if c not in covered]
     native = [cid for cid in report if cid not in HOST_ONLY]
-    summary = {"checker": "claude p1b-independent-req-check (REQ v0.1 + JSON only)", "corpusSha256": sha,
+    summary = {"checker": "claude p1b-independent-req-check (REQ v0.2 + JSON only)", "corpusSha256": sha,
                "cases": len(report), "native": len(native), "hostOnly": sorted(HOST_ONLY), "errors": errors,
                "controlsCaught": f"{caught}/{total}", "codesCovered": covered, "codesNotInCorpus": missing,
                "extras": ex, "codes": report}

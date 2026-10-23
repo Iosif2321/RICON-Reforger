@@ -1,13 +1,15 @@
 {
- "checker": "claude p1b-independent-req-check (REQ v0.1 + JSON only)",
- "corpusSha256": "365e94e9c9a2386caae0a8b7e171471d84e615fabf4c14882347fb660ca46321",
- "cases": 50,
- "native": 46,
+ "checker": "claude p1b-independent-req-check (REQ v0.2 + JSON only)",
+ "corpusSha256": "cf5030f6a4ab5e03b5c02ef63aa4211a012b6a36a059ee2b11b519491a925f61",
+ "cases": 71,
+ "native": 65,
  "hostOnly": [
   "F27",
   "F28",
   "F29",
-  "F30"
+  "F30",
+  "F57",
+  "F70"
  ],
  "errors": [],
  "controlsCaught": "12/12",
@@ -81,6 +83,27 @@
   "F47": "OK",
   "F48": "OK",
   "F49": "OK",
-  "F50": "OK"
+  "F50": "OK",
+  "F51": "OK",
+  "F52": "CONTEXT_MISMATCH",
+  "F53": "CONTEXT_MISMATCH",
+  "F54": "CONTEXT_MISMATCH",
+  "F55": "INVALID_INPUT",
+  "F56": "INVALID_INPUT",
+  "F57": "INVALID_INPUT",
+  "F58": "INVALID_INPUT",
+  "F59": "INVALID_INPUT",
+  "F60": "INVALID_INPUT",
+  "F61": "INVALID_INPUT",
+  "F62": "INVALID_INPUT",
+  "F63": "INVALID_INPUT",
+  "F64": "INVALID_INPUT",
+  "F65": "OK",
+  "F66": "OK",
+  "F67": "OK",
+  "F68": "OK",
+  "F69": "OK",
+  "F70": "INVALID_INPUT",
+  "F71": "OK"
  }
 }
