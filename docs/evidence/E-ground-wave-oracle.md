@@ -16,8 +16,8 @@ codex по `docs/req/REQ-ground-wave.md`, P.368-10 и LFMF v1.1 без авто�
   коэффициентов асимптотики, корни Ai/Ai') не перепечатаны вручную: их извлекает
   `receipts/ground-wave-airy-tables-claude.py`, режим `--check` сверяет блок в эталоне с исходником (sha256 блока
   `ba6a8dff…`).
-- `oracle/build_ground_wave_vectors.py` → `oracle/vectors/ground_wave_v1.json`: 263 случая (224 OK, 22 INVALID_INPUT,
-  13 OUT_OF_MODEL_DOMAIN, 4 NUMERIC_FAILURE; 12 из них JSON-only) и 95 опубликованных примеров NTIA;
+- `oracle/build_ground_wave_vectors.py` → `oracle/vectors/ground_wave_v1.json`: 265 случаев (224 OK, 24 INVALID_INPUT,
+  13 OUT_OF_MODEL_DOMAIN, 4 NUMERIC_FAILURE; 14 из них JSON-only, включая целые JSON вне binary64 — codex #4118) и 95 опубликованных примеров NTIA;
   `oracle/test_ground_wave_oracle.py` — 18 тестов.
 
 ## Сверка с неизменённой сборкой NTIA

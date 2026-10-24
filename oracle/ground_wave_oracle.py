@@ -554,7 +554,10 @@ REQ = ROOT / "docs" / "req" / "REQ-ground-wave.md"
 def _number(value):
     if type(value) not in (int, float):
         raise ValueError("ожидалось число")
-    value = float(value)
+    try:
+        value = float(value)
+    except OverflowError:
+        raise ValueError("целое JSON вне binary64 (codex #4118)") from None
     if not math.isfinite(value):
         raise ValueError("не конечное число")
     return value

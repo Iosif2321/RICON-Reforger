@@ -5,10 +5,11 @@ Reads the streamed [RICON_LIVE] lines with kind BENCH_* (side=probe) and checks:
 BENCH_SPAWN; per spawned radio the reads spawn, t0, t1 (actualDeltaMs >= 1000), t5 (actualDeltaMs >= 5000) in order;
 for transceiver 0 either BENCH_SET_FREQUENCY or BENCH_SKIP; one BENCH_MUTE per radio; exactly one BENCH_DONE with value
 6 after everything and no BENCH_ABORTED; no SCRIPT (E) (engine errors elsewhere in the log are listed, not hidden).
-Then it summarises per radio the raw values and compares raw min/max with the passport band of the catalog
-(oracle/data/radio_model_catalog_v1.json, matched by exact prefab path): ratio raw/MHz is reported for the two unit
-hypotheses (kHz: ratio 1000, MHz: ratio 1). This is an offline comparison at level NATIVE_ROUNDTRIP + PRIMARY_MANUAL,
-not an observation of the UI and not a proof of what the player hears.
+Each BENCH_SPAWN must report actualPrefab equal to the requested ResourceName. Then it summarises per radio the raw
+values next to the catalog (oracle/data/radio_model_catalog_v1.json) entry found ONLY through the confirmed
+ResourceName map below: passport bands (MHz) and the old reportedGame raw ranges. The ratios raw/passport are
+diagnostic numbers only — game ranges differ from the prototypes (codex #4115), so no kHz/MHz verdict is drawn here;
+Q-F against the UI stays open. Level NATIVE_ROUNDTRIP + PRIMARY_MANUAL, not an observation of the UI or of audio.
 Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json>"""
 import hashlib
 import json
@@ -28,14 +29,29 @@ def fields(text):
     return out
 
 
-def passport_band(catalog, prefab):
-    """Exact prefab path match ($ArmaReforger:<path without GUID>) → passport frequency ranges (MHz)."""
-    path = "$ArmaReforger:" + re.sub(r"^\{[0-9A-F]{16}\}", "", prefab)
+# Confirmed ResourceName → catalog prefab key, only from the metadata log
+# ricon-liveradio2-claude-20261024-062851-RICON_LiveResourceProbePlugin (sha256 4769705f…, codex #4115):
+# an unknown GUID is never matched by stripping it from the path.
+CONFIRMED = {
+    "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+    "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+    "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+    "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+}
+
+
+def catalog_entry(catalog, prefab):
+    """Confirmed ResourceName → (model id, passport frequency ranges in MHz, reportedGame raw ranges)."""
+    path = CONFIRMED.get(prefab)
+    if path is None:
+        return None, [], []
     for binding in catalog["bindings"]:
         if binding["prefab"] == path:
             model = catalog["models"][binding["modelId"]]
-            return binding["modelId"], [f["value"] for f in model["facts"] if f["quantity"] == "frequencyMHz"]
-    return None, []
+            bands = [f["value"] for f in model["facts"] if f["quantity"] == "frequencyMHz"]
+            game = [(t["minRaw"], t["maxRaw"]) for t in binding["reportedGame"]["transceivers"]]
+            return binding["modelId"], bands, game
+    return None, [], []
 
 
 def main(argv):
@@ -46,14 +62,28 @@ def main(argv):
     script_errors = [l for l in lines if re.search(r"SCRIPT\s*\(E\)", l)]
     if script_errors:
         errors.append(f"SCRIPT (E): {len(script_errors)}")
+    # Only the stream counts: lines inside dump=BEGIN … dump=END are the snapshot and are skipped, so a missing stream
+    # line can never be "restored" from the snapshot (codex #4113). A repeated seq in the stream is an error.
     events = []
     seen_seq = set()
+    in_dump = False
     for l in lines:
+        if "[RICON_LIVE] dump=BEGIN" in l:
+            in_dump = True
+            continue
+        if "[RICON_LIVE] dump=END" in l:
+            in_dump = False
+            continue
         m = LINE.search(l)
-        if m and m.group(4).startswith("BENCH_") and m.group(1) not in seen_seq:
-            seen_seq.add(m.group(1))  # the stream prints each record once; Dump repeats them — keep the first
-            events.append({"seq": int(m.group(1)), "kind": m.group(4), "tr": int(m.group(7)), "value": int(m.group(8)),
-                           "text": m.group(9), "f": fields(m.group(9))})
+        if in_dump or not m or not m.group(4).startswith("BENCH_"):
+            continue
+        if m.group(1) in seen_seq:
+            errors.append(f"stream seq {m.group(1)} repeated")
+        seen_seq.add(m.group(1))
+        events.append({"seq": int(m.group(1)), "kind": m.group(4), "tr": int(m.group(7)), "value": int(m.group(8)),
+                       "text": m.group(9), "f": fields(m.group(9))})
+    if not events:
+        errors.append("no BENCH stream lines: bench did not start (readiness, not a GetFrequency/mute result)")
     kinds = [e["kind"] for e in events]
     starts = [e for e in events if e["kind"] == "BENCH_START"]
     if len(starts) != 1:
@@ -80,7 +110,8 @@ def main(argv):
                 reads.setdefault(e["f"].get("phase"), e)
         row = {"device": device, "prefab": prefab, "spawned": spawn["value"] == 1}
         if spawn["value"] != 1:
-            notes.append(f"device {device}: spawn failed")
+            # codex #4113: a failed spawn is "no measurement", never a successful round-trip
+            errors.append(f"device {device}: spawn failed, no measurement")
             summary.append(row)
             continue
         phases = [p for p in ("spawn", "t0", "t1", "t5") if p in reads]
@@ -98,16 +129,21 @@ def main(argv):
             errors.append(f"device {device}: step records {len(step)}")
         if len(mute) != 1:
             errors.append(f"device {device}: mute records {len(mute)}")
+        actual = spawn["f"].get("actualPrefab")
+        row["actualPrefab"] = actual
+        if actual != prefab:
+            errors.append(f"device {device}: actual prefab {actual} != requested {prefab}")
         r0 = reads.get("spawn")
         if r0:
-            model, bands = passport_band(catalog, prefab)
+            model, bands, game = catalog_entry(catalog, prefab)
             lo, hi = int(r0["f"]["min"]), int(r0["f"]["max"])
             row.update(model=model, rawMin=lo, rawMax=hi, rawRes=int(r0["f"]["res"]), rawFrequency=r0["value"],
-                       passportMHz=bands)
+                       passportMHz=bands, reportedGameRaw=game)
             if bands:
+                # Diagnostic only (codex #4115): game ranges differ from the prototypes, so this is not a unit verdict.
                 pmin, pmax = min(b[0] for b in bands), max(b[1] for b in bands)
-                row["ratioMinRawToPassportMHz"] = lo / pmin
-                row["ratioMaxRawToPassportMHz"] = hi / pmax
+                row["diagRatioRawMinToPassportMinMHz"] = lo / pmin
+                row["diagRatioRawMaxToPassportMaxMHz"] = hi / pmax
         if step:
             row["step"] = step[0]["kind"]
             row["stepText"] = step[0]["text"]

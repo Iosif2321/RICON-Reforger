@@ -25,7 +25,8 @@ NTIA/ITS LFMF v1.1 (https://github.com/NTIA/LFMF, main.zip sha256
 
 **GW02.** Вход — ровно `{frequencyMHz, distanceKm, txHeightM, rxHeightM, polarization, surfaceRefractivityN, ground}`,
 `ground` — ровно `{epsilonReal, conductivitySm, provenance}`. Числа — конечные int/float JSON (bool, строки, null,
-NaN/Inf — не числа); вычисление в binary64 без предварительного округления к binary32. Лишние и отсутствующие поля
+NaN/Inf и целые вне конечного binary64, например 10^400, — не числа: INVALID_INPUT); вычисление в binary64 без
+предварительного округления к binary32. Лишние и отсутствующие поля
 запрещены; JSON-загрузчик отвергает повторяющиеся ключи до создания dict/map.
 `polarization` — строка `"V"` или `"H"`; `provenance` — `SOURCE_DOMAIN`, `ASSUMED_CONFIG` или `TEST_ONLY`
 (задаёт вызывающая сторона, функция его не удостоверяет и не повышает).

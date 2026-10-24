@@ -3,7 +3,7 @@
   "version": 1,
   "revision": 1,
   "source": "docs/req/REQ-ground-wave.md",
-  "requirementsLfSha256": "198033126e72322887ef6e9b0b0467e89fb9168d395bbdb74e74024d194d5259",
+  "requirementsLfSha256": "f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f",
   "note": "Ожидания OK — порт LFMF v1.1 (CROSS_CHECKED с неизменённой сборкой NTIA, |Δ| ≤ 2e-9 дБ); отказы — HAND_DERIVED по GW03. ntiaExamples — опубликованные NTIA значения (1 знак), проверяются через lfmf() с допуском 0.05 дБ. Грунты TEST_ONLY, если не указано иное.",
   "cases": [
     {
@@ -6940,6 +6940,50 @@
     },
     {
       "id": "GW255",
+      "note": "целое JSON вне binary64 (codex #4118)",
+      "jsonOnly": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+        "distanceKm": 10.0,
+        "txHeightM": 2.0,
+        "rxHeightM": 2.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 0.005,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "GW256",
+      "note": "отрицательное целое JSON вне binary64",
+      "jsonOnly": true,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 25.0,
+        "distanceKm": 10.0,
+        "txHeightM": 2.0,
+        "rxHeightM": 2.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": -10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
+          "conductivitySm": 0.005,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "INVALID_INPUT"
+      }
+    },
+    {
+      "id": "GW257",
       "note": "поляризация в нижнем регистре",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6961,7 +7005,7 @@
       }
     },
     {
-      "id": "GW256",
+      "id": "GW258",
       "note": "неизвестная поляризация",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6983,7 +7027,7 @@
       }
     },
     {
-      "id": "GW257",
+      "id": "GW259",
       "note": "неизвестный provenance",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7005,7 +7049,7 @@
       }
     },
     {
-      "id": "GW258",
+      "id": "GW260",
       "note": "ground не объект",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7026,7 +7070,7 @@
       }
     },
     {
-      "id": "GW259",
+      "id": "GW261",
       "note": "лишнее поле входа",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7049,7 +7093,7 @@
       }
     },
     {
-      "id": "GW260",
+      "id": "GW262",
       "note": "нет поля surfaceRefractivityN",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7070,7 +7114,7 @@
       }
     },
     {
-      "id": "GW261",
+      "id": "GW263",
       "note": "лишнее поле ground",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7093,7 +7137,7 @@
       }
     },
     {
-      "id": "GW262",
+      "id": "GW264",
       "note": "нет provenance в ground",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -7114,7 +7158,7 @@
       }
     },
     {
-      "id": "GW263",
+      "id": "GW265",
       "note": "корень не объект",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",

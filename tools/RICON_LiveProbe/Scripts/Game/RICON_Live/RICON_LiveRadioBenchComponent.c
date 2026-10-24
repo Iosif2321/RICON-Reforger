@@ -128,9 +128,17 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			m_aRadios.Insert(radio);
 			m_aTargets.Insert(-1);
 			int ok = 0;
+			string actual = "NONE";
 			if (radio)
+			{
 				ok = 1;
-			Record("BENCH_SPAWN", i, -1, ok, "prefab=" + m_aPrefabs[i]);
+				// Фактический префаб созданной сущности отдельно от запрошенного (codex #4115).
+				EntityPrefabData data = radio.GetPrefabData();
+				actual = "UNKNOWN";
+				if (data)
+					actual = data.GetPrefabName();
+			}
+			Record("BENCH_SPAWN", i, -1, ok, "prefab=" + m_aPrefabs[i] + ",actualPrefab=" + actual);
 		}
 	}
 

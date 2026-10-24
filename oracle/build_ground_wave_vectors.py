@@ -133,6 +133,8 @@ def cases():
     change("bool вместо числа", "INVALID_INPUT", True, frequencyMHz=True)
     change("строка вместо числа", "INVALID_INPUT", True, distanceKm="10")
     change("null вместо числа", "INVALID_INPUT", True, txHeightM=None)
+    change("целое JSON вне binary64 (codex #4118)", "INVALID_INPUT", True, frequencyMHz=10 ** 400)
+    change("отрицательное целое JSON вне binary64", "INVALID_INPUT", True, epsilonReal=-(10 ** 400))
     change("поляризация в нижнем регистре", "INVALID_INPUT", True, polarization="v")
     change("неизвестная поляризация", "INVALID_INPUT", True, polarization="CIRCULAR")
     change("неизвестный provenance", "INVALID_INPUT", True, provenance="MEASURED")
