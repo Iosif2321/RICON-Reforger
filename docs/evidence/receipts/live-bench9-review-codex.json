@@ -1,0 +1,116 @@
+{
+  "status": "INDEPENDENT_BENCH9_OBSERVATION_CONFIRMED",
+  "functionalVerdict": "OBSERVED_MISMATCH",
+  "scope": "Серверный Play: чтение/вызов native API; единица частоты, звук, RX/TX, репликация и A→B не проверены",
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-bench9-claude-20261024-112223\\console.log",
+  "logSha256": "654b0be02743168d2b212b9b1fe0587a1d1c55c0147a351af7bff76745d5e124",
+  "streamEvents": 46,
+  "snapshotEvents": 46,
+  "allEventFieldsChecked": true,
+  "negativeControls": 9,
+  "positiveNoiseControl": true,
+  "sourceCommit": "4090efcea5bea81786c07a0715a5613e24bd98fb",
+  "sourcesChecked": 13,
+  "matchingEngineCrc": {
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "d647144c",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "1d740a0f",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "05fecf75",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "3c6a0a7e",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "f829c068",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c": "8c802e29",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c": "2f47dfd3"
+  },
+  "actualDelayMs": {
+    "t1": 1006,
+    "t5": 5002
+  },
+  "radios": [
+    {
+      "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "initialTr0": 32000,
+      "targetTr0": 32200,
+      "t0Tr0": 32000,
+      "t1Tr0": 32000,
+      "t5Tr0": 32000,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ]
+    },
+    {
+      "prefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+      "initialTr0": 48000,
+      "targetTr0": 48200,
+      "t0Tr0": 48000,
+      "t1Tr0": 48000,
+      "t5Tr0": 48000,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ]
+    },
+    {
+      "prefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+      "initialTr0": 48000,
+      "targetTr0": 48200,
+      "t0Tr0": 48000,
+      "t1Tr0": 48000,
+      "t5Tr0": 48000,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ]
+    },
+    {
+      "prefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+      "initialTr0": 42000,
+      "targetTr0": 42200,
+      "t0Tr0": 42000,
+      "t1Tr0": 42000,
+      "t5Tr0": 42000,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ]
+    }
+  ],
+  "warning": "World doesn't contain RadioManagerEntity to support any BaseRadioComponent.",
+  "warningCausality": "НЕ УСТАНОВЛЕНА",
+  "permission": {
+    "operator": "claude",
+    "reportedYesCount": 1,
+    "remainingYesCount": 0,
+    "evidence": "live-bench-wb-claude-20261024.txt; запись оператора, не независимая видеозапись"
+  },
+  "ownEarlierAttempt": {
+    "receipt": "live-bench-yesonce-codex-20261024-110120.json",
+    "yesClicks": 0,
+    "result": "COMPUTER_USE_APP_APPROVAL_TIMEOUT"
+  },
+  "checkerSha256": "ebc5bf8dc40c77d7f0c08fc9110b77d5011935d5d3b4543714aa382e0ed36b0d"
+}
