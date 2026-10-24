@@ -3088,3 +3088,229 @@ LOGSHA 8EB19EB768E58A8F0A84DB496725E376228E901F3CEB8FBA218CF013F00F4612 size 913
 [RICON_LIVEB] watch t=28000ms isGameMode=0 fps=59.15
 [RICON_LIVEB] watch t=29000ms isGameMode=0 fps=59.7194
 [RICON_LIVEB] watch=END isGameMode=0
+
+--- ricon-b0a-restart2-claude-20261025-001136
+# B0a-restart2 (00:11:36): Play -> Edit -> Play in one process with -riconEndpointRestart=1 after the launcher fix
+# (codex f0d6d4f, launcher CRC a2e15897: the same edit world held for 51 checks / >= 5 s, one SwitchToGameMode, wait for
+# the actual game mode). ACK codex #4599, START #4600. Game 45b337e3 / Probe 0cb4c712 / bench f40f8d06 unchanged.
+# Runner wb_bench.ps1 1F7081BB... (a second "Yes" only after restart=SECOND_PLAY_REQUESTED, for a new window of the exact
+# prompt; self-test 19/19) PID 8936, -EndpointCycles 2, cap 150 s. Parser 1d68621 (controls 45/45).
+#   - "Yes" 1 at 00:11:47.485 (t=10 s); after SECOND_PLAY_REQUESTED a new window of the same exact prompt, "Yes" 2 at
+#     00:11:58.183 (t=21 s); no third window, no unknown window. STOP ENDPOINT_FINISHED at 57 s (second dump=END),
+#     SCRIPT (E) 0, the known other (E) set, sources stable, own PID gone.
+#   - Cycle 1: START 00:11:47.040, 3 samples, restart=EDIT_REQUESTED 51.683, ENDPOINT_ABORTED samples=3 reason=GAME_END
+#     51.707, dump count=8 dropped 0 = stream.
+#   - restart=EDIT_STABLE checks=51 at 57.533, SECOND_PLAY_REQUESTED 57.534, second ENDPOINT_START 58.046,
+#     SECOND_PLAY_ENTERED 58.535.
+#   - Cycle 2: 30 samples, one binding (player 1), members 1, rplMode 0, AN/PRC-68 32000/48000, ENDPOINT_DONE LIMIT
+#     00:12:28.458, dump count=35 dropped 0 = stream.
+#   - Parser `restart`: LIVE_ENDPOINT_LOG_CHECK_PASS, ENDPOINT_RESTART_COMPLETE.
+# Reading: the observer stops on OnGameEnd at Edit, releases its references and starts a fresh journal and revision on
+#   the next Play. The second cycle carries cycle=1 again: in Workbench the game object (or its state) is recreated
+#   between Play sessions ("Workbench Reload Game"); recorded as an observation only.
+# Settings snapshot: registry 0 changed lines (sha E38C14F3... before = after), 0 profile files changed.
+8d45f3f4ec35d3f8b9dad64544381cbede1e060f422c982ebc11a4ca9f1d052e
+# runner output (selected lines)
+SETTINGS_BEFORE regLines=3276 profileFiles=5
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -logLevel verbose -log-scr-checksum -logsDir ricon-b0a-restart2-claude-20261025-001136 -forceUpdate -noFocus -maxFPS 30 -riconBenchMode=endpoint -riconEndpointProbe=1 -riconEndpointRestart=1
+WINDOW Hidden gameModeWait=0
+PID 8936 started 00:11:36
+OBSERVE t=10 responding=True cpuSec=10.42 threads=49 logSize=885993 windows=8 visible=3
+  WINDOW V|Qt683QWindowIcon|Script Authorization Required
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+DIALOG t=10 title="Script Authorization Required" handle=10224890
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_ONCE check textMatch=True buttons="No,No to All,Yes,Yes to All" buttonsMatch=True yesButtons=1
+YES_ONCE pressed button="Yes" count=1 t=10 at=00:11:47.485
+OBSERVE t=21 responding=True cpuSec=18.66 threads=50 logSize=927992 windows=7 visible=3
+  WINDOW V|Qt683QWindowIcon|Script Authorization Required
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+YES_SECOND allowed after restart=SECOND_PLAY_REQUESTED, full check follows
+DIALOG t=21 title="Script Authorization Required" handle=5310626
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_ONCE check textMatch=True buttons="No,No to All,Yes,Yes to All" buttonsMatch=True yesButtons=1
+YES_ONCE pressed button="Yes" count=2 t=21 at=00:11:58.183
+OBSERVE t=32 responding=True cpuSec=30.11 threads=48 logSize=939634 windows=6 visible=2
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+OBSERVE t=41 responding=True cpuSec=38.98 threads=48 logSize=943678 windows=6 visible=2
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+OBSERVE t=51 responding=True cpuSec=49.86 threads=48 logSize=948517 windows=6 visible=2
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+STOP reason=ENDPOINT_FINISHED pid=8936 after=57 s exited=True
+YES_PRESSES=2
+SETTINGS_AFTER regLines=3276 regDiffLines=0 profileDiffLines=0
+  REGSHA before=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2 after=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+LOGSHA 8D45F3F4EC35D3F8B9DAD64544381CBEDE1E060F422C982EBC11A4CA9F1D052E size 962624
+# log lines (timestamps stripped)
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] setup existing entities=21 gameModes=1 radioManagers=0 noInstance=0 gameModeParam=0: radioManagerParam=0:
+[RICON_LIVEB] state=ENDPOINT_ONLY bench=0 saved=0
+[RICON_LIVEB] setup created gameMode=0 gameModeOk=0 radioManager=0 via=class radioManagerOk=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=0
+[RICON_LIVEB] watch t=200ms isGameMode=1 fps=60.1956
+[RICON_LIVE] seq=1 t=729 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+[RICON_LIVE] seq=2 t=729 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1008,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=3 t=729 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=4 t=729 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVEB] watch t=1000ms isGameMode=1 fps=105.674
+[RICON_LIVE] seq=5 t=1734 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2013,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=2000ms isGameMode=1 fps=139.216
+[RICON_LIVE] seq=6 t=2736 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3014,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] restart=EDIT_REQUESTED
+[RICON_LIVE] seq=7 t=2825 side=probe kind=ENDPOINT_ABORTED player=1 device=-1 tr=-1 value=3 text=cycle=1,samples=3,reason=GAME_END
+[RICON_LIVE] dump=BEGIN count=8 dropped=0 nextSeq=8
+[RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=0
+[RICON_LIVE] seq=1 t=729 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+[RICON_LIVE] seq=2 t=729 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1008,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=3 t=729 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=4 t=729 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=5 t=1734 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2013,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=6 t=2736 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3014,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=7 t=2825 side=probe kind=ENDPOINT_ABORTED player=1 device=-1 tr=-1 value=3 text=cycle=1,samples=3,reason=GAME_END
+[RICON_LIVE] dump=END
+[RICON_LIVEB] watch t=2900ms isGameMode=0 fps=119.218
+[RICON_LIVEB] watch t=3000ms isGameMode=0 fps=119.218
+[RICON_LIVEB] watch t=4000ms isGameMode=0 fps=59.1871
+[RICON_LIVEB] watch t=5000ms isGameMode=0 fps=58.778
+[RICON_LIVEB] watch t=6000ms isGameMode=0 fps=58.9459
+[RICON_LIVEB] watch t=7000ms isGameMode=0 fps=59.362
+[RICON_LIVEB] watch t=8000ms isGameMode=0 fps=60.1241
+[RICON_LIVEB] restart=EDIT_STABLE checks=51
+[RICON_LIVEB] restart=SECOND_PLAY_REQUESTED
+[RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=0
+[RICON_LIVEB] restart=SECOND_PLAY_ENTERED
+[RICON_LIVEB] watch t=8100ms isGameMode=1 fps=27.7776
+[RICON_LIVE] seq=1 t=875 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+[RICON_LIVE] seq=2 t=875 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1001,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=3 t=875 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=4 t=875 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVEB] watch t=9000ms isGameMode=1 fps=123.142
+[RICON_LIVE] seq=5 t=1882 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2008,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=10000ms isGameMode=1 fps=124.236
+[RICON_LIVE] seq=6 t=2884 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3010,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=11000ms isGameMode=1 fps=127.891
+[RICON_LIVE] seq=7 t=3885 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=4 text=cycle=1,elapsedMs=4011,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=12000ms isGameMode=1 fps=128.167
+[RICON_LIVE] seq=8 t=4891 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=5 text=cycle=1,elapsedMs=5017,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=13000ms isGameMode=1 fps=127.168
+[RICON_LIVE] seq=9 t=5894 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=6 text=cycle=1,elapsedMs=6020,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=14000ms isGameMode=1 fps=130.271
+[RICON_LIVE] seq=10 t=6894 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=7 text=cycle=1,elapsedMs=7020,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=15000ms isGameMode=1 fps=128.019
+[RICON_LIVE] seq=11 t=7897 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=8 text=cycle=1,elapsedMs=8023,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=16000ms isGameMode=1 fps=130.772
+[RICON_LIVE] seq=12 t=8898 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=9 text=cycle=1,elapsedMs=9024,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=17000ms isGameMode=1 fps=129.354
+[RICON_LIVE] seq=13 t=9901 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=10 text=cycle=1,elapsedMs=10027,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=18000ms isGameMode=1 fps=128.803
+[RICON_LIVE] seq=14 t=10906 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=11 text=cycle=1,elapsedMs=11032,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=19000ms isGameMode=1 fps=131.274
+[RICON_LIVE] seq=15 t=11911 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=12 text=cycle=1,elapsedMs=12037,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=20000ms isGameMode=1 fps=130.408
+[RICON_LIVE] seq=16 t=12917 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=13 text=cycle=1,elapsedMs=13043,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=21000ms isGameMode=1 fps=131.248
+[RICON_LIVE] seq=17 t=13922 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=14 text=cycle=1,elapsedMs=14048,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=22000ms isGameMode=1 fps=129.543
+[RICON_LIVE] seq=18 t=14926 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=15 text=cycle=1,elapsedMs=15052,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=23000ms isGameMode=1 fps=130.309
+[RICON_LIVE] seq=19 t=15928 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=16 text=cycle=1,elapsedMs=16054,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=24000ms isGameMode=1 fps=129.846
+[RICON_LIVE] seq=20 t=16934 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=17 text=cycle=1,elapsedMs=17060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=25000ms isGameMode=1 fps=128.874
+[RICON_LIVE] seq=21 t=17936 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=18 text=cycle=1,elapsedMs=18062,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=26000ms isGameMode=1 fps=130.514
+[RICON_LIVE] seq=22 t=18943 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=19 text=cycle=1,elapsedMs=19070,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=27000ms isGameMode=1 fps=130.028
+[RICON_LIVE] seq=23 t=19950 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=20 text=cycle=1,elapsedMs=20076,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=28000ms isGameMode=1 fps=129.809
+[RICON_LIVE] seq=24 t=20951 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=21 text=cycle=1,elapsedMs=21077,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch t=29000ms isGameMode=1 fps=128.636
+[RICON_LIVE] seq=25 t=21956 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=22 text=cycle=1,elapsedMs=22082,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVEB] watch=END isGameMode=1
+[RICON_LIVE] seq=26 t=22962 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=23 text=cycle=1,elapsedMs=23088,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=27 t=23966 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=24 text=cycle=1,elapsedMs=24093,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=28 t=24974 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=25 text=cycle=1,elapsedMs=25100,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=29 t=25976 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=26 text=cycle=1,elapsedMs=26102,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=30 t=26983 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=27 text=cycle=1,elapsedMs=27109,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=31 t=27983 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=28 text=cycle=1,elapsedMs=28109,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=32 t=28988 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=29 text=cycle=1,elapsedMs=29115,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=33 t=29995 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=30 text=cycle=1,elapsedMs=30121,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=34 t=29995 side=probe kind=ENDPOINT_DONE player=1 device=-1 tr=-1 value=30 text=cycle=1,samples=30,reason=LIMIT
+[RICON_LIVE] dump=BEGIN count=35 dropped=0 nextSeq=35
+[RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=0
+[RICON_LIVE] seq=1 t=875 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+[RICON_LIVE] seq=2 t=875 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1001,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=3 t=875 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=4 t=875 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+[RICON_LIVE] seq=5 t=1882 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2008,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=6 t=2884 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3010,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=7 t=3885 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=4 text=cycle=1,elapsedMs=4011,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=8 t=4891 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=5 text=cycle=1,elapsedMs=5017,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=9 t=5894 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=6 text=cycle=1,elapsedMs=6020,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=10 t=6894 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=7 text=cycle=1,elapsedMs=7020,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=11 t=7897 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=8 text=cycle=1,elapsedMs=8023,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=12 t=8898 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=9 text=cycle=1,elapsedMs=9024,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=13 t=9901 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=10 text=cycle=1,elapsedMs=10027,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=14 t=10906 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=11 text=cycle=1,elapsedMs=11032,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=15 t=11911 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=12 text=cycle=1,elapsedMs=12037,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=16 t=12917 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=13 text=cycle=1,elapsedMs=13043,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=17 t=13922 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=14 text=cycle=1,elapsedMs=14048,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=18 t=14926 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=15 text=cycle=1,elapsedMs=15052,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=19 t=15928 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=16 text=cycle=1,elapsedMs=16054,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=20 t=16934 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=17 text=cycle=1,elapsedMs=17060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=21 t=17936 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=18 text=cycle=1,elapsedMs=18062,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=22 t=18943 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=19 text=cycle=1,elapsedMs=19070,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=23 t=19950 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=20 text=cycle=1,elapsedMs=20076,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=24 t=20951 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=21 text=cycle=1,elapsedMs=21077,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=25 t=21956 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=22 text=cycle=1,elapsedMs=22082,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=26 t=22962 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=23 text=cycle=1,elapsedMs=23088,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=27 t=23966 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=24 text=cycle=1,elapsedMs=24093,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=28 t=24974 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=25 text=cycle=1,elapsedMs=25100,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=29 t=25976 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=26 text=cycle=1,elapsedMs=26102,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=30 t=26983 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=27 text=cycle=1,elapsedMs=27109,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=31 t=27983 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=28 text=cycle=1,elapsedMs=28109,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=32 t=28988 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=29 text=cycle=1,elapsedMs=29115,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=33 t=29995 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=30 text=cycle=1,elapsedMs=30121,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=0
+[RICON_LIVE] seq=34 t=29995 side=probe kind=ENDPOINT_DONE player=1 device=-1 tr=-1 value=30 text=cycle=1,samples=30,reason=LIMIT
+[RICON_LIVE] dump=END

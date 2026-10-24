@@ -1,0 +1,93 @@
+{
+ "logSha256": "8d45f3f4ec35d3f8b9dad64544381cbede1e060f422c982ebc11a4ca9f1d052e",
+ "mode": "restart",
+ "errors": [],
+ "overall": "ENDPOINT_RESTART_COMPLETE",
+ "liveLines": 90,
+ "endpointOnly": true,
+ "cycles": [
+  {
+   "cycle": 1,
+   "samples": 3,
+   "end": "ENDPOINT_ABORTED",
+   "reason": "GAME_END",
+   "role": {
+    "isServer": "1",
+    "isClient": "0",
+    "rplMode": "0"
+   },
+   "cycleField": "1",
+   "bindingRevisions": 1,
+   "playerIds": [
+    1
+   ],
+   "members": [
+    "1"
+   ],
+   "firstLocalPlayerSample": 1,
+   "firstControlledSample": 1,
+   "radios": {
+    "0": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 0,
+     "raw": [
+      32000
+     ]
+    },
+    "1": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 1,
+     "raw": [
+      48000
+     ]
+    }
+   },
+   "rplModesInSamples": [
+    "0"
+   ],
+   "localRole": "LOCAL_ROLE_NOT_READY"
+  },
+  {
+   "cycle": 2,
+   "samples": 30,
+   "end": "ENDPOINT_DONE",
+   "reason": "LIMIT",
+   "role": {
+    "isServer": "1",
+    "isClient": "0",
+    "rplMode": "0"
+   },
+   "cycleField": "1",
+   "bindingRevisions": 1,
+   "playerIds": [
+    1
+   ],
+   "members": [
+    "1"
+   ],
+   "firstLocalPlayerSample": 1,
+   "firstControlledSample": 1,
+   "radios": {
+    "0": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 0,
+     "raw": [
+      32000
+     ]
+    },
+    "1": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 1,
+     "raw": [
+      48000
+     ]
+    }
+   },
+   "rplModesInSamples": [
+    "0"
+   ],
+   "localRole": "LOCAL_ROLE_READY"
+  }
+ ]
+}
+LIVE_ENDPOINT_LOG_CHECK_PASS
