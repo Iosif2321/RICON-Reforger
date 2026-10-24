@@ -52,7 +52,7 @@ def cycle(ordinal, b):
                          f"cycle={ordinal},revision={rev},initial={int(prev is None)},pcChanged={int(prev is None or pc != prev[0])},"
                          f"entityChanged={int(prev is None or controlled != prev[1])},idChanged={int(prev is None or pid != prev[2])},"
                          f"pc={pc},controlled={controlled},previousPlayerId={-1 if prev is None else prev[2]}"))
-        members = b.get("members", "1") if pc else "NONE"
+        members = (b.get("members_at", {}).get(n) or b.get("members", "1")) if pc else "NONE"
         shown_rev = rev - 1 if b.get("stale_rev_at") == n else rev
         rows.append(("ENDPOINT_SAMPLE", pid, -1, n,
                      f"cycle={ordinal},elapsedMs={ms},bindingRevision={shown_rev},{player_state(pc, controlled, pid)},"
@@ -108,14 +108,17 @@ cases = [
      OFF, 1, "LOG_INVALID"),
     ("off_without_endpoint_only", build(cycles=[], launcher=False), OFF, 1, "LOG_INVALID"),
     ("off_never_played", build(cycles=[]).replace("isGameMode=1", "isGameMode=0"), OFF, 1, "LOG_INVALID"),
-    ("on_complete", build(), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
+    ("on_complete", build(), ON, 0, "ENDPOINT_CYCLE_COMPLETE", "LOCAL_ROLE_READY"),
     # codex #4579: rplMode is required in START and every SAMPLE
     ("on_no_rplmode", build(cycles=[{"start_rpl": "", "sample_rpl": ""}]), ON, 1, "LOG_INVALID"),
     ("on_rplmode_start_missing", build(cycles=[{"start_rpl": ""}]), ON, 1, "LOG_INVALID"),
     ("on_rplmode_sample_missing", build(cycles=[{"sample_rpl": ""}]), ON, 1, "LOG_INVALID"),
     ("on_rplmode_not_int", build(cycles=[{"sample_rpl": ",rplMode=Listen"}]), ON, 1, "LOG_INVALID"),
-    ("on_never_player", build(cycles=[{"never": True}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
-    ("on_self_not_member", build(cycles=[{"members": "2"}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
+    ("on_never_player", build(cycles=[{"never": True}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE", "LOCAL_ROLE_NOT_READY"),
+    ("on_self_not_member", build(cycles=[{"members": "2"}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE", "LOCAL_ROLE_NOT_READY"),
+    # codex #4585: membership must hold on every sample of the readiness window, not only the last one
+    ("on_members_ready_only_last", build(cycles=[{"members_at": {26: "UNKNOWN", 27: "UNKNOWN", 28: "UNKNOWN", 29: "UNKNOWN"}}]),
+     ON, 0, "ENDPOINT_CYCLE_COMPLETE", "LOCAL_ROLE_NOT_READY"),
     ("on_aborted", build(cycles=[{"samples": 12}]), ON, 0, "ENDPOINT_CYCLE_ABORTED"),
     ("on_bad_reason", build(cycles=[{"samples": 12, "reason": "TIMEOUT"}]), ON, 1, "LOG_INVALID"),
     ("on_done_early", build(cycles=[{"samples": 29, "end_kind": "ENDPOINT_DONE", "reason": "LIMIT"}]), ON, 1, "LOG_INVALID"),
@@ -148,7 +151,7 @@ cases = [
      "LOG_INVALID"),
 ]
 passed = 0
-for name, text_, args, rc_expected, overall_expected in cases:
+for name, text_, args, rc_expected, overall_expected, *role_expected in cases:
     path = f"{out}/{name}.log"
     open(path, "w", encoding="utf-8").write(text_)
     run = subprocess.run([sys.executable, "-X", "utf8", "-I", checker, path, *args], capture_output=True, text=True,
@@ -157,9 +160,9 @@ for name, text_, args, rc_expected, overall_expected in cases:
         report = json.loads(run.stdout[:run.stdout.rindex("}") + 1])
     except ValueError:
         report = {"overall": "NO_REPORT", "errors": [run.stderr[-200:]], "cycles": []}
-    ok = run.returncode == rc_expected and report["overall"] == overall_expected
-    passed += ok
     roles = [c.get("localRole") for c in report.get("cycles", [])]
+    ok = run.returncode == rc_expected and report["overall"] == overall_expected         and (not role_expected or roles[-1:] == role_expected)
+    passed += ok
     print(f"{'PASS' if ok else 'FAIL'} {name}: rc={run.returncode} overall={report['overall']} role={roles} "
           f"errors={report['errors'][:2]}")
 print(f"ENDPOINT_PARSER_CONTROLS {passed}/{len(cases)}")

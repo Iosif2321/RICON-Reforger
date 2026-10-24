@@ -21,7 +21,7 @@ reason GAME_END / WORLD_CLEANUP / WORLD_CHANGED / GAME_START_RESET); then one du
 repeats exactly the cycle's stream, and dump=END. No other kind (no VoN, BENCH, PLAYER, QM, SCREEN records).
 Cycles are numbered 1, 2, ... in stream order. Findings are descriptive: the process role, samples with a local player,
 the playerIds and members seen, binding revisions, radios observed, and LOCAL_ROLE_READY when the last 5 samples have
-pc=1, controlled=1, one stable revision and the own playerId among members (LOCAL_ROLE_NOT_READY otherwise; a missing
+pc=1, controlled=1, one stable revision and the own playerId among members in each of them (LOCAL_ROLE_NOT_READY otherwise; a missing
 player early in a cycle is not a log error). The end of an observation is not a proven role readiness (codex schema).
 Restart (codex #4579, -riconEndpointRestart=1: the launcher waits for >= 3 samples, requests Edit, waits for the edit mode
 and requests the second Play): cycle 1 must end ABORTED after at least 3 samples with GAME_END, WORLD_CLEANUP or
@@ -203,7 +203,7 @@ def check_cycle(ordinal, events, dump, errors):
     last = tail[-READY_TAIL:]
     ready = len(last) == READY_TAIL and all(t["pc"] == "1" and t["controlled"] == "1" for t in last) \
         and len({(t["player"], t["revision"]) for t in last}) == 1 \
-        and str(last[-1]["player"]) in last[-1]["members"].split("|")
+        and all(str(t["player"]) in t["members"].split("|") for t in last)  # codex #4585: every sample of the window
     row.update({"samples": sample, "bindingRevisions": revision, "playerIds": sorted(players),
                 "members": sorted(members_seen), "firstLocalPlayerSample": next((t["n"] for t in tail if t["pc"] == "1"),
                                                                               None),
