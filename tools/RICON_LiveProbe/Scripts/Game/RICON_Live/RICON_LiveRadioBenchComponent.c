@@ -801,7 +801,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!ScreenSame(von))
 		{
 			m_bScreenNotReady = true;
-			Note("SCREEN", sample, "op=NOT_READY,von=" + Bit(von != null) + ",menu=" + Bit(m_ScreenMenu != null) + ",same=0");
+			// codex #4476: отдельно — есть ли SCR_VONMenu у VON-контроллера и радиальное меню у него
+			SCR_VONMenu probeMenu;
+			if (von)
+				probeMenu = von.GetVONMenu();
+			string why = "op=NOT_READY,von=" + Bit(von != null) + ",vonMenu=" + Bit(probeMenu != null);
+			Note("SCREEN", sample, why + ",menu=" + Bit(m_ScreenMenu != null) + ",same=0");
 			return;
 		}
 		if (sample == 5)
