@@ -252,6 +252,7 @@ def main(argv):
         entries = [e for e in mine if e["kind"] == "BENCH_ENTRY"]
         text_points = []
         entry_ok = True
+        entry_state_ok = True
         if entry_mode:
             # A1-E: one BENCH_ENTRY before the step; InitEntry's AdjustEntryModif(0) must not move the frequency
             if len(entries) != 1:
@@ -280,8 +281,16 @@ def main(argv):
                     point = menu_point(reads[p]["f"], reads[p]["value"])
                     if point is None:
                         errors.append(f"device {device}: read {p} without entry fields")
+                    else:
+                        # entry state agrees with the transceiver: usable, GetIsMuted == IsMuted, local frequency
+                        # == the step target (observations: a disagreement is OBSERVED_MISMATCH, not a log error)
+                        rf = reads[p]["f"]
+                        if rf.get("usable") != "1" or rf.get("emuted") != rf.get("muted") \
+                                or step and step[0]["kind"] == "BENCH_SET_FREQUENCY" and point["entryFreq"] != step[0]["value"]:
+                            entry_state_ok = False
                     text_points.append((p, point))
             row["menuText"] = {p: q for p, q in text_points}
+            row["entryStateOk"] = entry_state_ok
         if len(step) != 1:
             errors.append(f"device {device}: step records {len(step)}")
         if len(mute) != 1:
@@ -323,7 +332,10 @@ def main(argv):
             mute_ok = mute_ok and m.get("path") == "entry" and m.get("ebefore") == m.get("before") \
                 and m.get("eafter") == m.get("after") and m.get("eafter2") == m.get("after2") \
                 and m.get("dafter") == m.get("requested") and m.get("edafter") == m.get("dafter") \
-                and m.get("dafter2") == m.get("restoreTo") and m.get("edafter2") == m.get("dafter2")
+                and m.get("dafter2") == m.get("restoreTo") and m.get("edafter2") == m.get("dafter2") \
+                and m.get("ret") == m.get("after") and m.get("ret2") == m.get("after2")
+            # ToggleMuteEntry returns the new state (SCR_VONEntryRadio.c:240–244); SetMuteState's return is only recorded
+            mute_ok = mute_ok and entry_state_ok
         elif m.get("path") == "entry":
             errors.append(f"device {device}: entry mute path without setter=entry")
         statuses = [q["status"] for _, q in text_points if q]

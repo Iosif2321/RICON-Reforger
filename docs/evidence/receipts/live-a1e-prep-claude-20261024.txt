@@ -48,3 +48,15 @@ PASS v2_expect_entry: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_START se
 PASS entry_in_transceiver_mode: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_ENTRY without setter=entry']
 PASS v2_as_is: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
 ENTRY_PARSER_CONTROLS 20/20
+#
+# Follow-up (self-review before codex review of f70e90d): the entry verdict also requires, for every tr0 read t0/t1/t5,
+# usable=1, emuted == muted and entryFreq == step target, and ToggleMuteEntry returns equal to the new state (ret == after,
+# ret2 == after2); SetMuteState returns stay recorded only. Parser 92ebc991..., controls 64ba1d90...:
+PASS expect_transceiver: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['BENCH_START setter=entry setterGiven=1 != given transceiver']
+PASS no_expectation: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['log was run with setter=entry: pass the expectation explicitly']
+PASS v2_expect_entry: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+PASS entry_in_transceiver_mode: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_ENTRY without setter=entry']
+PASS v2_as_is: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
+ENTRY_PARSER_CONTROLS 24/24
+A0B_PARSER_CONTROLS 17/17
+V2_PARSER_CONTROLS 20/20
