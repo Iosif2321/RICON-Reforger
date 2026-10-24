@@ -49,7 +49,29 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		if (!bench || !component)
 			return;
 		editor.SwitchToGameMode(false, false);
-		// Переход асинхронный: ванильный SCR_FPSDiagnosticPlugin.c:360 ждёт WorldEditorAPI.IsGameMode() в цикле.
+		// Переход асинхронный: ванильный SCR_FPSDiagnosticPlugin.c:360–369 ждёт WorldEditorAPI.IsGameMode() в цикле
+		// с Sleep(100) и считает потерю фокуса окна (GetFPS ≈ FPS_UNFOCUSED) провалом перехода. Здесь — только
+		// наблюдение в отдельном потоке, без возврата в edit mode (codex #4139: одна выборка ничего не доказывает).
 		PrintFormat("[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=%1", api.IsGameMode());
+		m_Api = api;
+		thread WatchGameMode();
+	}
+
+	protected WorldEditorAPI m_Api;
+	static const int WATCH_STEPS = 300;      //!< 300 × 100 мс = 30 с
+	static const int WATCH_PRINT_EVERY = 10; //!< печать раз в секунду и при каждой смене режима
+
+	protected void WatchGameMode()
+	{
+		bool last = m_Api.IsGameMode();
+		for (int i = 0; i < WATCH_STEPS; i++)
+		{
+			bool now = m_Api.IsGameMode();
+			if (now != last || i % WATCH_PRINT_EVERY == 0)
+				PrintFormat("[RICON_LIVEB] watch t=%1ms isGameMode=%2 fps=%3", i * 100, now, System.GetFPS());
+			last = now;
+			Sleep(100);
+		}
+		PrintFormat("[RICON_LIVEB] watch=END isGameMode=%1", m_Api.IsGameMode());
 	}
 }

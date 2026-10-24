@@ -69,3 +69,58 @@ Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
 \388e4924bd55f7ab41e994c7c0ac1670b613640755504ef3d95f6ff4531b52f
 [RICON_WbReader] ---- $ArmaReforger:scripts/WorkbenchGame/WorldEditor/SCR_FPSDiagnosticPlugin.c
 [RICON_WbReader] done, files with matches: 1, lines printed: 7
+
+# 4 (07:38:11, ACK #4144): Hidden + -forceUpdate -noFocus -maxFPS 30, watch thread 30 s: isGameMode=0 at every sample, fps ~60 → NO_BENCH_START.
+--- ricon-bench4-claude-20261024-073811
+\b18d70e7392fdf6793ed1ced81c71ce4e4c08540005fc09f7490d697e923778
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f19c0174
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 1392562e
+Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent opened=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] watch t=1000ms isGameMode=0 fps=60.332
+[RICON_LIVEB] watch t=2000ms isGameMode=0 fps=60.0016
+[RICON_LIVEB] watch t=3000ms isGameMode=0 fps=59.9739
+[RICON_LIVEB] watch t=4000ms isGameMode=0 fps=60.7678
+[RICON_LIVEB] watch t=5000ms isGameMode=0 fps=59.5741
+[RICON_LIVEB] watch t=6000ms isGameMode=0 fps=59.1577
+[RICON_LIVEB] watch t=7000ms isGameMode=0 fps=59.9468
+[RICON_LIVEB] watch t=8000ms isGameMode=0 fps=60.6924
+[RICON_LIVEB] watch t=9000ms isGameMode=0 fps=59.4138
+[RICON_LIVEB] watch t=10000ms isGameMode=0 fps=60.6034
+[RICON_LIVEB] watch t=11000ms isGameMode=0 fps=59.8081
+[RICON_LIVEB] watch t=12000ms isGameMode=0 fps=59.8514
+[RICON_LIVEB] watch t=13000ms isGameMode=0 fps=60.1515
+[RICON_LIVEB] watch t=14000ms isGameMode=0 fps=60.4432
+[RICON_LIVEB] watch t=15000ms isGameMode=0 fps=60.0984
+[RICON_LIVEB] watch t=16000ms isGameMode=0 fps=60.0151
+[RICON_LIVEB] watch t=17000ms isGameMode=0 fps=59.9971
+[RICON_LIVEB] watch t=18000ms isGameMode=0 fps=60.9503
+[RICON_LIVEB] watch t=19000ms isGameMode=0 fps=60.7424
+[RICON_LIVEB] watch t=20000ms isGameMode=0 fps=60.1122
+[RICON_LIVEB] watch t=21000ms isGameMode=0 fps=59.8563
+[RICON_LIVEB] watch t=22000ms isGameMode=0 fps=60.5983
+[RICON_LIVEB] watch t=23000ms isGameMode=0 fps=60.1549
+[RICON_LIVEB] watch t=24000ms isGameMode=0 fps=60.3453
+[RICON_LIVEB] watch t=25000ms isGameMode=0 fps=60.609
+[RICON_LIVEB] watch t=26000ms isGameMode=0 fps=60.4149
+[RICON_LIVEB] watch t=27000ms isGameMode=0 fps=61.0245
+[RICON_LIVEB] watch t=28000ms isGameMode=0 fps=60.3991
+[RICON_LIVEB] watch t=29000ms isGameMode=0 fps=61.0893
+[RICON_LIVEB] watch=END isGameMode=0
+
+--- ricon-wbreader-isgamemode2-claude-20261024-073144 (read-only window SCR_FPSDiagnosticPlugin.c:364-378, paraphrase in agora #4142; vanilla lines not stored)
+\ae88f1f0a1aa8480210bf7590b71569a6f8edb42d9f986005258f1983b69627
