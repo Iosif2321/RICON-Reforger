@@ -1,0 +1,44 @@
+{
+  "status": "NATIVE_STREAM_LOG_PASS",
+  "scope": "1000 синтетических записей; не звук и не Play",
+  "ownProcessReceipt": "live-stream-native-run-codex-20261024-060136.json",
+  "sourcesChecked": 7,
+  "engineCrc": {
+    "Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
+    "Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0",
+    "Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1",
+    "Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "1f2b4e67"
+  },
+  "positiveNoiseControl": true,
+  "negativeControls": 7,
+  "logs": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-livestream-codex-20261024-060136\\console.log",
+      "sha256": "95d51985e81154d299854f946c6be709147d8fd6640a9a711c09113115b2ed89",
+      "taggedLines": 1014,
+      "streamEvents": 1000,
+      "snapshotEvents": 8
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-liveprobe2-claude-20261024-055216-RICON_LiveStreamProbePlugin\\console.log",
+      "sha256": "fb486483f026a73a6b118ae533576218f197dd910666e8ae2a8076a9d74ff4a1",
+      "taggedLines": 1014,
+      "streamEvents": 1000,
+      "snapshotEvents": 8
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-liveprobe2-claude-20261024-055226-RICON_LiveJournalProbePlugin\\console.log",
+      "sha256": "770f9e1a4b074ee3dd42e9dfe75f899b96b5b2d915d2a57431894116635af1c6",
+      "summary": "[RICON_LIVEJ] checks=19 passed=19 count=8 dropped=13"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-liveprobe2-claude-20261024-055235-RICON_LiveObserverProbePlugin\\console.log",
+      "sha256": "4288e55ae5ec7fed395984eebf683782a59151b0efc53bd55f3a5650f466e834",
+      "summary": "[RICON_LIVEO] checks=30 passed=30 count=6 ignored=2 now=-1"
+    }
+  ],
+  "checkerPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\evidence\\receipts\\live-stream-check-codex.py",
+  "checkerSha256": "6719b3df9ac878523e975c35a5f04fc7eee3cef9dbde3d71b8be779e00ad28ff"
+}
