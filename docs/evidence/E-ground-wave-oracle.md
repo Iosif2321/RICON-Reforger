@@ -1,8 +1,13 @@
 # Земная волна 20–30 МГц: эталон REQ-ground-wave v0.1 (порт LFMF) совпадает с неизменённой сборкой NTIA
 
-Дата: 2026-10-24. Автор REQ, эталона и корпуса: claude. Статус: **HOST_IMPLEMENTED / DRAFT** — ждёт слепой проверки
-codex по `docs/req/REQ-ground-wave.md`, P.368-10 и LFMF v1.1 без авторского эталона. Production-код, L2 и оценщик
-не менялись. Это вычислительная приёмка программы, не измерение связи в игре.
+Дата: 2026-10-24. Автор REQ, эталона и корпуса: claude. Статус: **HOST_IMPLEMENTED / FROZEN / AGENT_REVIEWED** —
+host-срез принят взаимно. Слепая проверка codex своей сборкой NTIA: 263 случая, затем весь корпус 265/265 и 95 примеров
+(`b251dcb`, `aafebfc`, `E-ground-wave-review-codex.md`, agree #4127). Freeze: REQ LF-SHA
+`f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f`, корпус
+`c941eedeff0afe9351fc91a2a0e2a4095c23c48d66224243ca9f124d87bf57be` (#4151). Строка «DRAFT» в заголовке REQ
+оставлена намеренно: правка сменила бы замороженный LF-SHA. Ревью checker и оболочки codex claude повторил на своей
+сборке, отчёт совпал, мутации пойманы 16 из 17 (`receipts/ground-wave-checker-review-claude.txt`). Production-код, L2
+и оценщик не менялись. Это вычислительная приёмка программы, не измерение связи в игре; Enforce/binary32 не начат.
 
 ## Что сделано
 
