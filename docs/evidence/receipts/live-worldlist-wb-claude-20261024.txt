@@ -38,3 +38,53 @@ claude, 2026-10-24: состав миров-кандидатов для стен
   Второй SetOpenedResource в том же процессе не вернул управление за ~55 с и ничего не записал в лог.
   Причина не установлена: модальный диалог в скрытом окне, долгая загрузка или зависание. Автоповтора не было.
 Уровень: WORKBENCH_STATIC (чтение состава мира через WorldEditorAPI), не Play и не измерение раций.
+
+== Прогон 2: отдельный процесс только с Autotest_GameMode_Plain (ACK codex #4163) ==
+Тот же плагин, -riconListWorld1="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent", -riconListWorld2="".
+PID 26068, Hidden, остановка LIST_DONE через 14 с, SCRIPT (E) = 0, SOURCES_STABLE.
+Лог: logs/ricon-worldlist2-claude-20261024-081536/console.log, sha256 \b80dc3b89787aad94a1044ad4600b2d9702eb1bc72c5805d3ad987aa73beabac, 7008 строк.
+Ошибки WeatherStateMachine в этом прогоне нет: 0 строк.
+
+Строки плагина:
+  w=1 state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+  w=1 entities=21 subScenes=3 isGameModeBefore=0
+  w=1 entity=0 class=GenericWorldEntity name=world prefab=-
+  w=1 entity=1 class=GenericTerrainEntity name=MPTestTerrain prefab=-
+  w=1 entity=2 class=GenericWorldPPEffect name=PP_SSR prefab=-
+  w=1 entity=3 class=GenericWorldPPEffect name=GodRays prefab=-
+  w=1 entity=4 class=GenericWorldPPEffect name=UnderWater prefab=-
+  w=1 entity=5 class=GenericWorldPPEffect name=SSDO prefab=-
+  w=1 entity=6 class=GenericWorldPPEffect name=HBAO prefab=-
+  w=1 entity=7 class=GenericWorldPPEffect name=HDR prefab=-
+  w=1 entity=8 class=GenericWorldPPEffect name=RainEffect prefab=-
+  w=1 entity=9 class=GenericWorldPPEffect name=PPAA prefab=-
+  w=1 entity=10 class=GenericWorldFogEntity name=Fog_Haze prefab=-
+  w=1 entity=11 class=GenericWorldLightEntity name=Lighting prefab=-
+  w=1 entity=12 class=SCR_CameraManager name=CameraManager prefab={33F9FD881E3700CC}Prefabs/World/Game/SCR_CameraManager.et
+  w=1 entity=13 class=TimeAndWeatherManagerEntity name=TimeAndWeatherManager prefab={A3BAF78F6F03315B}Prefabs/World/Game/TimeAndWeatherManager.et
+  w=1 entity=14 class=GameEnvironmentProbeEntity name=MainProbe prefab=-
+  w=1 gameMode=1 entity=17 class=SCR_BaseGameMode prefab={1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et
+  w=1 class=GenericWorldEntity count=1
+  w=1 class=GenericTerrainEntity count=1
+  w=1 class=GenericWorldPPEffect count=8
+  w=1 class=GenericWorldFogEntity count=1
+  w=1 class=GenericWorldLightEntity count=1
+  w=1 class=SCR_CameraManager count=1
+  w=1 class=TimeAndWeatherManagerEntity count=1
+  w=1 class=GameEnvironmentProbeEntity count=1
+  w=1 class=SCR_MPDestructionManager count=1
+  w=1 class=SCR_AIWorld count=1
+  w=1 class=SCR_BaseGameMode count=1
+  w=1 class=SCR_FactionManager count=1
+  w=1 class=EditorCommentEntity count=1
+  w=1 class=SCR_LoadoutManager count=1
+  w=1 summary entities=21 nullSources=0 noInstance=0 noInstanceGameModeClass=0 distinctClasses=14 gameModes=1 isGameModeAfter=0
+  state=DONE worlds=1 saved=0 play=0
+
+Итог прогона 2:
+- Autotest_GameMode_Plain открывается скрыто за ~3 с после загрузки скриптов: 21 сущность, 3 подсцены, noInstance=0.
+- Один BaseGameMode: сущность 17 класса SCR_BaseGameMode из префаба {1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et.
+  Есть также SCR_FactionManager, SCR_LoadoutManager, SCR_AIWorld, TimeAndWeatherManagerEntity, EditorCommentEntity.
+- Вывод о прогоне 1: сам мир открывается в отдельном процессе; зависание связано со вторым SetOpenedResource
+  после первого мира в том же процессе. Механизм (диалог, состояние редактора) не установлен.
+- Назначение мира (папка Tests/TestFramework) и содержимое EditorCommentEntity не прочитаны; Play в нём не запускался.
