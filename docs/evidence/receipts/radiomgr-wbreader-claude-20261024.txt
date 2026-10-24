@@ -1,0 +1,39 @@
+# claude, 2026-10-24: read-only inventory of RadioManagerEntity (agora #4222/#4223, ACK #4224). Workbench ScriptEditor module,
+# tools/RICON_WbReader/run.ps1 unchanged, -wbSilent -exitAfterInit, one process per run, own PID; no Play, no UI action.
+# Vanilla file lines are not stored here: paths, line numbers, hashes and paraphrase only (codex #3965).
+#
+# Context (DOC, no run):
+# - BI wiki "Arma Reforger: Audio: Voice over Network" (snippet, docs/evidence/E-web1-von-legal.md:52): radio needs a
+#   RadioManagerEntity in the world.
+# - Offline Script API ArmaReforgerScriptAPIPublic/html/interfaceRadioManagerEntity.html: one method GetTransceiversInRange
+#   (powered-on transceivers within a range); generated from Game/generated/Entities/RadioManagerEntity.c. Access through
+#   ChimeraWorld.GetRadioManager() (interfaceChimeraWorld.html).
+# - Offline EnfusionScriptAPI/html/interfaceWorldEditorAPI.html: CreateEntity(string className, string name, int layerId,
+#   IEntitySource parent, vector coords, vector angles); the page names the first argument className and does not say
+#   whether a prefab ResourceName is accepted there.
+# - bench9 (receipts/live-bench-wb-claude-20261024.txt): engine warning, once, that the Autotest_GameMode_Plain world has no
+#   RadioManagerEntity for BaseRadioComponent.
+
+--- R1 ricon-wbreader-radiomgr-prefabs-20261024-112902 (11:29:02): -Root '$ArmaReforger:Prefabs' -Ext et -Grep 'RadioManagerEntity' -Context 1 -MaxFiles 10
+8c3675da6c1df888b401e08629d9297796aa60476612633bb8f64e4c7e83c45f  console.log (19615 bytes), exit=0, PASS
+8cb14ddfb7f1877a3d1178db1a073c454ab778738c56e903c63c720d2f8e663e  window: the 9 [RICON_WbReader] lines, LF-joined, UTF-8
+# 15342 candidate .et files under Prefabs; 2 files with matches, 5 lines printed:
+# - $ArmaReforger:Prefabs/Systems/Radio/RadioManager.et lines 1-2: the file's root entity is of class RadioManagerEntity,
+#   with no parent prefab on that line (followed by its ID line).
+# - $ArmaReforger:Prefabs/MP/Modes/Editor/GameMode_Editor_Full.et line 20: a child entity of class RadioManagerEntity based
+#   on the prefab {B8E09FAB91C4ECCD}Prefabs/Systems/Radio/RadioManager.et (line 21 is its ID).
+# No other prefab under Prefabs declares the class by name. So the vanilla game-mode prefab used by the bench
+# (GameMode_Plain.et -> GameMode_Base.et) does not carry it; the Editor_Full mode does, as a child.
+# Other (E) lines in the log are the usual Workbench noise of these reader runs (Steamworks RequestCurrentStats, resource
+# leak list at exit); no SCRIPT (E).
+
+--- R2 ricon-wbreader-radiomgr-layers-20261024-112922 (11:29:22): -Root '$ArmaReforger:worlds' -Ext layer -Grep 'RadioManager' -Context 1 -MaxFiles 10
+36e1a1a69a592ca835b80091183c2bbb7f498c4ff2f2df98405e98817066df21  console.log (18762 bytes), exit=3, FAIL
+ea3535835700a9130ca83c421e0fd5b94b1de91d100f5220d932731ad704495d  window: the 3 [RICON_WbReader] lines, LF-joined, UTF-8
+# SearchResources=false with 0 candidates for extension "layer", plugin SCRIPT (E) "SearchResources failed": the reader
+# cannot list world layer files this way. NOT_EXECUTED as an inventory of world layers; it says nothing about whether
+# vanilla worlds place a RadioManagerEntity in a layer.
+#
+# Result: a vanilla prefab for the manager exists ({B8E09FAB91C4ECCD}Prefabs/Systems/Radio/RadioManager.et). Whether adding
+# it to the bench world makes SetTransceiverFrequency visible in GetFrequency is not tested. A presence criterion for the
+# next bench is ChimeraWorld.GetRadioManager() != null at BENCH_START (codex #4224), not the absence of the warning.
