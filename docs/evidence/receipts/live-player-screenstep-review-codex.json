@@ -1,0 +1,236 @@
+{
+  "status": "INDEPENDENT_SCREEN_STEP_AND_CORE_READER_CONFIRMED",
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-a1s2-claude-20261024-221205\\console.log",
+  "logSha256": "90440dc2e8310bad511f0d8a2cd7eff7bc1c5bf23a0f8ede813bbfe1152e39b8",
+  "streamEvents": 120,
+  "snapshotEvents": 120,
+  "samples": 30,
+  "entryRows": 60,
+  "widgetRows": 10,
+  "acts": [
+    {
+      "sample": 5,
+      "gameMs": 5020,
+      "op": "CHOOSE",
+      "idx": "1",
+      "trNumber": "2",
+      "min": "32000",
+      "max": "68000",
+      "res": "200",
+      "raw0": "48000",
+      "muted0": "0",
+      "target": "48200",
+      "modifier": "1",
+      "slot": "0",
+      "bound": "1",
+      "raw": "48000",
+      "entryFreq": "48000",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.0%20#AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "sample": 9,
+      "gameMs": 9037,
+      "op": "STEP",
+      "idx": "1",
+      "phase": "t0",
+      "sinceStepMs": "0",
+      "target": "48200",
+      "bound": "1",
+      "raw": "48200",
+      "entryFreq": "48200",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.2%20#AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "sample": 10,
+      "gameMs": 10041,
+      "op": "READ",
+      "idx": "1",
+      "phase": "t1",
+      "sinceStepMs": "1004",
+      "target": "48200",
+      "bound": "1",
+      "raw": "48200",
+      "entryFreq": "48200",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.2%20#AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "sample": 14,
+      "gameMs": 14052,
+      "op": "READ",
+      "idx": "1",
+      "phase": "t5",
+      "sinceStepMs": "5015",
+      "target": "48200",
+      "bound": "1",
+      "raw": "48200",
+      "entryFreq": "48200",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.2%20#AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "sample": 15,
+      "gameMs": 15056,
+      "op": "RESTORE",
+      "idx": "1",
+      "raw0": "48000",
+      "bound": "1",
+      "raw": "48000",
+      "entryFreq": "48000",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.0%20#AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "sample": 20,
+      "gameMs": 20074,
+      "op": "FINAL",
+      "idx": "1",
+      "raw0": "48000",
+      "muted0": "0",
+      "bound": "1",
+      "raw": "48000",
+      "entryFreq": "48000",
+      "muted": "0",
+      "emuted": "0",
+      "dtext": "48.0%20#AR-VON_FrequencyUnits_MHz"
+    }
+  ],
+  "readers": [
+    {
+      "sample": 7,
+      "phase": "PRE",
+      "idx": "1",
+      "bound": "1",
+      "authority": "1",
+      "deviceId": "1",
+      "trIndex": "1",
+      "ok": "1",
+      "obsDevice": "1",
+      "obsTr": "1",
+      "tuning": "48000",
+      "powered": "1",
+      "rawBefore": "48000",
+      "rawAfter": "48000"
+    },
+    {
+      "sample": 10,
+      "phase": "POST",
+      "idx": "1",
+      "bound": "1",
+      "authority": "1",
+      "deviceId": "1",
+      "trIndex": "1",
+      "ok": "1",
+      "obsDevice": "1",
+      "obsTr": "1",
+      "tuning": "48200",
+      "powered": "1",
+      "rawBefore": "48200",
+      "rawAfter": "48200"
+    },
+    {
+      "sample": 17,
+      "phase": "BACK",
+      "idx": "1",
+      "bound": "1",
+      "authority": "1",
+      "deviceId": "1",
+      "trIndex": "1",
+      "ok": "1",
+      "obsDevice": "1",
+      "obsTr": "1",
+      "tuning": "48000",
+      "powered": "1",
+      "rawBefore": "48000",
+      "rawAfter": "48000"
+    }
+  ],
+  "widgets": [
+    {
+      "sample": 7,
+      "idx": 0,
+      "text": "32.0 MHz"
+    },
+    {
+      "sample": 7,
+      "idx": 1,
+      "text": "48.0 MHz"
+    },
+    {
+      "sample": 8,
+      "idx": 0,
+      "text": "32.0 MHz"
+    },
+    {
+      "sample": 8,
+      "idx": 1,
+      "text": "48.0 MHz"
+    },
+    {
+      "sample": 10,
+      "idx": 0,
+      "text": "32.0 MHz"
+    },
+    {
+      "sample": 10,
+      "idx": 1,
+      "text": "48.2 MHz"
+    },
+    {
+      "sample": 14,
+      "idx": 0,
+      "text": "32.0 MHz"
+    },
+    {
+      "sample": 14,
+      "idx": 1,
+      "text": "48.2 MHz"
+    },
+    {
+      "sample": 17,
+      "idx": 0,
+      "text": "32.0 MHz"
+    },
+    {
+      "sample": 17,
+      "idx": 1,
+      "text": "48.0 MHz"
+    }
+  ],
+  "screenshotFiles": [
+    {
+      "phase": "PRE",
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\claude\\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\\583c292f-5bc1-43e3-9045-3fc153e17657\\scratchpad\\a1s2-ricon-a1s2-claude-20261024-221205-PRE.png",
+      "sha256": "cfcf211307b5881a2b43a937d77ab25a7566b7d6972e0832fe27ec692926976e",
+      "captureStart": "22:12:27.559",
+      "captureEnd": "22:12:27.662"
+    },
+    {
+      "phase": "POST",
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\claude\\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\\583c292f-5bc1-43e3-9045-3fc153e17657\\scratchpad\\a1s2-ricon-a1s2-claude-20261024-221205-POST.png",
+      "sha256": "6c27fe397b340a917d215a72cdbc45b56abf5a76388996ae0956f129e6120946",
+      "captureStart": "22:12:30.421",
+      "captureEnd": "22:12:30.443"
+    },
+    {
+      "phase": "BACK",
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\claude\\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\\583c292f-5bc1-43e3-9045-3fc153e17657\\scratchpad\\a1s2-ricon-a1s2-claude-20261024-221205-BACK.png",
+      "sha256": "b9367f547ea252fff2e4680413cc8bce77237fdb2bc11786b4bbfbff2ffa5337",
+      "captureStart": "22:12:37.395",
+      "captureEnd": "22:12:37.433"
+    }
+  ],
+  "captureTimingSource": "a433072:docs/evidence/receipts/live-bench-wb-claude-20261024.txt",
+  "visualReview": "Codex отдельно просмотрел все три PNG через view_image: CH2 48.0/48.2/48.0 MHz, CH1 32.0 MHz во всех. Скрипт проверяет файлы и время, но не распознаёт пиксели.",
+  "unitScope": "RUNTIME_OBSERVED: native raw в кГц для проверенной AN/PRC-68 в установленной 1.8.0.13; общий builder остаётся с явным RF-профилем.",
+  "limits": "Не доказаны звук, RX/TX, сетевые права и репликация, физический ввод или точечное A→B. DeviceId=1 и позиция владельца — TEST_ONLY входы reader; ключ и координаты не журналируются.",
+  "replayRequirements": "Нужны исходный лог, три внешних PNG и Git-коммит a433072. Отсутствие любого доказательства прерывает повтор.",
+  "checkerSha256": "45d45ca0b15e6f45189c1b70fbff980b64b5a8590eadd8c570cf7055572aa2a0"
+}
