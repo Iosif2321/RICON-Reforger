@@ -3,7 +3,7 @@
   "version": 1,
   "revision": 1,
   "source": "docs/req/REQ-ground-wave.md",
-  "requirementsLfSha256": "30b685fcf6f75bdf61b2ff374ff834c5abf7e9dd5a43b45afca24c3a3880fa17",
+  "requirementsLfSha256": "66a8e1362ecb722c65258db34e12d63450c8c68da43db92b50f8410accbd9080",
   "note": "Ожидания OK — порт LFMF v1.1 (CROSS_CHECKED с неизменённой сборкой NTIA, |Δ| ≤ 2e-9 дБ); отказы — HAND_DERIVED по GW03. ntiaExamples — опубликованные NTIA значения (1 знак), проверяются через lfmf() с допуском 0.05 дБ. Грунты TEST_ONLY, если не указано иное.",
   "cases": [
     {
