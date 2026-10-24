@@ -124,12 +124,32 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		editor.SwitchToEditMode();
 		Print("[RICON_LIVEB] restart=EDIT_REQUESTED");
 		bool edited;
+		BaseWorld editWorld;
+		int stableChecks;
 		for (int j = 0; j < 600; j++)
 		{
-			if (!m_Api.IsGameMode())
+			BaseWorld currentWorld = m_Api.GetWorld();
+			bool validEdit = !m_Api.IsGameMode() && currentWorld && currentWorld.IsEditMode();
+			if (validEdit && m_Api.GetEditorEntityCount() > 0)
 			{
-				edited = true;
-				break;
+				if (currentWorld == editWorld)
+					stableChecks++;
+				else
+				{
+					editWorld = currentWorld;
+					stableChecks = 1;
+				}
+				// 51 проверка с 50 промежутками: не менее 5 с после появления одного и того же edit-мира.
+				if (stableChecks >= 51)
+				{
+					edited = true;
+					break;
+				}
+			}
+			else
+			{
+				editWorld = null;
+				stableChecks = 0;
 			}
 			Sleep(100);
 		}
@@ -138,8 +158,19 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] restart=REFUSED reason=EDIT_NOT_REACHED");
 			return;
 		}
+		Print("[RICON_LIVEB] restart=EDIT_STABLE checks=51");
 		editor.SwitchToGameMode(false, false);
 		Print("[RICON_LIVEB] restart=SECOND_PLAY_REQUESTED");
+		for (int k = 0; k < 300; k++)
+		{
+			if (m_Api.IsGameMode())
+			{
+				Print("[RICON_LIVEB] restart=SECOND_PLAY_ENTERED");
+				return;
+			}
+			Sleep(100);
+		}
+		Print("[RICON_LIVEB] restart=REFUSED reason=SECOND_PLAY_NOT_ENTERED");
 	}
 
 	static const float EDGE_MARGIN_M = 10.0;  //!< запас от края границ по x/z; рации ставятся в +0…+6 м по x от стенда

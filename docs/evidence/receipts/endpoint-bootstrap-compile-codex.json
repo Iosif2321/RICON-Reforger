@@ -1,7 +1,7 @@
 {
   "scope": "COMPILE_ONLY_NO_WORLD",
   "peerReview": "SOURCE_REVIEW_ACCEPTED_AGORA_4574_DELTA_PENDING",
-  "runtime": "NOT_RUN",
+  "runtime": "GATE_OFF_AND_ON_OBSERVED_RESTART_RETEST_PENDING",
   "gateArgumentPresent": false,
   "processesAfter": 0,
   "runs": [
@@ -73,6 +73,20 @@
         "Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "f40f8d06",
         "Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "438865b4"
       }
+    },
+    {
+      "run": "ricon-endpoint-compile-codex-20261025-000708",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-endpoint-compile-codex-20261025-000708\\console.log",
+      "sha256": "45ea14604905d500c1cf7c014b11f40509296aa0cc07fb986bed8474e27f5f9c",
+      "scriptErrors": 0,
+      "status": "COMPILE_PASS",
+      "textChecksPassed": 15,
+      "sourceCRCs": {
+        "Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c": "45b337e3",
+        "Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c": "0cb4c712",
+        "Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "f40f8d06",
+        "Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "a2e15897"
+      }
     }
   ],
   "currentSourceManifest": {
@@ -86,7 +100,7 @@
     "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "b05e0a3ec5bfcd63b407e4990c6bf424bb8d7a7c4d371204df82469eaf54bf75",
     "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveText.c": "6e373594d9578600a2e2a0b4340c2b8eb7fc804cd816d7ea580134e241351d7c",
     "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c": "7c0800a70045486dd242524d46542dcb5b3401b6ddd4b10e1f2326c38392f09f",
-    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "8419d2b1f1046a2a6fadd68cd3d2d050ec18b2d532290f27857247a2b6479811",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "0208fc371c42a50ecbe8123197994623f922eec6a9539ba261c13f0eb87d4621",
     "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "861dab2acc6aeee610875ccb5fca1fe991fdfcee76d9f9962f38f37aa9996d58",
     "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "65a13e42275b66e5a48997e9497e5b8bde921bf96680f0fb322dde8ff0bd4a9e",
     "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "7e3927491c93594209ba1669504d9d167c1bfef0a90af313dcf5b997e989a9b7",
