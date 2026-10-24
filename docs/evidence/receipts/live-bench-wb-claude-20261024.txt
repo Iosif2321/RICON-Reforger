@@ -160,3 +160,30 @@ engine (paraphrase, line 7175): WORLD (D) world controller node with identity 0x
 log lines: 7193; last line time 08:22:07.620
 # The file ends at 08:22:07.620 although the process ran until ~08:22:12: lines after that were not flushed before the forced
 # stop, so events between 0.6 s after BENCH_START and the stop are unknown (the 1 s watch line is also missing).
+
+--- ricon-bench5b-claude-20261024-082525
+# 5b (08:25:25, ACK #4172): repeat of 5 with the anchored readiness pattern; same world, sources and flags; PID 18820.
+# Stop TIMEOUT at 92 s (no false NOT_READY). Again: game mode entered, component re-created (editMode=0, isServer=1),
+# BENCH_START 0.38 s after PLAY_REQUESTED. After that NO further RICON lines for ~90 s: no lifecycle=FirstFrame (EOnFrame
+# of the play-world bench never ran), no BENCH_SPAWN, and the launcher watch thread printed only t=0. The console log
+# ends at 08:25:34.286, 0.19 s after BENCH_START, at the same line count (7193) as attempt 5. Verdict: INCOMPLETE —
+# game mode and bench start observed, no radio measurement; role server-only (isServer=1, isClient=0).
+# Engine warning in this world only (attempts 5 and 5b, not 1-4): entity RICON_LiveBench (GenericEntity) at <0,0,0> is out
+# of world bounds; the world's own SCR_AIWorld is created at <107.9, 1, 159.5>. Not separated by this log: (a) entity out of
+# bounds gets no EOnFrame, (b) the whole process stops after the player controller is created (no lines at all for 90 s).
+d9c7ef49081c2652cc43ca5ecffaa03de5cd75bcd58c86e5a4e395cdada13780
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
+engine (paraphrase): last lines — offline game state entered, local player connected and created (PlayerId 1),
+SCR_PlayerController spawned at the origin, then two script warnings about duplicate notification keys; nothing after.
+error.log 950ffbb618bb3b2700d4cf5384131fe4f35cc61cfb995f1be74c352ca6b7add9: out-of-world-bounds warning for RICON_LiveBench, Steamworks stats failure,
+empty m_sLoadingLayout GUID, no navmesh file; no SCRIPT (E).
+log lines: 7193; last line time 08:25:34.286
