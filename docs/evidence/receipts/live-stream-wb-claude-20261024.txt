@@ -1,0 +1,119 @@
+# LiveProbe stream fix (claude, 2026-10-24): Workbench ScriptEditor runs, hidden, no world/Play/server,
+# via tools/RICON_LiveProbe/addon.gproj, slot ACK codex #4042. Snapshot = sha256 of every .c/.gproj before/after.
+# Series 1 (05:50): all PASS, but receipts/live-stream-log-check-claude.py REJECTED the stream log: the dump header
+# was printed as "string head = '...'" (Enforce Print of a local variable prints its debug form). Fixed with PrintFormat.
+# Series 2 (05:52): final; stream transcript check PASS (log sha256 fb486483...).
+
+=== SERIES 1 (superseded) ===
+BEFORE
+8B47F08CE19736DA62A06F25B5AF521C6E71828AA087FA63197CA2617ACF0E90  tools\RICON_LiveProbe\addon.gproj
+34DA9CCD29591258BAD9020CAA524A2F7DAC65F0EB600996A6CB73F0D682DF32  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveJournal.c
+5594C10CFDDB4857D5E3B30F9D4087AE3772CA94253D98ADCFCD173A7BCF6F9D  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveObserver.c
+092F6840B73D75007B9DBCA06095242B9221CE616F826CEA650F7EF306524EFC  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveProbeComponent.c
+861DAB2ACC6AEEE610875CCB5FCA1FE991FDFCEE76D9F9962F38F37AA9996D58  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveJournalProbePlugin.c
+65A13E42275B66E5A48997E9497E5B8BDE921BF96680F0FB322DDE8FF0BD4A9E  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveObserverProbePlugin.c
+6025DABEBB96AF869451FA8641C120AFC6C208D39A75808BF46D0F3D78D9693F  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveStreamProbePlugin.c
+=== RICON_LiveStreamProbePlugin pid=17484 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe-claude-20261024-055030-RICON_LiveStreamProbePlugin\console.log
+scriptErrors=0
+05:50:34.586    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: fcee8537
+05:50:34.586    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:50:34.586    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:50:36.074    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:50:36.075    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:50:36.075    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:50:38.833  SCRIPT       : [RICON_LIVES] checks=7 passed=7 count=8 dropped=993 nextSeq=1000
+05:50:38.834  SCRIPT       : [RICON_LIVES] done: PASS
+LOGSHA 1102817067A004CE60643E7C7F23517DADDB50E3DAD6F7DADD17CEBF68C4C043 size 1011756
+=== RICON_LiveJournalProbePlugin pid=10992 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe-claude-20261024-055039-RICON_LiveJournalProbePlugin\console.log
+scriptErrors=0
+05:50:44.036    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: fcee8537
+05:50:44.036    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:50:44.036    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:50:45.476    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:50:45.476    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:50:45.476    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:50:47.859  SCRIPT       : [RICON_LIVEJ] checks=19 passed=19 count=8 dropped=13
+05:50:47.859  SCRIPT       : [RICON_LIVEJ] done: PASS
+LOGSHA 57E59A0C88FD19A85B98FBCF211D37743DB8004C79EC35ACBC066F16BC88237F size 867522
+=== RICON_LiveObserverProbePlugin pid=32456 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe-claude-20261024-055048-RICON_LiveObserverProbePlugin\console.log
+scriptErrors=0
+05:50:52.723    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: fcee8537
+05:50:52.723    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:50:52.723    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:50:54.171    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:50:54.171    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:50:54.171    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:50:56.605  SCRIPT       : [RICON_LIVEO] checks=30 passed=30 count=6 ignored=2 now=-1
+05:50:56.605  SCRIPT       : [RICON_LIVEO] done: PASS
+LOGSHA E333FC4365478AFD2970141BCCBE896206AD8BE495380C6BECAF51180D1948B1 size 867413
+AFTER
+8B47F08CE19736DA62A06F25B5AF521C6E71828AA087FA63197CA2617ACF0E90  tools\RICON_LiveProbe\addon.gproj
+34DA9CCD29591258BAD9020CAA524A2F7DAC65F0EB600996A6CB73F0D682DF32  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveJournal.c
+5594C10CFDDB4857D5E3B30F9D4087AE3772CA94253D98ADCFCD173A7BCF6F9D  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveObserver.c
+092F6840B73D75007B9DBCA06095242B9221CE616F826CEA650F7EF306524EFC  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveProbeComponent.c
+861DAB2ACC6AEEE610875CCB5FCA1FE991FDFCEE76D9F9962F38F37AA9996D58  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveJournalProbePlugin.c
+65A13E42275B66E5A48997E9497E5B8BDE921BF96680F0FB322DDE8FF0BD4A9E  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveObserverProbePlugin.c
+6025DABEBB96AF869451FA8641C120AFC6C208D39A75808BF46D0F3D78D9693F  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveStreamProbePlugin.c
+SOURCES_STABLE
+
+[exited with code 0]
+
+=== SERIES 2 (final) ===
+BEFORE
+8B47F08CE19736DA62A06F25B5AF521C6E71828AA087FA63197CA2617ACF0E90  tools\RICON_LiveProbe\addon.gproj
+2FF202A89BAC221E21D48A3FAED7BE6E27E9C3BCE0FEEE8C007784B3045544DB  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveJournal.c
+5594C10CFDDB4857D5E3B30F9D4087AE3772CA94253D98ADCFCD173A7BCF6F9D  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveObserver.c
+092F6840B73D75007B9DBCA06095242B9221CE616F826CEA650F7EF306524EFC  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveProbeComponent.c
+861DAB2ACC6AEEE610875CCB5FCA1FE991FDFCEE76D9F9962F38F37AA9996D58  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveJournalProbePlugin.c
+65A13E42275B66E5A48997E9497E5B8BDE921BF96680F0FB322DDE8FF0BD4A9E  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveObserverProbePlugin.c
+6025DABEBB96AF869451FA8641C120AFC6C208D39A75808BF46D0F3D78D9693F  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveStreamProbePlugin.c
+=== RICON_LiveStreamProbePlugin pid=4152 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe2-claude-20261024-055216-RICON_LiveStreamProbePlugin\console.log
+scriptErrors=0
+05:52:20.871    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+05:52:20.871    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:52:20.871    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:52:22.477    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:52:22.477    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:52:22.477    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:52:25.563  SCRIPT       : [RICON_LIVES] checks=7 passed=7 count=8 dropped=993 nextSeq=1000
+05:52:25.563  SCRIPT       : [RICON_LIVES] done: PASS
+LOGSHA FB486483F026A73A6B118AE533576218F197DD910666E8AE2A8076A9D74FF4A1 size 1011746
+=== RICON_LiveJournalProbePlugin pid=5528 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe2-claude-20261024-055226-RICON_LiveJournalProbePlugin\console.log
+scriptErrors=0
+05:52:30.970    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+05:52:30.970    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:52:30.970    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:52:32.517    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:52:32.517    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:52:32.517    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:52:35.232  SCRIPT       : [RICON_LIVEJ] checks=19 passed=19 count=8 dropped=13
+05:52:35.232  SCRIPT       : [RICON_LIVEJ] done: PASS
+LOGSHA 770F9E1A4B074EE3DD42E9DFE75F899B96B5B2D915D2A57431894116635AF1C6 size 867512
+=== RICON_LiveObserverProbePlugin pid=12372 exit=0
+log=C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs\ricon-liveprobe2-claude-20261024-055235-RICON_LiveObserverProbePlugin\console.log
+scriptErrors=0
+05:52:40.141    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+05:52:40.141    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+05:52:40.141    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: 1f2b4e67
+05:52:41.586    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+05:52:41.586    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+05:52:41.586    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+05:52:44.071  SCRIPT       : [RICON_LIVEO] checks=30 passed=30 count=6 ignored=2 now=-1
+05:52:44.071  SCRIPT       : [RICON_LIVEO] done: PASS
+LOGSHA 4288E55AE5EC7FED395984EEBF683782A59151B0EFC53BD55F3A5650F466E834 size 867403
+AFTER
+8B47F08CE19736DA62A06F25B5AF521C6E71828AA087FA63197CA2617ACF0E90  tools\RICON_LiveProbe\addon.gproj
+2FF202A89BAC221E21D48A3FAED7BE6E27E9C3BCE0FEEE8C007784B3045544DB  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveJournal.c
+5594C10CFDDB4857D5E3B30F9D4087AE3772CA94253D98ADCFCD173A7BCF6F9D  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveObserver.c
+092F6840B73D75007B9DBCA06095242B9221CE616F826CEA650F7EF306524EFC  tools\RICON_LiveProbe\Scripts\Game\RICON_Live\RICON_LiveProbeComponent.c
+861DAB2ACC6AEEE610875CCB5FCA1FE991FDFCEE76D9F9962F38F37AA9996D58  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveJournalProbePlugin.c
+65A13E42275B66E5A48997E9497E5B8BDE921BF96680F0FB322DDE8FF0BD4A9E  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveObserverProbePlugin.c
+6025DABEBB96AF869451FA8641C120AFC6C208D39A75808BF46D0F3D78D9693F  tools\RICON_LiveProbe\Scripts\WorkbenchGame\RICON_LiveStreamProbePlugin.c
+SOURCES_STABLE
+
+[exited with code 0]

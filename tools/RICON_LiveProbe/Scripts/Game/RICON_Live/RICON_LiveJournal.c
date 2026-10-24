@@ -21,7 +21,8 @@ class RICON_LiveJournal
 	static const int DEFAULT_CAPACITY = 256;
 	protected int m_iCapacity;
 	protected int m_iNextSeq;
-	protected int m_iDropped;      //!< события, вытесненные без записи (учтены в последней GAP-записи)
+	protected int m_iDropped;      //!< события, вытесненные из буфера-снимка (учтены в первой GAP-записи)
+	protected bool m_bStream;      //!< немедленный вывод каждой записи (codex #4035); буфер остаётся снимком
 	protected ref array<ref RICON_LiveEvent> m_aEvents = {};
 
 	void RICON_LiveJournal(int capacity = 256)
@@ -29,6 +30,18 @@ class RICON_LiveJournal
 		m_iCapacity = capacity;
 		if (m_iCapacity < 2)
 			m_iCapacity = 2;
+	}
+
+	//! Поток: каждая Add сразу печатает строку события в лог, поэтому вытеснение из буфера (GAP) теряет только
+	//! снимок, а не уже выведенный поток. По умолчанию выключено. Сохранность лога при аварии процесса не заявляется.
+	void SetStream(bool stream)
+	{
+		m_bStream = stream;
+	}
+
+	bool IsStream()
+	{
+		return m_bStream;
 	}
 
 	int Count()
@@ -101,6 +114,8 @@ class RICON_LiveJournal
 		e.m_iValue = value;
 		e.m_sText = text;
 		m_aEvents.Insert(e);
+		if (m_bStream)
+			Print(Format(e));
 		return e.m_iSeq;
 	}
 
@@ -126,11 +141,17 @@ class RICON_LiveJournal
 		return text;
 	}
 
+	//! Снимок буфера в рамке: строки между dump=BEGIN и dump=END — повтор уже выведенных (в потоке) событий плюс GAP,
+	//! а не новые события; seq в снимке повторяют seq потока.
+	//! Print(локальная_строка) печатает отладочный вид «string head = '…'», поэтому заголовок — через PrintFormat
+	//! (прогон 2026-10-24 05:50:30 поймал это внешним разбором лога).
 	void Dump()
 	{
+		PrintFormat("[RICON_LIVE] dump=BEGIN count=%1 dropped=%2 nextSeq=%3", m_aEvents.Count(), m_iDropped, m_iNextSeq);
 		foreach (RICON_LiveEvent e : m_aEvents)
 		{
 			Print(Format(e));
 		}
+		Print("[RICON_LIVE] dump=END");
 	}
 }

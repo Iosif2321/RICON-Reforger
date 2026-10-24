@@ -41,6 +41,8 @@ class RICON_LiveProbeComponent : ScriptComponent
 			return false;
 		}
 		m_Journal = new RICON_LiveJournal(256);
+		// Поток (codex #4035, claude #4028): OnCapture вызывается каждый кадр записи, буфер 256 — только снимок.
+		m_Journal.SetStream(true);
 		if (Replication.IsServer())
 		{
 			m_Server = new RICON_LiveObserver(m_Journal, "server");
