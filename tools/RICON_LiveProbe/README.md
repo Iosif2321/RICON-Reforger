@@ -40,7 +40,9 @@
   (`docs/evidence/receipts/live-bench-wb-claude-20261024.txt`).
   Необязательные параметры A0b (codex #4233):
   - `-riconBenchGameMode=SCR_BaseGameMode` (единственное допустимое значение) — создать в памяти один game mode
-    по имени класса, если в мире его нет;
+    по имени класса, если в мире его нет. **Экспериментально и в проверенном SlotFlatSmall неработоспособно**
+    (A0b-1, `ddf8cd1`): SCRIPT (E) «missing RplComponent», Play не начался, модальное окно «World needs to be saved».
+    Как готовый способ не предлагается;
   - `-riconBenchRadioManager=1` — создать одну `RadioManagerEntity` по имени класса и ожидать менеджер перед спавном;
   - `-riconBenchRadioManager=0` — ничего не создавать и ожидать, что менеджера нет.
 
