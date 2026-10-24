@@ -12,6 +12,7 @@ import pathlib
 import re
 import sys
 
+sys.dont_write_bytecode = True  # no __pycache__ in the receipts folder
 _spec = importlib.util.spec_from_file_location(
     "live_text_codec_claude", pathlib.Path(__file__).resolve().parent / "live_text_codec_claude.py")
 codec = importlib.util.module_from_spec(_spec)

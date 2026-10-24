@@ -32,7 +32,9 @@ import sys
 LINE = re.compile(r"\[RICON_LIVE\] seq=(\d+) t=(-?\d+) side=(\w+) kind=(\w+) player=(-?\d+) device=(-?\d+) "
                   r"tr=(-?\d+) value=(-?\d+) text=(\S+)$")
 
-# Strict %XX codec shared with live-text-log-check-claude.py (codex #4339), loaded by explicit path for python -I.
+# Strict %XX codec shared with live-text-log-check-claude.py (codex #4339), loaded by explicit path for python -I;
+# no __pycache__ is written into the receipts folder.
+sys.dont_write_bytecode = True
 _spec = importlib.util.spec_from_file_location(
     "live_text_codec_claude", pathlib.Path(__file__).resolve().parent / "live_text_codec_claude.py")
 codec = importlib.util.module_from_spec(_spec)
