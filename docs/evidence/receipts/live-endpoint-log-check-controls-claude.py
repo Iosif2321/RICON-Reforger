@@ -86,7 +86,7 @@ def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0
     cycles = cycles if cycles is not None else [{}]
     body = [f"11:59:59.000 SCRIPT : {l}" for l in LAUNCH] if launcher else []
     # the launcher's restart lines go between the cycles (codex 15efc1a)
-    marks = ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"] if restart_marks is None and len(cycles) == 2 else (restart_marks or [])
+    marks = ["EDIT_REQUESTED", "EDIT_STABLE checks=51", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"] if restart_marks is None and len(cycles) == 2 else (restart_marks or [])
     seq = 0
     for i, b in enumerate(cycles):
         rows = cycle(b.get("ordinal", i + 1), b)
@@ -146,8 +146,10 @@ cases = [
     # codex #4594: a recreated game object may count the second cycle from 1 again; 3 is never valid
     ("restart_cycle_recreated", build(cycles=[{"samples": 8}, {"ordinal": 1}]), RE, 0, "ENDPOINT_RESTART_COMPLETE"),
     ("restart_cycle_number", build(cycles=[{"samples": 8}, {"ordinal": 3}]), RE, 1, "LOG_INVALID"),
-    ("restart_no_entered", build(cycles=[{"samples": 8}, {}], restart_marks=["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED"]), RE, 1,
-     "LOG_INVALID"),
+    ("restart_no_entered", build(cycles=[{"samples": 8}, {}], restart_marks=["EDIT_REQUESTED", "EDIT_STABLE checks=51",
+                                                                             "SECOND_PLAY_REQUESTED"]), RE, 1, "LOG_INVALID"),
+    ("restart_no_stable", build(cycles=[{"samples": 8}, {}], restart_marks=["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED",
+                                                                            "SECOND_PLAY_ENTERED"]), RE, 1, "LOG_INVALID"),
     ("restart_seq_not_reset", build(cycles=[{"samples": 8}, {}], seq_continue=True), RE, 1, "LOG_INVALID"),
     ("restart_one_cycle", build(), RE, 1, "LOG_INVALID"),
     ("restart_no_marks", build(cycles=[{"samples": 8}, {}], restart_marks=[]), RE, 1, "LOG_INVALID"),

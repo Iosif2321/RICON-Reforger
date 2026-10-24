@@ -26,7 +26,8 @@ player early in a cycle is not a log error). The end of an observation is not a 
 Restart (codex #4579, -riconEndpointRestart=1: the launcher waits for >= 3 samples, requests Edit, waits for the edit mode
 and requests the second Play): cycle 1 must end ABORTED after at least 3 samples with GAME_END, WORLD_CLEANUP or
 WORLD_CHANGED, cycle 2 must end DONE, and the launcher lines are exactly restart=EDIT_REQUESTED,
-restart=SECOND_PLAY_REQUESTED and restart=SECOND_PLAY_ENTERED (no REFUSED); cycle 2 may carry cycle=2 (same game object) or
+restart=EDIT_STABLE (the same edit world held for >= 5 s, codex #4597), restart=SECOND_PLAY_REQUESTED and
+restart=SECOND_PLAY_ENTERED (no REFUSED); cycle 2 may carry cycle=2 (same game object) or
 cycle=1 (game object recreated), recorded as cycleField; a cycle 1 that reached DONE did not exercise the cleanup
 (ENDPOINT_RESTART_NOT_EXERCISED, not a pass).
 Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / ENDPOINT_RESTART_COMPLETE /
@@ -289,8 +290,9 @@ def main(path, mode):
             else "ENDPOINT_CYCLE_ABORTED"
         if mode == "restart":
             marks = [m.group(1) for m in (re.search(r"\[RICON_LIVEB\] restart=(\w+)", l) for l in lines) if m]
-            if marks != ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"]:
-                errors.append(f"restart launcher lines {marks} != EDIT_REQUESTED, SECOND_PLAY_REQUESTED, SECOND_PLAY_ENTERED")
+            want_marks = ["EDIT_REQUESTED", "EDIT_STABLE", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"]
+            if marks != want_marks:
+                errors.append(f"restart launcher lines {marks} != {want_marks}")
         if mode == "restart" and len(rows) == 2:
             first, second = rows
             if first["end"] == "ENDPOINT_DONE":
