@@ -1,0 +1,88 @@
+{
+  "status": "INDEPENDENT_PLAYER_MENU_RUNTIME_PASS",
+  "scope": "Управление через реальные radio-entry тестового персонажа; без экранного меню, голоса и репликации",
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-a1p2-claude-20261024-203425\\console.log",
+  "logSha256": "99f291867e001543353b8aa7ce3e5a336f7084105f10501fefd8f3fecbce4450",
+  "streamEvents": 100,
+  "snapshotEvents": 100,
+  "samples": 30,
+  "entriesChecked": 60,
+  "acts": [
+    {
+      "sample": 5,
+      "op": "CHOOSE",
+      "gameMs": 5024,
+      "raw": 48000,
+      "muted": 0
+    },
+    {
+      "sample": 6,
+      "op": "STEP",
+      "gameMs": 6025,
+      "raw": 48200,
+      "muted": 0
+    },
+    {
+      "sample": 7,
+      "op": "READ",
+      "gameMs": 7030,
+      "raw": 48200,
+      "muted": 0
+    },
+    {
+      "sample": 11,
+      "op": "READ",
+      "gameMs": 11046,
+      "raw": 48200,
+      "muted": 0
+    },
+    {
+      "sample": 12,
+      "op": "RESTORE",
+      "gameMs": 12046,
+      "raw": 48000,
+      "muted": 0
+    },
+    {
+      "sample": 14,
+      "op": "MUTE",
+      "gameMs": 14055,
+      "raw": 48000,
+      "muted": 1
+    },
+    {
+      "sample": 15,
+      "op": "UNMUTE",
+      "gameMs": 15063,
+      "raw": 48000,
+      "muted": 0
+    },
+    {
+      "sample": 20,
+      "op": "FINAL",
+      "gameMs": 20100,
+      "raw": 48000,
+      "muted": 0
+    }
+  ],
+  "selectedEntry": 1,
+  "transceiverIndex": 1,
+  "radioPrefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+  "frequencySequence": [
+    48000,
+    48200,
+    48000
+  ],
+  "muteSequence": [
+    0,
+    1,
+    0
+  ],
+  "activeEntryUnchanged": true,
+  "restoredEntriesEqual": true,
+  "firstSampleMs": 1004,
+  "lastSampleMs": 30160,
+  "timingBasis": "Времена относятся к наблюдаемому фиксированному прогону, не к прогнозу задержек",
+  "limits": "Не доказывает слышимость, общее ownership bool-API, сетевую синхронизацию и избирательное A→B",
+  "checkerSha256": "29f6a909f4f4fcc34004ccba3f731c19ed9252964e800bddcd08790853f7c9d1"
+}
