@@ -2605,3 +2605,8 @@ LOGSHA 126CDDE02F1723BAAEFCCC017AA38F64FCC7210B3D04B38C9F7E74600B840A63 size 922
 [RICON_LIVE] seq=45 t=10041 side=probe kind=QM player=-1 device=-1 tr=-1 value=9 text=bench=3,op=FINAL,radio=1,trs=2,powered=1,f0=42000,m0=0,f1=39000,m1=0,elapsedMs=10041
 [RICON_LIVEB] heartbeat=STOP reason=FINISH n=10 frames=1311
 [RICON_LIVE] seq=46 t=10041 side=probe kind=BENCH_DONE player=-1 device=-1 tr=-1 value=9 text=level=QM_LOCAL,not=AUDIBLE|RX_TX|REPLICATION|CLIENT|PER_PAIR|PLAYER
+
+# A0-M addendum (codex #4552, adb655b): BENCH_START and BENCH_MANAGER of ricon-a0m-claude-20261024-224002 record
+#   radioManager=0 - the Plain world has no RadioManagerEntity; the A0-M findings are the native transceiver flags
+#   of one authority process in a world without RadioManager. Codex's independent checker live-qm-check-codex.py
+#   (sha256 d89d5b22...) was rerun by claude from a copy: QM_CONFIRMED, its JSON byte-identical to the committed one.
