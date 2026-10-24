@@ -1,7 +1,7 @@
 {
   "scope": "COMPILE_ONLY_NO_WORLD",
-  "peerReview": "SOURCE_ACCEPTED_AGORA_4582_4600",
-  "runtime": "B0A_OFF_ON_RESTART_OBSERVED_PENDING_CROSS_REVIEW",
+  "peerReview": "SOURCE_AND_RUNTIME_ACCEPTED_AGORA_4582_4600_4606",
+  "runtime": "B0A_OFF_ON_RESTART_ACCEPTED_AGORA_4606",
   "gateArgumentPresent": false,
   "processesAfter": 0,
   "runs": [
