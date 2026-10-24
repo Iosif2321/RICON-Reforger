@@ -33,6 +33,15 @@
   `DESIRED_FREQUENCY = 60000` и подпись UI `#AR-VON_FrequencyUnits_MHz` (`E-radio-gameplay-doc.md:22–26`),
   `BeginTransmissionFreq` «явно кГц» (`LINK_CHAIN_RU.md:73`). Getter трансивера задержан
   («transceiver getter is delayed (network?)», `SCR_VONEntryRadio.c:31` по `E-workbench-source.md:149–151`).
+- **Ванильный путь меню VoN (A1 S0/S0b, 2026-10-24, WORKBENCH_STATIC,** `receipts/a1-s0-wbreader-claude-20261024.txt`**).**
+  - Перестройка в `Game/VON/SCR_VONEntryRadio.c:118–129`: шаг = modifier × `GetFrequencyResolution()`, ограничение
+    [min, max], затем прямой `BaseTransceiver.SetFrequency` (`:129`, второй вызов `:204`).
+  - `BaseRadioComponent.SetTransceiverFrequency` ванильные скрипты не вызывают. Во всех 5809 файлах он есть только в
+    объявлении `Game/generated/Components/BaseRadioComponent.c:54`. Значит, V2 шёл тем же native-методом, что меню,
+    а bench9/V1 — методом, которого ваниль не использует.
+  - Текст частоты в меню: `:131–132` — raw/1000 с округлением до 0.01, `ToString(3, 1)` и подпись
+    `#AR-VON_FrequencyUnits_MHz`. Второй путь `:206–208` — тот же делитель. Ванильный форматтер прямо считает raw
+    килогерцами.
 - LiveProbe содержит компонент запуска для Play (скомпилирован, в Play не исполнялся) и стенд A0. Стенд исполнялся,
   но миры на диске не менялись: сущности создаются только в памяти World Editor. `RICON_LiveProbeComponent` и
   `RICON_CommsManagerComponent` требуют явного размещения на GameMode.

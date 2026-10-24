@@ -1,0 +1,49 @@
+# claude, A1 S0 (2026-10-24): read-only WbReader windows into vanilla VON scripts for the client/UI slice
+# (LIVE-order-frequency-mute.md §2 Q-F, §7 item 2). START agora #4297, ACK codex #4298, END #4302.
+# Runner: tools/RICON_WbReader/run.ps1 at HEAD 3a8d718 (unchanged), ScriptEditor, -wbSilent -exitAfterInit -noBackend;
+# no world, Play, server or dialogs; at most 15 source lines per run, printed only into the Workbench log outside the repo.
+# Vanilla code is not reproduced here: resource path, line numbers, identifiers and a paraphrase only (codex #3965).
+# Each run: exit 0, plugin "done", SCRIPT (E) 0 (the "Resource leaks" and Steamworks RequestCurrentStats lines are the
+# usual noise), Workbench processes after the run 0.
+#
+# sha256 of console.log                                             run (17:10:45-17:11:24)            printed lines
+902b42f41add0db50cb03f60309749ebb307bb4b1766b2c774b8b9586bcc3944  s0a SCR_VONEntryRadio.c grep SetTransceiverFrequency  0
+505e2d96303c9347915a5b342d81f4fe056f4b4e278a2178f19d737c82a49551  s0b SCR_VONEntryRadio.c grep SetFrequency             9
+54c38ed38fa3652f26bc12d6ee9fdcd82290acd7f44811095b2708a239e9190a  s0c SCR_VONEntryRadio.c grep FrequencyUnits ctx 4     9
+397429c9c85bc9ece1250bef035ef4b3598ca7770005a55cf88c4f082eeb65d2  s0d SCR_VONEntryRadio.c grep GetFrequency             4
+f963fc55f28fb0f2c25e9d45d6ec7674f9ff2da57df5318d8b6d209e7884e8a5  s0e all 5809 scripts grep SetTransceiverFrequency    1
+#
+# Findings (WORKBENCH_STATIC, paraphrase):
+# 1. The vanilla VON menu entry retunes with the direct setter: $ArmaReforger:scripts/Game/VON/SCR_VONEntryRadio.c:129
+#    and :204 both call SetFrequency on the entry's own transceiver with the entry's local frequency field.
+#    SetTransceiverFrequency does not occur in this file (s0a, 0 matches); across all 5809 scripts its only occurrence
+#    is the native declaration Game/generated/Components/BaseRadioComponent.c:54 (proto external), i.e. no vanilla
+#    script calls the wrapper. V2 (direct setter, NATIVE_ROUNDTRIP_PASS) therefore exercised the same native method as
+#    the menu, while bench9/V1 exercised a method the vanilla scripts never call. Why the wrapper had no visible
+#    effect on the server is still not established.
+# 2. One menu step is one resolution: :126 adds modifier x GetFrequencyResolution() to the local frequency field;
+#    the field is initialised from the transceiver getter at :116; :151 reads the current getter value again;
+#    :98 derives the channel text from the getter value through SCR_VONMenu.GetKnownChannel.
+# 3. The unit label is the constant "#AR-VON_FrequencyUnits_MHz" declared at :5; the frequency text reaches the entry
+#    widget through SetFrequencyText at :315 (or the overwrite string at :319). Where the text is built and with which
+#    divisor is not visible in these windows (follow-up S0b).
+#
+# S0b (START #4305 after ACK codex #4304, END #4306), same runner and conditions, only SCR_VONEntryRadio.c.
+# sha256 of console.log                                             run (17:20:33-17:20:56)            printed lines
+f4e8b0cc370654a952d11498d339101e4376ff9338faf12b6edc7b8da9bf0ab2  s0f grep LABEL_FREQUENCY_UNITS ctx 2                 15
+33c7ffa38a8f297a6e13032c2cc9b1713da20fce0254d8b329bedd10f3c79118  s0g grep m_sText ctx 1                               9
+c71f167a251f6c037e00fcd271b89f5c2c969538ef5c3b2f22ba05054d5fd273  s0h window from line 118                            15
+#
+# Findings (WORKBENCH_STATIC, paraphrase):
+# 4. The menu text is raw / 1000 labelled MHz: :131 rounds raw x 0.1 to an integer and multiplies by 0.01 (the vanilla
+#    comment gives the example "39500 -> 39.5"); :132 builds the entry text from that number (ToString(3, 1)) and the
+#    "#AR-VON_FrequencyUnits_MHz" label. A second path :206-208 uses the same divisor in two steps (integer raw / 10,
+#    then / 100) next to the SOUND_RADIO_FREQUENCY_CYCLE UI sound (:210), i.e. a frequency-cycle path. For raw values
+#    that are not multiples of 10 the two paths may round differently by 0.01 MHz; with one decimal shown this is not
+#    visible.
+# 5. Retune :118-129: the step is modifier x GetFrequencyResolution(), clamped to [GetMinFrequency, GetMaxFrequency]
+#    with ClampInt, then the direct SetFrequency (:129). An attempt beyond a bound plays an error UI sound (:121-122).
+# Consequence for Q-F: the vanilla menu formatter treats the raw getter value as kHz. Together with the raw values read in
+#    V2 on the four bench radios (32000 -> 32200 etc., res 200) the unit is kHz at level WORKBENCH_STATIC (menu formula)
+#    + NATIVE_ROUNDTRIP (raw), not RUNTIME_OBSERVED: no screen with a player was observed. The formatter cannot be run
+#    without a world: the formula is inline in a method that needs the entry's transceiver.
