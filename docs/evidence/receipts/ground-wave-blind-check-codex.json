@@ -6,8 +6,8 @@
   "sourceFilesChecked": 28,
   "testDataZipSha256": "53f5331b2337a2b60376a3d2538fb14948a82611281a5bbed90e499ce0fa2be6",
   "csvSha256": "c13ef54eae96b8196047d5ea7fb58ce1d34b2f32cb86a1ad85dedfd8ec2d0ff6",
-  "requirementsLfSha256": "198033126e72322887ef6e9b0b0467e89fb9168d395bbdb74e74024d194d5259",
-  "corpusSha256": "2620674f5963784e26ca65a8d0659b1f1e0f22c00fa26dd8c1f6db1654d0c0d3",
+  "requirementsLfSha256": "f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f",
+  "corpusSha256": "c941eedeff0afe9351fc91a2a0e2a4095c23c48d66224243ca9f124d87bf57be",
   "referenceExeSha256": "9b539d4078dfd7aaadb2fd83e8eb891b308ad5b05c2b762a7bf3bb6d6aa8c114",
   "compilerFlags": [
     "MSVC /EHs",
@@ -15,12 +15,12 @@
     "/std:c++17"
   ],
   "driverSha256": "3e2873d53249adc410b3e7b977f1bec46331769a07088919fab976d5de92b4a2",
-  "checkerSha256": "175bdee3fb70a03ba7608a43feebbad2b9998f2cb578ba03bf785839acd90662",
-  "cases": 263,
+  "checkerSha256": "8d0656e08eb9bd33d6dff89cec7e8979bd78ebddc34bf292b99a6af77e6edd4d",
+  "cases": 265,
   "codes": {
     "OK": 224,
     "OUT_OF_MODEL_DOMAIN": 13,
-    "INVALID_INPUT": 22,
+    "INVALID_INPUT": 24,
     "NUMERIC_FAILURE": 4
   },
   "nativeCalls": 551,
