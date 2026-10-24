@@ -26,6 +26,9 @@
 //! «playermenu» — то же плюс одна последовательность пути меню на одной полностью привязанной radio-entry игрока
 //! (PLAYER_ACT: выбор, шаг AdjustEntryModif, чтения t0/t1/t5, возврат, ToggleMuteEntry туда и обратно, итог); каждая
 //! запись предварена проверкой ожидаемого состояния, иначе STOP без перезаписи; BENCH_DONE level=PLAYER_MENU_RUNTIME.
+//! A0-M (claude #4526, codex #4524, #4529): режим «radiomute» — те же свои рации, без прежних радиофаз: шаги QM
+//! BASE, MUTE, RETUNE, READ, POWER, READ, POWER_BACK, READ, RESTORE, FINAL раз в секунду (см. StepRadioMute);
+//! трансивер 1 — контроль без записей; BENCH_DONE level=QM_LOCAL. Игрок и его рации не трогаются.
 //! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
@@ -216,6 +219,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	static const string MODE_PLAYERMENU = "playermenu"; //!< A1-P2: player + путь меню на одной radio-entry игрока
 	static const string MODE_PLAYERSCREEN = "playerscreen"; //!< A1-S1: player + одно Open радиального меню и чтение виджетов
 	static const string MODE_PLAYERSCREENSTEP = "playerscreenstep"; //!< A1-S2: S1 + один шаг частоты P2 на экране
+	static const string MODE_RADIOMUTE = "radiomute"; //!< A0-M: локальный Q-M на своих рациях (mute, частота, питание)
 	static const string MODE_INVALID = "INVALID";
 	static const int PLAYER_SAMPLES = 30;
 	protected int m_iSamples;
@@ -233,7 +237,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!System.GetCLIParam("riconBenchMode", value))
 			return MODE_RADIO;
 		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU || value == MODE_PLAYERSCREEN
-			|| value == MODE_PLAYERSCREENSTEP)
+			|| value == MODE_PLAYERSCREENSTEP || value == MODE_RADIOMUTE)
 			return value;
 		return MODE_INVALID;
 	}
@@ -635,6 +639,248 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		text = text + ",edafter=" + Bit(entryAfterDirect) + ",dret2=" + Bit(returnedDirect2) + ",dafter2=" + Bit(afterDirect2);
 		text = text + ",edafter2=" + Bit(entryAfterDirect2);
 		Record("BENCH_MUTE", device, 0, -1, text);
+	}
+
+	//! A0-M (claude #4526, порядок codex #4524): локальный Q-M на своих рациях. Трансивер 0 — объект опыта, трансивер 1
+	//! (если есть) — контроль, в него стенд не пишет. Шаги через ≥ 1 с игрового времени: 0 BASE — снимок питания и обоих
+	//! трансиверов; 1 MUTE — SetMuteState(!m0); 2 RETUNE — SetFrequency(f0 ± res); 3 READ; 4 POWER — SetPower(!p0);
+	//! 5 READ; 6 POWER_BACK — SetPower(p0); 7 READ; 8 RESTORE — к BASE только то, что отличается; 9 FINAL. Запись шага
+	//! с изменением несёт состояние до (pre*) и после вызова; сохраняется ли mute — вопрос опыта, поэтому стенд ничего
+	//! не предсказывает. Перед каждой записью — те же объекты рации и трансиверов, что на BASE, иначе STOP этой рации без
+	//! записей. IsMuted — флаг native-трансивера, не слышимость и не направление RX/TX.
+	static const int QM_STEPS = 9;
+	protected int m_iQmStep = -1;  //!< −1 до спавна, 0 — BASE
+	protected float m_fQmAt;
+	protected ref array<int> m_aQmStop = {};
+	protected ref array<int> m_aQmP0 = {};
+	protected ref array<int> m_aQmF0 = {};
+	protected ref array<int> m_aQmM0 = {};
+	protected ref array<int> m_aQmTarget = {};
+	protected ref array<BaseTransceiver> m_aQmTr0 = {};
+	protected ref array<BaseTransceiver> m_aQmTr1 = {};
+	protected ref array<int> m_aQmTrs = {};
+
+	protected static BaseTransceiver QmTr(BaseRadioComponent radio, int index)
+	{
+		if (!radio || index >= radio.TransceiversCount())
+			return null;
+		return radio.GetTransceiver(index);
+	}
+
+	//! Питание и оба трансивера (без второго — −1); pre — те же поля с приставкой pre для состояния до вызова.
+	protected string QmState(int device, bool pre)
+	{
+		string p = "";
+		if (pre)
+			p = "pre";
+		BaseRadioComponent radio = RadioOf(device);
+		if (!radio)
+			return p + "radio=0";
+		BaseTransceiver t0 = QmTr(radio, 0);
+		BaseTransceiver t1 = QmTr(radio, 1);
+		int f0 = -1;
+		int m0 = -1;
+		int f1 = -1;
+		int m1 = -1;
+		if (t0)
+		{
+			f0 = t0.GetFrequency();
+			m0 = 0;
+			if (t0.IsMuted())
+				m0 = 1;
+		}
+		if (t1)
+		{
+			f1 = t1.GetFrequency();
+			m1 = 0;
+			if (t1.IsMuted())
+				m1 = 1;
+		}
+		string text = p + "radio=1," + p + "trs=" + radio.TransceiversCount().ToString() + "," + p + "powered=" + Bit(radio.IsPowered());
+		text = text + "," + p + "f0=" + f0.ToString() + "," + p + "m0=" + m0.ToString();
+		return text + "," + p + "f1=" + f1.ToString() + "," + p + "m1=" + m1.ToString();
+	}
+
+	protected void QmNote(int device, int step, string text)
+	{
+		float ms = m_fElapsed * 1000.0;
+		int elapsedMs = ms;
+		Record("QM", device, -1, step, text + ",elapsedMs=" + elapsedMs.ToString());
+	}
+
+	//! Те же объекты, что на BASE: рация, число трансиверов, трансиверы 0 и 1, и каждый из них — трансивер этой рации
+	//! (GetRadio, codex #4533). Изменение состояния между записями стенд не останавливает: на своих изолированных рациях
+	//! это наблюдаемый отложенный эффект (stateChangedSinceObservation в разборе), а не внешний писатель (codex #4529,
+	//! #4533; уточнение плана #4526). Для рации игрока и production остаётся прежний ActExpect.
+	protected bool QmSameObjects(int device)
+	{
+		BaseRadioComponent radio = RadioOf(device);
+		if (!radio || radio.TransceiversCount() != m_aQmTrs[device])
+			return false;
+		BaseTransceiver t0 = QmTr(radio, 0);
+		BaseTransceiver t1 = QmTr(radio, 1);
+		if (t0 != m_aQmTr0[device] || t1 != m_aQmTr1[device] || !t0 || t0.GetRadio() != radio)
+			return false;
+		return !t1 || t1.GetRadio() == radio;
+	}
+
+	protected void QmBase(int device)
+	{
+		BaseRadioComponent radio = RadioOf(device);
+		BaseTransceiver t0 = QmTr(radio, 0);
+		m_aQmStop.Insert(0);
+		m_aQmP0.Insert(-1);
+		m_aQmF0.Insert(-1);
+		m_aQmM0.Insert(-1);
+		m_aQmTarget.Insert(-1);
+		m_aQmTr0.Insert(t0);
+		m_aQmTr1.Insert(QmTr(radio, 1));
+		int trs = -1;
+		if (radio)
+			trs = radio.TransceiversCount();
+		m_aQmTrs.Insert(trs);
+		if (!t0 || t0.GetRadio() != radio)
+		{
+			m_aQmStop[device] = 1;
+			QmNote(device, 0, "op=STOP,reason=NO_TRANSCEIVER," + QmState(device, false));
+			return;
+		}
+		m_aQmP0[device] = 0;
+		if (radio.IsPowered())
+			m_aQmP0[device] = 1;
+		m_aQmF0[device] = t0.GetFrequency();
+		m_aQmM0[device] = 0;
+		if (t0.IsMuted())
+			m_aQmM0[device] = 1;
+		int res = t0.GetFrequencyResolution();
+		int minRaw = t0.GetMinFrequency();
+		int maxRaw = t0.GetMaxFrequency();
+		int f0 = m_aQmF0[device];
+		string range = ",min=" + minRaw.ToString() + ",max=" + maxRaw.ToString() + ",res=" + res.ToString();
+		if (res > 0 && f0 >= minRaw && f0 <= maxRaw && maxRaw - f0 >= res)
+			m_aQmTarget[device] = f0 + res;
+		else if (res > 0 && f0 >= minRaw && f0 <= maxRaw && f0 - minRaw >= res)
+			m_aQmTarget[device] = f0 - res;
+		else
+		{
+			// без места для шага опыт этой рации не начинается: ни одной записи
+			m_aQmStop[device] = 1;
+			QmNote(device, 0, "op=STOP,reason=NO_ROOM_FOR_STEP," + QmState(device, false) + range);
+			return;
+		}
+		QmNote(device, 0, "op=BASE," + QmState(device, false) + range + ",target=" + m_aQmTarget[device].ToString());
+	}
+
+	protected void QmApply(int device, int step)
+	{
+		if (m_aQmStop[device] == 1)
+			return;
+		if (!QmSameObjects(device))
+		{
+			m_aQmStop[device] = 1;
+			QmNote(device, step, "op=STOP,reason=OBJECT_LOST," + QmState(device, false));
+			return;
+		}
+		BaseRadioComponent radio = RadioOf(device);
+		BaseTransceiver t0 = m_aQmTr0[device];
+		bool p0 = m_aQmP0[device] == 1;
+		bool m0 = m_aQmM0[device] == 1;
+		string pre = QmState(device, true);
+		if (step == 1)
+		{
+			bool muteRet = t0.SetMuteState(!m0);
+			QmNote(device, step, "op=MUTE,want=" + Bit(!m0) + ",ret=" + Bit(muteRet) + "," + pre + "," + QmState(device, false));
+		}
+		else if (step == 2)
+		{
+			t0.SetFrequency(m_aQmTarget[device]);
+			QmNote(device, step, "op=RETUNE,want=" + m_aQmTarget[device].ToString() + "," + pre + "," + QmState(device, false));
+		}
+		else if (step == 4)
+		{
+			radio.SetPower(!p0);
+			QmNote(device, step, "op=POWER,want=" + Bit(!p0) + "," + pre + "," + QmState(device, false));
+		}
+		else if (step == 6)
+		{
+			radio.SetPower(p0);
+			QmNote(device, step, "op=POWER_BACK,want=" + Bit(p0) + "," + pre + "," + QmState(device, false));
+		}
+		else if (step == 8)
+		{
+			// возврат только своей рации к BASE и только того, что отличается
+			int setPower = 0;
+			int setFreq = 0;
+			int setMute = 0;
+			int restoreRet = -1;
+			if (radio.IsPowered() != p0)
+			{
+				radio.SetPower(p0);
+				setPower = 1;
+			}
+			// codex #4541: каждый следующий вызов решается по свежему getter-у после предыдущего, и это значение пишется
+			int freqBefore = t0.GetFrequency();
+			if (freqBefore != m_aQmF0[device])
+			{
+				t0.SetFrequency(m_aQmF0[device]);
+				setFreq = 1;
+			}
+			int muteBefore = 0;
+			if (t0.IsMuted())
+				muteBefore = 1;
+			if (muteBefore != m_aQmM0[device])
+			{
+				restoreRet = 0;
+				if (t0.SetMuteState(m0))
+					restoreRet = 1;
+				setMute = 1;
+			}
+			string acts = "op=RESTORE,setPower=" + setPower.ToString() + ",restoreFreqBefore=" + freqBefore.ToString();
+			acts = acts + ",setFreq=" + setFreq.ToString() + ",restoreMuteBefore=" + muteBefore.ToString();
+			QmNote(device, step, acts + ",setMute=" + setMute.ToString() + ",ret=" + restoreRet.ToString() + "," + pre + "," + QmState(device, false));
+		}
+		else if (step == 3 || step == 5 || step == 7)
+		{
+			string phase = "afterRetune";
+			if (step == 5)
+				phase = "powerToggled";
+			else if (step == 7)
+				phase = "powerBack";
+			QmNote(device, step, "op=READ,phase=" + phase + "," + QmState(device, false));
+		}
+		else if (step == 9)
+			QmNote(device, step, "op=FINAL," + QmState(device, false));
+	}
+
+	//! A0-M: спавн своих раций через ≥ 1 с, BASE, затем по одному шагу на каждую секунду игрового времени для всех раций;
+	//! после FINAL — удаление своих раций (Finish) и BENCH_DONE level=QM_LOCAL.
+	protected void StepRadioMute(IEntity owner)
+	{
+		if (m_iQmStep < 0)
+		{
+			if (m_fElapsed < 1)
+				return;
+			if (!ManagerReady(owner))
+			{
+				Finish(false);
+				return;
+			}
+			Spawn();
+			m_fSpawnedAt = m_fElapsed;
+			m_iQmStep = 0;
+			m_fQmAt = m_fElapsed;
+			for (int a = 0; a < m_aRadios.Count(); a++)
+				QmBase(a);
+			return;
+		}
+		if (m_fElapsed < m_fQmAt + 1)
+			return;
+		m_iQmStep++;
+		m_fQmAt = m_fElapsed;
+		for (int b = 0; b < m_aRadios.Count(); b++)
+			QmApply(b, m_iQmStep);
+		if (m_iQmStep >= QM_STEPS)
+			Finish(true);
 	}
 
 	//! A1-P0: неверный режим — NOT_READY до любых действий; иначе один PLAYER_SAMPLE на каждую секунду игрового времени
@@ -1353,6 +1599,13 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			else
 				Note("BENCH_ABORTED", m_iSamples, "level=" + level + ",notReady=" + Bit(m_bScreenNotReady) + ",stopped=" + Bit(m_bActStopped) + ",samples=" + m_iSamples.ToString());
 		}
+		else if (Mode() == MODE_RADIOMUTE)
+		{
+			if (complete)
+				Note("BENCH_DONE", m_iQmStep, "level=QM_LOCAL,not=AUDIBLE|RX_TX|REPLICATION|CLIENT|PER_PAIR|PLAYER");
+			else
+				Note("BENCH_ABORTED", m_iQmStep, "level=QM_LOCAL,step=" + m_iQmStep.ToString());
+		}
 		else if (Mode() == MODE_PLAYERMENU)
 		{
 			if (complete)
@@ -1382,6 +1635,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!m_bRunning || timeSlice <= 0)
 			return;
 		m_fElapsed += timeSlice;
+		if (Mode() == MODE_RADIOMUTE)
+		{
+			StepRadioMute(owner);
+			return;
+		}
 		if (Mode() != MODE_RADIO)
 		{
 			StepPlayer();
