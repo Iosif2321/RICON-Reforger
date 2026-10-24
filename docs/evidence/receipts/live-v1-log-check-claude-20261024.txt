@@ -1,0 +1,180 @@
+# claude, 2026-10-24: output of docs/evidence/receipts/live-bench-log-check-claude.py on
+# ricon-v1-claude-20261024-143158/console.log (sha256 557d268b1996c5d55998a1687b1827947ecb20011c688ce30be5c54021e9d169)
+# with oracle/data/radio_model_catalog_v1.json and expectManager=1. Diagnostic ratios are not a kHz/MHz verdict (codex #4115).
+{
+ "logSha256": "557d268b1996c5d55998a1687b1827947ecb20011c688ce30be5c54021e9d169",
+ "errors": [],
+ "notes": [],
+ "overall": "OBSERVED_MISMATCH",
+ "radioManager": {
+  "expected": 1,
+  "start": "1",
+  "startExpected": "1",
+  "preSpawn": [
+   1
+  ]
+ },
+ "radios": [
+  {
+   "device": "0",
+   "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+   "spawned": true,
+   "actualPrefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+   "model": "an_prc68",
+   "rawMin": 32000,
+   "rawMax": 68000,
+   "rawRes": 200,
+   "rawFrequency": 32000,
+   "passportMHz": [
+    [
+     30,
+     79.95
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     32000,
+     68000
+    ],
+    [
+     32000,
+     68000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1066.6666666666667,
+   "diagRatioRawMaxToPassportMaxMHz": 850.5315822388993,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=0,current=32000,min=32000,max=68000,res=200",
+   "target": 32200,
+   "raw_t0": 32000,
+   "raw_t1": 32000,
+   "raw_t5": 32000,
+   "mute": "bench=0,before=0,requested=1,ret=0,after=1,restoreTo=0,ret2=0,after2=0",
+   "verdict": "OBSERVED_MISMATCH",
+   "frequencyRoundTrip": false,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "1",
+   "prefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+   "spawned": true,
+   "actualPrefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+   "model": "an_prc77",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 48000,
+   "passportMHz": [
+    [
+     30,
+     52.95
+    ],
+    [
+     53,
+     75.95
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     30000,
+     76000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1000.0,
+   "diagRatioRawMaxToPassportMaxMHz": 1000.6583278472679,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=1,current=48000,min=30000,max=76000,res=200",
+   "target": 48200,
+   "raw_t0": 48000,
+   "raw_t1": 48000,
+   "raw_t5": 48000,
+   "mute": "bench=1,before=0,requested=1,ret=0,after=1,restoreTo=0,ret2=0,after2=0",
+   "verdict": "OBSERVED_MISMATCH",
+   "frequencyRoundTrip": false,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "2",
+   "prefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+   "spawned": true,
+   "actualPrefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+   "model": "r107m",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 48000,
+   "passportMHz": [
+    [
+     20,
+     52
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     20000,
+     52000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1500.0,
+   "diagRatioRawMaxToPassportMaxMHz": 1461.5384615384614,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=2,current=48000,min=30000,max=76000,res=200",
+   "target": 48200,
+   "raw_t0": 48000,
+   "raw_t1": 48000,
+   "raw_t5": 48000,
+   "mute": "bench=2,before=0,requested=1,ret=0,after=1,restoreTo=0,ret2=0,after2=0",
+   "verdict": "OBSERVED_MISMATCH",
+   "frequencyRoundTrip": false,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "3",
+   "prefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+   "spawned": true,
+   "actualPrefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+   "model": "rf10",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 42000,
+   "passportMHz": [
+    [
+     44,
+     53.975
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     20000,
+     52000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 681.8181818181819,
+   "diagRatioRawMaxToPassportMaxMHz": 1408.0592867068087,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=3,current=42000,min=30000,max=76000,res=200",
+   "target": 42200,
+   "raw_t0": 42000,
+   "raw_t1": 42000,
+   "raw_t5": 42000,
+   "mute": "bench=3,before=0,requested=1,ret=0,after=1,restoreTo=0,ret2=0,after2=0",
+   "verdict": "OBSERVED_MISMATCH",
+   "frequencyRoundTrip": false,
+   "muteToggleAndRestore": true
+  }
+ ]
+}
+LIVE_BENCH_LOG_CHECK_PASS
