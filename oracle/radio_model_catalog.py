@@ -10,7 +10,8 @@ import re
 DEFAULT_PATH = Path(__file__).parent / "data" / "radio_model_catalog_v1.json"
 PREFIX = "$ArmaReforger:Prefabs/Items/Equipment/Radios/"
 QUANTITIES = {"frequencyMHz", "channelSpacingKHz", "presetChannelSpacingKHz",
-              "tuningReadoutKHz", "txPowerW", "rxSensitivityUv", "supplyVoltageV", "antennaLengthM"}
+              "tuningReadoutKHz", "txPowerW", "rxSensitivityUv", "supplyVoltageV", "antennaLengthM",
+              "specifiedRangeKm", "selectivityHalfBandwidthKHz", "intermediateFrequencyMHz", "adjacentChannelRejectionDb"}
 RELATIONS = {"range", "exact", "specified", "nominal", "minimum", "greater_than", "maximum", "less_than"}
 
 

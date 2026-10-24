@@ -92,6 +92,38 @@
           "sourceId": "tm_prc68",
           "locator": "§1-8, стр. 1-2, PDF index 9",
           "conditions": "Критерий 10 дБ SINAD на аудиовыходе; соглашение о напряжении и входной импеданс здесь не установлены."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 0.3,
+          "relation": "specified",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-1, PDF index 8",
+          "conditions": "Короткая антенна; в руководстве 330 ярдов / 300 м. Местность и высота не заданы, это не универсальная граница связи."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 1.6,
+          "relation": "specified",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-1, PDF index 8",
+          "conditions": "Длинная антенна; в руководстве 1 миля / 1.6 км. Не порог LOST и не обратный расчёт мощности."
+        },
+        {
+          "quantity": "selectivityHalfBandwidthKHz",
+          "value": 15,
+          "relation": "greater_than",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-2, PDF index 9",
+          "conditions": "Половина полосы по уровню ослабления 6 дБ: исходное обозначение ±15 кГц. Не эквивалентная шумовая полоса."
+        },
+        {
+          "quantity": "selectivityHalfBandwidthKHz",
+          "value": 50,
+          "relation": "less_than",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-2, PDF index 9",
+          "conditions": "Половина полосы по уровню ослабления 60 дБ: исходное обозначение ±50 кГц. Не эквивалентная шумовая полоса."
         }
       ],
       "unknowns": [
@@ -162,6 +194,14 @@
           "sourceId": "tm_prc77",
           "locator": "§1-9/1-11, стр. 1-3, PDF index 14",
           "conditions": "AT-271A/PRC: 10 ft, перевод 1 ft = 0.3048 м; принадлежность игровой антенны не проверена."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 8,
+          "relation": "specified",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9, стр. 1-3, PDF index 14",
+          "conditions": "В руководстве 5 миль / 8 км с оговоркой зависимости от условий; конкретная антенна в этой строке не указана."
         }
       ],
       "unknowns": [
@@ -219,6 +259,22 @@
           "sourceId": "to_r107m",
           "locator": "§2.17.1, стр. 8, PDF index 4",
           "conditions": "Режим телефонии: отношение выходных напряжений сигнал/шум 10:1, модуляция 1000 Гц, девиация ±5 кГц. Это не 10 дБ входного SINR."
+        },
+        {
+          "quantity": "intermediateFrequencyMHz",
+          "value": 10.7,
+          "relation": "specified",
+          "sourceId": "to_r107m",
+          "locator": "§2.17.3, стр. 8, PDF index 4",
+          "conditions": "Промежуточная частота приёмника с допуском ±1 кГц; не ширина фильтра."
+        },
+        {
+          "quantity": "adjacentChannelRejectionDb",
+          "value": 70,
+          "relation": "minimum",
+          "sourceId": "to_r107m",
+          "locator": "§2.17.5, стр. 8, PDF index 4",
+          "conditions": "Ослабление чувствительности по соседнему каналу при расстройке ±30 кГц; не входной SINR и не шумовая полоса."
         }
       ],
       "unknowns": [
@@ -307,6 +363,54 @@
           "sourceId": "to_rf10",
           "locator": "§4, стр. 5, PDF index 2",
           "conditions": "Пять NiCd элементов источника; это питание, не мощность излучения."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 5,
+          "relation": "specified",
+          "sourceId": "to_rf10",
+          "locator": "§2, стр. 5, PDF index 2",
+          "conditions": "Средняя дальность: штыревая антенна 1.5 м, средняя пересечённость и лесистость местности; не гарантированный радиус."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 1,
+          "relation": "specified",
+          "sourceId": "to_rf10",
+          "locator": "§2, стр. 5, PDF index 2",
+          "conditions": "Средняя дальность: штыревая антенна 0.5 м, средняя пересечённость и лесистость местности; не гарантированный радиус."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 10,
+          "relation": "specified",
+          "sourceId": "to_rf10",
+          "locator": "§2, стр. 5, PDF index 2",
+          "conditions": "Средняя дальность: подвесная антенна, средняя пересечённость и лесистость местности."
+        },
+        {
+          "quantity": "specifiedRangeKm",
+          "value": 20,
+          "relation": "specified",
+          "sourceId": "to_rf10",
+          "locator": "§2, стр. 5, PDF index 2",
+          "conditions": "Средняя дальность: направленная антенна, средняя пересечённость и лесистость местности."
+        },
+        {
+          "quantity": "adjacentChannelRejectionDb",
+          "value": 60,
+          "relation": "minimum",
+          "sourceId": "to_rf10",
+          "locator": "§12, стр. 7, PDF index 3",
+          "conditions": "Двухсигнальная избирательность при отстройке соседнего канала ±25 кГц; не шумовая полоса."
+        },
+        {
+          "quantity": "adjacentChannelRejectionDb",
+          "value": 76,
+          "relation": "minimum",
+          "sourceId": "to_rf10",
+          "locator": "§12, стр. 7, PDF index 3",
+          "conditions": "Двухсигнальная избирательность при отстройке соседнего канала ±50 кГц; не шумовая полоса."
         }
       ],
       "unknowns": [

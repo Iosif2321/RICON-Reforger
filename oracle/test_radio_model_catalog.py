@@ -85,6 +85,19 @@ class RadioModelCatalogTests(unittest.TestCase):
             with self.subTest(value=repr(value)), self.assertRaises(ValueError):
                 validate_catalog(changed)
 
+    def test_reference_ranges_and_selectivity_do_not_create_rf_defaults(self):
+        result = lookup(self.catalog, PREFIX+"Radio_ANPRC68.et", self.build)
+        facts = result["model"]["facts"]
+        self.assertEqual([f["value"] for f in facts if f["quantity"] == "specifiedRangeKm"], [0.3,1.6])
+        self.assertEqual([(f["value"],f["relation"]) for f in facts if f["quantity"] == "selectivityHalfBandwidthKHz"],
+                         [(15,"greater_than"),(50,"less_than")])
+        self.assertFalse(result["readyForS2"])
+        self.assertFalse({"rxBandwidthHz","txPowerDbm","rxSensitivityDbm"} & {f["quantity"] for f in facts})
+        changed = copy.deepcopy(self.catalog)
+        changed["models"]["an_prc68"]["facts"][-1]["quantity"] = "rxBandwidthHz"
+        with self.assertRaises(ValueError):
+            validate_catalog(changed)
+
     def test_invalid_structure_and_references_are_rejected(self):
         changes = [lambda c: c.update(schemaVersion=True),
                    lambda c: c.update(readyForS2=True),
