@@ -40,7 +40,7 @@ def player_state(pc, controlled, pid):
 def cycle(ordinal, b):
     """Rows (kind, player, tr, value, text) of one cycle."""
     samples = b.get("samples", 30)
-    start = f"cycle={ordinal},limit=30,isServer=1,isClient=0" + b.get("start_extra", "")
+    start = f"cycle={ordinal},limit=30,isServer=1,isClient=0" + b.get("start_rpl", ",rplMode=1") + b.get("start_extra", "")
     rows = [("ENDPOINT_START", -1, -1, 0, start)]
     rev, prev, ms = 0, None, 1003
     for n in range(1, samples + 1):
@@ -56,7 +56,7 @@ def cycle(ordinal, b):
         shown_rev = rev - 1 if b.get("stale_rev_at") == n else rev
         rows.append(("ENDPOINT_SAMPLE", pid, -1, n,
                      f"cycle={ordinal},elapsedMs={ms},bindingRevision={shown_rev},{player_state(pc, controlled, pid)},"
-                     f"members={members}" + b.get("sample_rpl", "") + (b.get("sample_extra", "") if n == 5 else "")))
+                     f"members={members}" + b.get("sample_rpl", ",rplMode=1") + (b.get("sample_extra", "") if n == 5 else "")))
         if controlled and (prev is None or prev[1] == 0):
             for t, f in ((0, 32000), (1, 48000)):
                 extra = b.get("radio_extra", "")
@@ -105,12 +105,11 @@ cases = [
     ("off_without_endpoint_only", build(cycles=[], launcher=False), OFF, 1, "LOG_INVALID"),
     ("off_never_played", build(cycles=[]).replace("isGameMode=1", "isGameMode=0"), OFF, 1, "LOG_INVALID"),
     ("on_complete", build(), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
-    ("on_with_rplmode", build(cycles=[{"start_extra": ",rplMode=1", "sample_rpl": ",rplMode=1"}]), ON, 0,
-     "ENDPOINT_CYCLE_COMPLETE"),
-    ("on_rplmode_start_only", build(cycles=[{"start_extra": ",rplMode=1"}]), ON, 1, "LOG_INVALID"),
-    ("on_rplmode_sample_only", build(cycles=[{"sample_rpl": ",rplMode=1"}]), ON, 1, "LOG_INVALID"),
-    ("on_rplmode_not_int", build(cycles=[{"start_extra": ",rplMode=1", "sample_rpl": ",rplMode=Listen"}]), ON, 1,
-     "LOG_INVALID"),
+    # codex #4579: rplMode is required in START and every SAMPLE
+    ("on_no_rplmode", build(cycles=[{"start_rpl": "", "sample_rpl": ""}]), ON, 1, "LOG_INVALID"),
+    ("on_rplmode_start_missing", build(cycles=[{"start_rpl": ""}]), ON, 1, "LOG_INVALID"),
+    ("on_rplmode_sample_missing", build(cycles=[{"sample_rpl": ""}]), ON, 1, "LOG_INVALID"),
+    ("on_rplmode_not_int", build(cycles=[{"sample_rpl": ",rplMode=Listen"}]), ON, 1, "LOG_INVALID"),
     ("on_never_player", build(cycles=[{"never": True}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
     ("on_self_not_member", build(cycles=[{"members": "2"}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
     ("on_aborted", build(cycles=[{"samples": 12}]), ON, 0, "ENDPOINT_CYCLE_ABORTED"),
@@ -131,7 +130,12 @@ cases = [
     ("on_radio_player_wrong", build(cycles=[{"radio_player_wrong": True}]), ON, 1, "LOG_INVALID"),
     ("on_members_name", build(cycles=[{"members": "Ivan"}]), ON, 1, "LOG_INVALID"),
     ("on_script_error", build(extra_lines=["12:00:31.000 SCRIPT    (E): something"]), ON, 1, "LOG_INVALID"),
-    ("restart_ok", build(cycles=[{"samples": 8}, {}]), RE, 0, "ENDPOINT_CYCLE_COMPLETE"),
+    ("restart_ok", build(cycles=[{"samples": 8}, {}]), RE, 0, "ENDPOINT_RESTART_COMPLETE"),
+    ("restart_world_cleanup", build(cycles=[{"samples": 4, "reason": "WORLD_CLEANUP"}, {}]), RE, 0, "ENDPOINT_RESTART_COMPLETE"),
+    ("restart_not_exercised", build(cycles=[{}, {}]), RE, 0, "ENDPOINT_RESTART_NOT_EXERCISED"),
+    ("restart_too_early", build(cycles=[{"samples": 2}, {}]), RE, 1, "LOG_INVALID"),
+    ("restart_reset_reason", build(cycles=[{"samples": 8, "reason": "GAME_START_RESET"}, {}]), RE, 1, "LOG_INVALID"),
+    ("restart_second_aborted", build(cycles=[{"samples": 8}, {"samples": 10}]), RE, 1, "LOG_INVALID"),
     ("restart_cycle_number", build(cycles=[{"samples": 8}, {"ordinal": 1}]), RE, 1, "LOG_INVALID"),
     ("restart_seq_not_reset", build(cycles=[{"samples": 8}, {}], seq_continue=True), RE, 1, "LOG_INVALID"),
     ("restart_one_cycle", build(), RE, 1, "LOG_INVALID"),

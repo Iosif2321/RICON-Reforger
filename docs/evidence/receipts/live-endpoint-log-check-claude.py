@@ -8,8 +8,8 @@ Modes:
             Verdict ENDPOINT_GATE_OFF_CLEAN.
   on      - exactly one observation cycle; restart - exactly two (Play -> Edit -> Play in one process).
 For every cycle: the stream from ENDPOINT_START (seq 0) to ENDPOINT_DONE / ENDPOINT_ABORTED with consecutive seq; START
-fields cycle, limit=30, isServer, isClient (rplMode = RplSession.Mode() optional, codex #4574; when START has it, every
-SAMPLE has it too and it is an integer); per sample n = 1.. an optional ENDPOINT_BINDING (value n), then
+fields cycle, limit=30, isServer, isClient, rplMode (= RplSession.Mode() as an integer, required in START and in every
+SAMPLE, codex #4579; the number is recorded, never mapped to a name by guess); per sample n = 1.. an optional ENDPOINT_BINDING (value n), then
 ENDPOINT_SAMPLE (value n), then RADIO_STATE / RADIO_GONE of the radio reader; elapsedMs >= 1000 for the first sample and at
 least 999 ms after the previous one; each BINDING raises revision by one, the first one has initial=1 and
 previousPlayerId=-1, a BINDING is required whenever pc, controlled or playerId differ from the previous sample, and its
@@ -23,7 +23,12 @@ Cycles are numbered 1, 2, ... in stream order. Findings are descriptive: the pro
 the playerIds and members seen, binding revisions, radios observed, and LOCAL_ROLE_READY when the last 5 samples have
 pc=1, controlled=1, one stable revision and the own playerId among members (LOCAL_ROLE_NOT_READY otherwise; a missing
 player early in a cycle is not a log error). The end of an observation is not a proven role readiness (codex schema).
-Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / LOG_INVALID.
+Restart (codex #4579, -riconEndpointRestart=1: the launcher waits for >= 3 samples, requests Edit, waits for the edit mode
+and requests the second Play): cycle 1 must end ABORTED after at least 3 samples with GAME_END, WORLD_CLEANUP or
+WORLD_CHANGED, cycle 2 must end DONE; a cycle 1 that reached DONE did not exercise the cleanup
+(ENDPOINT_RESTART_NOT_EXERCISED, not a pass).
+Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / ENDPOINT_RESTART_COMPLETE /
+ENDPOINT_RESTART_NOT_EXERCISED / LOG_INVALID.
 Usage: python -I live-endpoint-log-check-claude.py <console.log> off|on|restart"""
 import hashlib
 import json
@@ -84,8 +89,8 @@ def check_cycle(ordinal, events, dump, errors):
     if [int(e["seq"]) for e in events] != list(range(len(events))):
         errors.append(f"{tag}: seq not consecutive from 0")
     start = events[0]["f"] if events and events[0]["kind"] == "ENDPOINT_START" else {}
-    want = {"cycle", "limit", "isServer", "isClient"} | ({"rplMode"} if "rplMode" in start else set())
-    if set(start) != want or start.get("cycle") != str(ordinal) or start.get("limit") != str(LIMIT) \
+    want = {"cycle", "limit", "isServer", "isClient", "rplMode"}
+    if set(start) != want or not INT.fullmatch(start.get("rplMode", "")) or start.get("cycle") != str(ordinal) or start.get("limit") != str(LIMIT) \
             or start.get("isServer") not in BIT or start.get("isClient") not in BIT \
             or events[0]["value"] != 0 or events[0]["player"] != -1:
         errors.append(f"{tag}: ENDPOINT_START {start}")
@@ -126,10 +131,9 @@ def check_cycle(ordinal, events, dump, errors):
             sample = v
             errs, want = player_state_errors(f)
             want |= {"cycle", "elapsedMs", "bindingRevision", "members"}
-            if "rplMode" in start:
-                want.add("rplMode")
-                if not INT.fullmatch(f.get("rplMode", "")):
-                    errs.append("rplMode not an integer")
+            want.add("rplMode")
+            if not INT.fullmatch(f.get("rplMode", "")):
+                errs.append("rplMode not an integer")
             if set(f) != want:
                 errs.append(f"field set {sorted(set(f) ^ want)}")
             if f.get("cycle") != str(ordinal) or not INT.fullmatch(f.get("elapsedMs", "")) \
@@ -273,11 +277,20 @@ def main(path, mode):
         if len(cycles) != want:
             errors.append(f"{len(cycles)} cycles, expected {want}")
         rows = [check_cycle(i + 1, ev, du, errors) for i, (ev, du) in enumerate(cycles)]
-        if mode == "restart" and len(rows) == 2 and rows[0]["end"] == "ENDPOINT_DONE" and rows[0]["samples"] == LIMIT:
-            rows[0]["note"] = "first cycle reached LIMIT before the restart: cleanup on Edit not exercised"
         ends = [r["end"] for r in rows]
         verdict = "ENDPOINT_CYCLE_COMPLETE" if ends and all(x == "ENDPOINT_DONE" for x in ends[-1:]) \
             else "ENDPOINT_CYCLE_ABORTED"
+        if mode == "restart" and len(rows) == 2:
+            first, second = rows
+            if first["end"] == "ENDPOINT_DONE":
+                first["note"] = "first cycle reached LIMIT before the restart: cleanup on Edit not exercised"
+                verdict = "ENDPOINT_RESTART_NOT_EXERCISED"
+            elif first["samples"] < 3 or first["reason"] not in ("GAME_END", "WORLD_CLEANUP", "WORLD_CHANGED"):
+                errors.append(f"restart: cycle 1 ended {first['reason']} after {first['samples']} samples")
+            elif second["end"] != "ENDPOINT_DONE":
+                errors.append(f"restart: cycle 2 ended {second['end']} {second['reason']}")
+            else:
+                verdict = "ENDPOINT_RESTART_COMPLETE"
     overall = "LOG_INVALID" if errors else verdict
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "mode": mode, "errors": errors,
                       "overall": overall, "liveLines": len(live), "endpointOnly": endpoint_only, "cycles": rows},
