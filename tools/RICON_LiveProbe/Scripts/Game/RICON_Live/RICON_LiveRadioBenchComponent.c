@@ -678,12 +678,14 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			Finish(true);
 	}
 
-	//! A1-S1 (claude #4431, условия codex #4425, #4427, #4430, #4432): настоящий радиальный VON-меню локального игрока.
-	//! Срез 5 — состояние меню до опыта; срез 6 — один штатный SCR_SelectionMenu.Open(), только если меню закрыто (если
+	//! A1-S1 (claude #4431, условия codex #4425, #4427, #4430, #4432, #4436, #4463, #4467): настоящее радиальное
+	//! VON-меню локального игрока. Срез 5 — состояние меню до опыта; срез 6 — один вызов OnInputOpen собственного
+	//! config-контроллера меню (RICON_LiveVONMenuAccess), только если меню закрыто, есть контроллер и его inputs (если
 	//! открыто — записывается и только читается); срезы 7–12 — по каждой entry цепочка EntryComponent → RootWidget →
 	//! FrequencyText/ChannelText: GetText (%XX), IsVisibleInHierarchy, экранные позиция и размер. Close, Perform,
-	//! OnMenuToggle и действия ввода не вызываются; процесс с открытым меню останавливает runner. Потеря меню или
-	//! VON-контроллера — SCREEN op=NOT_READY и BENCH_ABORTED. Уровень — живой виджет, не пиксели и не локализация.
+	//! OnMenuToggle, отпускание и действия ввода не вызываются; процесс с открытым меню останавливает runner. Потеря
+	//! меню, VON-контроллера, config-контроллера или его inputs — SCREEN op=NOT_READY и BENCH_ABORTED. Уровень — живой
+	//! виджет, не пиксели и не локализация.
 	protected SCR_SelectionMenu m_ScreenMenu;
 	protected PlayerController m_ScreenController;  //!< codex #4436: контроллер, VON и меню фиксируются на BEFORE
 	protected SCR_VONController m_ScreenVon;
@@ -728,6 +730,17 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		}
 		entries.Clear();
 		return text + ",activeIdx=" + activeIdx.ToString();
+	}
+
+	//! Конфигурация inputs контроллера меню (только чтение): действие открытия (%XX), закрытие по отпусканию,
+	//! Perform при закрытии и после Perform — чтобы видеть, что могло бы сработать без участия стенда.
+	protected static string ControlsText(SCR_SelectionMenuControllerInputs controls)
+	{
+		if (!controls)
+			return "controls=0";
+		string text = "controls=1,openAction=" + RICON_LiveText.Esc(controls.m_sOpenAction);
+		text = text + ",closeOnRelease=" + Bit(controls.m_bCloseOnReleaseOpen) + ",performOnClose=" + Bit(controls.m_bPerformOnClose);
+		return text + ",closeOnPerform=" + Bit(controls.m_bCloseOnPerform);
 	}
 
 	//! Один виджет по имени под корнем entry: текст (%XX), видимость по иерархии, экранные позиция и размер.
@@ -795,19 +808,33 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			Note("SCREEN", sample, "op=BEFORE," + ScreenMenuState(von));
 		else if (sample == 6)
 		{
+			// Прогон 21:07: SCR_SelectionMenu.Open без controller inputs разыменовывает null (SCR_SelectionMenu.c:244).
+			// Штатный вход — собственный config-контроллер меню: SCR_RadialMenuController.OnInputOpen берёт управление
+			// (SetController с его config inputs), даёт SCR_VONMenu.OnInputOpenMenu поставить display и открывает меню
+			// (codex #4463). Вызывается один раз на закрытом меню; отпускания действия нет, поэтому закрытие по
+			// отпусканию и Perform из конфигурации (пишутся ниже) стендом не вызываются.
+			SCR_RadialMenuController radial;
+			SCR_VONMenu openMenu = von.GetVONMenu();
+			if (openMenu)
+				radial = openMenu.RICON_LiveRadialController();
 			if (m_ScreenMenu.IsOpened())
 				Note("SCREEN", sample, "op=ALREADY_OPEN," + ScreenMenuState(von));
-			else if (!m_ScreenMenu.HasDisplay() || !m_ScreenMenu.GetControllerInputs())
+			else if (!radial)
 			{
-				// A1-S1 run 21:07: without display/controller inputs vanilla Open dereferences null
-				// (SCR_SelectionMenu.c:244) — no menu UI to observe, so no Open
 				m_bScreenNotReady = true;
-				Note("SCREEN", sample, "op=NOT_READY,reason=NO_MENU_UI," + ScreenMenuState(von));
+				Note("SCREEN", sample, "op=NOT_READY,reason=NO_RADIAL_CONTROLLER," + ScreenMenuState(von));
+			}
+			else if (!radial.GetControls())
+			{
+				// codex #4467: OnInputOpen разыменовывает m_RMControls — без них вызова нет
+				m_bScreenNotReady = true;
+				Note("SCREEN", sample, "op=NOT_READY,reason=NO_RADIAL_INPUTS," + ScreenMenuState(von));
 			}
 			else
 			{
-				m_ScreenMenu.Open();
-				Note("SCREEN", sample, "op=OPEN," + ScreenMenuState(von));
+				string via = "hadControl=" + Bit(radial.HasControl()) + "," + ControlsText(radial.GetControls());
+				radial.OnInputOpen();
+				Note("SCREEN", sample, "op=OPEN," + ScreenMenuState(von) + "," + via);
 			}
 		}
 		else if (sample <= 12)

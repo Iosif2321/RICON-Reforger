@@ -314,7 +314,24 @@ def check_screen(screens, by_sample, errors):
         errors.append(f"SCREEN sequence {got} != plan")
     for s in menus:
         f = s["f"]
-        if set(f) != MENU_FIELDS or f.get("opened") not in BIT or f.get("hasDisplay") not in BIT or f.get("inputs") not in BIT \
+        want = set(MENU_FIELDS)
+        if f.get("op") == "OPEN":
+            # codex #4463/#4465: OPEN goes through the menu's own config controller and logs its inputs config
+            want |= {"hadControl", "controls"}
+            if f.get("controls") == "1":
+                want |= {"openAction", "closeOnRelease", "performOnClose", "closeOnPerform"}
+            # codex #4467: the bench calls OnInputOpen only with the controller's inputs; OPEN with controls=0 is invalid
+            if f.get("controls") != "1":
+                errors.append(f"SCREEN {s['value']} OPEN without controller inputs config (controls={f.get('controls')})")
+            for k in ("hadControl", "controls", "closeOnRelease", "performOnClose", "closeOnPerform"):
+                if k in want and f.get(k) not in BIT:
+                    errors.append(f"SCREEN {s['value']} OPEN: {k} not 0|1")
+            if "openAction" in f:
+                try:
+                    codec.unescape(f["openAction"])
+                except ValueError as exc:
+                    errors.append(f"SCREEN {s['value']} OPEN: openAction {exc}")
+        if set(f) != want or f.get("opened") not in BIT or f.get("hasDisplay") not in BIT or f.get("inputs") not in BIT \
                 or not INT.fullmatch(f.get("selectedId", "")) or not INT.fullmatch(f.get("activeIdx", "")):
             errors.append(f"SCREEN {s['value']} {f.get('op')}: menu fields")
     before = next((s["f"] for s in menus if s["f"].get("op") == "BEFORE"), {})
@@ -381,6 +398,11 @@ def check_screen(screens, by_sample, errors):
     changed = [n for n in sorted(by_sample) if json.dumps(by_sample[n], sort_keys=True) != first]
     if changed:
         mismatches.append(f"entries changed at {changed[:5]}")
+    if opening.get("op") == "OPEN" and "openAction" in opening:
+        try:
+            opening = dict(opening, openAction=codec.unescape(opening["openAction"]))
+        except ValueError:
+            pass
     summary = {"before": before, "opening": opening, "widgets": rows[:len(by_sample.get(7, []))],
                "entriesChangedAt": changed, "mismatches": mismatches[:10],
                "textKinds": sorted({str(r["textKind"]) for r in rows}),

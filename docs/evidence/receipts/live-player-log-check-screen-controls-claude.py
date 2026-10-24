@@ -15,6 +15,7 @@ STATE = ("isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEnt
          "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1")
 RADIO = "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et"
 DONE = "level=PLAYER_SCREEN_WIDGET,not=PIXELS|LOCALIZATION|INPUT|AUDIO|REPLICATION"
+OPEN_VIA = (",hadControl=0,controls=1,openAction=VONMenuOpen,closeOnRelease=1,performOnClose=1,closeOnPerform=1")
 RAWS = (32000, 48000)
 
 
@@ -41,7 +42,7 @@ def menu(op, opened=1, active=0, selected=0):
 
 def screens(before_open=0):
     s = {5: [menu("BEFORE", opened=before_open, selected=-1)],
-         6: [menu("ALREADY_OPEN" if before_open else "OPEN")]}
+         6: [menu("ALREADY_OPEN") if before_open else menu("OPEN") + OPEN_VIA]}
     for n in range(7, 13):
         s[n] = [menu("MENU"), widget(0), widget(1)]
     s[20] = [menu("MENU")]
@@ -81,6 +82,13 @@ cases = [
      S, 0, "OBSERVED_MISMATCH"),
     ("inputs_lazy_before", build({**screens(), 5: [menu("BEFORE", opened=0, selected=-1).replace("inputs=1", "inputs=0")]}),
      S, 0, "PLAYER_SCREEN_WIDGET_PASS"),
+    ("open_via_missing", build({**screens(), 6: [menu("OPEN")]}), S, 1, "LOG_INVALID"),
+    ("open_controls_bad", build({**screens(), 6: [menu("OPEN") + OPEN_VIA.replace("performOnClose=1", "performOnClose=x")]}),
+     S, 1, "LOG_INVALID"),
+    ("open_no_controls", build({**screens(), 6: [menu("OPEN") + ",hadControl=0,controls=0"]}), S, 1, "LOG_INVALID"),
+    ("no_radial_inputs", build({5: [menu("BEFORE", opened=0, selected=0)],
+                                6: ["op=NOT_READY,reason=NO_RADIAL_INPUTS,opened=0,hasDisplay=0,inputs=0,selectedId=0,activeIdx=0"]},
+                               last=6, end=("BENCH_ABORTED", 6, "level=PLAYER_SCREEN_WIDGET,notReady=1,samples=6")), S, 0, "NOT_READY"),
     ("root_without_component", build(change(9, [menu("MENU"), widget(0).replace("component=1", "component=0"), widget(1)])),
      S, 1, "LOG_INVALID"),
     ("widget_invisible", build(change(9, [menu("MENU"), widget(0, fvis=0), widget(1)])), S, 0, "OBSERVED_MISMATCH"),
