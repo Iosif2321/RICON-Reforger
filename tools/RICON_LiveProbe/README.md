@@ -57,8 +57,22 @@
   - `-riconBenchSetter=component` — тот же метод, но выбранный явно;
   - `-riconBenchSetter=transceiver` — прямой `BaseTransceiver.SetFrequency`.
 
+  - `-riconBenchSetter=entry` (A1-E, claude #4309, codex #4315, #4326) — путь меню VON на собственном ванильном
+    объекте `SCR_VONEntryRadio`. Сразу после спавна стенд создаёт entry для трансивера 0 каждой своей рации
+    (`SetRadioEntry(tr0, 1, gadget)`, номер 1-базный). Затем `SetChannelTextOverwrite` и `InitEntry`, запись
+    `BENCH_ENTRY`. Шаг частоты — `AdjustEntryModif(±1)`. Mute — `ToggleMuteEntry` дважды, затем прямой `SetMuteState`
+    туда и обратно с чтением `entry.GetIsMuted`. Чтения трансивера 0 дополняются `entryFreq`, `usable`, `emuted` и
+    сырым текстом меню `dtext` в %XX-записи (`RICON_LiveText`). Уровень `MENU_ENTRY_RUNTIME`: экран, VON-контроллер
+    игрока и ветка `SCR_VONMenu.GetKnownChannel` не исполняются. Последняя обходится channel-overwrite, потому что
+    при менеджере фракций она разыменовывает `GetPlayerController()` без проверки (`a1-s0` квитанция).
+
   Другое значение, в том числе пустое, даёт `BENCH_NOT_READY reason=SETTER_PARAM` до спавна. Метод пишется в
   `BENCH_START` (`setter`, `setterGiven`) и в каждый `BENCH_SET_FREQUENCY` (`setter`). Остальные фазы не меняются.
+  `BENCH_START` также пишет наличие контроллера игрока и менеджера фракций (`playerController`, `factionManager`).
+- `Scripts/Game/RICON_Live/RICON_LiveText.c` — запись произвольной строки в поле `text` журнала без потерь: печатный
+  ASCII 33…126, кроме `%`, `,` и `=`, остаётся как есть, остальное — `%XX` (`%uXXXX` для кодов вне 0…255, со счётчиком).
+  Пробник `RICON_LiveTextProbePlugin.c` — 14 проверок. Обратимость проверяет внешний разбор
+  `docs/evidence/receipts/live-text-log-check-claude.py`: он декодирует напечатанные формы и сравнивает байты.
 - `Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c` — потоковый режим: 1000 записей при ёмкости 8, 7 проверок;
   сами строки потока проверяет внешний разбор всего тегированного транскрипта
   `docs/evidence/receipts/live-stream-log-check-claude.py` (плагин не видит собственный вывод).

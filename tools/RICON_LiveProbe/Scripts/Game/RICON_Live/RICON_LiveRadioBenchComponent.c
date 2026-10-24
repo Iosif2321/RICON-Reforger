@@ -13,7 +13,12 @@
 //! V2 (codex #4229, #4262): метод шага частоты по -riconBenchSetter — без параметра прежний
 //! BaseRadioComponent.SetTransceiverFrequency, «transceiver» — прямой BaseTransceiver.SetFrequency; другое значение, в том
 //! числе пустое, — BENCH_NOT_READY до спавна. Метод пишется в BENCH_START и в каждый BENCH_SET_FREQUENCY; фазы те же.
-//! Ключи шифрования не читаются.
+//! A1-E (claude #4309, codex #4315, #4326): «entry» — сразу после спавна стенд создаёт для трансивера 0 каждой своей рации
+//! собственную ванильную SCR_VONEntryRadio (BENCH_ENTRY), шаг частоты делает её AdjustEntryModif(±1), mute — её
+//! ToggleMuteEntry дважды и затем прямой SetMuteState туда и обратно; чтения трансивера 0 дополняются частотой, mute и
+//! сырым текстом entry (%XX, RICON_LiveText). Уровень MENU_ENTRY_RUNTIME: исполнен ванильный объект меню на настоящем
+//! трансивере, но не экран, не VON-контроллер игрока и не ветка GetKnownChannel. BENCH_START пишет наличие контроллера
+//! игрока и менеджера фракций. Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
 }
@@ -46,6 +51,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	protected ref array<string> m_aPrefabs;
 	protected ref array<IEntity> m_aRadios = {};       //!< слабые ссылки на свои рации
 	protected ref array<int> m_aTargets = {};          //!< целевая сырая частота трансивера 0 после шага или −1
+	protected ref array<ref SCR_VONEntryRadio> m_aEntries = {}; //!< A1-E: собственная entry трансивера 0 или null
 	protected float m_fElapsed;
 	protected float m_fSpawnedAt;
 	protected float m_fSetAt;                          //!< игровое время фактического вызова setter
@@ -130,7 +136,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 
 	static const string SETTER_COMPONENT = "component";     //!< BaseRadioComponent.SetTransceiverFrequency (прежний)
 	static const string SETTER_TRANSCEIVER = "transceiver"; //!< BaseTransceiver.SetFrequency
+	static const string SETTER_ENTRY = "entry";             //!< A1-E: собственная SCR_VONEntryRadio, путь меню VON
 	static const string SETTER_INVALID = "INVALID";         //!< значение вне списка; сырое значение не печатается
+	//! A1-E: явная настройка собственной entry до InitEntry (codex #4326). Без неё InitEntry идёт в
+	//! SCR_VONMenu.GetKnownChannel, который при менеджере фракций разыменовывает GetPlayerController() без проверки
+	//! (SCR_VONMenu.c:41–46, квитанция a1-s0); ветка GetKnownChannel поэтому стендом не исполняется.
+	static const string ENTRY_CHANNEL_OVERWRITE = "RICON_BENCH";
 
 	//! Задан ли -riconBenchSetter явно (в том числе пустым).
 	protected static bool SetterGiven()
@@ -145,7 +156,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		string value;
 		if (!System.GetCLIParam("riconBenchSetter", value))
 			return SETTER_COMPONENT;
-		if (value == SETTER_COMPONENT || value == SETTER_TRANSCEIVER)
+		if (value == SETTER_COMPONENT || value == SETTER_TRANSCEIVER || value == SETTER_ENTRY)
 			return value;
 		return SETTER_INVALID;
 	}
@@ -255,6 +266,9 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		text = text + ",from=" + from + ",activeBefore=" + Bit(activeBefore);
 		text = text + ",radioManager=" + Bit(HasRadioManager(owner)) + ",expectedManager=" + ExpectedManager().ToString();
 		text = text + ",setter=" + Setter() + ",setterGiven=" + Bit(SetterGiven());
+		// A1-E (codex #4327): наличие контроллера и менеджера фракций измеряется, а не предполагается.
+		text = text + ",playerController=" + Bit(GetGame().GetPlayerController() != null);
+		text = text + ",factionManager=" + Bit(GetGame().GetFactionManager() != null);
 		Note("BENCH_START", -1, text);
 		StartHeartbeat();
 	}
@@ -318,6 +332,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				radio = GetGame().SpawnEntityPrefab(resource, owner.GetWorld(), params);
 			m_aRadios.Insert(radio);
 			m_aTargets.Insert(-1);
+			m_aEntries.Insert(null);
 			int ok = 0;
 			string actual = "NONE";
 			if (radio)
@@ -331,6 +346,52 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			}
 			Record("BENCH_SPAWN", i, -1, ok, "prefab=" + m_aPrefabs[i] + ",actualPrefab=" + actual);
 		}
+	}
+
+	protected SCR_VONEntryRadio EntryOf(int device)
+	{
+		if (device < 0 || device >= m_aEntries.Count())
+			return null;
+		return m_aEntries[device];
+	}
+
+	//! Состояние своей entry: локальная частота entry, mute по entry и сырой текст меню (%XX, RICON_LiveText).
+	protected static string EntryText(SCR_VONEntryRadio entry)
+	{
+		string text = "entryFreq=" + entry.GetEntryFrequency().ToString();
+		text = text + ",usable=" + Bit(entry.IsUsable()) + ",emuted=" + Bit(entry.GetIsMuted());
+		return text + ",dtext=" + RICON_LiveText.Esc(entry.GetDisplayText());
+	}
+
+	//! A1-E: собственная SCR_VONEntryRadio для трансивера 0 своей рации (codex #4315, #4326). Номер трансивера
+	//! 1-базный (GetIsMuted берёт GetTransceiver(номер − 1), SCR_VONEntryRadio.c:255); gadget нужен настоящий
+	//! (IsLongRange разыменовывает его без проверки, :56–58); channel-overwrite до InitEntry — см. ENTRY_CHANNEL_OVERWRITE.
+	//! InitEntry сам вызывает AdjustEntryModif(0): это первое исполнение пути меню, шаг 0 частоту не меняет.
+	protected void CreateEntry(int device)
+	{
+		BaseRadioComponent radio = RadioOf(device);
+		BaseTransceiver transceiver;
+		if (radio && radio.TransceiversCount() > 0)
+			transceiver = radio.GetTransceiver(0);
+		if (!transceiver)
+		{
+			Record("BENCH_ENTRY", device, 0, -1, "phase=init,reason=NO_TRANSCEIVER");
+			return;
+		}
+		SCR_GadgetComponent gadget = SCR_GadgetComponent.Cast(m_aRadios[device].FindComponent(SCR_GadgetComponent));
+		if (!gadget)
+		{
+			Record("BENCH_ENTRY", device, 0, -1, "phase=init,reason=NO_GADGET");
+			return;
+		}
+		int rawBefore = transceiver.GetFrequency();
+		SCR_VONEntryRadio entry = new SCR_VONEntryRadio();
+		entry.SetRadioEntry(transceiver, 1, gadget);
+		entry.SetChannelTextOverwrite(ENTRY_CHANNEL_OVERWRITE);
+		entry.InitEntry();
+		m_aEntries[device] = entry;
+		string text = "phase=init,rawBefore=" + rawBefore.ToString() + ",raw=" + transceiver.GetFrequency().ToString();
+		Record("BENCH_ENTRY", device, 0, entry.GetEntryFrequency(), text + "," + EntryText(entry));
 	}
 
 	//! Все трансиверы своей рации: сырые getter-ы, без единиц. Цель шага относится только к трансиверу 0.
@@ -366,6 +427,9 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			text = text + ",powered=" + powered.ToString();
 			text = text + ",muted=" + muted.ToString();
 			text = text + ",targetTr0=" + target.ToString();
+			SCR_VONEntryRadio entry = EntryOf(device);
+			if (t == 0 && entry)
+				text = text + "," + EntryText(entry);
 			Record("BENCH_READ", device, t, transceiver.GetFrequency(), text);
 		}
 	}
@@ -413,13 +477,33 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			Record("BENCH_SKIP", device, 0, -1, "reason=NO_ROOM_FOR_STEP," + range);
 			return;
 		}
-		m_aTargets[device] = target;
-		// SetterReady до спавна исключает INVALID: здесь только один из двух методов (V2, codex #4262)
+		// SetterReady до спавна исключает INVALID: здесь только один из трёх методов (V2, codex #4262; A1-E)
 		string setter = Setter();
-		if (setter == SETTER_TRANSCEIVER)
-			transceiver.SetFrequency(target);
+		if (setter == SETTER_ENTRY)
+		{
+			// Путь меню: AdjustEntryModif сам берёт свежий getter, шаг ±разрешение, ограничение и SetFrequency
+			// (SCR_VONEntryRadio.c:107–133); стенд выбирает только знак шага тем же правилом «есть место».
+			SCR_VONEntryRadio entry = EntryOf(device);
+			if (!entry)
+			{
+				Record("BENCH_SKIP", device, 0, -1, "reason=NO_ENTRY," + range);
+				return;
+			}
+			int modifier = 1;
+			if (target < current)
+				modifier = -1;
+			m_aTargets[device] = target;
+			entry.AdjustEntryModif(modifier);
+			range = range + ",modifier=" + modifier.ToString() + "," + EntryText(entry);
+		}
 		else
-			radio.SetTransceiverFrequency(transceiver, target);
+		{
+			m_aTargets[device] = target;
+			if (setter == SETTER_TRANSCEIVER)
+				transceiver.SetFrequency(target);
+			else
+				radio.SetTransceiverFrequency(transceiver, target);
+		}
 		Record("BENCH_SET_FREQUENCY", device, 0, target, range + ",setter=" + setter);
 	}
 
@@ -433,6 +517,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		BaseTransceiver transceiver = radio.GetTransceiver(0);
 		if (!transceiver)
 			return;
+		SCR_VONEntryRadio entry = EntryOf(device);
+		if (entry)
+		{
+			MuteEntry(device, transceiver, entry);
+			return;
+		}
 		bool before = transceiver.IsMuted();
 		bool requested = !before;
 		bool returnedSet = transceiver.SetMuteState(requested);
@@ -445,12 +535,44 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		Record("BENCH_MUTE", device, 0, -1, text);
 	}
 
+	//! A1-E: mute путём меню — ToggleMuteEntry дважды (SCR_VONEntryRadio.c:240–244), затем прямой SetMuteState туда и
+	//! обратно с чтением entry.GetIsMuted (читает IsMuted трансивера, :255–259), чтобы увидеть, одно ли это состояние.
+	//! Поля after/after2 — после первого и второго ToggleMuteEntry (те же имена, что у прямого пути); d* — прямой путь;
+	//! e* — entry.GetIsMuted после соответствующего шага. Всё возвращается к исходному состоянию трансивера.
+	protected void MuteEntry(int device, BaseTransceiver transceiver, SCR_VONEntryRadio entry)
+	{
+		bool before = transceiver.IsMuted();
+		bool entryBefore = entry.GetIsMuted();
+		bool requested = !before;
+		bool returnedToggle = entry.ToggleMuteEntry();
+		bool afterToggle = transceiver.IsMuted();
+		bool entryAfterToggle = entry.GetIsMuted();
+		bool returnedToggle2 = entry.ToggleMuteEntry();
+		bool afterToggle2 = transceiver.IsMuted();
+		bool entryAfterToggle2 = entry.GetIsMuted();
+		bool returnedDirect = transceiver.SetMuteState(requested);
+		bool afterDirect = transceiver.IsMuted();
+		bool entryAfterDirect = entry.GetIsMuted();
+		bool returnedDirect2 = transceiver.SetMuteState(before);
+		bool afterDirect2 = transceiver.IsMuted();
+		bool entryAfterDirect2 = entry.GetIsMuted();
+		string text = "path=entry,before=" + Bit(before) + ",ebefore=" + Bit(entryBefore) + ",requested=" + Bit(requested);
+		text = text + ",ret=" + Bit(returnedToggle) + ",after=" + Bit(afterToggle) + ",eafter=" + Bit(entryAfterToggle);
+		text = text + ",restoreTo=" + Bit(before) + ",ret2=" + Bit(returnedToggle2) + ",after2=" + Bit(afterToggle2);
+		text = text + ",eafter2=" + Bit(entryAfterToggle2) + ",dret=" + Bit(returnedDirect) + ",dafter=" + Bit(afterDirect);
+		text = text + ",edafter=" + Bit(entryAfterDirect) + ",dret2=" + Bit(returnedDirect2) + ",dafter2=" + Bit(afterDirect2);
+		text = text + ",edafter2=" + Bit(entryAfterDirect2);
+		Record("BENCH_MUTE", device, 0, -1, text);
+	}
+
 	//! Удаление только своих раций штатным SCR_EntityHelper.DeleteEntityAndChildren (обёртка
 	//! RplComponent.DeleteRplEntity, codex #4108). BENCH_DONE — лишь после всех фаз; иначе BENCH_ABORTED с фазой.
 	protected void Finish(bool complete)
 	{
 		// codex #4180: очередь снимается до удаления своих раций.
 		StopHeartbeat("FINISH");
+		// A1-E: свои entry держат трансивер — освобождаются до удаления раций.
+		m_aEntries.Clear();
 		for (int i = 0; i < m_aRadios.Count(); i++)
 		{
 			IEntity radio = m_aRadios[i];
@@ -458,7 +580,9 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				SCR_EntityHelper.DeleteEntityAndChildren(radio);
 		}
 		m_aRadios.Clear();
-		if (complete)
+		if (complete && Setter() == SETTER_ENTRY)
+			Note("BENCH_DONE", m_iPhase, "level=MENU_ENTRY_RUNTIME,not=SCREEN|PLAYER_VON|KNOWN_CHANNEL|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
+		else if (complete)
 			Note("BENCH_DONE", m_iPhase, "level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
 		else
 			Note("BENCH_ABORTED", m_iPhase, "level=NATIVE_ROUNDTRIP,phase=" + m_iPhase.ToString());
@@ -490,6 +614,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			m_iPhase = PHASE_SPAWNED;
 			for (int a = 0; a < m_aRadios.Count(); a++)
 				Read(a, "spawn");
+			if (Setter() == SETTER_ENTRY)
+			{
+				for (int g = 0; g < m_aRadios.Count(); g++)
+					CreateEntry(g);
+			}
 		}
 		else if (m_iPhase == PHASE_SPAWNED && m_fElapsed - m_fSpawnedAt >= 1)
 		{

@@ -39,11 +39,33 @@ c71f167a251f6c037e00fcd271b89f5c2c969538ef5c3b2f22ba05054d5fd273  s0h window fro
 #    comment gives the example "39500 -> 39.5"); :132 builds the entry text from that number (ToString(3, 1)) and the
 #    "#AR-VON_FrequencyUnits_MHz" label. A second path :206-208 uses the same divisor in two steps (integer raw / 10,
 #    then / 100) next to the SOUND_RADIO_FREQUENCY_CYCLE UI sound (:210), i.e. a frequency-cycle path. For raw values
-#    that are not multiples of 10 the two paths may round differently by 0.01 MHz; with one decimal shown this is not
-#    visible.
+#    that are not multiples of 10 the two paths may differ by 0.01 MHz before formatting, e.g. raw 39949: path :131
+#    gives round(3994.9) = 3995 -> 39.95, path :206 gives 3994 -> 39.94. Whether the shown one-decimal text then differs
+#    depends on the rounding of ToString(3, 1) near such boundaries, which is not established (codex #4316). Raw values
+#    that are multiples of 100 (all V2 values) give the same exact number on both paths.
 # 5. Retune :118-129: the step is modifier x GetFrequencyResolution(), clamped to [GetMinFrequency, GetMaxFrequency]
 #    with ClampInt, then the direct SetFrequency (:129). An attempt beyond a bound plays an error UI sound (:121-122).
 # Consequence for Q-F: the vanilla menu formatter treats the raw getter value as kHz. Together with the raw values read in
 #    V2 on the four bench radios (32000 -> 32200 etc., res 200) the unit is kHz at level WORKBENCH_STATIC (menu formula)
 #    + NATIVE_ROUNDTRIP (raw), not RUNTIME_OBSERVED: no screen with a player was observed. The formatter cannot be run
 #    without a world: the formula is inline in a method that needs the entry's transceiver.
+#
+# S0c (START #4317 after ACK codex #4319, END #4320), same runner and conditions, only SCR_VONEntryRadio.c.
+# sha256 of console.log                                             run (17:47:45-17:48:15)            printed lines
+ef0191977a5aa8878e5886563cb04ea8408082c7ee9da329bd163092465613ef  s0i grep "void SetRadioEntry" ctx 7                 15
+9e6effad6b74a72999e30451b757516ad4478fd7ce450a59a3b437fa49ed6362  s0j grep "void InitEntry" ctx 7                     15
+e454cb1a79a017e6ed4055d2860af6ed15c33f49393aac07910d56ab7da7a1bf  s0k grep "string GetDisplayText" ctx 7               0
+5812e5735fa6f255fe3c98102903c6a42484d32d6e8e13dacb874710ac5190e7  s0l grep "bool GetIsMuted" ctx 4                     9
+#
+# Findings (WORKBENCH_STATIC, paraphrase):
+# 6. SetRadioEntry :62-67 only stores the transceiver, the number and the gadget component (no widget). IsLongRange
+#    :56-58 dereferences the gadget without a null check, so an entry needs the real gadget of its radio.
+# 7. InitEntry :88-94 sets a layout resource string, marks the entry usable from the radio's IsPowered and calls
+#    AdjustEntryModif(0); the rest of the method is outside the window.
+# 8. GetDisplayText is not declared in SCR_VONEntryRadio.c (s0k, 0 matches): it is inherited from SCR_VONEntry.
+# 9. GetIsMuted :248-252 returns true without a transceiver; the rest is outside the window.
+#
+# Same slot: independent rerun of RICON_LiveRadioReaderProbePlugin on 2fd9f87 (codex fix of #4300), ScriptEditor only,
+# PID 40312, exit 0. Reader b05e0a3e..., probe 7e392749... equal before and after.
+# bb641280e10fccbe8dc40846ee532cb5cf1da43bc7cdc6088490d1432ade891f  ricon-livereader-claude-20261024-174815
+#   "[RICON_LIVER] checks=22 passed=22 count=16 recorded=10 gone=6", one "done: PASS", 0 mismatch, SCRIPT (E) 0.

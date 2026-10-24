@@ -1,0 +1,50 @@
+# claude, A1-E preparation (2026-10-24): own vanilla SCR_VONEntryRadio on the bench (LIVE-order §4 A1-E), PREPARED_NOT_RUN.
+# Compile + text probe: START #4329, ACK codex #4332, END #4333. ScriptEditor only (no world, Play, server, dialogs),
+# -plugin=RICON_LiveTextProbePlugin -wbSilent -exitAfterInit -noThrow -noBackend -log-scr-checksum, PID 38456, exit 0,
+# SCRIPT (E) 0, all 15 LiveProbe .c/.gproj files equal before and after, Workbench processes after 0.
+# Sources: bench f62df6b5..., RICON_LiveText.c 0dde67b9..., RICON_LiveTextProbePlugin.c 673c9aef...; engine CRC bench
+# 1493fae8, LiveText 13856725, probe 1cda46fe. Native semantics observed: Length()/ToAscii(i) work on UTF-8 bytes
+# (Cyrillic 'МГц' length 6, wide 0, %D0%9C%D0%93%D1%86).
+641679c68eab62c3b812b243474c7a9fe9a140d4eca8cf8bd4b37661e21c26ef   ricon-livetext-claude-20261024-181308
+[RICON_LIVET] case=plain length=9 wide=0 escaped=abc_09.#-
+[RICON_LIVET] case=empty length=0 wide=0 escaped=
+[RICON_LIVET] case=space length=3 wide=0 escaped=a%20b
+[RICON_LIVET] case=percent length=1 wide=0 escaped=%25
+[RICON_LIVET] case=comma length=1 wide=0 escaped=%2C
+[RICON_LIVET] case=equals length=1 wide=0 escaped=%3D
+[RICON_LIVET] case=controls length=2 wide=0 escaped=%09%0A
+[RICON_LIVET] case=tilde_del_bell length=3 wide=0 escaped=~%7F%07
+[RICON_LIVET] case=menu_like length=31 wide=0 escaped=32.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVET] case=cyrillic length=6 wide=0 escaped=%D0%9C%D0%93%D1%86
+[RICON_LIVET] checks=14 passed=14
+[RICON_LIVET] done: PASS
+# external lossless check: python -I live-text-log-check-claude.py <console.log>
+LIVE_TEXT_LOG_CHECK_PASS
+# parser regression on the host (live-bench-log-check-claude.py 706f8703...):
+A0B_PARSER_CONTROLS 17/17
+V2_PARSER_CONTROLS 20/20
+# real V2 log with expectations 1 transceiver:
+ "overall": "NATIVE_ROUNDTRIP_PASS",
+LIVE_BENCH_LOG_CHECK_PASS
+# entry controls (live-bench-log-check-entry-controls-claude.py 7f9e5e87..., synthetic from the real V2 log):
+PASS entry_ok: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+PASS text_mismatch_t5: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS text_unparsed: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS text_rounded_init: rc=0 overall=INCOMPLETE errors=[]
+PASS entry_missing: rc=1 overall=INCOMPLETE errors=['device 2: entry records 0']
+PASS entry_no_gadget: rc=0 overall=INCOMPLETE errors=[]
+PASS entry_init_moved: rc=1 overall=INCOMPLETE errors=['device 1: entry init bench=1,phase=init,rawBefore=47800,raw=48000,entryFreq=48000,usable=1,emuted=0,dtext=48.0%20#AR-VON_FrequencyUnits_MHz']
+PASS entry_after_step: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['device 0: BENCH_ENTRY after the step']
+PASS step_without_dtext: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['device 0: entry step fields bench=0,current=32000,min=32000,max=68000,res=200,modifier=1,entryFreq=32200,usable=1,emuted=0,setter=entry']
+PASS step_entryfreq_wrong: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['device 0: entry frequency after the step 32000 != target']
+PASS read_without_entry: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['device 2: read t1 without entry fields']
+PASS mute_path_missing: rc=1 overall=OBSERVED_MISMATCH errors=['device 0: mute path None != entry']
+PASS mute_entry_diverges: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_toggle_failed: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS done_level_wrong: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['BENCH_DONE level=NATIVE_ROUNDTRIP != MENU_ENTRY_RUNTIME']
+PASS expect_transceiver: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['BENCH_START setter=entry setterGiven=1 != given transceiver']
+PASS no_expectation: rc=1 overall=MENU_ENTRY_RUNTIME_PASS errors=['log was run with setter=entry: pass the expectation explicitly']
+PASS v2_expect_entry: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+PASS entry_in_transceiver_mode: rc=1 overall=NATIVE_ROUNDTRIP_PASS errors=['BENCH_ENTRY without setter=entry']
+PASS v2_as_is: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
+ENTRY_PARSER_CONTROLS 20/20
