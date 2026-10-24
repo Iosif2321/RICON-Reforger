@@ -215,3 +215,33 @@ Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 3c6a0a
 [RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
 [RICON_LIVEB] heartbeat=START
 log lines: 7194; last line time 08:38:33.860; out-of-bounds warnings: 0
+
+--- ricon-bench7-claude-20261024-084349
+# 7 (08:43:49, ACK #4188): sources as in 6 (1ac37ad), same Plain world and flags, PID 7032, stop TIMEOUT at 92 s, SCRIPT (E) = 0.
+# New: wb_bench.ps1 -Observe (read-only, own PID only, no input/focus/clicks): every 10 s Process.Responding, CPU seconds,
+# threads, console.log size, top-level windows of the own PID (EnumWindows filtered by PID before reading titles).
+# Result: from t=10 s to t=82 s three VISIBLE top-level windows of the own process, although it was started Hidden:
+#   V | Qt683QWindowIcon | Script Authorization Required
+#   V | Qt683QWindowIcon | World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent*
+#   V | Qt683QWindowIcon | Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+# plus hidden helper windows (2 x Arma Reforger Workbench, MSCTFIME UI, Default IME). Responding=True throughout; CPU
+# 9.33 s at t=10 and 9.61 s at t=82 (+0.28 s in 72 s); threads 49 -> 39; console.log size 886684 bytes at every sample.
+# The dialog text was not read and nothing was clicked; the own PID was stopped at the cap. The window list is the same at
+# every sample, so the dialog was already up at t=10 s; the log again ends ~0.2 s after BENCH_START / heartbeat=START.
+# Reading: the stall after entering Play coincides with a modal Workbench dialog titled 'Script Authorization Required'.
+# Which call raised it is not established. -WindowStyle Hidden does not hide these Qt windows: in attempts 1-7 the
+# Workbench windows were most likely visible on the desktop.
+a89d9fb36609d85085917012c195dfcaf87668d03770eedfec806b5bdae653c1
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
+[RICON_LIVEB] heartbeat=START
+log lines: 7194; last line time 08:43:58.640
