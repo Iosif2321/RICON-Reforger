@@ -89,22 +89,22 @@ class RICON_LiveRadioReaderProbePlugin : WorkbenchPlugin
 		Check(r.m_iRecorded == 6 && r.m_iGone == 5 && r.m_iReads == 1, "counters");
 		string line = RICON_LiveJournal.Format(j.At(2));
 		Check(line.IndexOf("kind=RADIO_STATE") > 0 && line.IndexOf("device=-1") > 0, "formatted line");
-		// Регрессия A1: контекст игрока меняется без замены самой рации и без изменения её настроек.
+		// Регрессия A1: контекст игрока меняется без замены рации; obs 0–4 уже использованы предыдущими случаями.
 		int unknownIndex = j.Count();
 		r.BeginPoll();
 		r.Observe(-1, a, 0, 0, 48000, idle);
 		r.EndPoll(-1);
-		Check(j.Count() == unknownIndex + 1 && j.At(unknownIndex).m_iPlayerId == -1 && j.At(unknownIndex).m_sText.IndexOf("obs=4,") > 0, "unknown player recorded under new observation");
+		Check(j.Count() == unknownIndex + 1 && j.At(unknownIndex).m_iPlayerId == -1 && j.At(unknownIndex).m_sText.IndexOf("obs=5,") > 0, "unknown player recorded under new observation");
 		int resolvedIndex = j.Count();
 		r.BeginPoll();
 		r.Observe(7, a, 0, 0, 48000, idle);
 		r.EndPoll(7);
-		Check(j.Count() == resolvedIndex + 1 && j.At(resolvedIndex).m_iPlayerId == 7 && j.At(resolvedIndex).m_sText.IndexOf("obs=4,") > 0, "resolved player records state under same observation");
+		Check(j.Count() == resolvedIndex + 1 && j.At(resolvedIndex).m_iPlayerId == 7 && j.At(resolvedIndex).m_sText.IndexOf("obs=5,") > 0, "resolved player records state under same observation");
 		int changedIndex = j.Count();
 		r.BeginPoll();
 		r.Observe(8, a, 0, 0, 48000, idle);
 		r.EndPoll(8);
-		Check(j.Count() == changedIndex + 1 && j.At(changedIndex).m_iPlayerId == 8 && j.At(changedIndex).m_sText.IndexOf("obs=4,") > 0, "changed player records state under same observation");
+		Check(j.Count() == changedIndex + 1 && j.At(changedIndex).m_iPlayerId == 8 && j.At(changedIndex).m_sText.IndexOf("obs=5,") > 0, "changed player records state under same observation");
 		int stableCount = j.Count();
 		r.BeginPoll();
 		r.Observe(8, a, 3, 0, 48000, idle);
@@ -118,7 +118,7 @@ class RICON_LiveRadioReaderProbePlugin : WorkbenchPlugin
 		Check(j.Count() == changedStateIndex + 1 && j.At(changedStateIndex).m_iPlayerId == 8, "changed state establishes last observed player");
 		int goneIndex = j.Count();
 		r.ReadEntity(-1, null);
-		Check(j.Count() == goneIndex + 1 && j.At(goneIndex).m_sKind == "RADIO_GONE" && j.At(goneIndex).m_iPlayerId == 8 && j.At(goneIndex).m_sText == "binding=LOCAL_ONLY,obs=4", "GONE keeps last observed player when controller disappears");
+		Check(j.Count() == goneIndex + 1 && j.At(goneIndex).m_sKind == "RADIO_GONE" && j.At(goneIndex).m_iPlayerId == 8 && j.At(goneIndex).m_sText == "binding=LOCAL_ONLY,obs=5", "GONE keeps last observed player when controller disappears");
 		j.Dump();
 		PrintFormat("[RICON_LIVER] checks=%1 passed=%2 count=%3 recorded=%4 gone=%5", m_iChecks, m_iPassed, j.Count(), r.m_iRecorded, r.m_iGone);
 		if (m_iChecks == m_iPassed && m_iChecks == 22)
