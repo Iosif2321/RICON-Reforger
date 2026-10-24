@@ -1,0 +1,167 @@
+{
+ "logSha256": "126cdde02f1723baaefccc017aa38f64fcc7210b3d04b38c9f7e74600b840a63",
+ "errors": [],
+ "mismatches": [],
+ "overall": "QM_LOCAL_OBSERVED",
+ "radios": [
+  {
+   "bench": 0,
+   "stopped": false,
+   "stateChangedSinceObservation": [],
+   "base": {
+    "trs": 2,
+    "powered": 1,
+    "f0": 32000,
+    "m0": 0,
+    "f1": 48000,
+    "m1": 0
+   },
+   "target": 32200,
+   "muteAfterSet": 1,
+   "muteRet": "0",
+   "muteAfterRetune": "PERSISTS",
+   "muteAfterRetuneT1": "PERSISTS",
+   "freqAfterRetuneT1": 32200,
+   "muteAtPowerOff": "PERSISTS",
+   "freqAtPowerOff": "PERSISTS",
+   "controlAtPowerOff": "UNCHANGED",
+   "muteWhilePowerToggledT1": "PERSISTS",
+   "poweredWhileToggledT1": 0,
+   "muteAtPowerBack": "PERSISTS",
+   "freqAtPowerBack": "PERSISTS",
+   "controlAtPowerBack": "UNCHANGED",
+   "muteAfterPowerBackT1": "PERSISTS",
+   "freqAfterPowerBackT1": "PERSISTS",
+   "controlAfterPowerBackT1": "UNCHANGED",
+   "restoreActions": {
+    "setPower": "0",
+    "setFreq": "1",
+    "setMute": "1"
+   },
+   "restored": true
+  },
+  {
+   "bench": 1,
+   "stopped": false,
+   "stateChangedSinceObservation": [],
+   "base": {
+    "trs": 2,
+    "powered": 1,
+    "f0": 48000,
+    "m0": 0,
+    "f1": 42000,
+    "m1": 0
+   },
+   "target": 48200,
+   "muteAfterSet": 1,
+   "muteRet": "0",
+   "muteAfterRetune": "PERSISTS",
+   "muteAfterRetuneT1": "PERSISTS",
+   "freqAfterRetuneT1": 48200,
+   "muteAtPowerOff": "PERSISTS",
+   "freqAtPowerOff": "PERSISTS",
+   "controlAtPowerOff": "UNCHANGED",
+   "muteWhilePowerToggledT1": "PERSISTS",
+   "poweredWhileToggledT1": 0,
+   "muteAtPowerBack": "PERSISTS",
+   "freqAtPowerBack": "PERSISTS",
+   "controlAtPowerBack": "UNCHANGED",
+   "muteAfterPowerBackT1": "PERSISTS",
+   "freqAfterPowerBackT1": "PERSISTS",
+   "controlAfterPowerBackT1": "UNCHANGED",
+   "restoreActions": {
+    "setPower": "0",
+    "setFreq": "1",
+    "setMute": "1"
+   },
+   "restored": true
+  },
+  {
+   "bench": 2,
+   "stopped": false,
+   "stateChangedSinceObservation": [],
+   "base": {
+    "trs": 2,
+    "powered": 1,
+    "f0": 48000,
+    "m0": 0,
+    "f1": 42000,
+    "m1": 0
+   },
+   "target": 48200,
+   "muteAfterSet": 1,
+   "muteRet": "0",
+   "muteAfterRetune": "PERSISTS",
+   "muteAfterRetuneT1": "PERSISTS",
+   "freqAfterRetuneT1": 48200,
+   "muteAtPowerOff": "PERSISTS",
+   "freqAtPowerOff": "PERSISTS",
+   "controlAtPowerOff": "UNCHANGED",
+   "muteWhilePowerToggledT1": "PERSISTS",
+   "poweredWhileToggledT1": 0,
+   "muteAtPowerBack": "PERSISTS",
+   "freqAtPowerBack": "PERSISTS",
+   "controlAtPowerBack": "UNCHANGED",
+   "muteAfterPowerBackT1": "PERSISTS",
+   "freqAfterPowerBackT1": "PERSISTS",
+   "controlAfterPowerBackT1": "UNCHANGED",
+   "restoreActions": {
+    "setPower": "0",
+    "setFreq": "1",
+    "setMute": "1"
+   },
+   "restored": true
+  },
+  {
+   "bench": 3,
+   "stopped": false,
+   "stateChangedSinceObservation": [],
+   "base": {
+    "trs": 2,
+    "powered": 1,
+    "f0": 42000,
+    "m0": 0,
+    "f1": 39000,
+    "m1": 0
+   },
+   "target": 42200,
+   "muteAfterSet": 1,
+   "muteRet": "0",
+   "muteAfterRetune": "PERSISTS",
+   "muteAfterRetuneT1": "PERSISTS",
+   "freqAfterRetuneT1": 42200,
+   "muteAtPowerOff": "PERSISTS",
+   "freqAtPowerOff": "PERSISTS",
+   "controlAtPowerOff": "UNCHANGED",
+   "muteWhilePowerToggledT1": "PERSISTS",
+   "poweredWhileToggledT1": 0,
+   "muteAtPowerBack": "PERSISTS",
+   "freqAtPowerBack": "PERSISTS",
+   "controlAtPowerBack": "UNCHANGED",
+   "muteAfterPowerBackT1": "PERSISTS",
+   "freqAfterPowerBackT1": "PERSISTS",
+   "controlAfterPowerBackT1": "UNCHANGED",
+   "restoreActions": {
+    "setPower": "0",
+    "setFreq": "1",
+    "setMute": "1"
+   },
+   "restored": true
+  }
+ ],
+ "spawned": [
+  "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+  "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+  "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+  "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et"
+ ],
+ "start": {
+  "isServer": "1",
+  "isClient": "0",
+  "playerController": "0",
+  "mode": "radiomute",
+  "modeGiven": "1",
+  "radioManager": "0"
+ }
+}
+LIVE_QM_LOG_CHECK_PASS
