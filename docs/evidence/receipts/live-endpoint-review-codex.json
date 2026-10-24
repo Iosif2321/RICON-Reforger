@@ -1,0 +1,136 @@
+{
+  "runs": [
+    {
+      "run": "ricon-b0a-off-claude-20261024-234801",
+      "logSha256": "2cb8130c8171e894a60a9002d66824b16cdc2dc587810b1c1937ecadc788f322",
+      "result": "GATE_OFF_CONFIRMED",
+      "endpointEvents": 0
+    },
+    {
+      "run": "ricon-b0a-on-claude-20261024-235216",
+      "logSha256": "3405ae560f096c6ee412a4a4029552ed59a17da7953f3b526ddb9ae907764007",
+      "result": "GATE_ON_SINGLE_CYCLE_CONFIRMED",
+      "cycles": [
+        {
+          "observedOrdinal": 1,
+          "cycleField": 1,
+          "events": 35,
+          "samples": 30,
+          "bindingRevision": 1,
+          "playerId": 1,
+          "members": [
+            1
+          ],
+          "rplMode": 0,
+          "radioValues": [
+            32000,
+            48000
+          ],
+          "firstElapsedMs": 1001,
+          "lastElapsedMs": 30095,
+          "firstWorldTimeMs": 787,
+          "lastWorldTimeMs": 29881,
+          "endReason": "LIMIT",
+          "streamEqualsDump": true
+        }
+      ],
+      "restartMarkers": []
+    },
+    {
+      "run": "ricon-b0a-restart-claude-20261024-235851",
+      "logSha256": "8eb19eb768e58a8f0a84db496725e376228e901f3ceb8fba218cf013f00f4612",
+      "result": "FIRST_RESTART_INCOMPLETE_SECOND_PLAY_NOT_OBSERVED",
+      "cycles": [
+        {
+          "observedOrdinal": 1,
+          "cycleField": 1,
+          "events": 8,
+          "samples": 3,
+          "bindingRevision": 1,
+          "playerId": 1,
+          "members": [
+            1
+          ],
+          "rplMode": 0,
+          "radioValues": [
+            32000,
+            48000
+          ],
+          "firstElapsedMs": 1008,
+          "lastElapsedMs": 3017,
+          "firstWorldTimeMs": 744,
+          "lastWorldTimeMs": 2753,
+          "endReason": "GAME_END",
+          "streamEqualsDump": true
+        }
+      ],
+      "restartMarkers": [
+        "EDIT_REQUESTED",
+        "SECOND_PLAY_REQUESTED"
+      ]
+    },
+    {
+      "run": "ricon-b0a-restart2-claude-20261025-001136",
+      "logSha256": "8d45f3f4ec35d3f8b9dad64544381cbede1e060f422c982ebc11a4ca9f1d052e",
+      "result": "RESTART_CLEANUP_AND_NEW_OBSERVATION_CONFIRMED",
+      "cycles": [
+        {
+          "observedOrdinal": 1,
+          "cycleField": 1,
+          "events": 8,
+          "samples": 3,
+          "bindingRevision": 1,
+          "playerId": 1,
+          "members": [
+            1
+          ],
+          "rplMode": 0,
+          "radioValues": [
+            32000,
+            48000
+          ],
+          "firstElapsedMs": 1008,
+          "lastElapsedMs": 3014,
+          "firstWorldTimeMs": 729,
+          "lastWorldTimeMs": 2736,
+          "endReason": "GAME_END",
+          "streamEqualsDump": true
+        },
+        {
+          "observedOrdinal": 2,
+          "cycleField": 1,
+          "events": 35,
+          "samples": 30,
+          "bindingRevision": 1,
+          "playerId": 1,
+          "members": [
+            1
+          ],
+          "rplMode": 0,
+          "radioValues": [
+            32000,
+            48000
+          ],
+          "firstElapsedMs": 1001,
+          "lastElapsedMs": 30121,
+          "firstWorldTimeMs": 875,
+          "lastWorldTimeMs": 29995,
+          "endReason": "LIMIT",
+          "streamEqualsDump": true
+        }
+      ],
+      "restartMarkers": [
+        "EDIT_REQUESTED",
+        "EDIT_STABLE",
+        "SECOND_PLAY_REQUESTED",
+        "SECOND_PLAY_ENTERED"
+      ]
+    }
+  ],
+  "scope": "Локальный read-only bootstrap в Workbench: gate, чтение роли и раций, ранний Stop и новый Play.",
+  "lifecycleFinding": "В успешном повторе cycleField=1 в обоих Play; это локальный счётчик игрового объекта/состояния, не уникальный ID процесса. Seq, revision и radio obs начинаются заново.",
+  "clockFinding": "World t и elapsedMs имеют разные начала; их равенство и синхронизация процессов не утверждаются.",
+  "limits": "Отдельный Diag-клиент, listen-сервер, сетевое подключение, голос и точечное A→B не проверены. RplMode=0 сохранён как наблюдённое число.",
+  "replayRequirements": "Нужны четыре исходных внешних console.log по фиксированным путям.",
+  "checkerSha256": "cdc9df289bc7291a4cd4bebc84895ca6d48ab6ba7f28f9fe83c9ecde02b2c32c"
+}
