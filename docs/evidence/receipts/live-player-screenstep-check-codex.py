@@ -1,4 +1,4 @@
-"""Независимая проверка фиксированного A1-S2: журнал, Core.TryRead и файлы трёх просмотренных кадров."""
+"""Проверка A1-S2: журнал, Core.TryRead и три просмотренных кадра. Запуск из репозитория; копия может лежать снаружи."""
 from datetime import datetime
 import hashlib
 import json
@@ -9,7 +9,6 @@ import subprocess
 from urllib.parse import unquote_to_bytes
 
 folder = Path(__file__).resolve().parent
-repo = folder.parents[2]
 run = 'ricon-a1s2-claude-20261024-221205'
 path = Path(r'C:\Users\Ded\Documents\My Games\ArmaReforgerWorkbench\logs') / run / 'console.log'
 raw = path.read_bytes()
@@ -109,7 +108,7 @@ assert events[-1][5] == 'level=PLAYER_SCREEN_STEP,not=PIXELS|LOCALIZATION|INPUT|
 
 # Время захвата взято из неизменяемой квитанции оператора и сверяется со временем действий в сыром логе.
 receipt_ref = 'a433072:docs/evidence/receipts/live-bench-wb-claude-20261024.txt'
-receipt = subprocess.check_output(['git', 'show', receipt_ref], cwd=repo).decode('utf-8')
+receipt = subprocess.check_output(['git', 'show', receipt_ref]).decode('utf-8')
 capture = re.findall(r'#\s+(PRE|POST|BACK)\s+marker ([\d:.]+), capture ([\d:.]+)-\.(\d{3}), 1936 x 1056, ok, sha256\s*\n#\s+([0-9a-f]{64})', receipt)
 assert [c[0] for c in capture] == ['PRE', 'POST', 'BACK']
 scratch = Path(r'C:\Users\Ded\AppData\Local\Temp\claude\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\583c292f-5bc1-43e3-9045-3fc153e17657\scratchpad')
