@@ -47,16 +47,49 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	protected int m_iPhase;
 	protected bool m_bRunning;
 
+	protected bool m_bFirstFrameLogged;
+	protected bool m_bStarted;
+
+	//! Диагностика жизненного цикла (codex #4129): видно, создаётся ли компонент заново при переходе в Play.
+	protected static string WorldState(IEntity owner)
+	{
+		if (!owner || !owner.GetWorld())
+			return "world=NONE";
+		bool active = (owner.GetFlags() & EntityFlags.ACTIVE) != 0;
+		string text = "world=1,editMode=" + Bit(owner.GetWorld().IsEditMode());
+		text = text + ",active=" + Bit(active);
+		return text;
+	}
+
 	override void OnPostInit(IEntity owner)
 	{
 		super.OnPostInit(owner);
 		SetEventMask(owner, EntityEvent.INIT | EntityEvent.FRAME);
+		PrintFormat("[RICON_LIVEB] lifecycle=OnPostInit %1", WorldState(owner));
+		// codex #4138: ACTIVE у своей сущности стенда сразу, чтобы первый EOnFrame мог вызвать TryStart; логика в
+		// edit mode при этом не запускается (TryStart проверяет режим).
+		if (owner && (owner.GetFlags() & EntityFlags.ACTIVE) == 0)
+			owner.SetFlags(EntityFlags.ACTIVE, false);
 	}
 
 	override void EOnInit(IEntity owner)
 	{
-		if (!owner.GetWorld() || owner.GetWorld().IsEditMode())
+		PrintFormat("[RICON_LIVEB] lifecycle=EOnInit %1 isServer=%2", WorldState(owner), Replication.IsServer());
+		TryStart(owner, "EOnInit");
+	}
+
+	//! Общий запуск из EOnInit и первого EOnFrame вне режима редактирования (codex #4131); повторно не стартует.
+	//! Если у сущности стенда нет флага ACTIVE («actively updated by engine»), он включается только у неё.
+	protected void TryStart(IEntity owner, string from)
+	{
+		if (m_bStarted)
 			return;
+		if (!owner || !owner.GetWorld() || owner.GetWorld().IsEditMode())
+			return;
+		m_bStarted = true;
+		bool activeBefore = (owner.GetFlags() & EntityFlags.ACTIVE) != 0;
+		if (!activeBefore)
+			owner.SetFlags(EntityFlags.ACTIVE, false);
 		m_Journal = new RICON_LiveJournal(256);
 		m_Journal.SetStream(true);
 		m_aPrefabs = BenchPrefabs();
@@ -65,6 +98,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		string text = "level=NATIVE_ROUNDTRIP,prefabs=" + m_aPrefabs.Count().ToString();
 		text = text + ",isServer=" + Bit(Replication.IsServer());
 		text = text + ",isClient=" + Bit(Replication.IsClient());
+		text = text + ",from=" + from + ",activeBefore=" + Bit(activeBefore);
 		Note("BENCH_START", -1, text);
 	}
 
@@ -270,6 +304,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 
 	override void EOnFrame(IEntity owner, float timeSlice)
 	{
+		if (!m_bFirstFrameLogged)
+		{
+			m_bFirstFrameLogged = true;
+			PrintFormat("[RICON_LIVEB] lifecycle=FirstFrame %1 running=%2", WorldState(owner), m_bRunning);
+			TryStart(owner, "FirstFrame");
+		}
 		if (!m_bRunning || timeSlice <= 0)
 			return;
 		m_fElapsed += timeSlice;

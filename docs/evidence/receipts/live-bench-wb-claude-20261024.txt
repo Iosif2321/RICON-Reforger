@@ -1,0 +1,71 @@
+# Phase A0 bench attempts (claude, 2026-10-24). World Editor Play, SlotFlatSmall {761C249B3D026B6C}, world in memory (no Save),
+# only own PID stopped. All three: NOT_EXECUTED (readiness) — no BENCH_START, no radio measurement.
+# 1 (07:04:49, ACK #4122): GetCmdLine("-riconBenchWorld") false → NO_WORLD_ARGUMENT.
+# 2 (07:12:00, ACK #4126): world opened, bench created, PLAY_REQUESTED; no game mode within 90 s (Hidden).
+# 3 (07:27:14, ACK #4136): lifecycle shows component only in edit world (editMode=1, active=0); isGameModeNow=0; no game mode within 30 s (Hidden).
+# Read-only WbReader windows (ACK #4129, #4133): vanilla SCR_EditorPlugin.c:77-78 SetOpenedResource+SwitchToGameMode;
+# SCR_FPSDiagnosticPlugin.c:357-363 waits while (!worldEditorAPI.IsGameMode()) and compares System.GetFPS() with FPS_UNFOCUSED.
+
+--- ricon-bench-claude-20261024-070449
+\863634ae71ab082dc99f7354ae165a9312ad662631a023c3e61d0e3ca0ee86d
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 4acf989a
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: f34d61cb
+Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+[RICON_LIVEB] state=NO_WORLD_ARGUMENT
+
+--- ricon-bench2-claude-20261024-071200
+\28824b5d3e04f03a95d28a1ece2d6bdfad95641fc66cb43376bba65ee941e05
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 4acf989a
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 1cd128aa
+Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent opened=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED
+
+--- ricon-bench3-claude-20261024-072714
+\39122c5d130554cc511aa5f2b4b17e50889ae82ee5e8622f62c4fd60bb4de8d
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 04462821
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 046a2921
+Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent opened=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=0 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+
+--- ricon-wbreader-switchgame-claude-20261024-071813
+\be035d6a6580fd5a67ca4c99d5eefed0f2ce7a7f93ca7edc9fdc0318f62e1ab
+[RICON_WbReader] ---- $ArmaReforger:scripts/WorkbenchGame/WorldEditor/SCR_EditorPlugin.c
+[RICON_WbReader] ---- $ArmaReforger:scripts/WorkbenchGame/WorldEditor/SCR_FPSDiagnosticPlugin.c
+[RICON_WbReader] done, files with matches: 2, lines printed: 10
+
+--- ricon-wbreader-isgamemode-claude-20261024-072135
+\388e4924bd55f7ab41e994c7c0ac1670b613640755504ef3d95f6ff4531b52f
+[RICON_WbReader] ---- $ArmaReforger:scripts/WorkbenchGame/WorldEditor/SCR_FPSDiagnosticPlugin.c
+[RICON_WbReader] done, files with matches: 1, lines printed: 7

@@ -15,12 +15,20 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] state=NO_WORLD_EDITOR");
 			return;
 		}
+		// Прогон 07:04:49: WorldEditor.GetCmdLine("-riconBenchWorld") при «-riconBenchWorld значение» вернул false.
+		// Проверенный в RICON_WbReaderPlugin способ — System.GetCLIParam("имя") при форме «-имя="значение"».
 		string world;
-		if (!editor.GetCmdLine("-riconBenchWorld", world) || world.IsEmpty())
+		string source = "System.GetCLIParam";
+		if (!System.GetCLIParam("riconBenchWorld", world) || world.IsEmpty())
 		{
-			Print("[RICON_LIVEB] state=NO_WORLD_ARGUMENT");
-			return;
+			source = "WorldEditor.GetCmdLine";
+			if (!editor.GetCmdLine("riconBenchWorld", world) || world.IsEmpty())
+			{
+				Print("[RICON_LIVEB] state=NO_WORLD_ARGUMENT tried=System.GetCLIParam,WorldEditor.GetCmdLine");
+				return;
+			}
 		}
+		PrintFormat("[RICON_LIVEB] state=WORLD_ARGUMENT via=%1", source);
 		bool opened = editor.SetOpenedResource(world);
 		PrintFormat("[RICON_LIVEB] state=OPEN world=%1 opened=%2", world, opened);
 		if (!opened)
@@ -41,6 +49,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		if (!bench || !component)
 			return;
 		editor.SwitchToGameMode(false, false);
-		Print("[RICON_LIVEB] state=PLAY_REQUESTED");
+		// Переход асинхронный: ванильный SCR_FPSDiagnosticPlugin.c:360 ждёт WorldEditorAPI.IsGameMode() в цикле.
+		PrintFormat("[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=%1", api.IsGameMode());
 	}
 }

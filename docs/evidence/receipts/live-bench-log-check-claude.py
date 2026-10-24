@@ -153,9 +153,31 @@ def main(argv):
                 row[f"raw_{p}"] = reads[p]["value"]
         if mute:
             row["mute"] = mute[0]["text"]
+        # Functional verdict (codex #4122): PASS only if the step was set, t5 reads the target and the mute
+        # toggle and restore both took effect; SKIP or failed spawn → INCOMPLETE; any mismatch → OBSERVED_MISMATCH.
+        frequency_ok = row.get("step") == "BENCH_SET_FREQUENCY" and row.get("raw_t5") == row.get("target")
+        m = fields(mute[0]["text"]) if mute else {}
+        mute_ok = bool(m) and m.get("after") == m.get("requested") and m.get("after2") == m.get("restoreTo")
+        if row.get("step") != "BENCH_SET_FREQUENCY" or not mute:
+            row["verdict"] = "INCOMPLETE"
+        elif frequency_ok and mute_ok:
+            row["verdict"] = "NATIVE_ROUNDTRIP_PASS"
+        else:
+            row["verdict"] = "OBSERVED_MISMATCH"
+        row["frequencyRoundTrip"] = frequency_ok
+        row["muteToggleAndRestore"] = mute_ok
         summary.append(row)
+    verdicts = [r.get("verdict", "INCOMPLETE") for r in summary]
+    if not summary:
+        overall = "NOT_EXECUTED"
+    elif all(v == "NATIVE_ROUNDTRIP_PASS" for v in verdicts):
+        overall = "NATIVE_ROUNDTRIP_PASS"
+    elif any(v == "OBSERVED_MISMATCH" for v in verdicts):
+        overall = "OBSERVED_MISMATCH"
+    else:
+        overall = "INCOMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "notes": notes,
-                      "radios": summary}, ensure_ascii=False, indent=1))
+                      "overall": overall, "radios": summary}, ensure_ascii=False, indent=1))
     print("LIVE_BENCH_LOG_CHECK_" + ("PASS" if not errors else "FAIL"))
     return 1 if errors else 0
 
