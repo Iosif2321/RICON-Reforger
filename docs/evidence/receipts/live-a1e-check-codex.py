@@ -91,8 +91,13 @@ for line in expected:
     number, label = display.split(' ', 1)
     assert label == '#AR-VON_FrequencyUnits_MHz'
     assert round(float(number)*1000) == int(fields['entryFreq'])
+    record_value = int(re.search(r' value=(-?\d+) ', line)[1])
+    native_raw = int(fields['raw']) if 'raw' in fields else (record_value if 'kind=BENCH_READ ' in line else None)
+    if native_raw is not None:
+        assert native_raw == int(fields['entryFreq'])
     points.append({'bench': int(fields['bench']), 'phase': fields.get('phase', 'step'),
-                   'raw': int(fields['entryFreq']), 'text': display})
+                   'entryFreq': int(fields['entryFreq']), 'recordValue': record_value,
+                   'nativeRaw': native_raw, 'text': display})
 assert len(points) == 20
 source_commit = subprocess.run(['git', 'rev-parse', 'beb1c65'], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 paths = subprocess.run(['git', 'ls-tree', '-r', '--name-only', source_commit, '--', 'tools/RICON_LiveProbe'],
@@ -115,6 +120,8 @@ report = {
     'crcMatchedAcceptedCompile': 14,
     'baselineCommit': '2254be0', 'baselineLogSha256': baseline['logSha256'],
     'textPoints': points, 'tr1Unchanged': True, 'actualDelayMs': {'t0': 0, 't1': 1000, 't5': 5007},
+    'timingBasis': 'Времена взяты из наблюдаемого фиксированного прогона; это сверка записи, не предсказание задержки',
+    'stepValueMeaning': 'У шага recordValue — запрошенная цель; nativeRaw отдельно есть только в init и чтениях',
     'muteEntryStates': [0, 1, 0], 'muteEntryReturns': [1, 0], 'muteDirectStates': [0, 1, 0],
     'muteDirectReturns': [0, 0], 'entryReadsBothMutePaths': True,
     'localControllerAtStart': False, 'factionManagerAtStart': True,

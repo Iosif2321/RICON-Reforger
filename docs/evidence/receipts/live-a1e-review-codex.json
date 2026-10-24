@@ -47,121 +47,161 @@
     {
       "bench": 0,
       "phase": "init",
-      "raw": 32000,
+      "entryFreq": 32000,
+      "recordValue": 32000,
+      "nativeRaw": 32000,
       "text": "32.0 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 1,
       "phase": "init",
-      "raw": 48000,
+      "entryFreq": 48000,
+      "recordValue": 48000,
+      "nativeRaw": 48000,
       "text": "48.0 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 2,
       "phase": "init",
-      "raw": 48000,
+      "entryFreq": 48000,
+      "recordValue": 48000,
+      "nativeRaw": 48000,
       "text": "48.0 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 3,
       "phase": "init",
-      "raw": 42000,
+      "entryFreq": 42000,
+      "recordValue": 42000,
+      "nativeRaw": 42000,
       "text": "42.0 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 0,
       "phase": "step",
-      "raw": 32200,
+      "entryFreq": 32200,
+      "recordValue": 32200,
+      "nativeRaw": null,
       "text": "32.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 0,
       "phase": "t0",
-      "raw": 32200,
+      "entryFreq": 32200,
+      "recordValue": 32200,
+      "nativeRaw": 32200,
       "text": "32.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 1,
       "phase": "step",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": null,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 1,
       "phase": "t0",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 2,
       "phase": "step",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": null,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 2,
       "phase": "t0",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 3,
       "phase": "step",
-      "raw": 42200,
+      "entryFreq": 42200,
+      "recordValue": 42200,
+      "nativeRaw": null,
       "text": "42.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 3,
       "phase": "t0",
-      "raw": 42200,
-      "text": "42.2 #AR-VON_FrequencyUnits_MHz"
-    },
-    {
-      "bench": 0,
-      "phase": "t1",
-      "raw": 32200,
-      "text": "32.2 #AR-VON_FrequencyUnits_MHz"
-    },
-    {
-      "bench": 1,
-      "phase": "t1",
-      "raw": 48200,
-      "text": "48.2 #AR-VON_FrequencyUnits_MHz"
-    },
-    {
-      "bench": 2,
-      "phase": "t1",
-      "raw": 48200,
-      "text": "48.2 #AR-VON_FrequencyUnits_MHz"
-    },
-    {
-      "bench": 3,
-      "phase": "t1",
-      "raw": 42200,
+      "entryFreq": 42200,
+      "recordValue": 42200,
+      "nativeRaw": 42200,
       "text": "42.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 0,
+      "phase": "t1",
+      "entryFreq": 32200,
+      "recordValue": 32200,
+      "nativeRaw": 32200,
+      "text": "32.2 #AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "bench": 1,
+      "phase": "t1",
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
+      "text": "48.2 #AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "bench": 2,
+      "phase": "t1",
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
+      "text": "48.2 #AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "bench": 3,
+      "phase": "t1",
+      "entryFreq": 42200,
+      "recordValue": 42200,
+      "nativeRaw": 42200,
+      "text": "42.2 #AR-VON_FrequencyUnits_MHz"
+    },
+    {
+      "bench": 0,
       "phase": "t5",
-      "raw": 32200,
+      "entryFreq": 32200,
+      "recordValue": 32200,
+      "nativeRaw": 32200,
       "text": "32.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 1,
       "phase": "t5",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 2,
       "phase": "t5",
-      "raw": 48200,
+      "entryFreq": 48200,
+      "recordValue": 48200,
+      "nativeRaw": 48200,
       "text": "48.2 #AR-VON_FrequencyUnits_MHz"
     },
     {
       "bench": 3,
       "phase": "t5",
-      "raw": 42200,
+      "entryFreq": 42200,
+      "recordValue": 42200,
+      "nativeRaw": 42200,
       "text": "42.2 #AR-VON_FrequencyUnits_MHz"
     }
   ],
@@ -171,6 +211,8 @@
     "t1": 1000,
     "t5": 5007
   },
+  "timingBasis": "Времена взяты из наблюдаемого фиксированного прогона; это сверка записи, не предсказание задержки",
+  "stepValueMeaning": "У шага recordValue — запрошенная цель; nativeRaw отдельно есть только в init и чтениях",
   "muteEntryStates": [
     0,
     1,
@@ -197,5 +239,5 @@
   "positiveNoiseControl": true,
   "negativeControls": 13,
   "uiEvidence": "Клик и настройки фиксирует оператор; этот checker проверяет сырой игровой журнал",
-  "checkerSha256": "78eb4b6286931ddbc00243dfd7bf5e4f9b2219e01e724a24b2772250f3d8ac14"
+  "checkerSha256": "dad3df41d8a3b115ae0499442d92c40cb4e46c34dc7d371c429065b87c263d89"
 }
