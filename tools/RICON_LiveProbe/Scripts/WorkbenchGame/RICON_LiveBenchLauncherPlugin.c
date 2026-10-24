@@ -4,6 +4,8 @@
 //! WorldEditor.GetCmdLine/SetOpenedResource/GetApi/SwitchToGameMode, WorldEditorAPI.BeginEntityAction/CreateEntity/
 //! CreateComponent/EndEntityAction/GetWorld/TryGetTerrainSurfaceY, BaseWorld.GetBoundBox (Script API).
 //! Точка стенда проверяется внутри границ мира (ChoosePoint), иначе явный отказ без создания сущности.
+//! A0b (codex #4233): необязательно в том же действии — одна сущность SCR_BaseGameMode (-riconBenchGameMode, только
+//! это значение) и одна RadioManagerEntity (-riconBenchRadioManager=1), обе по имени класса и тоже только в памяти.
 //! Завершение процесса — внешним таймаутом (журнал стенда потоковый).
 //! Запуск — только после START → ACK → run → END на шине и source review codex (#4091).
 [WorkbenchPluginAttribute(name: "RICON: стенд раций в Play", description: "Открыть мир, добавить стенд в памяти, Play", wbModules: {"WorldEditor"})]
@@ -44,15 +46,32 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		vector point;
 		if (!ChoosePoint(api, point))
 			return;
+		bool wantGameMode, wantManager;
+		if (!ReadSetup(api, wantGameMode, wantManager))
+			return;
 		api.BeginEntityAction("RICON live bench");
 		IEntitySource bench = api.CreateEntity("GenericEntity", "RICON_LiveBench", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
 		IEntityComponentSource component;
 		if (bench)
 			component = api.CreateComponent(bench, "RICON_LiveRadioBenchComponent");
+		// A0b (codex #4233): по имени класса (документированный CreateEntity(className, …)), без префаба и без fallback
+		IEntitySource gameMode;
+		if (wantGameMode)
+			gameMode = api.CreateEntity(BARE_GAME_MODE, "RICON_BenchGameMode", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
+		IEntitySource manager;
+		if (wantManager)
+			manager = api.CreateEntity(MANAGER_CLASS, "RICON_BenchRadioManager", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
 		api.EndEntityAction("RICON live bench");
 		PrintFormat("[RICON_LIVEB] state=BENCH_CREATED entity=%1 component=%2 saved=0", bench != null, component != null);
 		if (!bench || !component)
 			return;
+		PrintFormat("[RICON_LIVEB] setup created gameMode=%1 gameModeOk=%2 radioManager=%3 via=class radioManagerOk=%4",
+			wantGameMode, gameMode != null, wantManager, manager != null);
+		if ((wantGameMode && !gameMode) || (wantManager && !manager))
+		{
+			Print("[RICON_LIVEB] state=SETUP_REFUSED reason=CREATE_FAILED");
+			return;
+		}
 		editor.SwitchToGameMode(false, false);
 		// Переход асинхронный: ванильный SCR_FPSDiagnosticPlugin.c:360–369 ждёт WorldEditorAPI.IsGameMode() в цикле
 		// с Sleep(100) и считает потерю фокуса окна (GetFPS ≈ FPS_UNFOCUSED) провалом перехода. Здесь — только
@@ -93,6 +112,62 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		if (!spanOk || !onTerrain || !inside)
 		{
 			PrintFormat("[RICON_LIVEB] state=PLACEMENT_REFUSED reason=spanOk:%1,onTerrain:%2,inside:%3", spanOk, onTerrain, inside);
+			return false;
+		}
+		return true;
+	}
+
+	//! A0b (codex #4233): единственное допустимое значение -riconBenchGameMode и класс менеджера радио.
+	static const string BARE_GAME_MODE = "SCR_BaseGameMode";
+	static const string MANAGER_CLASS = "RadioManagerEntity";
+
+	//! Необязательные -riconBenchGameMode=SCR_BaseGameMode и -riconBenchRadioManager=0|1. Другое значение, уже
+	//! существующий game mode при запросе bare, уже существующий менеджер при запросе создания или сущность мира без
+	//! экземпляра (проверить нельзя) — явный отказ без создания чего-либо (SETUP_REFUSED). Без параметров — как в bench9.
+	protected bool ReadSetup(WorldEditorAPI api, out bool wantGameMode, out bool wantManager)
+	{
+		string gameModeValue, managerValue;
+		// codex #4237: явно заданное пустое значение — не «нет параметра», а значение вне списка
+		bool gameModeGiven = System.GetCLIParam("riconBenchGameMode", gameModeValue);
+		bool managerGiven = System.GetCLIParam("riconBenchRadioManager", managerValue);
+		int gameModes = 0;
+		int managers = 0;
+		int noInstance = 0;
+		int count = api.GetEditorEntityCount();
+		for (int i = 0; i < count; i++)
+		{
+			IEntitySource src = api.GetEditorEntity(i);
+			IEntity instance = null;
+			if (src)
+				instance = api.SourceToEntity(src);
+			if (!instance)
+			{
+				noInstance++;
+				continue;
+			}
+			if (BaseGameMode.Cast(instance))
+				gameModes++;
+			if (RadioManagerEntity.Cast(instance))
+				managers++;
+		}
+		PrintFormat("[RICON_LIVEB] setup existing entities=%1 gameModes=%2 radioManagers=%3 noInstance=%4 gameModeParam=%5:%6 radioManagerParam=%7:%8",
+			count, gameModes, managers, noInstance, gameModeGiven, gameModeValue, managerGiven, managerValue);
+		string reason;
+		if (gameModeGiven && gameModeValue != BARE_GAME_MODE)
+			reason = "GAMEMODE_PARAM";
+		else if (managerGiven && managerValue != "0" && managerValue != "1")
+			reason = "RADIOMANAGER_PARAM";
+		wantGameMode = gameModeGiven;
+		wantManager = managerGiven && managerValue == "1";
+		if (reason.IsEmpty() && (wantGameMode || wantManager) && noInstance > 0)
+			reason = "UNVERIFIED_SOURCES";
+		else if (reason.IsEmpty() && wantGameMode && gameModes > 0)
+			reason = "GAMEMODE_EXISTS";
+		else if (reason.IsEmpty() && wantManager && managers > 0)
+			reason = "RADIOMANAGER_EXISTS";
+		if (!reason.IsEmpty())
+		{
+			PrintFormat("[RICON_LIVEB] state=SETUP_REFUSED reason=%1", reason);
 			return false;
 		}
 		return true;

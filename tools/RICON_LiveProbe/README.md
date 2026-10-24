@@ -35,7 +35,18 @@
   миров через `ResourceDatabase.SearchResources`, файлы не открываются.
 - `Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c` и `Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c` —
   стенд фазы A0 (`docs/plan/LIVE-order-frequency-mute.md` §4): изолированные рации в Play без сохранения мира.
-  Скомпилированы, **не запускались**; запуск — после source review codex и START/ACK.
+  Запуск — после source review codex и START/ACK. Прогон bench9 в Autotest_GameMode_Plain дошёл до `BENCH_DONE`
+  после одного разрешённого владельцем «Yes» на запрос авторизации ванильного арсенала
+  (`docs/evidence/receipts/live-bench-wb-claude-20261024.txt`).
+  Необязательные параметры A0b (codex #4233):
+  - `-riconBenchGameMode=SCR_BaseGameMode` (единственное допустимое значение) — создать в памяти один game mode
+    по имени класса, если в мире его нет;
+  - `-riconBenchRadioManager=0|1` — создать одну `RadioManagerEntity` по имени класса.
+
+  Для обоих параметров значение вне списка или уже существующая сущность — `SETUP_REFUSED`. Стенд пишет наличие
+  менеджера (`ChimeraWorld.GetRadioManager`) в `BENCH_START` и перед спавном (`BENCH_MANAGER`). Если оно расходится
+  с явным значением параметра, стенд пишет `BENCH_NOT_READY` и останавливается до спавна раций. Без параметра наличие
+  менеджера только записывается.
 - `Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c` — потоковый режим: 1000 записей при ёмкости 8, 7 проверок;
   сами строки потока проверяет внешний разбор всего тегированного транскрипта
   `docs/evidence/receipts/live-stream-log-check-claude.py` (плагин не видит собственный вывод).

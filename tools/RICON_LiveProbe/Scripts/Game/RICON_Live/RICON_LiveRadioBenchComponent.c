@@ -8,6 +8,8 @@
 //! чтения «t1»/«t5» — когда от фактического вызова setter прошло ≥ 1 / ≥ 5 с, в записи actualDeltaMs; через 7 с после
 //! setter — mute на противоположное состояние и возврат; через 9 с — удаление своих раций и BENCH_DONE.
 //! Ранний выход (удаление компонента до конца) пишет BENCH_ABORTED с достигнутой фазой, не BENCH_DONE.
+//! A0b: наличие RadioManagerEntity пишется в BENCH_START и перед спавном (BENCH_MANAGER); расхождение с явным
+//! -riconBenchRadioManager=0|1 — BENCH_NOT_READY и BENCH_ABORTED с фазой 0 до спавна раций; без параметра — только запись.
 //! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
@@ -70,6 +72,55 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		{
 			if (origin[k] < mins[k] || origin[k] > maxs[k])
 				return false;
+		}
+		return true;
+	}
+
+	//! A0b (codex #4224, #4233): есть ли в мире стенда RadioManagerEntity — ChimeraWorld.GetRadioManager() (Script API).
+	protected static bool HasRadioManager(IEntity owner)
+	{
+		if (!owner)
+			return false;
+		ChimeraWorld world = ChimeraWorld.CastFrom(owner.GetWorld());
+		if (!world)
+			return false;
+		return world.GetRadioManager() != null;
+	}
+
+	static const int MANAGER_OBSERVE_ONLY = -1; //!< параметра нет: наличие только записывается (прежний запуск)
+	static const int MANAGER_INVALID = -2;      //!< значение не 0|1, в том числе пустое (launcher отклоняет раньше)
+
+	//! Ожидание по параметру запуска -riconBenchRadioManager (codex #4237): явные 0 / 1 проверяются, без параметра —
+	//! только наблюдение, любое другое значение — неготовность.
+	protected static int ExpectedManager()
+	{
+		string value;
+		if (!System.GetCLIParam("riconBenchRadioManager", value))
+			return MANAGER_OBSERVE_ONLY;
+		if (value == "0")
+			return 0;
+		if (value == "1")
+			return 1;
+		return MANAGER_INVALID;
+	}
+
+	//! Перед спавном (регистрация менеджера может запоздать относительно EOnInit): при явном ожидании фактическое
+	//! наличие должно с ним совпасть, иначе стенд не готов — BENCH_NOT_READY и выход до спавна, не результат по рациям.
+	protected bool ManagerReady(IEntity owner)
+	{
+		bool present = HasRadioManager(owner);
+		int expected = ExpectedManager();
+		string text = "where=preSpawn,radioManager=" + Bit(present) + ",expected=" + expected.ToString();
+		int presentValue = 0;
+		if (present)
+			presentValue = 1;
+		Note("BENCH_MANAGER", presentValue, text);
+		if (expected == MANAGER_OBSERVE_ONLY)
+			return true;
+		if (expected == MANAGER_INVALID || present != (expected == 1))
+		{
+			Note("BENCH_NOT_READY", -1, "reason=RADIO_MANAGER_MISMATCH," + text);
+			return false;
 		}
 		return true;
 	}
@@ -168,6 +219,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		text = text + ",isServer=" + Bit(Replication.IsServer());
 		text = text + ",isClient=" + Bit(Replication.IsClient());
 		text = text + ",from=" + from + ",activeBefore=" + Bit(activeBefore);
+		text = text + ",radioManager=" + Bit(HasRadioManager(owner)) + ",expectedManager=" + ExpectedManager().ToString();
 		Note("BENCH_START", -1, text);
 		StartHeartbeat();
 	}
@@ -388,6 +440,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		m_fElapsed += timeSlice;
 		if (m_iPhase == PHASE_IDLE && m_fElapsed >= 1)
 		{
+			if (!ManagerReady(owner))
+			{
+				Finish(false);
+				return;
+			}
 			Spawn();
 			m_fSpawnedAt = m_fElapsed;
 			m_iPhase = PHASE_SPAWNED;

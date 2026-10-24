@@ -10,7 +10,9 @@ values next to the catalog (oracle/data/radio_model_catalog_v1.json) entry found
 ResourceName map below: passport bands (MHz) and the old reportedGame raw ranges. The ratios raw/passport are
 diagnostic numbers only — game ranges differ from the prototypes (codex #4115), so no kHz/MHz verdict is drawn here;
 Q-F against the UI stays open. Level NATIVE_ROUNDTRIP + PRIMARY_MANUAL, not an observation of the UI or of audio.
-Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json>"""
+A0b: the RadioManagerEntity records (BENCH_START radioManager, preSpawn BENCH_MANAGER, BENCH_NOT_READY) are checked
+against an optional expectation 0|1.
+Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json> [expectManager 0|1]"""
 import hashlib
 import json
 import re
@@ -94,6 +96,46 @@ def main(argv):
     spawns = [e for e in events if e["kind"] == "BENCH_SPAWN"]
     if len(spawns) != n:
         errors.append(f"BENCH_SPAWN {len(spawns)} != {n}")
+    # A0b (codex #4233): RadioManagerEntity presence at BENCH_START and before the spawn. With an expectation (third
+    # argument 0|1) exactly one preSpawn BENCH_MANAGER must precede the first BENCH_SPAWN and match it; BENCH_NOT_READY
+    # means the bench was not ready (no radio result). Logs before A0b have no manager record: noted, not an error.
+    expect = None
+    if len(argv) > 2:
+        if argv[2] in ("0", "1"):
+            expect = int(argv[2])
+        else:
+            errors.append(f"expectManager must be 0 or 1, got {argv[2]!r}")
+    managers = [e for e in events if e["kind"] == "BENCH_MANAGER"]
+    not_ready = [e for e in events if e["kind"] == "BENCH_NOT_READY"]
+    start_f = starts[0]["f"] if len(starts) == 1 else {}
+    manager = {"expected": expect, "start": start_f.get("radioManager"), "startExpected": start_f.get("expectedManager"),
+               "preSpawn": [m["value"] for m in managers]}
+    for e in not_ready:
+        errors.append("BENCH_NOT_READY: " + e["text"])
+    # codex #4237: every manager field must agree, not only value; the early BENCH_START radioManager may be 0 or 1
+    for m in managers:
+        f = m["f"]
+        if m["value"] not in (0, 1) or f.get("radioManager") != str(m["value"]) or f.get("where") != "preSpawn":
+            errors.append(f"manager record inconsistent: value={m['value']} text={m['text']}")
+    # codex #4238: with an expectation the early BENCH_START radioManager is mandatory (0|1); without one, checked if present
+    if (expect is not None or "radioManager" in start_f) and start_f.get("radioManager") not in ("0", "1"):
+        errors.append(f"BENCH_START radioManager={start_f.get('radioManager')}")
+    if expect is not None:
+        # order by position in the stream, not by seq value
+        pos_start = next((i for i, e in enumerate(events) if e["kind"] == "BENCH_START"), None)
+        pos_spawn = next((i for i, e in enumerate(events) if e["kind"] == "BENCH_SPAWN"), None)
+        if start_f.get("expectedManager") != str(expect):
+            errors.append(f"BENCH_START expectedManager={start_f.get('expectedManager')} != {expect}")
+        if len(managers) != 1 or managers[0]["value"] != expect or managers[0]["f"].get("expected") != str(expect):
+            errors.append(f"manager records {[m['text'] for m in managers]} != one preSpawn with radioManager={expect}")
+        elif pos_start is None or events.index(managers[0]) < pos_start:
+            errors.append("manager record before BENCH_START")
+        elif pos_spawn is not None and events.index(managers[0]) > pos_spawn:
+            errors.append("manager record after the first BENCH_SPAWN")
+    elif start_f.get("expectedManager") in ("0", "1"):
+        errors.append(f"log expects radioManager={start_f['expectedManager']}: pass the expectation explicitly")
+    elif not managers:
+        notes.append("no BENCH_MANAGER record (log before A0b)")
     done = [e for e in events if e["kind"] == "BENCH_DONE"]
     if "BENCH_ABORTED" in kinds:
         errors.append("BENCH_ABORTED present")
@@ -168,7 +210,9 @@ def main(argv):
         row["muteToggleAndRestore"] = mute_ok
         summary.append(row)
     verdicts = [r.get("verdict", "INCOMPLETE") for r in summary]
-    if not summary:
+    if not_ready:
+        overall = "NOT_READY"
+    elif not summary:
         overall = "NOT_EXECUTED"
     elif all(v == "NATIVE_ROUNDTRIP_PASS" for v in verdicts):
         overall = "NATIVE_ROUNDTRIP_PASS"
@@ -177,7 +221,7 @@ def main(argv):
     else:
         overall = "INCOMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "notes": notes,
-                      "overall": overall, "radios": summary}, ensure_ascii=False, indent=1))
+                      "overall": overall, "radioManager": manager, "radios": summary}, ensure_ascii=False, indent=1))
     print("LIVE_BENCH_LOG_CHECK_" + ("PASS" if not errors else "FAIL"))
     return 1 if errors else 0
 
