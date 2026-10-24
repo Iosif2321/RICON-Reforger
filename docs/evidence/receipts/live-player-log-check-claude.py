@@ -14,7 +14,12 @@ PLAYER_ENTRY records (value = sample, idx 0..N-1) with a consistent field set pe
 transceiver number, entry frequency and mute, range, and the transceiver raw/min/max/res/mute and radio prefab); the
 player's own menu text is compared with the raw getter value descriptively (TEXT_MATCH / ROUNDED / MISMATCH / UNPARSED).
 Without the argument a log with PLAYER_ENTRY is an error (an A1-P0 log has none).
-Usage: python -I live-player-log-check-claude.py <console.log> [entries]"""
+A1-P2 (claude #4399, codex #4388/#4390), second argument "menu" (implies entries, mode playermenu): the PLAYER_ACT
+plan CHOOSE(5) STEP(6) READ t1(7) READ t5(11) RESTORE(12) MUTE(14) UNMUTE(15) FINAL(20), or a prefix of it closed by
+one STOP with nothing after it; values checked against the chosen raw0/target/muted0 (menu text x 1000 = raw,
+ToggleMuteEntry returns the new state), and the entries after FINAL equal those before CHOOSE. Verdicts
+PLAYER_MENU_RUNTIME_PASS / OBSERVED_MISMATCH / STOPPED; BENCH_DONE level=PLAYER_MENU_RUNTIME with stopped=0|1.
+Usage: python -I live-player-log-check-claude.py <console.log> [entries|menu]"""
 import hashlib
 import importlib.util
 import json
@@ -108,6 +113,12 @@ def entry_errors(f):
             want.add("longRange")
         if f.get("transceiver") == "1":
             want |= {"raw", "min", "max", "res", "muted", "radioPrefab", "trIndex", "inventorySlot"}
+            # editorRadio (BaseRadioComponent.IsEditorRadio, codex #4402) appears from A1-P2 on; the A1-P1 log has none
+            if "editorRadio" in f:
+                want.add("editorRadio")
+                if f["editorRadio"] not in BIT:
+                    errs.append("editorRadio not 0|1")
+                out["editorRadio"] = f["editorRadio"]
             if f.get("gadget") == "1":
                 want.add("gadgetOwnerMatch")
                 if f.get("gadgetOwnerMatch") not in BIT:
@@ -125,7 +136,8 @@ def entry_errors(f):
                     and INT.fullmatch(f.get("trNumber", "")):
                 # codex #4390: MAPPED needs a gadget whose owner is the radio; without a gadget only the
                 # transceiver <-> inventory part is known (PARTIAL), never an implied owner match
-                linked = int(f["trIndex"]) == int(f["trNumber"]) - 1 and int(f["inventorySlot"]) >= 0
+                linked = int(f["trIndex"]) == int(f["trNumber"]) - 1 and int(f["inventorySlot"]) >= 0 \
+                    and f.get("editorRadio") != "1"
                 out["mapping"] = ("NOT_MAPPED" if not linked or f.get("gadgetOwnerMatch") == "0" else
                                   "MAPPED" if f.get("gadgetOwnerMatch") == "1" else "PARTIAL")
         for k in ("trNumber", "entryFreq"):
@@ -143,7 +155,118 @@ def entry_errors(f):
     return errs, out
 
 
-def main(path, expect_entries=False):
+ACT_PLAN = [(5, "CHOOSE"), (6, "STEP"), (7, "READ"), (11, "READ"), (12, "RESTORE"), (14, "MUTE"), (15, "UNMUTE"),
+            (20, "FINAL")]
+ACT_STATE = {"bound", "raw", "entryFreq", "muted", "emuted", "dtext"}
+
+
+def menu_status(f, raw):
+    try:
+        m = MENU_TEXT.match(codec.unescape(f.get("dtext", "")))
+    except ValueError:
+        return "TEXT_UNDECODABLE"
+    if not m:
+        return "TEXT_UNPARSED"
+    if raw % 100:
+        return "TEXT_ROUNDED"
+    return "TEXT_MATCH" if round(float(m.group(1)) * 1000) == raw else "TEXT_MISMATCH"
+
+
+def check_acts(acts, errors, by_sample):
+    """A1-P2 (claude #4399, codex #4388/#4390/#4402/#4414): the planned PLAYER_ACT sequence, or a prefix of it closed by
+    one STOP after which nothing follows. Bound to the plan: phases STEP 6 = t0, READ 7 = t1, READ 11 = t5; one idx on
+    the whole chain; CHOOSE has res > 0, raw0 and target in [min, max], target = raw0 + modifier x res != raw0, and refers
+    to an existing non-active MAPPED radio entry of its own sample (same idx, trNumber, slot, raw0, mute0, min/max/res).
+    The PLAYER_ENTRY snapshots must agree with the acts: the target entry reads target on samples 7..12 and raw0
+    otherwise, is muted only on sample 15 (recorded between MUTE and UNMUTE), and the other entries never change.
+    Returns (verdict, rows). Log-format problems go to errors; value disagreements make OBSERVED_MISMATCH."""
+    rows, mismatches = [], []
+    stop = next((i for i, a in enumerate(acts) if a["f"].get("op") == "STOP"), None)
+    if stop is not None and stop != len(acts) - 1:
+        errors.append("PLAYER_ACT after STOP")
+    planned = acts if stop is None else acts[:stop]
+    if [(a["value"], a["f"].get("op")) for a in planned] != ACT_PLAN[:len(planned)]:
+        errors.append(f"PLAYER_ACT sequence {[(a['value'], a['f'].get('op')) for a in planned]} is not a prefix of the plan")
+    if stop is None and len(planned) != len(ACT_PLAN):
+        errors.append("PLAYER_ACT plan incomplete without STOP")
+    phases = {6: "t0", 7: "t1", 11: "t5"}
+    for a in planned:
+        if a["value"] in phases and a["f"].get("phase") != phases[a["value"]]:
+            errors.append(f"PLAYER_ACT {a['value']} {a['f'].get('op')}: phase {a['f'].get('phase')} != {phases[a['value']]}")
+    idxs = {a["f"].get("idx") for a in acts}
+    if len(idxs) != 1:
+        errors.append(f"PLAYER_ACT idx not one value: {sorted(map(str, idxs))}")
+    choose = planned[0]["f"] if planned and planned[0]["f"].get("op") == "CHOOSE" else {}
+    try:
+        raw0, target, mod = int(choose["raw0"]), int(choose["target"]), int(choose["modifier"])
+        muted0, idx = choose["muted0"], choose["idx"]
+        res, lo, hi = int(choose["res"]), int(choose["min"]), int(choose["max"])
+        tr_number, slot = choose["trNumber"], choose["slot"]
+    except (KeyError, ValueError):
+        if planned:
+            errors.append("CHOOSE fields")
+        return ("STOPPED" if stop is not None else "INCOMPLETE"), rows
+    if mod not in (1, -1) or res <= 0 or target != raw0 + mod * res or target == raw0 or muted0 not in BIT \
+            or not (lo <= raw0 <= hi and lo <= target <= hi):
+        errors.append("CHOOSE target/modifier/res/range/muted0")
+    # CHOOSE refers to an existing non-active MAPPED radio entry of its own sample
+    chosen = next((e for e in by_sample.get(planned[0]["value"], []) if e.get("idx") == idx), None)
+    if not chosen or chosen.get("cls") != "SCR_VONEntryRadio" or chosen.get("active") != "0" \
+            or chosen.get("transmit") != "0" or chosen.get("mapping") != "MAPPED" or chosen.get("trNumber") != tr_number \
+            or chosen.get("inventorySlot") != slot or chosen.get("raw") != str(raw0) or chosen.get("muted") != muted0 \
+            or chosen.get("res") != str(res):
+        errors.append(f"CHOOSE idx {idx} does not match a non-active MAPPED radio entry of sample {planned[0]['value']}")
+    for a in acts:
+        f, op = a["f"], a["f"].get("op")
+        if op == "STOP":
+            rows.append({"n": a["value"], "op": op, "reason": f.get("reason")})
+            continue
+        if not ACT_STATE <= set(f) or f.get("bound") != "1" or not INT.fullmatch(f.get("raw", "")) \
+                or not INT.fullmatch(f.get("entryFreq", "")) or f.get("muted") not in BIT or f.get("emuted") not in BIT:
+            errors.append(f"PLAYER_ACT {a['value']} {op}: state fields")
+            continue
+        raw, efreq, muted = int(f["raw"]), int(f["entryFreq"]), f["muted"]
+        want_raw = target if op in ("STEP", "READ") else raw0
+        want_muted = muted0 if op not in ("MUTE",) else str(1 - int(muted0))
+        text = menu_status(f, raw)
+        ok = raw == want_raw and efreq == want_raw and muted == want_muted and f["emuted"] == muted \
+            and text in ("TEXT_MATCH", "TEXT_ROUNDED")
+        if op in ("MUTE", "UNMUTE"):
+            ok = ok and f.get("ret") == muted  # ToggleMuteEntry returns the new state (SCR_VONEntryRadio.c:240-244)
+        if op in ("STEP", "READ"):
+            # codex #4402: t0/t1/t5 relative to the actual step call
+            need = {"t0": 0, "t1": 1000, "t5": 5000}.get(f.get("phase"))
+            since = int(f["sinceStepMs"]) if INT.fullmatch(f.get("sinceStepMs", "")) else None
+            if need is None or since is None or since < need or (need == 0 and since != 0):
+                errors.append(f"PLAYER_ACT {a['value']} {op}: phase={f.get('phase')} sinceStepMs={f.get('sinceStepMs')}")
+        if text == "TEXT_UNDECODABLE":
+            errors.append(f"PLAYER_ACT {a['value']} {op}: dtext undecodable")
+        if not ok:
+            mismatches.append(a["value"])
+        rows.append({"n": a["value"], "op": op, "phase": f.get("phase"), "raw": raw, "entryFreq": efreq,
+                     "muted": muted, "emuted": f["emuted"], "ret": f.get("ret"), "text": text, "ok": ok})
+    # codex #4414: the entry snapshots during the experiment agree with the acts (target entry) and nothing else moves
+    last = planned[-1]["value"] if stop is None else acts[stop]["value"]
+    before = {e.get("idx"): e for e in by_sample.get(4, [])}
+    for n in sorted(by_sample):
+        if n > last and stop is not None:
+            break
+        for e in by_sample[n]:
+            if e.get("idx") == idx:
+                stepped = stop is None or n <= acts[stop]["value"]
+                want_raw = target if 7 <= n <= 12 and stepped else raw0
+                want_muted = str(1 - int(muted0)) if n == 15 else muted0
+                if e.get("raw") != str(want_raw) or e.get("entryFreq") != str(want_raw) or e.get("muted") != want_muted:
+                    mismatches.append(f"entry@{n}")
+            elif before.get(e.get("idx")) is not None and json.dumps(e, sort_keys=True) != \
+                    json.dumps(before[e.get("idx")], sort_keys=True):
+                mismatches.append(f"other@{n}")
+    if stop is not None:
+        return "STOPPED", rows
+    return ("OBSERVED_MISMATCH" if mismatches else "PLAYER_MENU_RUNTIME_PASS"), rows
+
+
+def main(path, expect_entries=False, expect_menu=False):
     raw = open(path, "rb").read()
     lines = raw.decode("utf-8", errors="replace").splitlines()
     errors = []
@@ -168,7 +291,7 @@ def main(path, expect_entries=False):
     start_f = starts[0]["f"] if len(starts) == 1 else {}
     if len(starts) != 1:
         errors.append(f"BENCH_START count {len(starts)}")
-    elif start_f.get("mode") != "player" or start_f.get("modeGiven") != "1":
+    elif start_f.get("mode") != ("playermenu" if expect_menu else "player") or start_f.get("modeGiven") != "1":
         errors.append(f"BENCH_START mode={start_f.get('mode')} modeGiven={start_f.get('modeGiven')}")
     not_ready = [e for e in events if e["kind"] == "BENCH_NOT_READY"]
     for e in not_ready:
@@ -177,8 +300,12 @@ def main(path, expect_entries=False):
     if actions:
         errors.append(f"not read-only: {actions}")
     samples = [e for e in events if e["kind"] == "PLAYER_SAMPLE"]
-    if [s["value"] for s in samples] != list(range(1, SAMPLES + 1)):
-        errors.append(f"PLAYER_SAMPLE values {[s['value'] for s in samples]} != 1..{SAMPLES}")
+    # codex #4402: in the menu mode a STOP aborts the run at its sample (BENCH_ABORTED, never a DONE)
+    stop_value = next((e["value"] for e in events if e["kind"] == "PLAYER_ACT" and e["f"].get("op") == "STOP"), None) \
+        if expect_menu else None
+    last_sample = stop_value if stop_value is not None else SAMPLES
+    if [s["value"] for s in samples] != list(range(1, last_sample + 1)):
+        errors.append(f"PLAYER_SAMPLE values {[s['value'] for s in samples]} != 1..{last_sample}")
     rows, last_ms = [], -1
     for s in samples:
         errs, prefab = sample_errors(s["f"])
@@ -198,11 +325,16 @@ def main(path, expect_entries=False):
     # A1-P1: PLAYER_ENTRY records follow their sample in the stream, value = sample number, idx 0..vonEntries-1;
     # samples without a VON controller have none. Without the expectation a log with entries is an error, and
     # vice versa (an A1-P0 log has none).
-    entries, current, by_sample = [], None, {}
+    entries, current, by_sample, acts = [], None, {}, []
     for e in events:
         if e["kind"] == "PLAYER_SAMPLE":
             current = e
             by_sample[e["value"]] = []
+        elif e["kind"] == "PLAYER_ACT":
+            # A1-P2: an action record follows its sample (after that sample's entries)
+            if current is None or e["value"] != current["value"]:
+                errors.append(f"PLAYER_ACT value {e['value']} not after its sample")
+            acts.append(e)
         elif e["kind"] == "PLAYER_ENTRY":
             if current is None or e["value"] != current["value"]:
                 errors.append(f"PLAYER_ENTRY value {e['value']} not after its sample")
@@ -226,12 +358,28 @@ def main(path, expect_entries=False):
             errors.append("expected PLAYER_ENTRY records, none found")
     entry_states = [json.dumps(by_sample.get(r["n"], []), sort_keys=True) for r in rows]
     entry_changes = [rows[i]["n"] for i in range(len(rows)) if i == 0 or entry_states[i] != entry_states[i - 1]]
+    if acts and not expect_menu:
+        errors.append("log has PLAYER_ACT: pass the expectation 'menu'")
+    menu_verdict, act_rows = (check_acts(acts, errors, by_sample) if expect_menu else (None, []))
+    # A1-P2: the entry state after FINAL (sample 21) must equal the state before CHOOSE (sample 4): restored exactly
+    restored = None
+    if expect_menu and menu_verdict == "PLAYER_MENU_RUNTIME_PASS":
+        restored = json.dumps(by_sample.get(4), sort_keys=True) == json.dumps(by_sample.get(21), sort_keys=True)
+        if not restored:
+            menu_verdict = "OBSERVED_MISMATCH"
+    level = "PLAYER_MENU_RUNTIME" if expect_menu else "PLAYER_OBSERVATION"
     done = [e for e in events if e["kind"] == "BENCH_DONE"]
-    if "BENCH_ABORTED" in {e["kind"] for e in events}:
-        errors.append("BENCH_ABORTED present")
-    if len(done) != 1 or done[0]["value"] != SAMPLES or done[0]["f"].get("level") != "PLAYER_OBSERVATION" \
-            or not events or events[-1]["kind"] != "BENCH_DONE":
-        errors.append("BENCH_DONE must be the single last event with value 30 and level=PLAYER_OBSERVATION")
+    aborted = [e for e in events if e["kind"] == "BENCH_ABORTED"]
+    if stop_value is not None:
+        if done or len(aborted) != 1 or events[-1]["kind"] != "BENCH_ABORTED" or aborted[0]["value"] != stop_value \
+                or aborted[0]["f"].get("level") != level or aborted[0]["f"].get("stopped") != "1":
+            errors.append(f"after STOP the single last event must be BENCH_ABORTED value={stop_value} level={level} stopped=1")
+    else:
+        if aborted:
+            errors.append("BENCH_ABORTED present")
+        if len(done) != 1 or done[0]["value"] != SAMPLES or done[0]["f"].get("level") != level \
+                or not events or events[-1]["kind"] != "BENCH_DONE":
+            errors.append(f"BENCH_DONE must be the single last event with value 30 and level={level}")
     # codex #4372: a change of playerId (or of the player count / entries) with the same prefab is a state change too
     states = [tuple(r[k] for k in ("pc", "playerId", "controlled", "prefab", "players", "vonController", "vonEntries",
                                    "entityVoN", "gadgetManager", "isServer", "isClient")) for r in rows]
@@ -248,9 +396,12 @@ def main(path, expect_entries=False):
         overall = "NOT_READY"
     elif errors:
         overall = "LOG_INVALID"
+    elif expect_menu:
+        overall = menu_verdict
     else:
         overall = "PLAYER_OBSERVATION_COMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "overall": overall,
+                      "menuExpected": expect_menu, "acts": act_rows, "restoredEntriesEqual": restored,
                       "finding": finding, "stateChangesAtSample": changes,
                       "entriesExpected": expect_entries, "entryStateChangesAtSample": entry_changes if entries else [],
                       "entriesFirstSample": by_sample.get(1, []), "entriesLastSample": by_sample.get(SAMPLES, []),
@@ -262,7 +413,8 @@ def main(path, expect_entries=False):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2 and sys.argv[2] != "entries":
-        print(f"second argument must be 'entries', got {sys.argv[2]!r}")
+    if len(sys.argv) > 2 and sys.argv[2] not in ("entries", "menu"):
+        print(f"second argument must be 'entries' or 'menu', got {sys.argv[2]!r}")
         sys.exit(2)
-    sys.exit(main(sys.argv[1], len(sys.argv) > 2))
+    # 'menu' (A1-P2) implies the entries of A1-P1
+    sys.exit(main(sys.argv[1], len(sys.argv) > 2, len(sys.argv) > 2 and sys.argv[2] == "menu"))

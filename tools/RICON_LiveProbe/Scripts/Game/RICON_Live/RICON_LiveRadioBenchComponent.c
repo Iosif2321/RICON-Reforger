@@ -21,6 +21,11 @@
 //! игрока и менеджера фракций. A1-P0 (claude #4360, codex #4365): режим -riconBenchMode=player вместо радиофаз —
 //! 30 записей PLAYER_SAMPLE раз в секунду (роль процесса, игроки, локальный контроллер, управляемая сущность, её VoN
 //! и GadgetManager, SCR_VONController) и BENCH_DONE level=PLAYER_OBSERVATION; ни спавна, ни Set*, ни контроля.
+//! A1-P1 (claude #4385, codex #4384, #4388): после каждого среза — PLAYER_ENTRY на каждую entry VON-контроллера игрока
+//! (только getter-ы, связь entry ↔ трансивер ↔ рация в инвентаре). A1-P2 (claude #4399, codex #4388, #4390): режим
+//! «playermenu» — то же плюс одна последовательность пути меню на одной полностью привязанной radio-entry игрока
+//! (PLAYER_ACT: выбор, шаг AdjustEntryModif, чтения t0/t1/t5, возврат, ToggleMuteEntry туда и обратно, итог); каждая
+//! запись предварена проверкой ожидаемого состояния, иначе STOP без перезаписи; BENCH_DONE level=PLAYER_MENU_RUNTIME.
 //! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
@@ -208,6 +213,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	//! в том числе пустое, — BENCH_NOT_READY reason=MODE_PARAM до любых действий.
 	static const string MODE_RADIO = "radio";
 	static const string MODE_PLAYER = "player";
+	static const string MODE_PLAYERMENU = "playermenu"; //!< A1-P2: player + путь меню на одной radio-entry игрока
 	static const string MODE_INVALID = "INVALID";
 	static const int PLAYER_SAMPLES = 30;
 	protected int m_iSamples;
@@ -224,7 +230,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		string value;
 		if (!System.GetCLIParam("riconBenchMode", value))
 			return MODE_RADIO;
-		if (value == MODE_RADIO || value == MODE_PLAYER)
+		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU)
 			return value;
 		return MODE_INVALID;
 	}
@@ -648,8 +654,256 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		int elapsedMs = ms;
 		Note("PLAYER_SAMPLE", m_iSamples, "elapsedMs=" + elapsedMs.ToString() + "," + PlayerState());
 		RecordEntries(m_iSamples);
+		if (Mode() == MODE_PLAYERMENU)
+		{
+			PlayerMenuStep(m_iSamples);
+			// codex #4402: STOP никогда не становится успешным DONE — прогон сразу прерывается
+			if (m_bActStopped)
+			{
+				Finish(false);
+				return;
+			}
+		}
 		if (m_iSamples >= PLAYER_SAMPLES)
 			Finish(true);
+	}
+
+	//! A1-P2 (claude #4399, условия codex #4388, #4390, #4402): одна последовательность пути меню на одной radio-entry
+	//! локального игрока в собственном временном Play. Цель выбирается на срезе 5 только при полной привязке:
+	//! SCR_VONEntryRadio, НЕ активная для передачи (активную entry, передачу и DIRECT не меняем), usable, gadget, его
+	//! владелец = рация трансивера, рация не IsEditorRadio, индекс трансивера = номер − 1, рация в инвентаре персонажа;
+	//! шаг только при res > 0, raw в [min, max] и полном свободном шаге. Перед КАЖДОЙ записью — полная повторная
+	//! проверка личности (тот же контроллер и playerId, та же управляемая сущность, entry есть в текущем GetVONEntries,
+	//! тот же трансивер, рация, gadget, слот и номер, entry всё ещё не активна) и ожидаемого raw/mute; иначе
+	//! PLAYER_ACT op=STOP и сразу BENCH_ABORTED — ни одной дальнейшей записи и не успешный DONE. Срез 6 — шаг
+	//! AdjustEntryModif(±1); 6/7/11 — чтения t0/t1/t5 с фактическим временем от вызова шага; 12 — возврат ∓1 и проверка
+	//! raw = исходное; 14/15 — ToggleMuteEntry туда (проверка ¬muted0) и обратно (перед ним проверка, что держится
+	//! установленное нами ¬muted0); 20 — итоговая проверка raw0 и muted0. Снимки — защита изолированного опыта, а не
+	//! вывод о владении bool-API в production.
+	protected ref SCR_VONEntryRadio m_ActEntry;   //!< ref: цель удерживается до конца прогона
+	protected BaseTransceiver m_ActTransceiver;
+	protected PlayerController m_ActController;
+	protected IEntity m_ActControlled;
+	protected IEntity m_ActRadioOwner;
+	protected SCR_GadgetComponent m_ActGadget;
+	protected int m_iActPlayerId;
+	protected int m_iActSlot;
+	protected int m_iActTrIndex;
+	protected int m_iActTrNumber;
+	protected int m_iActIdx = -1;
+	protected int m_iActRaw0;
+	protected int m_iActTarget;
+	protected int m_iActModifier;
+	protected bool m_bActMuted0;
+	protected bool m_bActChosen;
+	protected bool m_bActStopped;
+	protected float m_fActStepAt = -1;
+
+	//! Есть ли цель в текущем списке entry VON-контроллера (тот же объект) и не стала ли она entry передачи (codex #4410).
+	protected bool ActListed()
+	{
+		if (!m_ActController)
+			return false;
+		SCR_VONController von = SCR_VONController.Cast(m_ActController.FindComponent(SCR_VONController));
+		if (!von || von.GetActiveEntry() == m_ActEntry)
+			return false;
+		array<ref SCR_VONEntry> entries = {};
+		von.GetVONEntries(entries);
+		bool found = false;
+		foreach (SCR_VONEntry entry : entries)
+		{
+			if (entry == m_ActEntry)
+				found = true;
+		}
+		entries.Clear();
+		return found;
+	}
+
+	//! Полная повторная проверка личности цели (codex #4402).
+	protected bool ActBound()
+	{
+		if (!m_ActEntry || !m_ActTransceiver || !m_ActController || !m_ActControlled || !m_ActRadioOwner || !m_ActGadget)
+			return false;
+		PlayerController controller = GetGame().GetPlayerController();
+		if (controller != m_ActController || controller.GetPlayerId() != m_iActPlayerId)
+			return false;
+		if (controller.GetControlledEntity() != m_ActControlled || !ActListed())
+			return false;
+		if (m_ActEntry.GetTransceiver() != m_ActTransceiver || m_ActEntry.GetGadget() != m_ActGadget || m_ActEntry.IsActive())
+			return false;
+		if (!m_ActEntry.IsUsable())
+			return false;
+		BaseRadioComponent radio = m_ActTransceiver.GetRadio();
+		if (!radio || radio.IsEditorRadio() || radio.GetOwner() != m_ActRadioOwner || m_ActGadget.GetOwner() != m_ActRadioOwner)
+			return false;
+		if (TransceiverIndex(radio, m_ActTransceiver) != m_iActTrIndex || m_ActEntry.GetTransceiverNumber() != m_iActTrNumber)
+			return false;
+		return InventorySlot(m_ActControlled, m_ActRadioOwner) == m_iActSlot;
+	}
+
+	//! Текущее состояние цели одной строкой (raw трансивера, локальная частота и mute entry, mute трансивера, текст).
+	protected string ActState()
+	{
+		if (!ActBound())
+			return "bound=0";
+		string text = "bound=1,raw=" + m_ActTransceiver.GetFrequency().ToString();
+		text = text + ",entryFreq=" + m_ActEntry.GetEntryFrequency().ToString() + ",muted=" + Bit(m_ActTransceiver.IsMuted());
+		text = text + ",emuted=" + Bit(m_ActEntry.GetIsMuted());
+		return text + ",dtext=" + RICON_LiveText.Esc(m_ActEntry.GetDisplayText());
+	}
+
+	protected int ActSinceStepMs()
+	{
+		if (m_fActStepAt < 0)
+			return -1;
+		float ms = (m_fElapsed - m_fActStepAt) * 1000.0;
+		int value = ms;
+		return value;
+	}
+
+	protected void ActNote(int sample, string op, string text)
+	{
+		Note("PLAYER_ACT", sample, "op=" + op + ",idx=" + m_iActIdx.ToString() + "," + text);
+	}
+
+	protected void ActStop(int sample, string reason)
+	{
+		m_bActStopped = true;
+		ActNote(sample, "STOP", "reason=" + reason + "," + ActState());
+	}
+
+	//! Проверка перед записью: полная привязка цела, raw и mute трансивера равны ожидаемым; иначе STOP.
+	protected bool ActExpect(int sample, int raw, bool muted, string reason)
+	{
+		if (!ActBound() || m_ActTransceiver.GetFrequency() != raw || m_ActTransceiver.IsMuted() != muted)
+		{
+			ActStop(sample, reason);
+			return false;
+		}
+		return true;
+	}
+
+	protected void ActChoose(int sample)
+	{
+		m_bActChosen = true;
+		PlayerController controller = GetGame().GetPlayerController();
+		SCR_VONController von;
+		if (controller)
+			von = SCR_VONController.Cast(controller.FindComponent(SCR_VONController));
+		if (!von || !controller.GetControlledEntity())
+		{
+			ActStop(sample, "NO_VON_CONTROLLER");
+			return;
+		}
+		IEntity controlled = controller.GetControlledEntity();
+		array<ref SCR_VONEntry> entries = {};
+		von.GetVONEntries(entries);
+		for (int i = 0; i < entries.Count() && !m_ActEntry; i++)
+		{
+			SCR_VONEntryRadio entry = SCR_VONEntryRadio.Cast(entries[i]);
+			if (!entry || entry.IsActive() || entry == von.GetActiveEntry() || !entry.IsUsable() || !entry.GetGadget())
+				continue;
+			BaseTransceiver transceiver = entry.GetTransceiver();
+			if (!transceiver || !transceiver.GetRadio())
+				continue;
+			BaseRadioComponent radio = transceiver.GetRadio();
+			if (radio.IsEditorRadio() || entry.GetGadget().GetOwner() != radio.GetOwner())
+				continue;
+			int trIndex = TransceiverIndex(radio, transceiver);
+			int slot = InventorySlot(controlled, radio.GetOwner());
+			if (trIndex < 0 || trIndex != entry.GetTransceiverNumber() - 1 || slot < 0)
+				continue;
+			m_ActEntry = entry;
+			m_ActTransceiver = transceiver;
+			m_ActController = controller;
+			m_ActControlled = controlled;
+			m_ActRadioOwner = radio.GetOwner();
+			m_ActGadget = entry.GetGadget();
+			m_iActPlayerId = controller.GetPlayerId();
+			m_iActSlot = slot;
+			m_iActTrIndex = trIndex;
+			m_iActTrNumber = entry.GetTransceiverNumber();
+			m_iActIdx = i;
+		}
+		entries.Clear();
+		if (!m_ActEntry)
+		{
+			ActStop(sample, "NO_CANDIDATE");
+			return;
+		}
+		m_iActRaw0 = m_ActTransceiver.GetFrequency();
+		m_bActMuted0 = m_ActTransceiver.IsMuted();
+		int res = m_ActTransceiver.GetFrequencyResolution();
+		int minRaw = m_ActTransceiver.GetMinFrequency();
+		int maxRaw = m_ActTransceiver.GetMaxFrequency();
+		string range = "trNumber=" + m_iActTrNumber.ToString() + ",min=" + minRaw.ToString();
+		range = range + ",max=" + maxRaw.ToString() + ",res=" + res.ToString();
+		if (res > 0 && m_iActRaw0 >= minRaw && m_iActRaw0 <= maxRaw && maxRaw - m_iActRaw0 >= res)
+			m_iActModifier = 1;
+		else if (res > 0 && m_iActRaw0 >= minRaw && m_iActRaw0 <= maxRaw && m_iActRaw0 - minRaw >= res)
+			m_iActModifier = -1;
+		else
+		{
+			ActStop(sample, "NO_ROOM_FOR_STEP");
+			return;
+		}
+		m_iActTarget = m_iActRaw0 + m_iActModifier * res;
+		range = range + ",raw0=" + m_iActRaw0.ToString() + ",muted0=" + Bit(m_bActMuted0) + ",target=" + m_iActTarget.ToString();
+		ActNote(sample, "CHOOSE", range + ",modifier=" + m_iActModifier.ToString() + ",slot=" + m_iActSlot.ToString() + "," + ActState());
+	}
+
+	protected void PlayerMenuStep(int sample)
+	{
+		if (m_bActStopped)
+			return;
+		if (sample == 5)
+			ActChoose(sample);
+		else if (!m_bActChosen)
+			return;
+		else if (sample == 6)
+		{
+			if (!ActExpect(sample, m_iActRaw0, m_bActMuted0, "BEFORE_STEP"))
+				return;
+			m_fActStepAt = m_fElapsed;
+			m_ActEntry.AdjustEntryModif(m_iActModifier);
+			ActNote(sample, "STEP", "phase=t0,sinceStepMs=" + ActSinceStepMs().ToString() + ",target=" + m_iActTarget.ToString() + "," + ActState());
+		}
+		else if (sample == 7 || sample == 11)
+		{
+			string phase = "t1";
+			if (sample == 11)
+				phase = "t5";
+			ActNote(sample, "READ", "phase=" + phase + ",sinceStepMs=" + ActSinceStepMs().ToString() + ",target=" + m_iActTarget.ToString() + "," + ActState());
+		}
+		else if (sample == 12)
+		{
+			if (!ActExpect(sample, m_iActTarget, m_bActMuted0, "BEFORE_RESTORE"))
+				return;
+			m_ActEntry.AdjustEntryModif(-m_iActModifier);
+			ActNote(sample, "RESTORE", "raw0=" + m_iActRaw0.ToString() + "," + ActState());
+			ActExpect(sample, m_iActRaw0, m_bActMuted0, "RESTORE_MISMATCH");
+		}
+		else if (sample == 14)
+		{
+			if (!ActExpect(sample, m_iActRaw0, m_bActMuted0, "BEFORE_MUTE"))
+				return;
+			bool returned = m_ActEntry.ToggleMuteEntry();
+			ActNote(sample, "MUTE", "ret=" + Bit(returned) + ",muted0=" + Bit(m_bActMuted0) + "," + ActState());
+			ActExpect(sample, m_iActRaw0, !m_bActMuted0, "MUTE_NOT_TOGGLED");
+		}
+		else if (sample == 15)
+		{
+			if (!ActExpect(sample, m_iActRaw0, !m_bActMuted0, "BEFORE_UNMUTE"))
+				return;
+			bool returned2 = m_ActEntry.ToggleMuteEntry();
+			ActNote(sample, "UNMUTE", "ret=" + Bit(returned2) + ",muted0=" + Bit(m_bActMuted0) + "," + ActState());
+			ActExpect(sample, m_iActRaw0, m_bActMuted0, "UNMUTE_MISMATCH");
+		}
+		else if (sample == 20)
+		{
+			if (ActExpect(sample, m_iActRaw0, m_bActMuted0, "FINAL_MISMATCH"))
+				ActNote(sample, "FINAL", "raw0=" + m_iActRaw0.ToString() + ",muted0=" + Bit(m_bActMuted0) + "," + ActState());
+		}
 	}
 
 	//! A1-P1 (claude #4385, codex #4384): сразу после среза — по одной записи PLAYER_ENTRY на каждую entry
@@ -751,6 +1005,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			prefab = radioOwner.GetPrefabData().GetPrefabName();
 		text = text + ",radioPrefab=" + RICON_LiveText.Esc(prefab);
 		// codex #4388: точная связь entry ↔ трансивер ↔ рация в инвентаре управляемого персонажа
+		text = text + ",editorRadio=" + Bit(radio && radio.IsEditorRadio());
 		text = text + ",trIndex=" + TransceiverIndex(radio, transceiver).ToString();
 		text = text + ",inventorySlot=" + InventorySlot(controlled, radioOwner).ToString();
 		if (entry.GetGadget())
@@ -766,6 +1021,13 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		StopHeartbeat("FINISH");
 		// A1-E: свои entry держат трансивер — освобождаются до удаления раций.
 		m_aEntries.Clear();
+		// A1-P2 (codex #4410): цель и сохранённые engine-ссылки после последней записи больше не используются
+		m_ActEntry = null;
+		m_ActTransceiver = null;
+		m_ActController = null;
+		m_ActControlled = null;
+		m_ActRadioOwner = null;
+		m_ActGadget = null;
 		for (int i = 0; i < m_aRadios.Count(); i++)
 		{
 			IEntity radio = m_aRadios[i];
@@ -779,6 +1041,13 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				Note("BENCH_DONE", m_iSamples, "level=PLAYER_OBSERVATION,not=SPAWN|SET|CONTROL|RADIO|AUDIO");
 			else
 				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_OBSERVATION,samples=" + m_iSamples.ToString());
+		}
+		else if (Mode() == MODE_PLAYERMENU)
+		{
+			if (complete)
+				Note("BENCH_DONE", m_iSamples, "level=PLAYER_MENU_RUNTIME,not=SCREEN|SPAWN|CONTROL|AUDIO|REPLICATION");
+			else
+				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_MENU_RUNTIME,stopped=" + Bit(m_bActStopped) + ",samples=" + m_iSamples.ToString());
 		}
 		else if (complete && Setter() == SETTER_ENTRY)
 			Note("BENCH_DONE", m_iPhase, "level=MENU_ENTRY_RUNTIME,not=SCREEN|PLAYER_VON|KNOWN_CHANNEL|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
