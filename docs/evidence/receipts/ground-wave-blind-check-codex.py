@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[3]
 SOURCE_SHA = "be6ed041d4f095c8845e8cce800e1a4ffb568401dec6f5d93c14b7a8ce58fd95"
 TEST_DATA_SHA = "53f5331b2337a2b60376a3d2538fb14948a82611281a5bbed90e499ce0fa2be6"
 REQ_SHA = "f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f"
+CORPUS_LF_SHA = "c941eedeff0afe9351fc91a2a0e2a4095c23c48d66224243ca9f124d87bf57be"
 INPUT_KEYS = set("frequencyMHz distanceKm txHeightM rxHeightM polarization surfaceRefractivityN ground".split())
 GROUND_KEYS = {"epsilonReal", "conductivitySm", "provenance"}
 METHODS = ("FLAT_EARTH_CURVE", "RESIDUE_SERIES")
@@ -134,6 +135,7 @@ def main():
          and data["version"] == 1 and type(data["revision"]) is int and data["revision"] >= 1, "Неверная версия корпуса")
     need(sha(req_path.read_bytes().replace(b"\r\n", b"\n")) == REQ_SHA == data["requirementsLfSha256"], "REQ изменился")
     cases = data["cases"]
+    need(len(cases) == 265, "Неполный замороженный корпус: ожидается 265 случаев")
     need([c["id"] for c in cases] == [f"GW{i:03d}" for i in range(1, len(cases)+1)], "Порядок/полнота ID")
     need({c["expect"]["code"] for c in cases} == {"OK", "INVALID_INPUT", "OUT_OF_MODEL_DOMAIN", "NUMERIC_FAILURE"}, "Не покрыты все коды GW03")
     need(len(published) == len(data["ntiaExamples"]) == 95, "Число примеров NTIA")
@@ -203,6 +205,7 @@ def main():
             continue
         raise AssertionError("Проверка пропустила порчу поля: "+key)
     need(corpus_path.read_bytes() == corpus_raw, "Корпус изменился во время проверки")
+    need(sha(corpus_raw.replace(b"\r\n", b"\n")) == CORPUS_LF_SHA, "Изменён замороженный корпус")
     need(sha(req_path.read_bytes().replace(b"\r\n", b"\n")) == REQ_SHA, "REQ изменился во время проверки")
     report = {"status":"GW_BLIND_REFERENCE_PASS", "scope":"Контракт GW и паритет отдельной сборке NTIA; не физическая/игровая приёмка",
               "sourceZipSha256":SOURCE_SHA, "sourceCommit":commit, "sourceFilesChecked":checked_sources,

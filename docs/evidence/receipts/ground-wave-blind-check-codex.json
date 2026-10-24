@@ -15,7 +15,7 @@
     "/std:c++17"
   ],
   "driverSha256": "3e2873d53249adc410b3e7b977f1bec46331769a07088919fab976d5de92b4a2",
-  "checkerSha256": "8d0656e08eb9bd33d6dff89cec7e8979bd78ebddc34bf292b99a6af77e6edd4d",
+  "checkerSha256": "a4249f820ca6aa6adec20f77d7a0c7a5bc6d92b5abc690357db47f174a9b8d46",
   "cases": 265,
   "codes": {
     "OK": 224,
