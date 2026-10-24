@@ -1,0 +1,130 @@
+{
+  "status": "INDEPENDENT_V2_OBSERVATION_CONFIRMED",
+  "functionalVerdict": "NATIVE_ROUNDTRIP_PASS",
+  "scope": "Серверный Play, только native getter/setter; единица частоты, звук, RX/TX, репликация и A→B не проверены",
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-v2-claude-20261024-145309\\console.log",
+  "logSha256": "7a9a109265c53d2ead595212e533803dacdf0ce0c8aaaf1dc48add860fd2ef05",
+  "sourceCommit": "c8298bd613bbb8a5c02c5cf5fac14cd485c12b96",
+  "sources": {
+    "tools/RICON_LiveProbe/addon.gproj": "8b47f08ce19736da62a06f25b5af521c6e71828aa087fa63197ca2617acf0e90",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c": "2ff202a89bac221e21d48a3faed7be6e27e9c3bce0feee8c007784b3045544db",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c": "5594c10cfddb4857d5e3b30f9d4087ae3772ca94253d98adcfcd173a7bcf6f9d",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "6e4c52d5aef91dc2dd8a5283bd5b5f5389037e4a50abba64ab481e655e035d3b",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "876f8a395574e8db6e868b61d47e99b54ceca8100cff810c1a32b56dd748971e",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "9385438b1af44e620cbe2a7d4fbfce1c958fec94ef7eb579bacf15885f7b1382",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "7daa97b011629bf00caec2ae2ad25e183408730c35d5b8b9309b93a525e76816",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "861dab2acc6aeee610875ccb5fca1fe991fdfcee76d9f9962f38f37aa9996d58",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "65a13e42275b66e5a48997e9497e5b8bde921bf96680f0fb322dde8ff0bd4a9e",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "f947fcb6a864a75880317061490121ef5e62b49c71a9959d60753cf9bda0f880",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c": "27c5d87cc5682c44b7aa5565a8cbd181935b04950622d92de4cd84f21092fd3a",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "6025dabebb96af869451fa8641c120afc6c208d39a75808bf46d0f3d78d9693f",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c": "501937121ece444107212dd82838c8c390f140adf49cbcb105b0f20619964200"
+  },
+  "engineCrc": {
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "d647144c",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "db3a17a4",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "05fecf75",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "77c77ee8",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "f829c068",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c": "8c802e29",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c": "2f47dfd3"
+  },
+  "streamEvents": 47,
+  "snapshotEvents": 47,
+  "allEventFieldsChecked": true,
+  "baselineCommit": "a863915",
+  "baselineLogSha256": "557d268b1996c5d55998a1687b1827947ecb20011c688ce30be5c54021e9d169",
+  "comparison": "Исторический контраст с V1; разные процессы, причина различий методов не установлена",
+  "setter": "BaseTransceiver.SetFrequency",
+  "managerAtStart": 1,
+  "managerBeforeSpawn": 1,
+  "actualDelayMs": {
+    "t0": 0,
+    "t1": 1000,
+    "t5": 5006
+  },
+  "radios": [
+    {
+      "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "initialTr0": 32000,
+      "targetTr0": 32200,
+      "t0Tr0": 32200,
+      "t1Tr0": 32200,
+      "t5Tr0": 32200,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ],
+      "tr1Unchanged": true
+    },
+    {
+      "prefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+      "initialTr0": 48000,
+      "targetTr0": 48200,
+      "t0Tr0": 48200,
+      "t1Tr0": 48200,
+      "t5Tr0": 48200,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ],
+      "tr1Unchanged": true
+    },
+    {
+      "prefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+      "initialTr0": 48000,
+      "targetTr0": 48200,
+      "t0Tr0": 48200,
+      "t1Tr0": 48200,
+      "t5Tr0": 48200,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ],
+      "tr1Unchanged": true
+    },
+    {
+      "prefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+      "initialTr0": 42000,
+      "targetTr0": 42200,
+      "t0Tr0": 42200,
+      "t1Tr0": 42200,
+      "t5Tr0": 42200,
+      "muteBeforeAfterRestored": [
+        0,
+        1,
+        0
+      ],
+      "muteReturns": [
+        0,
+        0
+      ],
+      "tr1Unchanged": true
+    }
+  ],
+  "conclusion": "Прямой setter изменил tr0 всех четырёх раций на заданный шаг; чтения t0/t1/t5 совпали с целью, tr1 не изменились, mute переключился и восстановился",
+  "positiveNoiseControl": true,
+  "negativeControls": 12,
+  "uiEvidence": "Нажатия UI этот проверяющий не наблюдает; квитанция оператора хранится отдельно",
+  "checkerSha256": "8ffd1e3b26448cd2ba4dfc0387f56a7d895f9c47bafd13ef893b1ba1b568ed49"
+}
