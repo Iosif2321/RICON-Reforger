@@ -97,13 +97,14 @@ res=<int> powered=<bool> muted=<bool>`. Для Q-M — отдельная ком
 уже выданное разрешение сохраняется.
 
 **Фаза A0 — стенд изолированных раций (вариант (а′), claude #4089, условия codex #4091; source review до запуска).**
-Плагин `RICON_LiveBenchLauncherPlugin` (World Editor) открывает маленький ванильный мир
-`{761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent`, в памяти создаёт одну
-GenericEntity с `RICON_LiveRadioBenchComponent` (Save не вызывается — файлы мира не меняются) и входит в Play.
+Плагин `RICON_LiveBenchLauncherPlugin` (World Editor) открывает ванильный тестовый мир с игровым режимом
+`{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent` (мир из параметра `-riconBenchWorld`).
+В памяти он создаёт одну GenericEntity с `RICON_LiveRadioBenchComponent` в проверенной точке внутри границ мира и
+входит в Play. Save не вызывается, файлы мира не меняются. SlotFlatSmall — только история неудачных попыток (ниже).
 Стенд спавнит собственные экземпляры ANPRC68, ANPRC77, R107M, RF10 по точным ResourceName (получены
 `RICON_LiveResourceProbePlugin`, `receipts/live-radio-wb-claude-20261024.txt`), читает сырые частоту/границы/шаг,
 меняет частоту трансивера 0 только своей рации на один шаг (`BaseRadioComponent.SetTransceiverFrequency`) с чтением
-t+0/+1/+5 с, проверяет `SetMuteState(true)` и возврат к исходному состоянию только на ней, удаляет свои рации. Игроков,
+t+0/+1/+5 с, переключает `SetMuteState` на противоположное состояние и возвращает исходное только на ней, удаляет свои рации. Игроков,
 меню VON и пользовательских раций нет — это изолированный экземпляр под исключительным управлением (§2 Q-M).
 Уровень результата — NATIVE_ROUNDTRIP: закрывает поведение getter/setter на этой сборке, но не UI_MHz, направление
 RX/TX, слышимость, репликацию и per-pair. Процесс завершается внешним таймаутом; журнал потоковый.
