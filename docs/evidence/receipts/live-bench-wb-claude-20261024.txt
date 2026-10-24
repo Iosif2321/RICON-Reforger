@@ -270,3 +270,15 @@ log lines: 7194; last line time 08:43:58.640
 [RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
 [RICON_LIVEB] heartbeat=START
 log lines: 7194; last line time 08:49:57.325
+
+--- ricon-worldmp-claude-20261024-085503 (read-only world listing, ACK #4197; RICON_LiveWorldListPlugin -riconListDetail=1)
+4b90eb1a841c535fa798e1bf5f5907211c391460699314373e6185d71f5197f4
+# MpTest_Empty {049B18BF1CE2A44C}: 2 entities (GenericWorldEntity, GenericTerrainEntity MPTestTerrain), 1 subscene, gameModes=0.
+
+--- ricon-wbreader-arsenal-loadcontainer-1094-20261024-085608 (read-only window, ACK #4197; vanilla lines not stored)
+92339e6057bf4e5d5a9c37ade0f74372681866c6d6b42896ffcd487f3f736b58
+# $ArmaReforger:scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c lines 1094-1108, paraphrase: 1099 begins a getter
+# that returns the military supply allocation config; 1101 calls BaseContainerTools.LoadContainer on the component member
+# m_sMilitarySupplyAllocationConfigHolder (a resource reference); 1102-1103 return null if the resource is missing or invalid;
+# 1105 creates an SCR_MilitarySupplyAllocationConfig instance from that container. The operation reads a config resource;
+# no write is visible in the window. The concrete resource in the member is not shown by this window.
