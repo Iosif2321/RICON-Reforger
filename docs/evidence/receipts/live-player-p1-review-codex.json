@@ -1,0 +1,48 @@
+{
+  "status": "INDEPENDENT_PLAYER_RADIO_ENTRY_MAPPING_CONFIRMED",
+  "scope": "Чтение реальных entry игрока; без изменения частоты, mute, передачи и экранного меню",
+  "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-a1p1-claude-20261024-201240\\console.log",
+  "logSha256": "f5b1428bd7ccac75591d5c27732965c692c01d4ae1a5ae4809f624772085f28f",
+  "streamEvents": 92,
+  "snapshotEvents": 92,
+  "samples": 30,
+  "entriesChecked": 60,
+  "firstSampleMs": 1007,
+  "lastSampleMs": 30218,
+  "minIntervalMs": 1001,
+  "maxIntervalMs": 1031,
+  "sameStateInAllSamples": true,
+  "observations": [
+    {
+      "idx": 0,
+      "type": "SCR_VONEntryRadio",
+      "method": 1,
+      "transceiverIndex": 0,
+      "entryNumber": 1,
+      "raw": 32000,
+      "entryFreq": 32000,
+      "text": "32.0 #AR-VON_FrequencyUnits_MHz",
+      "radioPrefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "inventorySlot": 0,
+      "gadgetOwnerMatch": true,
+      "active": true
+    },
+    {
+      "idx": 1,
+      "type": "SCR_VONEntryRadio",
+      "method": 1,
+      "transceiverIndex": 1,
+      "entryNumber": 2,
+      "raw": 48000,
+      "entryFreq": 48000,
+      "text": "48.0 #AR-VON_FrequencyUnits_MHz",
+      "radioPrefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "inventorySlot": 0,
+      "gadgetOwnerMatch": true,
+      "active": false
+    }
+  ],
+  "directSpeechInEnumeratedList": false,
+  "limits": "Отсутствие DIRECT в этом перечислении не означает отсутствия прямой речи в игре; виджет и звук не проверены",
+  "checkerSha256": "4fa44b4a98836353f9791c4e462a53cfc458eec163d09343da8b3f79549e4777"
+}
