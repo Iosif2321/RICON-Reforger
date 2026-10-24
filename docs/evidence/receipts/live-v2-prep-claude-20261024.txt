@@ -1,0 +1,55 @@
+# claude, 2026-10-24: preparation of V2 (direct BaseTransceiver.SetFrequency, codex #4229/#4262; source review codex #4269).
+# Not a Play run: no world, no dialog, no "Yes". Compile probe = one ScriptEditor -validate run (ACK #4269, START #4271).
+# Sources: RICON_LiveRadioBenchComponent.c sha256 876f8a395574e8db6e868b61d47e99b54ceca8100cff810c1a32b56dd748971e
+# (engine CRC db3a17a4); the other LiveProbe sources unchanged since 81147b1. Runner wb_bench.ps1 (scratchpad) sha256
+# 8F13297B88371D427D70959F3F208AA942FCDB8BB256D4AD21C98824723F9824: only -BenchSetter added; self-test test_yesonce.ps1
+# 1778855C... 14/14 PASS, PARSE_OK.
+--- compile probe ricon-v2-validate-claude-20261024-144634
+ARGS -gproj "<repo>\tools\RICON_LiveProbe\addon.gproj" -addonsDir "<Steam>\Arma Reforger\addons,<Steam>\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=ScriptEditor -validate -wbSilent -exitAfterInit -noThrow -logLevel verbose -log-scr-checksum -logsDir ricon-v2-validate-claude-20261024-144634
+exit=0
+LOGSHA 77531767F6C52C503FC7A69633BBF36FDAE242A8DCB4F68022EB64E92C3FC92E
+validationOk=True ("Script validation successful")
+scriptE=0
+RICON (W) lines=0
+OWN_PID_GONE
+--- parser controls (live-bench-log-check-v2-controls-claude.py on the V1 and bench9 logs)
+PASS v1_as_is: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS v1_expect_component: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter=None setterGiven=None', 'BENCH_START setter=None setterGiven=None != given component']
+PASS transceiver_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS transceiver_reached_all: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
+PASS transceiver_reached_three: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS component_given_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS default_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS bench9_dash_transceiver_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS v1_dash_manager: rc=1 overall=OBSERVED_MISMATCH errors=['log expects radioManager=1: pass the expectation explicitly']
+PASS given_noarg: rc=1 overall=OBSERVED_MISMATCH errors=['log was run with setter=transceiver: pass the expectation explicitly']
+PASS expect_mismatch: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter=transceiver setterGiven=1 != given component']
+PASS default_expect_given: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter=component setterGiven=0 != given component']
+PASS step_mismatch: rc=1 overall=OBSERVED_MISMATCH errors=['device 2: step setter component != BENCH_START setter transceiver']
+PASS step_missing: rc=1 overall=OBSERVED_MISMATCH errors=['device 3: step setter None != BENCH_START setter transceiver']
+PASS steps_only: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_SET_FREQUENCY names a setter but BENCH_START does not']
+PASS default_not_component: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter without the parameter must be component']
+PASS given_bad: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter=transceiver setterGiven=2', 'BENCH_START setter=transceiver setterGiven=2 != given transceiver']
+PASS start_setter_bad: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START setter=direct setterGiven=1', 'BENCH_START setter=direct setterGiven=1 != given transceiver']
+PASS arg_bad: rc=1 overall=OBSERVED_MISMATCH errors=["expectSetter must be component or transceiver, got 'direct'", 'log was run with setter=transceiver: pass the expectation explicitly']
+PASS not_ready: rc=1 overall=NOT_READY errors=['BENCH_SPAWN 0 != 4', 'BENCH_NOT_READY: reason=SETTER_PARAM,setter=INVALID,setterGiven=1']
+V2_PARSER_CONTROLS 20/20
+--- regression (live-bench-log-check-a0b-controls-claude.py on the bench9 log)
+PASS bench9_noarg: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS a0b2_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS a0b1_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS observe_ok: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS value1_text0: rc=1 overall=OBSERVED_MISMATCH errors=['manager record inconsistent: value=1 text=where=preSpawn,radioManager=0,expected=1']
+PASS text_expected0: rc=1 overall=OBSERVED_MISMATCH errors=["manager records ['where=preSpawn,radioManager=1,expected=0'] != one preSpawn with radioManager=1"]
+PASS start_expected0: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START expectedManager=0 != 1']
+PASS arg2: rc=1 overall=OBSERVED_MISMATCH errors=["expectManager must be 0 or 1, got '2'", 'log expects radioManager=1: pass the expectation explicitly']
+PASS before_start: rc=1 overall=OBSERVED_MISMATCH errors=['manager record before BENCH_START']
+PASS after_spawn: rc=1 overall=OBSERVED_MISMATCH errors=['manager record after the first BENCH_SPAWN']
+PASS no_record: rc=1 overall=OBSERVED_MISMATCH errors=['manager records [] != one preSpawn with radioManager=1']
+PASS start_expects_noarg: rc=1 overall=OBSERVED_MISMATCH errors=['log expects radioManager=1: pass the expectation explicitly']
+PASS start_rm_bad: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START radioManager=x']
+PASS start_rm_missing: rc=1 overall=OBSERVED_MISMATCH errors=['BENCH_START radioManager=None']
+PASS where_early: rc=1 overall=OBSERVED_MISMATCH errors=['manager record inconsistent: value=1 text=where=early,radioManager=1,expected=1']
+PASS value2: rc=1 overall=OBSERVED_MISMATCH errors=['manager record inconsistent: value=2 text=where=preSpawn,radioManager=2,expected=1', "manager records ['where=preSpawn,radioManager=2,expected=1'] != one preSpawn with radioManager=1"]
+PASS not_ready: rc=1 overall=NOT_READY errors=['BENCH_SPAWN 0 != 4', 'BENCH_NOT_READY: reason=RADIO_MANAGER_MISMATCH,where=preSpawn,radioManager=0,expected=1']
+A0B_PARSER_CONTROLS 17/17

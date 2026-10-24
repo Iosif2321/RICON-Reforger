@@ -11,8 +11,11 @@ ResourceName map below: passport bands (MHz) and the old reportedGame raw ranges
 diagnostic numbers only — game ranges differ from the prototypes (codex #4115), so no kHz/MHz verdict is drawn here;
 Q-F against the UI stays open. Level NATIVE_ROUNDTRIP + PRIMARY_MANUAL, not an observation of the UI or of audio.
 A0b: the RadioManagerEntity records (BENCH_START radioManager, preSpawn BENCH_MANAGER, BENCH_NOT_READY) are checked
-against an optional expectation 0|1.
-Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json> [expectManager 0|1]"""
+against an optional expectation 0|1 ("-" = none).
+V2: the frequency-step method (BENCH_START setter/setterGiven, setter of every BENCH_SET_FREQUENCY) is checked against an
+optional expectation component|transceiver; a log before V2 has no setter field and used the component wrapper.
+Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json> [expectManager 0|1|-]
+       [expectSetter component|transceiver]"""
 import hashlib
 import json
 import re
@@ -100,7 +103,7 @@ def main(argv):
     # argument 0|1) exactly one preSpawn BENCH_MANAGER must precede the first BENCH_SPAWN and match it; BENCH_NOT_READY
     # means the bench was not ready (no radio result). Logs before A0b have no manager record: noted, not an error.
     expect = None
-    if len(argv) > 2:
+    if len(argv) > 2 and argv[2] != "-":
         if argv[2] in ("0", "1"):
             expect = int(argv[2])
         else:
@@ -136,7 +139,38 @@ def main(argv):
         errors.append(f"log expects radioManager={start_f['expectedManager']}: pass the expectation explicitly")
     elif not managers:
         notes.append("no BENCH_MANAGER record (log before A0b)")
-    done = [e for e in events if e["kind"] == "BENCH_DONE"]
+    # V2 (codex #4262): BENCH_START setter/setterGiven and the setter of every BENCH_SET_FREQUENCY must agree; without
+    # the parameter only the old wrapper is allowed. With an expectation (fourth argument) the parameter must have been
+    # given and match; without one a log with setterGiven=1 is an error. Logs before V2 have no setter field.
+    expect_setter = None
+    if len(argv) > 3:
+        if argv[3] in ("component", "transceiver"):
+            expect_setter = argv[3]
+        else:
+            errors.append(f"expectSetter must be component or transceiver, got {argv[3]!r}")
+    steps = [e for e in events if e["kind"] == "BENCH_SET_FREQUENCY"]
+    setter = {"expected": expect_setter, "start": start_f.get("setter"), "startGiven": start_f.get("setterGiven"),
+              "steps": [s["f"].get("setter") for s in steps]}
+    if "setter" in start_f or "setterGiven" in start_f or expect_setter is not None:
+        if start_f.get("setter") not in ("component", "transceiver") or start_f.get("setterGiven") not in ("0", "1"):
+            errors.append(f"BENCH_START setter={start_f.get('setter')} setterGiven={start_f.get('setterGiven')}")
+        elif start_f.get("setterGiven") == "0" and start_f.get("setter") != "component":
+            errors.append("BENCH_START setter without the parameter must be component")
+        for s in steps:
+            if s["f"].get("setter") != start_f.get("setter"):
+                errors.append(f"device {s['f'].get('bench')}: step setter {s['f'].get('setter')} != "
+                              f"BENCH_START setter {start_f.get('setter')}")
+    elif any("setter" in s["f"] for s in steps):
+        errors.append("BENCH_SET_FREQUENCY names a setter but BENCH_START does not")
+    else:
+        notes.append("no setter record (log before V2: BaseRadioComponent.SetTransceiverFrequency)")
+    if expect_setter is not None:
+        if start_f.get("setterGiven") != "1" or start_f.get("setter") != expect_setter:
+            errors.append(f"BENCH_START setter={start_f.get('setter')} setterGiven={start_f.get('setterGiven')} "
+                          f"!= given {expect_setter}")
+    elif start_f.get("setterGiven") == "1":
+        errors.append(f"log was run with setter={start_f.get('setter')}: pass the expectation explicitly")
+    done =[e for e in events if e["kind"] == "BENCH_DONE"]
     if "BENCH_ABORTED" in kinds:
         errors.append("BENCH_ABORTED present")
     if len(done) != 1 or done[0]["value"] != 6 or events[-1]["kind"] != "BENCH_DONE":
@@ -190,6 +224,7 @@ def main(argv):
             row["step"] = step[0]["kind"]
             row["stepText"] = step[0]["text"]
             row["target"] = step[0]["value"] if step[0]["kind"] == "BENCH_SET_FREQUENCY" else None
+            row["setter"] = step[0]["f"].get("setter")
         for p in ("t0", "t1", "t5"):
             if p in reads:
                 row[f"raw_{p}"] = reads[p]["value"]
@@ -221,7 +256,7 @@ def main(argv):
     else:
         overall = "INCOMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "notes": notes,
-                      "overall": overall, "radioManager": manager, "radios": summary}, ensure_ascii=False, indent=1))
+                      "overall": overall, "radioManager": manager, "setter": setter, "radios": summary}, ensure_ascii=False, indent=1))
     print("LIVE_BENCH_LOG_CHECK_" + ("PASS" if not errors else "FAIL"))
     return 1 if errors else 0
 

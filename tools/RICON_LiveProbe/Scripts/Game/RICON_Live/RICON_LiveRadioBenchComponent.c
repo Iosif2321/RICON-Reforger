@@ -10,6 +10,9 @@
 //! Ранний выход (удаление компонента до конца) пишет BENCH_ABORTED с достигнутой фазой, не BENCH_DONE.
 //! A0b: наличие RadioManagerEntity пишется в BENCH_START и перед спавном (BENCH_MANAGER); расхождение с явным
 //! -riconBenchRadioManager=0|1 — BENCH_NOT_READY и BENCH_ABORTED с фазой 0 до спавна раций; без параметра — только запись.
+//! V2 (codex #4229, #4262): метод шага частоты по -riconBenchSetter — без параметра прежний
+//! BaseRadioComponent.SetTransceiverFrequency, «transceiver» — прямой BaseTransceiver.SetFrequency; другое значение, в том
+//! числе пустое, — BENCH_NOT_READY до спавна. Метод пишется в BENCH_START и в каждый BENCH_SET_FREQUENCY; фазы те же.
 //! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
@@ -125,6 +128,37 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		return true;
 	}
 
+	static const string SETTER_COMPONENT = "component";     //!< BaseRadioComponent.SetTransceiverFrequency (прежний)
+	static const string SETTER_TRANSCEIVER = "transceiver"; //!< BaseTransceiver.SetFrequency
+	static const string SETTER_INVALID = "INVALID";         //!< значение вне списка; сырое значение не печатается
+
+	//! Задан ли -riconBenchSetter явно (в том числе пустым).
+	protected static bool SetterGiven()
+	{
+		string value;
+		return System.GetCLIParam("riconBenchSetter", value);
+	}
+
+	//! Метод шага частоты: без параметра — прежний, иначе только одно из двух точных имён.
+	protected static string Setter()
+	{
+		string value;
+		if (!System.GetCLIParam("riconBenchSetter", value))
+			return SETTER_COMPONENT;
+		if (value == SETTER_COMPONENT || value == SETTER_TRANSCEIVER)
+			return value;
+		return SETTER_INVALID;
+	}
+
+	//! Перед спавном, после ManagerReady: неизвестный метод — неготовность, а не результат по рациям.
+	protected bool SetterReady()
+	{
+		if (Setter() != SETTER_INVALID)
+			return true;
+		Note("BENCH_NOT_READY", -1, "reason=SETTER_PARAM,setter=" + SETTER_INVALID + ",setterGiven=" + Bit(SetterGiven()));
+		return false;
+	}
+
 	//! Положение сущности относительно границ её мира: печатается в OnPostInit и в отказе TryStart.
 	protected static string Placement(IEntity owner)
 	{
@@ -220,6 +254,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		text = text + ",isClient=" + Bit(Replication.IsClient());
 		text = text + ",from=" + from + ",activeBefore=" + Bit(activeBefore);
 		text = text + ",radioManager=" + Bit(HasRadioManager(owner)) + ",expectedManager=" + ExpectedManager().ToString();
+		text = text + ",setter=" + Setter() + ",setterGiven=" + Bit(SetterGiven());
 		Note("BENCH_START", -1, text);
 		StartHeartbeat();
 	}
@@ -379,8 +414,13 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			return;
 		}
 		m_aTargets[device] = target;
-		radio.SetTransceiverFrequency(transceiver, target);
-		Record("BENCH_SET_FREQUENCY", device, 0, target, range);
+		// SetterReady до спавна исключает INVALID: здесь только один из двух методов (V2, codex #4262)
+		string setter = Setter();
+		if (setter == SETTER_TRANSCEIVER)
+			transceiver.SetFrequency(target);
+		else
+			radio.SetTransceiverFrequency(transceiver, target);
+		Record("BENCH_SET_FREQUENCY", device, 0, target, range + ",setter=" + setter);
 	}
 
 	//! Q-M: только своя рация; переключение на противоположное состояние, чтение, затем возврат к исходному
@@ -440,7 +480,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		m_fElapsed += timeSlice;
 		if (m_iPhase == PHASE_IDLE && m_fElapsed >= 1)
 		{
-			if (!ManagerReady(owner))
+			if (!ManagerReady(owner) || !SetterReady())
 			{
 				Finish(false);
 				return;

@@ -52,6 +52,13 @@
   Стенд пишет наличие менеджера (`ChimeraWorld.GetRadioManager`) в `BENCH_START` и перед спавном (`BENCH_MANAGER`).
   Если оно расходится с явным значением, стенд пишет `BENCH_NOT_READY` и останавливается до спавна раций. Без
   параметра наличие менеджера только записывается.
+  Необязательный параметр V2 (codex #4229, #4262) — метод шага частоты трансивера 0:
+  - без параметра — прежний `BaseRadioComponent.SetTransceiverFrequency` (bench9, V1);
+  - `-riconBenchSetter=component` — тот же метод, но выбранный явно;
+  - `-riconBenchSetter=transceiver` — прямой `BaseTransceiver.SetFrequency`.
+
+  Другое значение, в том числе пустое, даёт `BENCH_NOT_READY reason=SETTER_PARAM` до спавна. Метод пишется в
+  `BENCH_START` (`setter`, `setterGiven`) и в каждый `BENCH_SET_FREQUENCY` (`setter`). Остальные фазы не меняются.
 - `Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c` — потоковый режим: 1000 записей при ёмкости 8, 7 проверок;
   сами строки потока проверяет внешний разбор всего тегированного транскрипта
   `docs/evidence/receipts/live-stream-log-check-claude.py` (плагин не видит собственный вывод).
