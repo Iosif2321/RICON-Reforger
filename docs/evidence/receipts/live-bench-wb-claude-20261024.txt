@@ -1667,9 +1667,11 @@ LOGSHA 99F291867E001543353B8AA7CE3E5A336F7084105F10501FEFD8F3FECBCE4450 size 991
 #     runner read it (not pressed) and stopped its own process: STOP DIALOG_UNKNOWN_WINDOW at 31 s, own PID gone,
 #     sources stable. SCRIPT (E) = 1 (this exception). No radio state was written in the run.
 #   - Window capture: CAPTURE_NO_WINDOW (the process ended before the 2.5 s delay after OPEN); no image.
-# Reading: in the Play started by the launcher the local player has a VON controller with entries (A1-P0..P2), but the
-#   VON radial menu UI is not constructed (no display, no controller inputs, no entry components), so no on-screen
-#   frequency widget exists to read here. The bench must not call Open() without a display (fix: BEFORE with
+# Reading (corrected after codex #4447): the local player has a VON controller with entries (A1-P0..P2); at the moment
+#   of the direct Open the radial menu had no controller inputs (proven by the exception) and no display, and the
+#   entries had no entry components. hasDisplay=0 before opening may be lazy initialisation: this does not show that
+#   the menu is never built. The direct Open bypassed the standard radial controller/input path; no on-screen
+#   frequency widget was read in this run. The bench must not call Open() without a display (fix: BEFORE with
 #   hasDisplay=0 -> SCREEN op=NOT_READY, no Open). Settings snapshot: registry 0 changed lines (sha E38C14F3... before =
 #   after), 0 profile files changed, SECURITY_TERMS_IN_DIFF=0.
 b2a738906a938f130b584e5b055b6e376f1879ee47fe04b846b5389975cad9dd
