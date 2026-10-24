@@ -3,13 +3,14 @@
   "scope": "1000 синтетических записей; не звук и не Play",
   "ownProcessReceipt": "live-stream-native-run-codex-20261024-060136.json",
   "sourcesChecked": 7,
+  "sourceCommit": "fa87ef4534b43010ea3f07e6a699e2d687e34073",
   "engineCrc": {
-    "Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
-    "Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "1f2b4e67",
     "Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
     "Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0",
-    "Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1",
-    "Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "1f2b4e67"
+    "Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1"
   },
   "positiveNoiseControl": true,
   "negativeControls": 7,
@@ -40,5 +41,5 @@
     }
   ],
   "checkerPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\evidence\\receipts\\live-stream-check-codex.py",
-  "checkerSha256": "6719b3df9ac878523e975c35a5f04fc7eee3cef9dbde3d71b8be779e00ad28ff"
+  "checkerSha256": "8ca6e8b656935916d544735f0f7a4efc60d66f0182a09f922528816a41d52136"
 }

@@ -1,0 +1,10 @@
+{
+  "status": "READER_SOURCE_AND_PEER_LOG_PASS",
+  "scope": "16 синтетических проверок, 11 событий; native getter-ы скомпилированы, но с реальными рациями здесь не вызывались",
+  "logSha256": "57c6352a18106b7778eb23f70077383699e7f6b855838483ccc73b483b485834",
+  "eventsChecked": 11,
+  "checks": 16,
+  "deviceField": -1,
+  "binding": "LOCAL_ONLY",
+  "allEventFieldsChecked": true
+}

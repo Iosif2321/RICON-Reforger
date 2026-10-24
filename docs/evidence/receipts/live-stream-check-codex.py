@@ -3,8 +3,9 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 
-root = Path.cwd()
+root = Path(__file__).resolve().parents[3]
 folder = root / 'docs/evidence/receipts'
 receipt = json.loads((folder/'live-stream-native-run-codex-20261024-060136.json').read_text(encoding='utf-8'))
 own = Path(receipt['logPath'])
@@ -44,7 +45,10 @@ for path in (own, peer):
 assert crcs[0] == crcs[1]
 assert receipt['sources'] == receipt['sourcesAfter'] and receipt['sourceStable'] and receipt['exitCode'] == 0 and not receipt['timedOut']
 for source in receipt['sources']:
-    assert hashlib.sha256((root/source['path']).read_bytes()).hexdigest() == source['sha256'], source['path']
+    # Сверяется принятый срез, а не более поздняя работа партнёра в общем дереве.
+    blob = subprocess.run(['git', 'show', receipt['head']+':'+source['path']], cwd=root,
+                          check=True, capture_output=True).stdout
+    assert hashlib.sha256(blob).hexdigest() == source['sha256'], source['path']
 assert logs[0]['sha256'] == receipt['logSha256']
 for name, summary, tag in [
     ('ricon-liveprobe2-claude-20261024-055226-RICON_LiveJournalProbePlugin', '[RICON_LIVEJ] checks=19 passed=19 count=8 dropped=13', 'RICON_LIVEJ'),
@@ -56,6 +60,7 @@ for name, summary, tag in [
     logs.append({'path':str(path), 'sha256':hashlib.sha256(raw).hexdigest(), 'summary':summary})
 report = {'status':'NATIVE_STREAM_LOG_PASS', 'scope':'1000 синтетических записей; не звук и не Play',
           'ownProcessReceipt':'live-stream-native-run-codex-20261024-060136.json', 'sourcesChecked':len(receipt['sources']),
+          'sourceCommit':receipt['head'],
           'engineCrc':crcs[0], 'positiveNoiseControl':True, 'negativeControls':7, 'logs':logs,
           'checkerPath':str(Path(__file__).resolve()), 'checkerSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
 (folder/'live-stream-log-check-codex.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
