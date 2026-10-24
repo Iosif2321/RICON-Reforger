@@ -1,0 +1,570 @@
+{
+  "schemaVersion": 1,
+  "gameBuild": "1.8.0.13",
+  "sources": {
+    "tm_prc68": {
+      "kind": "PRIMARY_MANUAL",
+      "title": "AN/PRC-68: TM 11-5820-882-23 / TM 06827A-23/2, 1981, Change 1",
+      "uri": "https://radionerds.com/images/2/2a/TM_11-5820-882-23.pdf",
+      "sha256": "24661c07e7989f0b2d27f95b1e451cea6930e0377f29436b088678aafb18727e"
+    },
+    "tm_prc77": {
+      "kind": "PRIMARY_MANUAL",
+      "title": "AN/PRC-77: TM 11-5820-667-12, скан с Changes 1/2",
+      "uri": "https://www.radionerds.com/images/8/8a/TM_11-5820-667-12.pdf",
+      "sha256": "d7fec2b0b6e7ba7aa6c7b74661a01fdc05f4fcc63d7a5af7525a94215ecaa085"
+    },
+    "to_r107m": {
+      "kind": "PRIMARY_MANUAL",
+      "title": "Р-107М: техническое описание и инструкция, 1.000.023 ТО, 1977",
+      "uri": "https://www.radiomanual.info/schemi/Surplus_EstEurope/R-107M_serv_1977.pdf",
+      "sha256": "980961de8db6b74570b6dd97029a499dd599920f28ee951517d86b00761326af"
+    },
+    "to_rf10": {
+      "kind": "PRIMARY_MANUAL",
+      "title": "RF-10: Spoj-21-57/1, Technický popis, Praha 1977",
+      "uri": "https://www.vu9967.cz/files/technika/rf-10/spoj_21-57-1_rf-10_technicky_popis_1_dil.pdf",
+      "sha256": "3077af11a3fbd296207fde24127652603d911873dd770cddaef078f3c8cf0d6e"
+    },
+    "wb_identity": {
+      "kind": "WORKBENCH_STATIC",
+      "title": "Пути и родители десяти prefab, WbReader 2026-10-24",
+      "uri": "workbench-log:ricon-wbreader-catalog-identities-codex-20261024-053320/console.log",
+      "sha256": "e3a126d5642af6463b7c8f29da62f7125fd157a6fd4e42a74023cb64e6ed9f16"
+    },
+    "wb_names": {
+      "kind": "WORKBENCH_STATIC",
+      "title": "Семь явных UI-ключей, десять файлов открыты, WbReader 2026-10-24",
+      "uri": "workbench-log:ricon-wbreader-catalog-exact-names-codex-20261024-054035/console.log",
+      "sha256": "2bf7af98f7475f992d6374da8ac5bb1b62c356947276ed16c3a6261e6be310f3"
+    },
+    "game_report": {
+      "kind": "REPO_REPORT",
+      "title": "Прежний отчёт игровых настроек, 2026-10-21; не текущий runtime-снимок",
+      "uri": "docs/evidence/E-radio-data-wb.md",
+      "sha256": "721a8013513bd849a1dd2e42b42d4937bfb7cc77cf6f60360b76456022a256a6"
+    }
+  },
+  "models": {
+    "an_prc68": {
+      "name": "AN/PRC-68",
+      "variant": "Исходный AN/PRC-68 по TM 1981; параметры AN/PRC-68B не подставляются",
+      "facts": [
+        {
+          "quantity": "frequencyMHz",
+          "value": [
+            30,
+            79.95
+          ],
+          "relation": "range",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, печатная стр. 1-1, PDF index 8",
+          "conditions": "Общая полоса прототипа; отдельная сетка каналов 50 кГц."
+        },
+        {
+          "quantity": "channelSpacingKHz",
+          "value": 50,
+          "relation": "exact",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-1, PDF index 8",
+          "conditions": "Сетка доступных частот; не расстояние между соседними предустановками CHAN."
+        },
+        {
+          "quantity": "presetChannelSpacingKHz",
+          "value": 200,
+          "relation": "exact",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-1, PDF index 8",
+          "conditions": "Десять предварительно подготовленных каналов CHAN."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 1,
+          "relation": "minimum",
+          "sourceId": "tm_prc68",
+          "locator": "§1-11, стр. 1-2, PDF index 9",
+          "conditions": "Минимальная мощность по описанию передатчика, не точная текущая мощность."
+        },
+        {
+          "quantity": "rxSensitivityUv",
+          "value": 0.5,
+          "relation": "specified",
+          "sourceId": "tm_prc68",
+          "locator": "§1-8, стр. 1-2, PDF index 9",
+          "conditions": "Критерий 10 дБ SINAD на аудиовыходе; соглашение о напряжении и входной импеданс здесь не установлены."
+        }
+      ],
+      "unknowns": [
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    },
+    "an_prc77": {
+      "name": "AN/PRC-77",
+      "variant": "Приёмопередатчик RT-841/PRC-77; игровые варианты перечислены отдельно",
+      "facts": [
+        {
+          "quantity": "frequencyMHz",
+          "value": [
+            30,
+            52.95
+          ],
+          "relation": "range",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9, стр. 1-2, PDF index 13",
+          "conditions": "Нижний поддиапазон, сетка 50 кГц."
+        },
+        {
+          "quantity": "frequencyMHz",
+          "value": [
+            53,
+            75.95
+          ],
+          "relation": "range",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9, стр. 1-2, PDF index 13",
+          "conditions": "Верхний поддиапазон, сетка 50 кГц."
+        },
+        {
+          "quantity": "channelSpacingKHz",
+          "value": 50,
+          "relation": "exact",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9, стр. 1-2, PDF index 13",
+          "conditions": "920 каналов в обоих поддиапазонах; не шумовая полоса."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": [
+            1,
+            4
+          ],
+          "relation": "range",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9, стр. 1-3, PDF index 14",
+          "conditions": "Табличный интервал выходной мощности; частотная зависимость и рабочая точка не заданы."
+        },
+        {
+          "quantity": "antennaLengthM",
+          "value": 0.9144,
+          "relation": "specified",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9/1-11, стр. 1-3, PDF index 14",
+          "conditions": "AT-892/PRC-25: 3 ft, перевод 1 ft = 0.3048 м; длина не равна усилению."
+        },
+        {
+          "quantity": "antennaLengthM",
+          "value": 3.048,
+          "relation": "specified",
+          "sourceId": "tm_prc77",
+          "locator": "§1-9/1-11, стр. 1-3, PDF index 14",
+          "conditions": "AT-271A/PRC: 10 ft, перевод 1 ft = 0.3048 м; принадлежность игровой антенны не проверена."
+        }
+      ],
+      "unknowns": [
+        "Чувствительность приёмника с условиями измерения",
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    },
+    "r107m": {
+      "name": "Р-107М",
+      "variant": "Р-107М, 1.000.023 ТО 1977; данные Р-107 без М не используются",
+      "facts": [
+        {
+          "quantity": "frequencyMHz",
+          "value": [
+            20,
+            52
+          ],
+          "relation": "range",
+          "sourceId": "to_r107m",
+          "locator": "§2.1, печатная стр. 6, PDF index 3",
+          "conditions": "Диапазон прототипа; настройка и отсчёт описаны отдельно."
+        },
+        {
+          "quantity": "tuningReadoutKHz",
+          "value": 1,
+          "relation": "specified",
+          "sourceId": "to_r107m",
+          "locator": "§2.1, стр. 6, PDF index 3",
+          "conditions": "Отсчёт электронно-счётного устройства внутри мегагерца; не объявляется шумовой полосой или сеткой 25 кГц."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 1,
+          "relation": "minimum",
+          "sourceId": "to_r107m",
+          "locator": "§2.18.1, стр. 8, PDF index 4",
+          "conditions": "МОЩНОСТЬ МАЛАЯ; аккумуляторы 7.2 В, эквивалент нагрузки 75 ± 1 Ом."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 5,
+          "relation": "minimum",
+          "sourceId": "to_r107m",
+          "locator": "§2.18.1, стр. 8, PDF index 4",
+          "conditions": "МОЩНОСТЬ ПОЛНАЯ; аккумуляторы 7.2 В, эквивалент нагрузки 75 ± 1 Ом."
+        },
+        {
+          "quantity": "rxSensitivityUv",
+          "value": 1.5,
+          "relation": "maximum",
+          "sourceId": "to_r107m",
+          "locator": "§2.17.1, стр. 8, PDF index 4",
+          "conditions": "Режим телефонии: отношение выходных напряжений сигнал/шум 10:1, модуляция 1000 Гц, девиация ±5 кГц. Это не 10 дБ входного SINR."
+        }
+      ],
+      "unknowns": [
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    },
+    "rf10": {
+      "name": "RF-10",
+      "variant": "RF-10 по Spoj-21-57/1, 1977; не одноимённые современные устройства",
+      "facts": [
+        {
+          "quantity": "frequencyMHz",
+          "value": [
+            44,
+            53.975
+          ],
+          "relation": "range",
+          "sourceId": "to_rf10",
+          "locator": "§1, печатная стр. 5, PDF index 2",
+          "conditions": "400 каналов, три переключателя частоты."
+        },
+        {
+          "quantity": "channelSpacingKHz",
+          "value": 25,
+          "relation": "exact",
+          "sourceId": "to_rf10",
+          "locator": "§1, стр. 5, PDF index 2",
+          "conditions": "Шаг каналов прототипа; не шумовая полоса."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 1,
+          "relation": "nominal",
+          "sourceId": "to_rf10",
+          "locator": "§1, стр. 5, PDF index 2",
+          "conditions": "Номинальная мощность при питании 6 В, не точное значение каждого экземпляра."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 1,
+          "relation": "greater_than",
+          "sourceId": "to_rf10",
+          "locator": "§7, стр. 6, PDF index 3",
+          "conditions": "Электрическая характеристика при питании 6 В."
+        },
+        {
+          "quantity": "txPowerW",
+          "value": 0.5,
+          "relation": "greater_than",
+          "sourceId": "to_rf10",
+          "locator": "§7, стр. 6, PDF index 3",
+          "conditions": "Электрическая характеристика при питании 5 В."
+        },
+        {
+          "quantity": "rxSensitivityUv",
+          "value": 0.5,
+          "relation": "less_than",
+          "sourceId": "to_rf10",
+          "locator": "§10, стр. 6, PDF index 3",
+          "conditions": "12 дБ SINAD, гарантия минимум для 97.5% каналов; две группы исключений записаны отдельными фактами."
+        },
+        {
+          "quantity": "rxSensitivityUv",
+          "value": 1,
+          "relation": "maximum",
+          "sourceId": "to_rf10",
+          "locator": "§10, стр. 6, PDF index 3",
+          "conditions": "При 12 дБ SINAD допускается ухудшение до 1 мкВ для восьми каналов; их номера не указаны."
+        },
+        {
+          "quantity": "rxSensitivityUv",
+          "value": 2,
+          "relation": "maximum",
+          "sourceId": "to_rf10",
+          "locator": "§10, стр. 6, PDF index 3",
+          "conditions": "При 12 дБ SINAD допускается ухудшение до 2 мкВ для двух каналов; их номера не указаны."
+        },
+        {
+          "quantity": "supplyVoltageV",
+          "value": 6,
+          "relation": "nominal",
+          "sourceId": "to_rf10",
+          "locator": "§4, стр. 5, PDF index 2",
+          "conditions": "Пять NiCd элементов источника; это питание, не мощность излучения."
+        }
+      ],
+      "unknowns": [
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    },
+    "r148": {
+      "name": "Р-148",
+      "variant": "Кандидат по Radio_R148 и UI-ключу R148; паспорт ещё не прочитан",
+      "facts": [],
+      "unknowns": [
+        "Оригинальный паспорт: найден архив, загрузка остановилась на ошибке TLS; численные сведения не приняты",
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    },
+    "r148e": {
+      "name": "R-148E — кандидат",
+      "variant": "Отдельный UI-ключ R148E у FIA; связь с аппаратной модификацией не подтверждена",
+      "facts": [],
+      "unknowns": [
+        "Оригинальный паспорт и идентичность варианта E; характеристики Р-148 не наследуются",
+        "Шумовая полоса приёмника и NF",
+        "Направленная диаграмма и усиление установленной антенны",
+        "Текущая рабочая мощность конкретного экземпляра",
+        "Соглашение о микровольтах и импеданс для пересчёта чувствительности",
+        "Соответствие native tuning физической частоте и активные переопределения модами"
+      ]
+    }
+  },
+  "bindings": [
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "modelId": "an_prc68",
+      "variant": "Базовый игровой предмет ANPRC68",
+      "nameKey": "#AR-Item_ANPRC68_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 32000,
+            "maxRaw": 68000,
+            "stepRaw": 200,
+            "basis": "Прежний отчёт §2, ссылки на i6; текущий runtime не проверен."
+          },
+          {
+            "index": 1,
+            "minRaw": 32000,
+            "maxRaw": 68000,
+            "stepRaw": 200,
+            "basis": "Прежний отчёт §2, ссылки на i6; текущий runtime не проверен."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+      "modelId": "an_prc77",
+      "variant": "Базовый игровой предмет ANPRC77",
+      "nameKey": "#AR-Item_ANPRC77_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_Deployable_Base.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Диапазон унаследован от Deployable_Base, шаг явный; прежний отчёт §2."
+          },
+          {
+            "index": 1,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Явные поля второго трансивера; прежний отчёт §2."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC77_COK.et",
+      "modelId": "an_prc77",
+      "variant": "Игровой суффикс COK; аппаратная модификация не выводится из суффикса",
+      "nameKey": "#AR-Item_ANPRC77_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_Deployable_Base.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Наследование ANPRC77 согласно прежнему отчёту §2; resolved runtime не проверен."
+          },
+          {
+            "index": 1,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Наследование ANPRC77 согласно прежнему отчёту §2; resolved runtime не проверен."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+      "modelId": "r107m",
+      "variant": "Базовый игровой предмет R107M",
+      "nameKey": "#AR-Item_R107M_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Диапазон наследуется от Deployable_Base; это вывод прежнего отчёта, не паспорт Р-107М."
+          },
+          {
+            "index": 1,
+            "minRaw": 20000,
+            "maxRaw": 52000,
+            "stepRaw": 200,
+            "basis": "Явный диапазон и шаг в прежнем отчёте §2."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M_FIA.et",
+      "modelId": "r107m",
+      "variant": "FIA, тот же UI-ключ R107M; аппаратная эквивалентность не доказана",
+      "nameKey": "#AR-Item_R107M_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M_FIA.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": []
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148.et",
+      "modelId": "r148",
+      "variant": "Базовый игровой предмет R148",
+      "nameKey": "#AR-Item_R148_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 38000,
+            "maxRaw": 54000,
+            "stepRaw": 200,
+            "basis": "Явные поля в прежнем отчёте §2."
+          },
+          {
+            "index": 1,
+            "minRaw": 38000,
+            "maxRaw": 54000,
+            "stepRaw": 200,
+            "basis": "Явные поля в прежнем отчёте §2."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148_FIA.et",
+      "modelId": "r148e",
+      "variant": "FIA с отдельным UI-ключом R148E",
+      "nameKey": "#AR-Item_R148E_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148_FIA.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": null,
+            "maxRaw": null,
+            "stepRaw": null,
+            "basis": "Диапазон и шаг в прежнем отчёте не прочитаны."
+          },
+          {
+            "index": 1,
+            "minRaw": null,
+            "maxRaw": null,
+            "stepRaw": null,
+            "basis": "Диапазон и шаг в прежнем отчёте не прочитаны."
+          }
+        ]
+      }
+    },
+    {
+      "prefab": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+      "modelId": "rf10",
+      "variant": "Предмет RF10, имя унаследовано от Radio_RF10_base",
+      "nameKey": "#AR-Item_RF10_Name",
+      "nameFrom": "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10_base.et",
+      "nameSource": "wb_names",
+      "identitySource": "wb_identity",
+      "reportedGame": {
+        "sourceId": "game_report",
+        "tuningUnit": "UNVERIFIED",
+        "transceivers": [
+          {
+            "index": 0,
+            "minRaw": 30000,
+            "maxRaw": 76000,
+            "stepRaw": 200,
+            "basis": "Диапазон наследуется от Deployable_Base; это вывод прежнего отчёта, не паспорт RF-10."
+          },
+          {
+            "index": 1,
+            "minRaw": 20000,
+            "maxRaw": 52000,
+            "stepRaw": 200,
+            "basis": "Явные поля Radio_RF10_base в прежнем отчёте §2."
+          }
+        ]
+      }
+    }
+  ],
+  "basePrefabs": [
+    "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_Deployable_Base.et",
+    "$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10_base.et"
+  ]
+}
