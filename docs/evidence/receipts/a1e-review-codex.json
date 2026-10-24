@@ -1,0 +1,85 @@
+{
+  "status": "A1E_SOURCE_HOST_AND_NATIVE_TEXT_REVIEW_PASS",
+  "scope": "SCRIPTEDITOR_NATIVE_TEXT_AND_HOST_ONLY",
+  "gamePlay": "NOT_RUN",
+  "nativeLogPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-livetext-claude-20261024-183233\\console.log",
+  "nativeLogSha256": "94ea46dfebd860f0bf8b5fbdf697ee008eff781289c3c0f023566c6160d9dc3a",
+  "nativeChecks": 15,
+  "nativeFormsIndependentlyChecked": 11,
+  "independentDecoder": "stdlib urllib.parse.unquote_to_bytes; EXACT_CANONICAL_MATCH",
+  "parserSha256": "7e791ddd753272754ebcd1d0d5e5df9a05d0d477a5824ab17f5b9fb630f92a37",
+  "codecSha256": "cf68ef8616e03ec5fae0c5c00f782351c9da3df97e7a9213e71ab07fa033257c",
+  "ownCases": [
+    {
+      "case": "positive",
+      "exitCode": 0,
+      "verdict": "MENU_ENTRY_RUNTIME_PASS",
+      "errors": []
+    },
+    {
+      "case": "init_missing_text",
+      "exitCode": 1,
+      "verdict": "INCOMPLETE",
+      "errors": [
+        "device 0: init TEXT_MISSING"
+      ]
+    },
+    {
+      "case": "step_wrong_text",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    },
+    {
+      "case": "read_wrong_entryfreq",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    },
+    {
+      "case": "read_unusable",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    },
+    {
+      "case": "read_mute_diverges",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    },
+    {
+      "case": "init_value_conflict",
+      "exitCode": 1,
+      "verdict": "LOG_INVALID",
+      "errors": [
+        "device 0: entry init record bench=0,phase=init,rawBefore=32000,raw=32000,entryFreq=32000,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz"
+      ]
+    },
+    {
+      "case": "mute_noop_ret_consistent",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    },
+    {
+      "case": "mute_wrong_restore_ret_consistent",
+      "exitCode": 0,
+      "verdict": "OBSERVED_MISMATCH",
+      "errors": []
+    }
+  ],
+  "malformedFormsRejected": [
+    "%A",
+    "%u0041",
+    "%a0",
+    "%G0",
+    "%ZZ",
+    "a b",
+    "a,b",
+    "a=b",
+    "%FF",
+    "%D0",
+    "%C0%AF"
+  ]
+}
