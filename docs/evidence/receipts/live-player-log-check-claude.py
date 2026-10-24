@@ -93,6 +93,15 @@ def sample_errors(f):
     return errs, prefab
 
 
+def kilo(number):
+    """round(number x 1000) of a text number; None when it is not a finite number (codex #4505: '1e309' -> inf,
+    a 400-digit number -> inf, 'nan' must give a report, not an exception)."""
+    try:
+        return round(float(number) * 1000)
+    except (ValueError, OverflowError):
+        return None
+
+
 ENTRY_FULL = {"idx", "entry", "cls", "method", "active", "transmit", "usable", "dtext", "radioEntry"}
 MENU_TEXT = re.compile(r"^(-?\d+(?:\.\d+)?) #AR-VON_FrequencyUnits_MHz$")
 
@@ -162,7 +171,7 @@ def entry_errors(f):
         if f.get("transceiver") == "1" and INT.fullmatch(f.get("raw", "")):
             raw = int(f["raw"])
             out["menuText"] = ("TEXT_UNPARSED" if not m else "TEXT_ROUNDED" if raw % 100 else
-                               "TEXT_MATCH" if round(float(m.group(1)) * 1000) == raw else "TEXT_MISMATCH")
+                               "TEXT_MATCH" if kilo(m.group(1)) == raw else "TEXT_MISMATCH")
     if set(f) != want:
         errs.append(f"field set {sorted(set(f) ^ want)}")
     return errs, out
@@ -188,7 +197,7 @@ def menu_status(f, raw):
         return "TEXT_UNPARSED"
     if raw % 100:
         return "TEXT_ROUNDED"
-    return "TEXT_MATCH" if round(float(m.group(1)) * 1000) == raw else "TEXT_MISMATCH"
+    return "TEXT_MATCH" if kilo(m.group(1)) == raw else "TEXT_MISMATCH"
 
 
 def check_acts(acts, errors, by_sample, spec=MENU_SPEC, cut=None):
@@ -427,10 +436,7 @@ def check_screen(screens, by_sample, errors, spec=SCREEN_SPEC, chosen=None, last
                     want_raw = chosen["target"] if n in STEP_SPEC["target"] else chosen["raw0"]
                 else:
                     want_raw = int(entry["raw"]) if INT.fullmatch(entry.get("raw") or "") else None
-                try:
-                    shown_raw = round(float(fw["text"].split(" ", 1)[0]) * 1000) if fw is not None else None
-                except ValueError:
-                    shown_raw = None
+                shown_raw = kilo(fw["text"].split(" ", 1)[0]) if fw is not None else None
                 if shown_raw is None or shown_raw != want_raw:
                     ok = False
                 if f.get("idx") == step_idx:
