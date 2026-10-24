@@ -24,7 +24,15 @@ SCREEN records BEFORE(5), one OPEN or ALREADY_OPEN(6), MENU(7..12, 20, 30) with 
 MENU of 7..12; PLAYER_SCREEN_WIDGET_PASS when the menu stays open, the active entry and all radio entries never change,
 and every entry's FrequencyText TextWidget is visible in the hierarchy with a non-zero size and shows exactly the entry's
 display text. A live widget is not a proof of pixels or localization.
-Usage: python -I live-player-log-check-claude.py <console.log> [entries|menu|screen]"""
+A1-S2 (claude #4488, codex #4489/#4491/#4492), second argument "screenstep" (implies entries, mode playerscreenstep):
+the S1 screen records on BEFORE(5), OPEN(6), MENU(7, 8, 10, 14, 17, 20, 30) with WIDGET records after the MENU of 7, 8,
+10, 14, 17; the PLAYER_ACT plan CHOOSE(5) STEP(9) READ t1(10) READ t5(14) RESTORE(15) FINAL(20) without mute,
+checked like A1-P2 (target entry reads target on samples 10..15); the widget number x 1000 equals the target entry's
+raw (raw0 on 7, 8, 17, target on 10, 14) and every other entry never changes; PLAYER_READER PRE(7) POST(10) BACK(17)
+of the production RICON_BaseRadioObservationReader.TryRead: ok, authority, deviceId 1, the chosen transceiver index,
+and rawBefore = tuning = rawAfter = raw0 / target / raw0. Verdicts PLAYER_SCREEN_STEP_PASS / _LABEL_UNVERIFIED /
+OBSERVED_MISMATCH / STOPPED / NOT_READY / LOG_INVALID; BENCH_DONE level=PLAYER_SCREEN_STEP.
+Usage: python -I live-player-log-check-claude.py <console.log> [entries|menu|screen|screenstep]"""
 import hashlib
 import importlib.util
 import json
@@ -163,6 +171,12 @@ def entry_errors(f):
 ACT_PLAN = [(5, "CHOOSE"), (6, "STEP"), (7, "READ"), (11, "READ"), (12, "RESTORE"), (14, "MUTE"), (15, "UNMUTE"),
             (20, "FINAL")]
 ACT_STATE = {"bound", "raw", "entryFreq", "muted", "emuted", "dtext"}
+# A1-P2: phases of STEP/READ, samples whose entry snapshot shows the target, sample whose snapshot shows the mute
+MENU_SPEC = {"plan": ACT_PLAN, "phases": {6: "t0", 7: "t1", 11: "t5"}, "target": range(7, 13), "mute": 15}
+# A1-S2 (codex #4489): the same step on the open menu, no mute; entries are recorded before the act of their sample,
+# so the snapshot of 9 still shows raw0 and that of 15 still shows the target
+STEP_SPEC = {"plan": [(5, "CHOOSE"), (9, "STEP"), (10, "READ"), (14, "READ"), (15, "RESTORE"), (20, "FINAL")],
+             "phases": {9: "t0", 10: "t1", 14: "t5"}, "target": range(10, 16), "mute": None}
 
 
 def menu_status(f, raw):
@@ -177,24 +191,31 @@ def menu_status(f, raw):
     return "TEXT_MATCH" if round(float(m.group(1)) * 1000) == raw else "TEXT_MISMATCH"
 
 
-def check_acts(acts, errors, by_sample):
+def check_acts(acts, errors, by_sample, spec=MENU_SPEC, cut=None):
     """A1-P2 (claude #4399, codex #4388/#4390/#4402/#4414): the planned PLAYER_ACT sequence, or a prefix of it closed by
     one STOP after which nothing follows. Bound to the plan: phases STEP 6 = t0, READ 7 = t1, READ 11 = t5; one idx on
     the whole chain; CHOOSE has res > 0, raw0 and target in [min, max], target = raw0 + modifier x res != raw0, and refers
     to an existing non-active MAPPED radio entry of its own sample (same idx, trNumber, slot, raw0, mute0, min/max/res).
     The PLAYER_ENTRY snapshots must agree with the acts: the target entry reads target on samples 7..12 and raw0
     otherwise, is muted only on sample 15 (recorded between MUTE and UNMUTE), and the other entries never change.
-    Returns (verdict, rows). Log-format problems go to errors; value disagreements make OBSERVED_MISMATCH."""
-    rows, mismatches = [], []
+    spec gives the plan, phases, target samples and mute sample (MENU_SPEC for A1-P2, STEP_SPEC for A1-S2). cut: the
+    sample of a SCREEN NOT_READY abort (A1-S2); the acts then are exactly the planned ones before it, without STOP.
+    Returns (verdict, rows, chosen). Log-format problems go to errors; value disagreements make OBSERVED_MISMATCH."""
+    rows, mismatches, plan = [], [], spec["plan"]
     stop = next((i for i, a in enumerate(acts) if a["f"].get("op") == "STOP"), None)
     if stop is not None and stop != len(acts) - 1:
         errors.append("PLAYER_ACT after STOP")
+    if stop is not None and cut is not None:
+        errors.append("PLAYER_ACT STOP and SCREEN NOT_READY in one run")
     planned = acts if stop is None else acts[:stop]
-    if [(a["value"], a["f"].get("op")) for a in planned] != ACT_PLAN[:len(planned)]:
+    if [(a["value"], a["f"].get("op")) for a in planned] != plan[:len(planned)]:
         errors.append(f"PLAYER_ACT sequence {[(a['value'], a['f'].get('op')) for a in planned]} is not a prefix of the plan")
-    if stop is None and len(planned) != len(ACT_PLAN):
+    if cut is not None:
+        if len(planned) != len([p for p in plan if p[0] < cut]):
+            errors.append(f"PLAYER_ACT before NOT_READY at {cut} is not the planned prefix")
+    elif stop is None and len(planned) != len(plan):
         errors.append("PLAYER_ACT plan incomplete without STOP")
-    phases = {6: "t0", 7: "t1", 11: "t5"}
+    phases = spec["phases"]
     for a in planned:
         if a["value"] in phases and a["f"].get("phase") != phases[a["value"]]:
             errors.append(f"PLAYER_ACT {a['value']} {a['f'].get('op')}: phase {a['f'].get('phase')} != {phases[a['value']]}")
@@ -210,7 +231,7 @@ def check_acts(acts, errors, by_sample):
     except (KeyError, ValueError):
         if planned:
             errors.append("CHOOSE fields")
-        return ("STOPPED" if stop is not None else "INCOMPLETE"), rows
+        return ("STOPPED" if stop is not None else "NOT_READY" if cut is not None else "INCOMPLETE"), rows, {}
     if mod not in (1, -1) or res <= 0 or target != raw0 + mod * res or target == raw0 or muted0 not in BIT \
             or not (lo <= raw0 <= hi and lo <= target <= hi):
         errors.append("CHOOSE target/modifier/res/range/muted0")
@@ -251,27 +272,34 @@ def check_acts(acts, errors, by_sample):
         rows.append({"n": a["value"], "op": op, "phase": f.get("phase"), "raw": raw, "entryFreq": efreq,
                      "muted": muted, "emuted": f["emuted"], "ret": f.get("ret"), "text": text, "ok": ok})
     # codex #4414: the entry snapshots during the experiment agree with the acts (target entry) and nothing else moves
-    last = planned[-1]["value"] if stop is None else acts[stop]["value"]
+    last = acts[stop]["value"] if stop is not None else cut
     before = {e.get("idx"): e for e in by_sample.get(4, [])}
     for n in sorted(by_sample):
-        if n > last and stop is not None:
+        if last is not None and n > last:
             break
         for e in by_sample[n]:
             if e.get("idx") == idx:
-                stepped = stop is None or n <= acts[stop]["value"]
-                want_raw = target if 7 <= n <= 12 and stepped else raw0
-                want_muted = str(1 - int(muted0)) if n == 15 else muted0
+                want_raw = target if n in spec["target"] else raw0
+                want_muted = str(1 - int(muted0)) if n == spec["mute"] else muted0
                 if e.get("raw") != str(want_raw) or e.get("entryFreq") != str(want_raw) or e.get("muted") != want_muted:
                     mismatches.append(f"entry@{n}")
             elif before.get(e.get("idx")) is not None and json.dumps(e, sort_keys=True) != \
                     json.dumps(before[e.get("idx")], sort_keys=True):
                 mismatches.append(f"other@{n}")
+    chosen_out = {"idx": idx, "raw0": raw0, "target": target, "muted0": muted0, "trNumber": tr_number}
     if stop is not None:
-        return "STOPPED", rows
-    return ("OBSERVED_MISMATCH" if mismatches else "PLAYER_MENU_RUNTIME_PASS"), rows
+        return "STOPPED", rows, chosen_out
+    if cut is not None:
+        return "NOT_READY", rows, chosen_out
+    return ("OBSERVED_MISMATCH" if mismatches else "PLAYER_MENU_RUNTIME_PASS"), rows, chosen_out
 
 
 SCREEN_PLAN = [(5, "BEFORE"), (6, "OPEN")] + [(n, "MENU") for n in range(7, 13)] + [(20, "MENU"), (30, "MENU")]
+SCREEN_SPEC = {"plan": SCREEN_PLAN, "widgets": range(7, 13), "step": False}
+# A1-S2 (codex #4492): PRE on 7 and 8 (STEP on 9), POST on 10 and 14, BACK on 17 (RESTORE on 15)
+STEP_SCREEN_SPEC = {"plan": [(5, "BEFORE"), (6, "OPEN")] + [(n, "MENU") for n in (7, 8, 10, 14, 17, 20, 30)],
+                    "widgets": (7, 8, 10, 14, 17), "step": True}
+STEP_MOVING = ("raw", "entryFreq", "text", "menuText")  # fields of the stepped entry that follow its frequency
 MENU_FIELDS = {"op", "opened", "hasDisplay", "inputs", "selectedId", "activeIdx"}
 
 
@@ -297,19 +325,22 @@ def widget_fields(f, prefix, errs):
                   "x": int(f[prefix + "X"]), "y": int(f[prefix + "Y"])}
 
 
-def check_screen(screens, by_sample, errors):
+def check_screen(screens, by_sample, errors, spec=SCREEN_SPEC, chosen=None, last=SAMPLES):
     """A1-S1 (claude #4431, codex #4425/#4427/#4430/#4432): BEFORE (5), one OPEN or ALREADY_OPEN (6), MENU on 7..12, 20,
     30, and after each MENU of 7..12 one WIDGET record per entry. Clean observation: the radio entries (frequency, mute,
     active, transmit, text) and the active entry never change over all samples. Widget evidence per entry and sample: the
     FrequencyText TextWidget exists, is visible in the hierarchy with a non-zero screen size, and its text equals the
-    entry's own display text of the same sample. Returns (verdict, summary)."""
+    entry's own display text of the same sample. A1-S2 (spec STEP_SCREEN_SPEC, chosen from check_acts, last = the
+    sample of a STOP): the plan up to last; the stepped entry may change only in STEP_MOVING (its values are checked by
+    check_acts), and on every widget sample the number of its FrequencyText x 1000 equals raw0 before the step and after
+    the return, target between them; other widgets show their own entry's raw. Returns (verdict, summary)."""
     menus = [s for s in screens if s["f"].get("op") != "WIDGET"]
     widgets = [s for s in screens if s["f"].get("op") == "WIDGET"]
     if any(s["f"].get("op") == "NOT_READY" for s in screens):
         return "NOT_READY", {}
     got = [(s["value"], s["f"].get("op")) for s in menus]
     want = [(n, "ALREADY_OPEN" if op == "OPEN" and len(menus) > 1 and menus[1]["f"].get("op") == "ALREADY_OPEN" else op)
-            for n, op in SCREEN_PLAN]
+            for n, op in spec["plan"] if n <= last]
     if got != want:
         errors.append(f"SCREEN sequence {got} != plan")
     for s in menus:
@@ -352,7 +383,9 @@ def check_screen(screens, by_sample, errors):
             mismatches.append(f"menu without controller inputs at {s['value']}")
         if s["f"].get("activeIdx") != before.get("activeIdx"):
             mismatches.append(f"active entry changed at {s['value']}")
-    for n in range(7, 13):
+    step_idx = str(chosen.get("idx")) if spec["step"] and chosen else None
+    shown = []
+    for n in [m for m in spec["widgets"] if m <= last]:
         mine = [w for w in widgets if w["value"] == n]
         entries = by_sample.get(n, [])
         if [w["f"].get("idx") for w in mine] != [str(i) for i in range(len(entries))]:
@@ -388,14 +421,32 @@ def check_screen(screens, by_sample, errors):
                     # codex #4436: same number, a different label without a verified translation of the key
                     kind = "LABEL_UNVERIFIED"
             ok = kind is not None and fw["visible"] and fw["w"] > 0 and fw["h"] > 0 and f.get("rootVis") == "1"
+            if spec["step"]:
+                # A1-S2: the number on the screen x 1000 is the raw value the entry should have on this sample
+                if f.get("idx") == step_idx:
+                    want_raw = chosen["target"] if n in STEP_SPEC["target"] else chosen["raw0"]
+                else:
+                    want_raw = int(entry["raw"]) if INT.fullmatch(entry.get("raw") or "") else None
+                try:
+                    shown_raw = round(float(fw["text"].split(" ", 1)[0]) * 1000) if fw is not None else None
+                except ValueError:
+                    shown_raw = None
+                if shown_raw is None or shown_raw != want_raw:
+                    ok = False
+                if f.get("idx") == step_idx:
+                    shown.append({"n": n, "text": fw["text"] if fw else None, "shownRaw": shown_raw, "wantRaw": want_raw})
             if not ok:
                 mismatches.append(f"widget {f.get('idx')}@{n}")
             rows.append({"n": n, "idx": f.get("idx"), "component": f.get("component"), "root": f.get("root"),
                          "rootVisible": f.get("rootVis"), "frequency": fw, "channel": cw, "entryText": entry.get("text"),
                          "textKind": kind})
-    # clean observation: the radio state seen through the entries never changes
-    first = json.dumps(by_sample.get(1, []), sort_keys=True)
-    changed = [n for n in sorted(by_sample) if json.dumps(by_sample[n], sort_keys=True) != first]
+    # clean observation: the radio state seen through the entries never changes (A1-S2: except the stepped entry's
+    # frequency fields, which check_acts compares with the plan)
+    def still(rows_):
+        return json.dumps([{k: v for k, v in e.items() if e.get("idx") != step_idx or k not in STEP_MOVING}
+                           for e in rows_], sort_keys=True)
+    first = still(by_sample.get(1, []))
+    changed = [n for n in sorted(by_sample) if still(by_sample[n]) != first]
     if changed:
         mismatches.append(f"entries changed at {changed[:5]}")
     if opening.get("op") == "OPEN" and "openAction" in opening:
@@ -403,7 +454,7 @@ def check_screen(screens, by_sample, errors):
             opening = dict(opening, openAction=codec.unescape(opening["openAction"]))
         except ValueError:
             pass
-    summary = {"before": before, "opening": opening, "widgets": rows[:len(by_sample.get(7, []))],
+    summary = {"before": before, "opening": opening, "widgets": rows[:len(by_sample.get(7, []))], "stepShown": shown,
                "entriesChangedAt": changed, "mismatches": mismatches[:10],
                "textKinds": sorted({str(r["textKind"]) for r in rows}),
                "selectionChanged": sorted({s["f"].get("selectedId") for s in menus}) if len({s["f"].get("selectedId") for s in menus}) > 1 else []}
@@ -414,7 +465,51 @@ def check_screen(screens, by_sample, errors):
     return "PLAYER_SCREEN_WIDGET_PASS", summary
 
 
-def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
+READER_PLAN = [(7, "PRE"), (10, "POST"), (17, "BACK")]
+READER_BASE = {"phase", "idx", "bound"}
+READER_BOUND = {"authority", "deviceId", "trIndex", "ok", "rawBefore", "rawAfter"}
+READER_OBS = {"obsDevice", "obsTr", "tuning", "powered"}
+READER_BITS = {"authority", "ok", "powered"}
+
+
+def check_readers(readers, errors, chosen, stop_value):
+    """A1-S2 (codex #4491): PLAYER_READER PRE(7) POST(10) BACK(17) of the production
+    RICON_BaseRadioObservationReader.TryRead after the full target binding; after an abort only those before it (no act
+    aborts on 7, 10 or 17). bound=0 carries nothing else; bound=1 adds authority, deviceId, trIndex, ok, rawBefore and
+    rawAfter, and ok=1 the observation (device, transceiver index, tuning value, power). Match: bound, authority, ok,
+    deviceId = obsDevice = 1, trIndex = obsTr = trNumber - 1 of CHOOSE, rawBefore = tuning = rawAfter = raw0 (PRE, BACK)
+    or target (POST). The network key and the position are never logged. Returns (verdict, rows)."""
+    want = [p for p in READER_PLAN if stop_value is None or p[0] < stop_value]
+    got = [(r["value"], r["f"].get("phase")) for r in readers]
+    if got != want:
+        errors.append(f"PLAYER_READER {got} != plan {want}")
+    rows, mismatches = [], []
+    tr_index = int(chosen["trNumber"]) - 1 if INT.fullmatch(str(chosen.get("trNumber", ""))) else None
+    for r in readers:
+        f = r["f"]
+        keys = set(READER_BASE)
+        if f.get("bound") == "1":
+            keys |= READER_BOUND
+            if f.get("ok") == "1":
+                keys |= READER_OBS
+        if set(f) != keys or f.get("bound") not in BIT or f.get("idx") != str(chosen.get("idx")) \
+                or any(f.get(k) not in BIT for k in READER_BITS & keys) \
+                or not all(INT.fullmatch(f.get(k, "")) for k in keys - READER_BASE - READER_BITS):
+            errors.append(f"PLAYER_READER {r['value']}: fields {sorted(set(f) ^ keys)}")
+            continue
+        wanted = chosen.get("target") if f.get("phase") == "POST" else chosen.get("raw0")
+        match = f["bound"] == "1" and f.get("authority") == "1" and f.get("ok") == "1" and f.get("deviceId") == "1" \
+            and f.get("obsDevice") == "1" and tr_index is not None and f.get("trIndex") == str(tr_index) \
+            and f.get("obsTr") == str(tr_index) and f.get("rawBefore") == f.get("tuning") == f.get("rawAfter") == str(wanted)
+        if not match:
+            mismatches.append(r["value"])
+        rows.append({"n": r["value"], **{k: f.get(k) for k in ("phase", "bound", "authority", "ok", "deviceId", "trIndex",
+                                                               "obsDevice", "obsTr", "rawBefore", "tuning", "rawAfter",
+                                                               "powered")}, "wantRaw": wanted, "match": match})
+    return ("OBSERVED_MISMATCH" if mismatches else "READER_PASS"), rows
+
+
+def main(path, expect_entries=False, expect_menu=False, expect_screen=False, expect_step=False):
     raw = open(path, "rb").read()
     lines = raw.decode("utf-8", errors="replace").splitlines()
     errors = []
@@ -439,7 +534,8 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
     start_f = starts[0]["f"] if len(starts) == 1 else {}
     if len(starts) != 1:
         errors.append(f"BENCH_START count {len(starts)}")
-    elif start_f.get("mode") != ("playermenu" if expect_menu else "playerscreen" if expect_screen else "player") \
+    elif start_f.get("mode") != ("playermenu" if expect_menu else "playerscreenstep" if expect_step else
+                                 "playerscreen" if expect_screen else "player") \
             or start_f.get("modeGiven") != "1":
         errors.append(f"BENCH_START mode={start_f.get('mode')} modeGiven={start_f.get('modeGiven')}")
     not_ready = [e for e in events if e["kind"] == "BENCH_NOT_READY"]
@@ -450,11 +546,12 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
         errors.append(f"not read-only: {actions}")
     samples = [e for e in events if e["kind"] == "PLAYER_SAMPLE"]
     # codex #4402: in the menu mode a STOP aborts the run at its sample (BENCH_ABORTED, never a DONE)
-    stop_value = next((e["value"] for e in events if e["kind"] == "PLAYER_ACT" and e["f"].get("op") == "STOP"), None) \
-        if expect_menu else None
-    # A1-S1: a SCREEN op=NOT_READY aborts the run at its sample, like a STOP of the menu mode
-    if expect_screen:
-        stop_value = next((e["value"] for e in events if e["kind"] == "SCREEN" and e["f"].get("op") == "NOT_READY"), None)
+    act_stop = next((e["value"] for e in events if e["kind"] == "PLAYER_ACT" and e["f"].get("op") == "STOP"), None) \
+        if expect_menu or expect_step else None
+    # A1-S1: a SCREEN op=NOT_READY aborts the run at its sample, like a STOP of the menu mode (A1-S2: either of them)
+    screen_cut = next((e["value"] for e in events if e["kind"] == "SCREEN" and e["f"].get("op") == "NOT_READY"), None) \
+        if expect_screen else None
+    stop_value = min((v for v in (act_stop, screen_cut) if v is not None), default=None)
     last_sample = stop_value if stop_value is not None else SAMPLES
     if [s["value"] for s in samples] != list(range(1, last_sample + 1)):
         errors.append(f"PLAYER_SAMPLE values {[s['value'] for s in samples]} != 1..{last_sample}")
@@ -477,11 +574,16 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
     # A1-P1: PLAYER_ENTRY records follow their sample in the stream, value = sample number, idx 0..vonEntries-1;
     # samples without a VON controller have none. Without the expectation a log with entries is an error, and
     # vice versa (an A1-P0 log has none).
-    entries, current, by_sample, acts, screens = [], None, {}, [], []
+    entries, current, by_sample, acts, screens, readers = [], None, {}, [], [], []
     for e in events:
         if e["kind"] == "PLAYER_SAMPLE":
             current = e
             by_sample[e["value"]] = []
+        elif e["kind"] == "PLAYER_READER":
+            # A1-S2: a production-reader record follows its sample
+            if current is None or e["value"] != current["value"]:
+                errors.append(f"PLAYER_READER value {e['value']} not after its sample")
+            readers.append(e)
         elif e["kind"] == "SCREEN":
             if current is None or e["value"] != current["value"]:
                 errors.append(f"SCREEN value {e['value']} not after its sample")
@@ -514,25 +616,35 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
             errors.append("expected PLAYER_ENTRY records, none found")
     entry_states = [json.dumps(by_sample.get(r["n"], []), sort_keys=True) for r in rows]
     entry_changes = [rows[i]["n"] for i in range(len(rows)) if i == 0 or entry_states[i] != entry_states[i - 1]]
-    if acts and not expect_menu:
-        errors.append("log has PLAYER_ACT: pass the expectation 'menu'")
-    menu_verdict, act_rows = (check_acts(acts, errors, by_sample) if expect_menu else (None, []))
+    if acts and not (expect_menu or expect_step):
+        errors.append("log has PLAYER_ACT: pass the expectation 'menu' or 'screenstep'")
+    menu_verdict, act_rows, chosen = (check_acts(acts, errors, by_sample) if expect_menu else
+                                      check_acts(acts, errors, by_sample, STEP_SPEC, screen_cut) if expect_step else
+                                      (None, [], {}))
     # A1-P2: the entry state after FINAL (sample 21) must equal the state before CHOOSE (sample 4): restored exactly
     restored = None
-    if expect_menu and menu_verdict == "PLAYER_MENU_RUNTIME_PASS":
+    if (expect_menu or expect_step) and menu_verdict == "PLAYER_MENU_RUNTIME_PASS":
         restored = json.dumps(by_sample.get(4), sort_keys=True) == json.dumps(by_sample.get(21), sort_keys=True)
         if not restored:
             menu_verdict = "OBSERVED_MISMATCH"
     if screens and not expect_screen:
         errors.append("log has SCREEN: pass the expectation 'screen'")
-    screen_verdict, screen_summary = (check_screen(screens, by_sample, errors) if expect_screen else (None, {}))
-    level = "PLAYER_MENU_RUNTIME" if expect_menu else "PLAYER_SCREEN_WIDGET" if expect_screen else "PLAYER_OBSERVATION"
+    screen_verdict, screen_summary = (
+        check_screen(screens, by_sample, errors, STEP_SCREEN_SPEC, chosen, stop_value or SAMPLES) if expect_step else
+        check_screen(screens, by_sample, errors) if expect_screen else (None, {}))
+    if readers and not expect_step:
+        errors.append("log has PLAYER_READER: pass the expectation 'screenstep'")
+    reader_verdict, reader_rows = (check_readers(readers, errors, chosen, stop_value) if expect_step else (None, []))
+    level = "PLAYER_MENU_RUNTIME" if expect_menu else "PLAYER_SCREEN_STEP" if expect_step else \
+        "PLAYER_SCREEN_WIDGET" if expect_screen else "PLAYER_OBSERVATION"
     done = [e for e in events if e["kind"] == "BENCH_DONE"]
     aborted = [e for e in events if e["kind"] == "BENCH_ABORTED"]
     if stop_value is not None:
         if done or len(aborted) != 1 or events[-1]["kind"] != "BENCH_ABORTED" or aborted[0]["value"] != stop_value \
                 or aborted[0]["f"].get("level") != level \
-                or aborted[0]["f"].get("notReady" if expect_screen else "stopped") != "1":
+                or (expect_step and (aborted[0]["f"].get("notReady") != ("1" if screen_cut is not None else "0")
+                                     or aborted[0]["f"].get("stopped") != ("1" if act_stop is not None else "0"))) \
+                or (not expect_step and aborted[0]["f"].get("notReady" if expect_screen else "stopped") != "1"):
             errors.append(f"after STOP/NOT_READY the single last event must be BENCH_ABORTED value={stop_value} level={level}")
     else:
         if aborted:
@@ -558,6 +670,13 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
         overall = "LOG_INVALID"
     elif expect_menu:
         overall = menu_verdict
+    elif expect_step:
+        # A1-S2: an abort decides first, then any disagreement, then the label rule of A1-S1
+        verdicts = (menu_verdict, screen_verdict, reader_verdict)
+        overall = ("NOT_READY" if "NOT_READY" in verdicts else "STOPPED" if "STOPPED" in verdicts else
+                   "OBSERVED_MISMATCH" if "OBSERVED_MISMATCH" in verdicts or menu_verdict != "PLAYER_MENU_RUNTIME_PASS" else
+                   "PLAYER_SCREEN_STEP_LABEL_UNVERIFIED" if screen_verdict == "PLAYER_SCREEN_WIDGET_LABEL_UNVERIFIED" else
+                   "PLAYER_SCREEN_STEP_PASS")
     elif expect_screen:
         overall = screen_verdict
     else:
@@ -565,6 +684,7 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "overall": overall,
                       "menuExpected": expect_menu, "acts": act_rows, "restoredEntriesEqual": restored,
                       "screenExpected": expect_screen, "screen": screen_summary,
+                      "stepExpected": expect_step, "readers": reader_rows,
                       "finding": finding, "stateChangesAtSample": changes,
                       "entriesExpected": expect_entries, "entryStateChangesAtSample": entry_changes if entries else [],
                       "entriesFirstSample": by_sample.get(1, []), "entriesLastSample": by_sample.get(SAMPLES, []),
@@ -576,9 +696,9 @@ def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2 and sys.argv[2] not in ("entries", "menu", "screen"):
-        print(f"second argument must be 'entries', 'menu' or 'screen', got {sys.argv[2]!r}")
+    if len(sys.argv) > 2 and sys.argv[2] not in ("entries", "menu", "screen", "screenstep"):
+        print(f"second argument must be 'entries', 'menu', 'screen' or 'screenstep', got {sys.argv[2]!r}")
         sys.exit(2)
     # 'menu' (A1-P2) and 'screen' (A1-S1) imply the entries of A1-P1
     arg = sys.argv[2] if len(sys.argv) > 2 else ""
-    sys.exit(main(sys.argv[1], bool(arg), arg == "menu", arg == "screen"))
+    sys.exit(main(sys.argv[1], bool(arg), arg == "menu", arg in ("screen", "screenstep"), arg == "screenstep"))

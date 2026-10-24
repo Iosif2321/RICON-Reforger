@@ -215,6 +215,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	static const string MODE_PLAYER = "player";
 	static const string MODE_PLAYERMENU = "playermenu"; //!< A1-P2: player + путь меню на одной radio-entry игрока
 	static const string MODE_PLAYERSCREEN = "playerscreen"; //!< A1-S1: player + одно Open радиального меню и чтение виджетов
+	static const string MODE_PLAYERSCREENSTEP = "playerscreenstep"; //!< A1-S2: S1 + один шаг частоты P2 на экране
 	static const string MODE_INVALID = "INVALID";
 	static const int PLAYER_SAMPLES = 30;
 	protected int m_iSamples;
@@ -231,7 +232,8 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		string value;
 		if (!System.GetCLIParam("riconBenchMode", value))
 			return MODE_RADIO;
-		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU || value == MODE_PLAYERSCREEN)
+		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU || value == MODE_PLAYERSCREEN
+			|| value == MODE_PLAYERSCREENSTEP)
 			return value;
 		return MODE_INVALID;
 	}
@@ -665,10 +667,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				return;
 			}
 		}
-		else if (Mode() == MODE_PLAYERSCREEN)
+		else if (Mode() == MODE_PLAYERSCREEN || Mode() == MODE_PLAYERSCREENSTEP)
 		{
 			PlayerScreenStep(m_iSamples);
-			if (m_bScreenNotReady)
+			if (!m_bScreenNotReady && Mode() == MODE_PLAYERSCREENSTEP)
+				PlayerScreenActStep(m_iSamples);
+			if (m_bScreenNotReady || m_bActStopped)
 			{
 				Finish(false);
 				return;
@@ -676,6 +680,100 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		}
 		if (m_iSamples >= PLAYER_SAMPLES)
 			Finish(true);
+	}
+
+	//! A1-S2 (claude #4488, условия codex #4489, #4491, #4492): один шаг частоты P2 на неактивной radio-entry игрока при
+	//! открытом меню. Выбор и все проверки — те же ActChoose/ActExpect, что в P2; перед STEP и RESTORE ещё ScreenSame (то же
+	//! меню, тот же VON-контроллер и игрок) и открытое меню, иначе STOP без записи. Срез 5 — CHOOSE; 9 — STEP
+	//! AdjustEntryModif(+1), проверка target и только затем entry.Update(): так штатный OnAdjustEntry обновляет
+	//! представление radio-entry (SCR_VONMenu.c:319–330), это не физический ввод; 10/14 — READ t1/t5 от фактического
+	//! вызова шага; 15 — RESTORE ∓1, проверка raw0, затем Update; 20 — FINAL. На 7, 10, 17 (снимки PRE/POST/BACK) —
+	//! чтение production-reader RICON_BaseRadioObservationReader.TryRead на той же рации (ActReader). Mute не трогается.
+	protected void PlayerScreenActStep(int sample)
+	{
+		if (m_bActStopped)
+			return;
+		if (sample == 5)
+		{
+			ActChoose(sample);
+			return;
+		}
+		if (!m_bActChosen)
+			return;
+		// codex #4492: те же объекты могут быть уже закрыты — нужно ещё и открытое меню
+		if ((sample == 9 || sample == 15) && (!ScreenSame(ScreenVon()) || !m_ScreenMenu.IsOpened()))
+		{
+			ActStop(sample, "SCREEN_LOST");
+			return;
+		}
+		if (sample == 7)
+			ActReader(sample, "PRE");
+		else if (sample == 9)
+		{
+			if (!ActExpect(sample, m_iActRaw0, m_bActMuted0, "BEFORE_STEP"))
+				return;
+			m_fActStepAt = m_fElapsed;
+			m_ActEntry.AdjustEntryModif(m_iActModifier);
+			// codex #4492: при неуспешном native-шаге интерфейс не обновляется
+			if (!ActExpect(sample, m_iActTarget, m_bActMuted0, "STEP_MISMATCH"))
+				return;
+			m_ActEntry.Update();
+			ActNote(sample, "STEP", "phase=t0,sinceStepMs=" + ActSinceStepMs().ToString() + ",target=" + m_iActTarget.ToString() + "," + ActState());
+		}
+		else if (sample == 10 || sample == 14)
+		{
+			string phase = "t1";
+			if (sample == 14)
+				phase = "t5";
+			ActNote(sample, "READ", "phase=" + phase + ",sinceStepMs=" + ActSinceStepMs().ToString() + ",target=" + m_iActTarget.ToString() + "," + ActState());
+			if (sample == 10)
+				ActReader(sample, "POST");
+		}
+		else if (sample == 15)
+		{
+			if (!ActExpect(sample, m_iActTarget, m_bActMuted0, "BEFORE_RESTORE"))
+				return;
+			m_ActEntry.AdjustEntryModif(-m_iActModifier);
+			if (!ActExpect(sample, m_iActRaw0, m_bActMuted0, "RESTORE_MISMATCH"))
+				return;
+			m_ActEntry.Update();
+			ActNote(sample, "RESTORE", "raw0=" + m_iActRaw0.ToString() + "," + ActState());
+		}
+		else if (sample == 17)
+			ActReader(sample, "BACK");
+		else if (sample == 20)
+		{
+			if (ActExpect(sample, m_iActRaw0, m_bActMuted0, "FINAL_MISMATCH"))
+				ActNote(sample, "FINAL", "raw0=" + m_iActRaw0.ToString() + ",muted0=" + Bit(m_bActMuted0) + "," + ActState());
+		}
+	}
+
+	static const int READER_TEST_DEVICE_ID = 1; //!< TEST_ONLY: deviceId обычно даёт серверный binding, здесь его нет
+
+	//! codex #4491: настоящий production-reader (только чтение) на рации цели. raw трансивера читается до и после;
+	//! позиция — GetOrigin владельца рации только как TEST_ONLY вход (не точка антенны), в лог не пишется; ключ сети
+	//! TryRead читает внутри себя, стенд его не выводит и не хэширует. Без привязки цели — bound=0 и без вызова.
+	protected void ActReader(int sample, string phase)
+	{
+		if (!ActBound())
+		{
+			Note("PLAYER_READER", sample, "phase=" + phase + ",idx=" + m_iActIdx.ToString() + ",bound=0");
+			return;
+		}
+		BaseRadioComponent radio = m_ActTransceiver.GetRadio();
+		int rawBefore = m_ActTransceiver.GetFrequency();
+		RICON_RadioObservation obs;
+		bool ok = RICON_BaseRadioObservationReader.TryRead(radio, READER_TEST_DEVICE_ID, m_iActTrIndex, m_ActRadioOwner.GetOrigin(), obs);
+		int rawAfter = m_ActTransceiver.GetFrequency();
+		string text = "phase=" + phase + ",idx=" + m_iActIdx.ToString() + ",bound=1,authority=" + Bit(RICON_CommsManagerComponent.IsAuthority());
+		text = text + ",deviceId=" + READER_TEST_DEVICE_ID.ToString() + ",trIndex=" + m_iActTrIndex.ToString() + ",ok=" + Bit(ok && obs != null);
+		if (ok && obs != null)
+		{
+			text = text + ",obsDevice=" + obs.m_iDeviceId.ToString() + ",obsTr=" + obs.m_iTransceiverIndex.ToString();
+			text = text + ",tuning=" + obs.m_iTuningValue.ToString() + ",powered=" + Bit(obs.m_bPowered);
+		}
+		obs = null;
+		Note("PLAYER_READER", sample, text + ",rawBefore=" + rawBefore.ToString() + ",rawAfter=" + rawAfter.ToString());
 	}
 
 	//! A1-S1 (claude #4431, условия codex #4425, #4427, #4430, #4432, #4436, #4463, #4467): настоящее радиальное
@@ -842,13 +940,29 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				Note("SCREEN", sample, "op=OPEN," + ScreenMenuState(von) + "," + via);
 			}
 		}
-		else if (sample <= 12)
+		else if (ScreenWidgetSample(sample))
 		{
 			Note("SCREEN", sample, "op=MENU," + ScreenMenuState(von));
 			ScreenWidgets(sample, von);
+			// A1-S2: маркеры для снимка собственного окна — до шага (7, за 2 с до STEP, codex #4492), после шага, после
+			// возврата; снимок берётся сразу после маркера, его время сверяется со строками STEP/RESTORE
+			if (Mode() == MODE_PLAYERSCREENSTEP && sample == 7)
+				PrintFormat("[RICON_LIVEB] capture=PRE sample=%1", sample);
+			else if (Mode() == MODE_PLAYERSCREENSTEP && sample == 10)
+				PrintFormat("[RICON_LIVEB] capture=POST sample=%1", sample);
+			else if (Mode() == MODE_PLAYERSCREENSTEP && sample == 17)
+				PrintFormat("[RICON_LIVEB] capture=BACK sample=%1", sample);
 		}
 		else if (sample == 20 || sample == 30)
 			Note("SCREEN", sample, "op=MENU," + ScreenMenuState(von));
+	}
+
+	//! Срезы с чтением виджетов: A1-S1 — 7…12; A1-S2 — 7, 8 (до шага), 10, 14 (после), 17 (после возврата).
+	protected static bool ScreenWidgetSample(int sample)
+	{
+		if (Mode() == MODE_PLAYERSCREENSTEP)
+			return sample == 7 || sample == 8 || sample == 10 || sample == 14 || sample == 17;
+		return sample >= 7 && sample <= 12;
 	}
 
 	//! A1-P2 (claude #4399, условия codex #4388, #4390, #4402): одна последовательность пути меню на одной radio-entry
@@ -1225,16 +1339,19 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			else
 				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_OBSERVATION,samples=" + m_iSamples.ToString());
 		}
-		else if (Mode() == MODE_PLAYERSCREEN)
+		else if (Mode() == MODE_PLAYERSCREEN || Mode() == MODE_PLAYERSCREENSTEP)
 		{
 			// Close не вызывается: Close может выполнить выбранную entry (SCR_SelectionMenu.c:314–316)
 			m_ScreenMenu = null;
 			m_ScreenController = null;
 			m_ScreenVon = null;
+			string level = "PLAYER_SCREEN_WIDGET";
+			if (Mode() == MODE_PLAYERSCREENSTEP)
+				level = "PLAYER_SCREEN_STEP";
 			if (complete)
-				Note("BENCH_DONE", m_iSamples, "level=PLAYER_SCREEN_WIDGET,not=PIXELS|LOCALIZATION|INPUT|AUDIO|REPLICATION");
+				Note("BENCH_DONE", m_iSamples, "level=" + level + ",not=PIXELS|LOCALIZATION|INPUT|AUDIO|REPLICATION");
 			else
-				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_SCREEN_WIDGET,notReady=" + Bit(m_bScreenNotReady) + ",samples=" + m_iSamples.ToString());
+				Note("BENCH_ABORTED", m_iSamples, "level=" + level + ",notReady=" + Bit(m_bScreenNotReady) + ",stopped=" + Bit(m_bActStopped) + ",samples=" + m_iSamples.ToString());
 		}
 		else if (Mode() == MODE_PLAYERMENU)
 		{

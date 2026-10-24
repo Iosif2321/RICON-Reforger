@@ -1,7 +1,9 @@
 # RICON_LiveProbe — прибор live-проверки (TOOL_ONLY)
 
 Отдельный аддон для опытов по `docs/plan/LIVE-order-frequency-mute.md` и `docs/analysis/AUDIO_CHAIN_CONTROL_RU.md`
-(трек 1). Не для Workshop, не зависит от `RICON_Core`; подключается только на время сессии через `-addonsDir`.
+(трек 1). Не для Workshop; подключается только на время сессии через `-addonsDir`. `addon.gproj` с e2a19a7 перечисляет
+`RICON_Core` и `RICON_CoreTests` в зависимостях. С A1-S2 стенд только читает production-reader
+`RICON_BaseRadioObservationReader.TryRead` из Core (codex #4491); код Core стенд не меняет.
 Запуски — в рамках разрешения владельца 2026-10-23, с START/END и доказательствами на шине.
 Статус среза: **проверки наблюдателя в Workbench пройдены; окончательное ревью ожидается**.
 Продолжение без ожидания ACK Claude разрешено владельцем 2026-10-23, Agora #4011; окончательная совместная приёмка
