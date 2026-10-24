@@ -1,0 +1,69 @@
+{
+  "status": "NATIVE_SYNTHETIC_CONTEXT_FIX_CONFIRMED",
+  "scope": "ScriptEditor, синтетические Managed-ключи; без мира, игрока, настоящих раций и Play",
+  "runs": [
+    {
+      "receipt": "live-reader-context-red-codex-20261024-172456-415.json",
+      "head": "3cdd9e66b2bffbeb601cee6d844f053d3075877b",
+      "logSha256": "7bc3a55535b74bcdaae8b89b1ee0abe71e940c8975f6b4d1029c28b86b82effd",
+      "passed": 18,
+      "checks": 22,
+      "mismatches": 4,
+      "events": 14,
+      "exitCode": 0,
+      "marker": "FAIL",
+      "sourcesChecked": 13
+    },
+    {
+      "receipt": "live-reader-context-red-codex-20261024-173049-395.json",
+      "head": "3be89adf860c50c898a58f7fd18131f6c0f73a31",
+      "logSha256": "48093357d2ae17f843670bf23e4c3c022fbebc916763313960e6de042c8d7e91",
+      "passed": 19,
+      "checks": 22,
+      "mismatches": 3,
+      "events": 14,
+      "exitCode": 0,
+      "marker": "FAIL",
+      "sourcesChecked": 13
+    },
+    {
+      "receipt": "live-reader-context-green-codex-20261024-173348-580.json",
+      "head": "2fd9f87f468bc85bd6d5a49633c5b3dafb111a75",
+      "logSha256": "9ce6347ce1947c35f9d9093b1db9d2967dda41bdca88ff5e61b5b9066b2d2aeb",
+      "passed": 22,
+      "checks": 22,
+      "mismatches": 0,
+      "events": 16,
+      "exitCode": 0,
+      "marker": "PASS",
+      "sourcesChecked": 13
+    }
+  ],
+  "initialAttempt": "Ожидание obs4 в новой фикстуре было ошибочным: этот номер уже использован. Исправлено на obs5 до чистого RED.",
+  "red": "Три отказа: уточнение игрока, смена игрока, GONE с новым вместо последнего наблюдавшегося ID",
+  "green": "Те же 22 критерия прошли; прежние 16 сохранены, все 16 событий сверены",
+  "lastObservationPlayers": [
+    -1,
+    7,
+    8,
+    8,
+    8
+  ],
+  "observationIdPreserved": 5,
+  "processExitIsNotTestVerdict": true,
+  "greenEngineCrc": {
+    "Scripts/Game/RICON_Live/RICON_LiveJournal.c": "27be0fe1",
+    "Scripts/Game/RICON_Live/RICON_LiveObserver.c": "b1c9b546",
+    "Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "d647144c",
+    "Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "db3a17a4",
+    "Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "8ba0a75b",
+    "Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "77c77ee8",
+    "Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "ac4884db",
+    "Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "eb49d2c0",
+    "Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "a46800ab",
+    "Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c": "8c802e29",
+    "Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "156e31c1",
+    "Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c": "2f47dfd3"
+  },
+  "checkerSha256": "5aa829e0241c848c474e2b63ffd6c524f6e64a0b7ade4826d23467a395e1f667"
+}
