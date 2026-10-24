@@ -1,6 +1,6 @@
 {
  "summary": {
-  "corpus_ok_cases": 222,
+  "corpus_ok_cases": 224,
   "corpus_bad": 0,
   "corpus_worst_abs_dev": 4.969891165274021e-10,
   "cases": 16502,
@@ -28,7 +28,7 @@
   "examples_bad": 0,
   "examples_worst_dev": 0.04750220676358374,
   "t_exe_s": 0.3,
-  "t_port_s": 4.9
+  "t_port_s": 5.2
  },
  "corpus_bad": [],
  "mismatch": [],

@@ -118,7 +118,18 @@ def cases():
         change(f"provenance {provenance} копируется", "OK", provenance=provenance)
     change("целые числа JSON допустимы", "OK", frequencyMHz=25, distanceKm=10, txHeightM=2, rxHeightM=2,
            surfaceRefractivityN=301)
-    # 8. JSON-only: типы и поля.
+    # 8. Численные границы (codex #4088): конечные, но крайние ε′/σ. Сборка NTIA здесь возвращает ±inf/NaN или
+    # прерывается исключением C++ — по GW03 это NUMERIC_FAILURE; огромная σ без переполнения остаётся OK.
+    # Совпадение границы отказа с неизменённой сборкой — receipts/ground-wave-extremes-claude.py.
+    numeric = (("σ = 1e308, f = 0.01 МГц, d = 1 км: поле не конечно (codex #4088)", 0.01, 1.0, 15.0, 1e308, "NUMERIC_FAILURE"),
+               ("ε′ = 1e308, f = 30 МГц, d = 1 км: поле не конечно (codex #4088)", 30.0, 1.0, 1e308, 1.0, "NUMERIC_FAILURE"),
+               ("ε′ = 1e308, f = 1 МГц, d = 100 км: исключение C++ в ряде вычетов", 1.0, 100.0, 1e308, 1.0, "NUMERIC_FAILURE"),
+               ("σ = 1e300, f = 1 МГц, d = 100 км: исключение C++ в ряде вычетов", 1.0, 100.0, 15.0, 1e300, "NUMERIC_FAILURE"),
+               ("σ = 1e20, f = 0.01 МГц, d = 1 м: огромная σ без переполнения", 0.01, 0.001, 15.0, 1e20, "OK"),
+               ("σ = 1e9, f = 25 МГц, d = 1 км: огромная σ без переполнения", 25.0, 1.0, 15.0, 1e9, "OK"))
+    for note, f, d, eps, sigma, code in numeric:
+        change(note, code, frequencyMHz=f, distanceKm=d, txHeightM=0.0, rxHeightM=0.0, ground=ground(eps, sigma))
+    # 9. JSON-only: типы и поля.
     change("bool вместо числа", "INVALID_INPUT", True, frequencyMHz=True)
     change("строка вместо числа", "INVALID_INPUT", True, distanceKm="10")
     change("null вместо числа", "INVALID_INPUT", True, txHeightM=None)

@@ -3,7 +3,7 @@
   "version": 1,
   "revision": 1,
   "source": "docs/req/REQ-ground-wave.md",
-  "requirementsLfSha256": "66a8e1362ecb722c65258db34e12d63450c8c68da43db92b50f8410accbd9080",
+  "requirementsLfSha256": "198033126e72322887ef6e9b0b0467e89fb9168d395bbdb74e74024d194d5259",
   "note": "Ожидания OK — порт LFMF v1.1 (CROSS_CHECKED с неизменённой сборкой NTIA, |Δ| ≤ 2e-9 дБ); отказы — HAND_DERIVED по GW03. ntiaExamples — опубликованные NTIA значения (1 знак), проверяются через lfmf() с допуском 0.05 дБ. Грунты TEST_ONLY, если не указано иное.",
   "cases": [
     {
@@ -6730,6 +6730,150 @@
     },
     {
       "id": "GW246",
+      "note": "σ = 1e308, f = 0.01 МГц, d = 1 км: поле не конечно (codex #4088)",
+      "jsonOnly": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 0.01,
+        "distanceKm": 1.0,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 1e+308,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "GW247",
+      "note": "ε′ = 1e308, f = 30 МГц, d = 1 км: поле не конечно (codex #4088)",
+      "jsonOnly": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 30.0,
+        "distanceKm": 1.0,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 1e+308,
+          "conductivitySm": 1.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "GW248",
+      "note": "ε′ = 1e308, f = 1 МГц, d = 100 км: исключение C++ в ряде вычетов",
+      "jsonOnly": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1.0,
+        "distanceKm": 100.0,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 1e+308,
+          "conductivitySm": 1.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "GW249",
+      "note": "σ = 1e300, f = 1 МГц, d = 100 км: исключение C++ в ряде вычетов",
+      "jsonOnly": false,
+      "provenance": "HAND_DERIVED",
+      "input": {
+        "frequencyMHz": 1.0,
+        "distanceKm": 100.0,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 1e+300,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "NUMERIC_FAILURE"
+      }
+    },
+    {
+      "id": "GW250",
+      "note": "σ = 1e20, f = 0.01 МГц, d = 1 м: огромная σ без переполнения",
+      "jsonOnly": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 0.01,
+        "distanceKm": 0.001,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 1e+20,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "basicLossDb": -67.5522167748363,
+        "fieldDbuVm": 169.53820702599896,
+        "method": "FLAT_EARTH_CURVE",
+        "kr": 0.00020958450219516817,
+        "heightToWavelength": 0.0,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "GW251",
+      "note": "σ = 1e9, f = 25 МГц, d = 1 км: огромная σ без переполнения",
+      "jsonOnly": false,
+      "provenance": "CROSS_CHECKED",
+      "input": {
+        "frequencyMHz": 25.0,
+        "distanceKm": 1.0,
+        "txHeightM": 0.0,
+        "rxHeightM": 0.0,
+        "polarization": "V",
+        "surfaceRefractivityN": 301.0,
+        "ground": {
+          "epsilonReal": 15.0,
+          "conductivitySm": 1000000000.0,
+          "provenance": "TEST_ONLY"
+        }
+      },
+      "expect": {
+        "code": "OK",
+        "basicLossDb": 60.41177001762483,
+        "fieldDbuVm": 109.53302040697858,
+        "method": "FLAT_EARTH_CURVE",
+        "kr": 523.9612554879204,
+        "heightToWavelength": 0.0,
+        "provenance": "TEST_ONLY"
+      }
+    },
+    {
+      "id": "GW252",
       "note": "bool вместо числа",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6751,7 +6895,7 @@
       }
     },
     {
-      "id": "GW247",
+      "id": "GW253",
       "note": "строка вместо числа",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6773,7 +6917,7 @@
       }
     },
     {
-      "id": "GW248",
+      "id": "GW254",
       "note": "null вместо числа",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6795,7 +6939,7 @@
       }
     },
     {
-      "id": "GW249",
+      "id": "GW255",
       "note": "поляризация в нижнем регистре",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6817,7 +6961,7 @@
       }
     },
     {
-      "id": "GW250",
+      "id": "GW256",
       "note": "неизвестная поляризация",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6839,7 +6983,7 @@
       }
     },
     {
-      "id": "GW251",
+      "id": "GW257",
       "note": "неизвестный provenance",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6861,7 +7005,7 @@
       }
     },
     {
-      "id": "GW252",
+      "id": "GW258",
       "note": "ground не объект",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6882,7 +7026,7 @@
       }
     },
     {
-      "id": "GW253",
+      "id": "GW259",
       "note": "лишнее поле входа",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6905,7 +7049,7 @@
       }
     },
     {
-      "id": "GW254",
+      "id": "GW260",
       "note": "нет поля surfaceRefractivityN",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6926,7 +7070,7 @@
       }
     },
     {
-      "id": "GW255",
+      "id": "GW261",
       "note": "лишнее поле ground",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6949,7 +7093,7 @@
       }
     },
     {
-      "id": "GW256",
+      "id": "GW262",
       "note": "нет provenance в ground",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",
@@ -6970,7 +7114,7 @@
       }
     },
     {
-      "id": "GW257",
+      "id": "GW263",
       "note": "корень не объект",
       "jsonOnly": true,
       "provenance": "HAND_DERIVED",

@@ -589,7 +589,9 @@ def evaluate(raw):
         return {"code": "OUT_OF_MODEL_DOMAIN"}
     try:
         rc, a_btl, e_dbuvm, _p_rx, method = lfmf(h_tx, h_rx, f, REFERENCE_POWER_W, n_s, d, eps, sigma, 1)
-    except NumericFailure:
+    except (NumericFailure, ArithmeticError, ValueError):
+        # Конечные, но крайние ε′/σ (codex #4088): LFMF даёт ±inf/NaN или прерывается исключением C++
+        # (receipts/ground-wave-extremes-claude.py: 576 случаев, граница отказа совпала полностью).
         return {"code": "NUMERIC_FAILURE"}
     if rc != SUCCESS:  # GW03 повторяет ValidateInputs; сюда попасть нельзя
         raise AssertionError(f"LFMF rc {rc} после проверок GW03")
