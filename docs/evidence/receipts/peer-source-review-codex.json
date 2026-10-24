@@ -1,0 +1,59 @@
+{
+  "level": "WORKBENCH_STATIC",
+  "review": "PENDING_CLAUDE",
+  "worldStarted": false,
+  "peerClientStarted": false,
+  "sourceResource": "$core:scripts/WorkbenchGameCommon/PeerTool.c",
+  "sourceCRC": "d12a9aa0",
+  "runs": [
+    {
+      "run": "ricon-wbreader-codex-peer-class-20261024-222453",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-class-20261024-222453\\console.log",
+      "sha256": "c0b9b24eef3dde65d47c4b63684191d5d11e85aa139e717956d685e20cdbb771",
+      "matchedFiles": 0,
+      "printedSourceLines": 0,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-peer-core-20261024-222517",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-core-20261024-222517\\console.log",
+      "sha256": "e5c96705ea79f4c2ee1e7e6bc23a71f06282d010cad40f08f3d94db1b4ff37a2",
+      "matchedFiles": 1,
+      "printedSourceLines": 5,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-peer-rpl-20261024-222603",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-rpl-20261024-222603\\console.log",
+      "sha256": "17d4e8cabd104d5fbba69831dc6ababb19dac959baae8b901ff3b7728c132765",
+      "matchedFiles": 1,
+      "printedSourceLines": 9,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-peer-command-80-20261024-222934",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-command-80-20261024-222934\\console.log",
+      "sha256": "b5956948fe2b8f2b6be37bbf952add6c21325c219aacb01c9603552c4311c6bf",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-peer-command-108-20261024-223015",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-command-108-20261024-223015\\console.log",
+      "sha256": "b9bc7779e1ffe352c8024902e9f7c0cc6cf40e1dd2a8bfe663754784a935bcf2",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-peer-command-65-20261024-223132",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-peer-command-65-20261024-223132\\console.log",
+      "sha256": "047baf391bb94fb430f6afc5baf457c84f651cef517a89c5fa9333933b457ea2",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    }
+  ],
+  "plan": "docs/plan/LIVE-peer-local-plan-codex.md"
+}
