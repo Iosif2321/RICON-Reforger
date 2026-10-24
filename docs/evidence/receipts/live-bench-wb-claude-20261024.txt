@@ -814,3 +814,165 @@ OWN_PID_GONE
 [RICON_LIVEB] heartbeat n=11 frames=1254 phase=5 running=1 elapsed=10.8124
 [RICON_LIVEB] heartbeat=STOP reason=FINISH n=11 frames=1281
 [RICON_LIVE] seq=46 t=11018 side=probe kind=BENCH_DONE player=-1 device=-1 tr=-1 value=6 text=level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR
+
+--- ricon-a1e-claude-20261024-192824
+# A1-E (19:28:24). Owner decision in chat (answer to agora #4353): "Разрешены все необходимые действия сейчас и в
+# будущем." (relayed #4355; codex got the same answer directly, #4357). Prepared and reviewed as PREPARED_NOT_RUN by
+# codex (3bc76fa, #4349), command agreed #4351, START #4356, ACK #4358. Sources HEAD beb1c65 (bench f62df6b5..., CRC
+# 1493fae8; RICON_LiveText d3500602), the same Plain world and flags as V2 except -riconBenchSetter=entry. Runner
+# wb_bench.ps1 8F13297B... -Observe -PressYesOnce -StopOnUnknownWindow. PID 29268.
+# Setup as in V1/V2: existing entities=21 gameModes=1 radioManagers=0; one RadioManagerEntity by class name in memory
+# (no Save), radioManagerOk=1. Dialog at t=13 s with the same 7 UIA elements and message as bench8/bench9/V1/V2; one
+# "Yes" at 19:28:38.278; no further dialog and no unknown window. BENCH_START setter=entry setterGiven=1
+# playerController=0 factionManager=1; BENCH_MANAGER preSpawn=1; four BENCH_ENTRY after the spawn reads; BENCH_DONE
+# value=6 level=MENU_ENTRY_RUNTIME within 11 s; STOP BENCH_FINISHED at 31 s; SCRIPT (E) = 0; sources stable; own PID gone.
+# The final dump repeats the streamed events identically (not repeated below).
+# Parser live-bench-log-check-claude.py (7e791ddd...) with expectations 1 and entry (output:
+# live-a1e-log-check-claude-20261024.txt): LIVE_BENCH_LOG_CHECK_PASS, overall MENU_ENTRY_RUNTIME_PASS on all four radios:
+#   - own vanilla SCR_VONEntryRadio per transceiver 0 (SetRadioEntry(tr0, 1, gadget), channel overwrite, InitEntry):
+#     InitEntry's AdjustEntryModif(0) left raw unchanged, entry usable, GetIsMuted = IsMuted;
+#   - menu step AdjustEntryModif(+1): ANPRC68 32000->32200, ANPRC77 48000->48200, R107M 48000->48200, RF10
+#     42000->42200, read by GetFrequency at t0 (actualDeltaMs 0), t1 (1000) and t5 (5007); GetEntryFrequency = target;
+#     transceiver 1 unchanged;
+#   - menu text of the vanilla object (GetDisplayText, decoded strictly): "32.0 #AR-VON_FrequencyUnits_MHz" ->
+#     "32.2 ...", "48.0" -> "48.2", "48.0" -> "48.2", "42.0" -> "42.2"; number x 1000 = raw at all 5 points
+#     init/step/t0/t1/t5 on all four radios (all raw multiples of 100: TEXT_MATCH 20/20);
+#   - mute: ToggleMuteEntry twice 0 -> 1 -> 0 (returns 1 and 0 = the new state), entry.GetIsMuted follows; then the
+#     direct SetMuteState 0 -> 1 -> 0 (returns 0 and 0, as in V1/V2) and entry.GetIsMuted follows it too: the menu
+#     mute and the direct mute are one native state of the transceiver.
+# Observation: on this server-only Play instance there is no local PlayerController but there is a faction manager, so
+# without the channel overwrite InitEntry would have reached SCR_VONMenu.GetKnownChannel and its unchecked
+# GetPlayerController() (SCR_VONMenu.c:41-46); that branch was not executed.
+# Against V2 the normalised sets of engine (E) messages are identical (7 = 7). Note: BENCH_START still prints
+# level=NATIVE_ROUNDTRIP in every mode; the level of the run is the one in BENCH_DONE (checked by the parser).
+# Settings snapshot: registry 0 changed lines (sha E38C14F3... before = after), 0 profile files changed,
+# SECURITY_TERMS_IN_DIFF=0. As before the runner stopped the process, so a save on a normal exit is not covered.
+# Level: MENU_ENTRY_RUNTIME on a server-only Play instance (isServer=1, isClient=0): the vanilla menu object ran on
+# real transceivers; not the screen, not the player's VON controller, not GetKnownChannel, not audio or replication.
+df685d35d9f4b073fa0e5d92abf55e27ed28b6c54d350b1226c9a4481d0a54e5
+# runner output (selected lines)
+SETTINGS_BEFORE regLines=3276 profileFiles=5
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -logLevel verbose -log-scr-checksum -logsDir ricon-a1e-claude-20261024-192824 -forceUpdate -noFocus -maxFPS 30 -riconBenchRadioManager=1 -riconBenchSetter=entry
+WINDOW Hidden gameModeWait=0
+PID 29268 started 19:28:24
+OBSERVE t=10 responding=True cpuSec=10.02 threads=40 logSize=861343 windows=7 visible=1
+  WINDOW h|Qt683QWindowIcon|MainWindow
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+# (the next 11 lines go to the PowerShell host stream and are missing from the Tee file; copied from the runner console)
+DIALOG t=13 title="Script Authorization Required" handle=6163572
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_ONCE check textMatch=True buttons="No,No to All,Yes,Yes to All" buttonsMatch=True yesButtons=1
+YES_ONCE pressed button="Yes" count=1 t=13 at=19:28:38.278
+OBSERVE t=21 responding=True cpuSec=22.12 threads=50 logSize=905386 windows=6 visible=2
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent*
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+STOP reason=BENCH_FINISHED pid=29268 after=31 s exited=True
+YES_PRESSES=1
+SETTINGS_AFTER regLines=3276 regDiffLines=0 profileDiffLines=0
+  REGSHA before=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2 after=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+LOGSHA DF685D35D9F4B073FA0E5D92ABF55E27ED28B6C54D350B1226C9A4481D0A54E5 size 923728
+# log lines (timestamps stripped)
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] setup existing entities=21 gameModes=1 radioManagers=0 noInstance=0 gameModeParam=0: radioManagerParam=1:1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] setup created gameMode=0 gameModeOk=0 radioManager=1 via=class radioManagerOk=1
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1,radioManager=1,expectedManager=1,setter=entry,setterGiven=1,playerController=0,factionManager=1
+[RICON_LIVEB] heartbeat=START
+[RICON_LIVEB] watch t=200ms isGameMode=1 fps=59.4564
+[RICON_LIVEB] lifecycle=FirstFrame world=1,editMode=0,active=1 running=1
+[RICON_LIVEB] heartbeat n=1 frames=11 phase=0 running=1 elapsed=0.682742
+[RICON_LIVE] seq=1 t=1005 side=probe kind=BENCH_MANAGER player=-1 device=-1 tr=-1 value=1 text=where=preSpawn,radioManager=1,expected=1
+[RICON_LIVE] seq=2 t=1005 side=probe kind=BENCH_SPAWN player=-1 device=-1 tr=-1 value=1 text=bench=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,actualPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et
+[RICON_LIVE] seq=3 t=1005 side=probe kind=BENCH_SPAWN player=-1 device=-1 tr=-1 value=1 text=bench=1,prefab={9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et,actualPrefab={9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et
+[RICON_LIVE] seq=4 t=1005 side=probe kind=BENCH_SPAWN player=-1 device=-1 tr=-1 value=1 text=bench=2,prefab={54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et,actualPrefab={54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et
+[RICON_LIVE] seq=5 t=1005 side=probe kind=BENCH_SPAWN player=-1 device=-1 tr=-1 value=1 text=bench=3,prefab={73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et,actualPrefab={73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et
+[RICON_LIVE] seq=6 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=32000 text=bench=0,phase=spawn,actualDeltaMs=-1,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=7 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=48000 text=bench=0,phase=spawn,actualDeltaMs=-1,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=8 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48000 text=bench=1,phase=spawn,actualDeltaMs=-1,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=9 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=1,phase=spawn,actualDeltaMs=-1,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=10 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48000 text=bench=2,phase=spawn,actualDeltaMs=-1,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=11 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=2,phase=spawn,actualDeltaMs=-1,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=12 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=42000 text=bench=3,phase=spawn,actualDeltaMs=-1,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=13 t=1005 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=39000 text=bench=3,phase=spawn,actualDeltaMs=-1,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=14 t=1005 side=probe kind=BENCH_ENTRY player=-1 device=-1 tr=0 value=32000 text=bench=0,phase=init,rawBefore=32000,raw=32000,entryFreq=32000,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=15 t=1005 side=probe kind=BENCH_ENTRY player=-1 device=-1 tr=0 value=48000 text=bench=1,phase=init,rawBefore=48000,raw=48000,entryFreq=48000,usable=1,emuted=0,dtext=48.0%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=16 t=1005 side=probe kind=BENCH_ENTRY player=-1 device=-1 tr=0 value=48000 text=bench=2,phase=init,rawBefore=48000,raw=48000,entryFreq=48000,usable=1,emuted=0,dtext=48.0%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=17 t=1005 side=probe kind=BENCH_ENTRY player=-1 device=-1 tr=0 value=42000 text=bench=3,phase=init,rawBefore=42000,raw=42000,entryFreq=42000,usable=1,emuted=0,dtext=42.0%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVEB] watch t=1000ms isGameMode=1 fps=61.7665
+[RICON_LIVEB] heartbeat n=2 frames=96 phase=1 running=1 elapsed=1.69912
+[RICON_LIVE] seq=18 t=2011 side=probe kind=BENCH_SET_FREQUENCY player=-1 device=-1 tr=0 value=32200 text=bench=0,current=32000,min=32000,max=68000,res=200,modifier=1,entryFreq=32200,usable=1,emuted=0,dtext=32.2%20#AR-VON_FrequencyUnits_MHz,setter=entry
+[RICON_LIVE] seq=19 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=32200 text=bench=0,phase=t0,actualDeltaMs=0,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=32200,entryFreq=32200,usable=1,emuted=0,dtext=32.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=20 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=48000 text=bench=0,phase=t0,actualDeltaMs=0,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=21 t=2011 side=probe kind=BENCH_SET_FREQUENCY player=-1 device=-1 tr=0 value=48200 text=bench=1,current=48000,min=30000,max=76000,res=200,modifier=1,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz,setter=entry
+[RICON_LIVE] seq=22 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=1,phase=t0,actualDeltaMs=0,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=23 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=1,phase=t0,actualDeltaMs=0,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=24 t=2011 side=probe kind=BENCH_SET_FREQUENCY player=-1 device=-1 tr=0 value=48200 text=bench=2,current=48000,min=30000,max=76000,res=200,modifier=1,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz,setter=entry
+[RICON_LIVE] seq=25 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=2,phase=t0,actualDeltaMs=0,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=26 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=2,phase=t0,actualDeltaMs=0,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=27 t=2011 side=probe kind=BENCH_SET_FREQUENCY player=-1 device=-1 tr=0 value=42200 text=bench=3,current=42000,min=30000,max=76000,res=200,modifier=1,entryFreq=42200,usable=1,emuted=0,dtext=42.2%20#AR-VON_FrequencyUnits_MHz,setter=entry
+[RICON_LIVE] seq=28 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=42200 text=bench=3,phase=t0,actualDeltaMs=0,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=42200,entryFreq=42200,usable=1,emuted=0,dtext=42.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=29 t=2011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=39000 text=bench=3,phase=t0,actualDeltaMs=0,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVEB] watch t=2000ms isGameMode=1 fps=74.9845
+[RICON_LIVEB] heartbeat n=3 frames=190 phase=2 running=1 elapsed=2.70942
+[RICON_LIVE] seq=30 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=32200 text=bench=0,phase=t1,actualDeltaMs=1000,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=32200,entryFreq=32200,usable=1,emuted=0,dtext=32.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=31 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=48000 text=bench=0,phase=t1,actualDeltaMs=1000,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=32 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=1,phase=t1,actualDeltaMs=1000,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=33 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=1,phase=t1,actualDeltaMs=1000,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=34 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=2,phase=t1,actualDeltaMs=1000,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=35 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=2,phase=t1,actualDeltaMs=1000,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=36 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=42200 text=bench=3,phase=t1,actualDeltaMs=1000,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=42200,entryFreq=42200,usable=1,emuted=0,dtext=42.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=37 t=3011 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=39000 text=bench=3,phase=t1,actualDeltaMs=1000,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVEB] watch t=3000ms isGameMode=1 fps=105.703
+[RICON_LIVEB] heartbeat n=4 frames=290 phase=3 running=1 elapsed=3.71766
+[RICON_LIVEB] watch t=4000ms isGameMode=1 fps=111.055
+[RICON_LIVEB] heartbeat n=5 frames=397 phase=3 running=1 elapsed=4.7222
+[RICON_LIVEB] watch t=5000ms isGameMode=1 fps=110.255
+[RICON_LIVEB] heartbeat n=6 frames=476 phase=3 running=1 elapsed=5.62163
+[RICON_LIVEB] watch t=6000ms isGameMode=1 fps=92.7566
+[RICON_LIVEB] heartbeat n=7 frames=563 phase=3 running=1 elapsed=6.62004
+[RICON_LIVE] seq=38 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=32200 text=bench=0,phase=t5,actualDeltaMs=5007,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=32200,entryFreq=32200,usable=1,emuted=0,dtext=32.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=39 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=48000 text=bench=0,phase=t5,actualDeltaMs=5007,min=32000,max=68000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=40 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=1,phase=t5,actualDeltaMs=5007,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=41 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=1,phase=t5,actualDeltaMs=5007,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=42 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=48200 text=bench=2,phase=t5,actualDeltaMs=5007,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=48200,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=43 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=42000 text=bench=2,phase=t5,actualDeltaMs=5007,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVE] seq=44 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=0 value=42200 text=bench=3,phase=t5,actualDeltaMs=5007,min=30000,max=76000,res=200,powered=1,muted=0,targetTr0=42200,entryFreq=42200,usable=1,emuted=0,dtext=42.2%20#AR-VON_FrequencyUnits_MHz
+[RICON_LIVE] seq=45 t=7018 side=probe kind=BENCH_READ player=-1 device=-1 tr=1 value=39000 text=bench=3,phase=t5,actualDeltaMs=5007,min=20000,max=52000,res=200,powered=1,muted=0,targetTr0=-1
+[RICON_LIVEB] watch t=7000ms isGameMode=1 fps=95.9023
+[RICON_LIVEB] heartbeat n=8 frames=639 phase=4 running=1 elapsed=7.62713
+[RICON_LIVEB] watch t=8000ms isGameMode=1 fps=91.195
+[RICON_LIVEB] heartbeat n=9 frames=735 phase=4 running=1 elapsed=8.62724
+[RICON_LIVE] seq=46 t=9013 side=probe kind=BENCH_MUTE player=-1 device=-1 tr=0 value=-1 text=bench=0,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0
+[RICON_LIVE] seq=47 t=9013 side=probe kind=BENCH_MUTE player=-1 device=-1 tr=0 value=-1 text=bench=1,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0
+[RICON_LIVE] seq=48 t=9013 side=probe kind=BENCH_MUTE player=-1 device=-1 tr=0 value=-1 text=bench=2,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0
+[RICON_LIVE] seq=49 t=9013 side=probe kind=BENCH_MUTE player=-1 device=-1 tr=0 value=-1 text=bench=3,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0
+[RICON_LIVEB] heartbeat n=10 frames=837 phase=5 running=1 elapsed=9.63057
+[RICON_LIVEB] watch t=9000ms isGameMode=1 fps=117.349
+[RICON_LIVEB] heartbeat n=11 frames=943 phase=5 running=1 elapsed=10.6388
+[RICON_LIVEB] watch t=10000ms isGameMode=1 fps=104.302
+[RICON_LIVEB] heartbeat=STOP reason=FINISH n=11 frames=981
+[RICON_LIVE] seq=50 t=11013 side=probe kind=BENCH_DONE player=-1 device=-1 tr=-1 value=6 text=level=MENU_ENTRY_RUNTIME,not=SCREEN|PLAYER_VON|KNOWN_CHANNEL|RX_TX|AUDIBLE|REPLICATION|PER_PAIR

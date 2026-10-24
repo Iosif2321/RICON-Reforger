@@ -1,0 +1,340 @@
+# claude, A1-E log check (2026-10-24): python -I -X utf8 docs/evidence/receipts/live-bench-log-check-claude.py
+#   <ricon-a1e-claude-20261024-192824/console.log> oracle/data/radio_model_catalog_v1.json 1 entry
+# parser 7e791ddd75327275..., codec cf68ef8616e03ec5...; exit code 0.
+{
+ "logSha256": "df685d35d9f4b073fa0e5d92abf55e27ed28b6c54d350b1226c9a4481d0a54e5",
+ "errors": [],
+ "notes": [],
+ "overall": "MENU_ENTRY_RUNTIME_PASS",
+ "level": "MENU_ENTRY_RUNTIME",
+ "observed": {
+  "playerController": "0",
+  "factionManager": "1"
+ },
+ "radioManager": {
+  "expected": 1,
+  "start": "1",
+  "startExpected": "1",
+  "preSpawn": [
+   1
+  ]
+ },
+ "setter": {
+  "expected": "entry",
+  "start": "entry",
+  "startGiven": "1",
+  "steps": [
+   "entry",
+   "entry",
+   "entry",
+   "entry"
+  ]
+ },
+ "radios": [
+  {
+   "device": "0",
+   "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+   "spawned": true,
+   "entry": "bench=0,phase=init,rawBefore=32000,raw=32000,entryFreq=32000,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz",
+   "menuText": {
+    "init": {
+     "raw": 32000,
+     "entryFreq": 32000,
+     "text": "32.0 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "step": {
+     "raw": 32200,
+     "entryFreq": 32200,
+     "text": "32.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t0": {
+     "raw": 32200,
+     "entryFreq": 32200,
+     "text": "32.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t1": {
+     "raw": 32200,
+     "entryFreq": 32200,
+     "text": "32.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t5": {
+     "raw": 32200,
+     "entryFreq": 32200,
+     "text": "32.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    }
+   },
+   "entryStateOk": true,
+   "actualPrefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+   "model": "an_prc68",
+   "rawMin": 32000,
+   "rawMax": 68000,
+   "rawRes": 200,
+   "rawFrequency": 32000,
+   "passportMHz": [
+    [
+     30,
+     79.95
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     32000,
+     68000
+    ],
+    [
+     32000,
+     68000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1066.6666666666667,
+   "diagRatioRawMaxToPassportMaxMHz": 850.5315822388993,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=0,current=32000,min=32000,max=68000,res=200,modifier=1,entryFreq=32200,usable=1,emuted=0,dtext=32.2%20#AR-VON_FrequencyUnits_MHz,setter=entry",
+   "target": 32200,
+   "setter": "entry",
+   "raw_t0": 32200,
+   "raw_t1": 32200,
+   "raw_t5": 32200,
+   "mute": "bench=0,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0",
+   "verdict": "MENU_ENTRY_RUNTIME_PASS",
+   "menuTextOk": true,
+   "frequencyRoundTrip": true,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "1",
+   "prefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+   "spawned": true,
+   "entry": "bench=1,phase=init,rawBefore=48000,raw=48000,entryFreq=48000,usable=1,emuted=0,dtext=48.0%20#AR-VON_FrequencyUnits_MHz",
+   "menuText": {
+    "init": {
+     "raw": 48000,
+     "entryFreq": 48000,
+     "text": "48.0 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "step": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t0": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t1": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t5": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    }
+   },
+   "entryStateOk": true,
+   "actualPrefab": "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et",
+   "model": "an_prc77",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 48000,
+   "passportMHz": [
+    [
+     30,
+     52.95
+    ],
+    [
+     53,
+     75.95
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     30000,
+     76000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1000.0,
+   "diagRatioRawMaxToPassportMaxMHz": 1000.6583278472679,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=1,current=48000,min=30000,max=76000,res=200,modifier=1,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz,setter=entry",
+   "target": 48200,
+   "setter": "entry",
+   "raw_t0": 48200,
+   "raw_t1": 48200,
+   "raw_t5": 48200,
+   "mute": "bench=1,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0",
+   "verdict": "MENU_ENTRY_RUNTIME_PASS",
+   "menuTextOk": true,
+   "frequencyRoundTrip": true,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "2",
+   "prefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+   "spawned": true,
+   "entry": "bench=2,phase=init,rawBefore=48000,raw=48000,entryFreq=48000,usable=1,emuted=0,dtext=48.0%20#AR-VON_FrequencyUnits_MHz",
+   "menuText": {
+    "init": {
+     "raw": 48000,
+     "entryFreq": 48000,
+     "text": "48.0 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "step": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t0": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t1": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t5": {
+     "raw": 48200,
+     "entryFreq": 48200,
+     "text": "48.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    }
+   },
+   "entryStateOk": true,
+   "actualPrefab": "{54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et",
+   "model": "r107m",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 48000,
+   "passportMHz": [
+    [
+     20,
+     52
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     20000,
+     52000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 1500.0,
+   "diagRatioRawMaxToPassportMaxMHz": 1461.5384615384614,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=2,current=48000,min=30000,max=76000,res=200,modifier=1,entryFreq=48200,usable=1,emuted=0,dtext=48.2%20#AR-VON_FrequencyUnits_MHz,setter=entry",
+   "target": 48200,
+   "setter": "entry",
+   "raw_t0": 48200,
+   "raw_t1": 48200,
+   "raw_t5": 48200,
+   "mute": "bench=2,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0",
+   "verdict": "MENU_ENTRY_RUNTIME_PASS",
+   "menuTextOk": true,
+   "frequencyRoundTrip": true,
+   "muteToggleAndRestore": true
+  },
+  {
+   "device": "3",
+   "prefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+   "spawned": true,
+   "entry": "bench=3,phase=init,rawBefore=42000,raw=42000,entryFreq=42000,usable=1,emuted=0,dtext=42.0%20#AR-VON_FrequencyUnits_MHz",
+   "menuText": {
+    "init": {
+     "raw": 42000,
+     "entryFreq": 42000,
+     "text": "42.0 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "step": {
+     "raw": 42200,
+     "entryFreq": 42200,
+     "text": "42.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t0": {
+     "raw": 42200,
+     "entryFreq": 42200,
+     "text": "42.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t1": {
+     "raw": 42200,
+     "entryFreq": 42200,
+     "text": "42.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    },
+    "t5": {
+     "raw": 42200,
+     "entryFreq": 42200,
+     "text": "42.2 #AR-VON_FrequencyUnits_MHz",
+     "status": "TEXT_MATCH"
+    }
+   },
+   "entryStateOk": true,
+   "actualPrefab": "{73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et",
+   "model": "rf10",
+   "rawMin": 30000,
+   "rawMax": 76000,
+   "rawRes": 200,
+   "rawFrequency": 42000,
+   "passportMHz": [
+    [
+     44,
+     53.975
+    ]
+   ],
+   "reportedGameRaw": [
+    [
+     30000,
+     76000
+    ],
+    [
+     20000,
+     52000
+    ]
+   ],
+   "diagRatioRawMinToPassportMinMHz": 681.8181818181819,
+   "diagRatioRawMaxToPassportMaxMHz": 1408.0592867068087,
+   "step": "BENCH_SET_FREQUENCY",
+   "stepText": "bench=3,current=42000,min=30000,max=76000,res=200,modifier=1,entryFreq=42200,usable=1,emuted=0,dtext=42.2%20#AR-VON_FrequencyUnits_MHz,setter=entry",
+   "target": 42200,
+   "setter": "entry",
+   "raw_t0": 42200,
+   "raw_t1": 42200,
+   "raw_t5": 42200,
+   "mute": "bench=3,path=entry,before=0,ebefore=0,requested=1,ret=1,after=1,eafter=1,restoreTo=0,ret2=0,after2=0,eafter2=0,dret=0,dafter=1,edafter=1,dret2=0,dafter2=0,edafter2=0",
+   "verdict": "MENU_ENTRY_RUNTIME_PASS",
+   "menuTextOk": true,
+   "frequencyRoundTrip": true,
+   "muteToggleAndRestore": true
+  }
+ ]
+}
+LIVE_BENCH_LOG_CHECK_PASS
