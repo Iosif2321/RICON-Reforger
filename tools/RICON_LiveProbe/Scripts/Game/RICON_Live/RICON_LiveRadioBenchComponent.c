@@ -1,11 +1,14 @@
-//! TOOL_ONLY: стенд Q-F/Q-M на изолированных рациях (вариант (а′), claude #4089, условия codex #4091).
+//! TOOL_ONLY: стенд Q-F/Q-M на изолированных рациях (вариант (а′), claude #4089, условия codex #4091, #4105, #4106).
 //! Компонент на временной GenericEntity, которую плагин RICON_LiveBenchLauncherPlugin создаёт в памяти World Editor
-//! (мир не сохраняется). В Play стенд сам спавнит рации из BenchPrefabs(), и только с ними работает: игроков, меню VON
+//! (мир не сохраняется). В Play стенд сам спавнит рации из BenchPrefabs() и работает только с ними: игроков, меню VON
 //! и пользовательских раций нет — это «изолированный экземпляр под исключительным управлением» LIVE-order §2 Q-M.
 //! Уровень всех записей — NATIVE_ROUNDTRIP: значения getter-ов и ответ Set* на этой рации в этом процессе.
 //! UI_MHz, направление RX/TX, слышимость, репликация и per-pair mute этим стендом НЕ проверяются.
-//! Шаги по игровому времени: 1 с — спавн и чтение; 2 с — частота на один шаг; чтение t+0/+1/+5 с;
-//! 9 с — mute on/off с чтением; 11 с — удаление своих раций и BENCH_DONE. Ключи шифрования не читаются.
+//! Фазы (codex #4105): через 1 с после старта — спавн и чтение; через 1 с после спавна — шаг частоты трансивера 0;
+//! чтения «t1»/«t5» — когда от фактического вызова setter прошло ≥ 1 / ≥ 5 с, в записи actualDeltaMs; через 7 с после
+//! setter — mute на противоположное состояние и возврат; через 9 с — удаление своих раций и BENCH_DONE.
+//! Ранний выход (удаление компонента до конца) пишет BENCH_ABORTED с достигнутой фазой, не BENCH_DONE.
+//! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
 }
@@ -26,13 +29,22 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		return prefabs;
 	}
 
-	protected ref array<string> m_aPrefabs;
+	static const int PHASE_IDLE = 0;
+	static const int PHASE_SPAWNED = 1;
+	static const int PHASE_STEPPED = 2;
+	static const int PHASE_READ_T1 = 3;
+	static const int PHASE_READ_T5 = 4;
+	static const int PHASE_MUTED = 5;
+	static const int PHASE_DONE = 6;
 
 	protected ref RICON_LiveJournal m_Journal;
+	protected ref array<string> m_aPrefabs;
 	protected ref array<IEntity> m_aRadios = {};       //!< слабые ссылки на свои рации
-	protected ref array<int> m_aTargets = {};          //!< целевая сырая частота трансивера 0 после шага
+	protected ref array<int> m_aTargets = {};          //!< целевая сырая частота трансивера 0 после шага или −1
 	protected float m_fElapsed;
-	protected int m_iStep;
+	protected float m_fSpawnedAt;
+	protected float m_fSetAt;                          //!< игровое время фактического вызова setter
+	protected int m_iPhase;
 	protected bool m_bRunning;
 
 	override void OnPostInit(IEntity owner)
@@ -49,7 +61,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		m_Journal.SetStream(true);
 		m_aPrefabs = BenchPrefabs();
 		m_bRunning = true;
-		Note("BENCH_START", -1, "level=NATIVE_ROUNDTRIP,prefabs=" + m_aPrefabs.Count().ToString());
+		// Роль процесса — из Replication, а не из наличия владельца (codex #4108).
+		string text = "level=NATIVE_ROUNDTRIP,prefabs=" + m_aPrefabs.Count().ToString();
+		text = text + ",isServer=" + Bit(Replication.IsServer());
+		text = text + ",isClient=" + Bit(Replication.IsClient());
+		Note("BENCH_START", -1, text);
 	}
 
 	protected int Note(string kind, int value, string text)
@@ -60,6 +76,23 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	protected int Record(string kind, int device, int transceiver, int value, string text)
 	{
 		return m_Journal.Add(RICON_LiveObserver.Now(), "probe", kind, -1, -1, transceiver, value, "bench=" + device.ToString() + "," + text);
+	}
+
+	protected static string Bit(bool value)
+	{
+		if (value)
+			return "1";
+		return "0";
+	}
+
+	//! Миллисекунды от фактического вызова setter (−1 до вызова).
+	protected int DeltaMs()
+	{
+		if (m_iPhase < PHASE_STEPPED)
+			return -1;
+		float delta = (m_fElapsed - m_fSetAt) * 1000.0;
+		int ms = delta;
+		return ms;
 	}
 
 	protected BaseRadioComponent RadioOf(int device)
@@ -101,7 +134,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		}
 	}
 
-	//! Все трансиверы своей рации: сырые getter-ы, без единиц.
+	//! Все трансиверы своей рации: сырые getter-ы, без единиц. Цель шага относится только к трансиверу 0.
 	protected void Read(int device, string phase)
 	{
 		BaseRadioComponent radio = RadioOf(device);
@@ -121,39 +154,73 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			int muted = 0;
 			if (transceiver.IsMuted())
 				muted = 1;
+			int target = -1;
+			if (t == 0)
+				target = m_aTargets[device];
 			int minRaw = transceiver.GetMinFrequency();
 			int maxRaw = transceiver.GetMaxFrequency();
 			int resolution = transceiver.GetFrequencyResolution();
-			string text = "phase=" + phase + ",min=" + minRaw.ToString();
+			string text = "phase=" + phase + ",actualDeltaMs=" + DeltaMs().ToString();
+			text = text + ",min=" + minRaw.ToString();
 			text = text + ",max=" + maxRaw.ToString();
 			text = text + ",res=" + resolution.ToString();
 			text = text + ",powered=" + powered.ToString();
 			text = text + ",muted=" + muted.ToString();
-			text = text + ",target=" + m_aTargets[device].ToString();
+			text = text + ",targetTr0=" + target.ToString();
 			Record("BENCH_READ", device, t, transceiver.GetFrequency(), text);
 		}
 	}
 
-	//! Q-F: трансивер 0 своей рации на один шаг разрешения (вверх, а у верхней границы — вниз).
+	//! Q-F: трансивер 0 своей рации на один шаг разрешения внутри [min, max]; иначе явный BENCH_SKIP (codex #4106).
 	protected void StepFrequency(int device)
 	{
 		BaseRadioComponent radio = RadioOf(device);
 		if (!radio || radio.TransceiversCount() < 1)
+		{
+			Record("BENCH_SKIP", device, 0, -1, "reason=NO_TRANSCEIVER");
 			return;
+		}
 		BaseTransceiver transceiver = radio.GetTransceiver(0);
 		if (!transceiver)
+		{
+			Record("BENCH_SKIP", device, 0, -1, "reason=NO_TRANSCEIVER");
 			return;
+		}
 		int current = transceiver.GetFrequency();
 		int resolution = transceiver.GetFrequencyResolution();
-		int target = current + resolution;
-		if (target > transceiver.GetMaxFrequency())
+		int minRaw = transceiver.GetMinFrequency();
+		int maxRaw = transceiver.GetMaxFrequency();
+		string range = "current=" + current.ToString();
+		range = range + ",min=" + minRaw.ToString();
+		range = range + ",max=" + maxRaw.ToString();
+		range = range + ",res=" + resolution.ToString();
+		if (resolution <= 0)
+		{
+			Record("BENCH_SKIP", device, 0, -1, "reason=RES_NONPOSITIVE," + range);
+			return;
+		}
+		if (current < minRaw || current > maxRaw)
+		{
+			Record("BENCH_SKIP", device, 0, -1, "reason=CURRENT_OUT_OF_RANGE," + range);
+			return;
+		}
+		int target;
+		if (maxRaw - current >= resolution)
+			target = current + resolution;
+		else if (current - minRaw >= resolution)
 			target = current - resolution;
+		else
+		{
+			Record("BENCH_SKIP", device, 0, -1, "reason=NO_ROOM_FOR_STEP," + range);
+			return;
+		}
 		m_aTargets[device] = target;
 		radio.SetTransceiverFrequency(transceiver, target);
-		Record("BENCH_SET_FREQUENCY", device, 0, target, "from=" + current.ToString() + ",res=" + resolution.ToString());
+		Record("BENCH_SET_FREQUENCY", device, 0, target, range);
 	}
 
-	//! Q-M: только своя рация; вызов, ответ и IsMuted до/после; затем возврат к исходному состоянию по своему журналу.
+	//! Q-M: только своя рация; переключение на противоположное состояние, чтение, затем возврат к исходному
+	//! (codex #4106: при before = true вызов SetMuteState(true) был бы no-op).
 	protected void Mute(int device)
 	{
 		BaseRadioComponent radio = RadioOf(device);
@@ -163,32 +230,32 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!transceiver)
 			return;
 		bool before = transceiver.IsMuted();
-		bool returnedOn = transceiver.SetMuteState(true);
-		bool afterOn = transceiver.IsMuted();
-		bool returnedOff = transceiver.SetMuteState(before);
-		bool afterOff = transceiver.IsMuted();
-		string text = "before=" + Bit(before) + ",call=1,ret=" + Bit(returnedOn) + ",after=" + Bit(afterOn);
-		text = text + ",restore=" + Bit(before) + ",ret2=" + Bit(returnedOff) + ",after2=" + Bit(afterOff);
+		bool requested = !before;
+		bool returnedSet = transceiver.SetMuteState(requested);
+		bool afterSet = transceiver.IsMuted();
+		bool returnedRestore = transceiver.SetMuteState(before);
+		bool afterRestore = transceiver.IsMuted();
+		string text = "before=" + Bit(before) + ",requested=" + Bit(requested) + ",ret=" + Bit(returnedSet);
+		text = text + ",after=" + Bit(afterSet) + ",restoreTo=" + Bit(before) + ",ret2=" + Bit(returnedRestore);
+		text = text + ",after2=" + Bit(afterRestore);
 		Record("BENCH_MUTE", device, 0, -1, text);
 	}
 
-	protected static string Bit(bool value)
-	{
-		if (value)
-			return "1";
-		return "0";
-	}
-
-	protected void Cleanup()
+	//! Удаление только своих раций штатным SCR_EntityHelper.DeleteEntityAndChildren (обёртка
+	//! RplComponent.DeleteRplEntity, codex #4108). BENCH_DONE — лишь после всех фаз; иначе BENCH_ABORTED с фазой.
+	protected void Finish(bool complete)
 	{
 		for (int i = 0; i < m_aRadios.Count(); i++)
 		{
 			IEntity radio = m_aRadios[i];
 			if (radio)
-				delete radio;
+				SCR_EntityHelper.DeleteEntityAndChildren(radio);
 		}
 		m_aRadios.Clear();
-		Note("BENCH_DONE", -1, "level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
+		if (complete)
+			Note("BENCH_DONE", m_iPhase, "level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
+		else
+			Note("BENCH_ABORTED", m_iPhase, "level=NATIVE_ROUNDTRIP,phase=" + m_iPhase.ToString());
 		m_Journal.Dump();
 		m_bRunning = false;
 	}
@@ -198,50 +265,53 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!m_bRunning || timeSlice <= 0)
 			return;
 		m_fElapsed += timeSlice;
-		if (m_iStep == 0 && m_fElapsed >= 1)
+		if (m_iPhase == PHASE_IDLE && m_fElapsed >= 1)
 		{
 			Spawn();
+			m_fSpawnedAt = m_fElapsed;
+			m_iPhase = PHASE_SPAWNED;
 			for (int a = 0; a < m_aRadios.Count(); a++)
 				Read(a, "spawn");
-			m_iStep = 1;
 		}
-		else if (m_iStep == 1 && m_fElapsed >= 2)
+		else if (m_iPhase == PHASE_SPAWNED && m_fElapsed - m_fSpawnedAt >= 1)
 		{
+			m_fSetAt = m_fElapsed;
+			m_iPhase = PHASE_STEPPED;
 			for (int b = 0; b < m_aRadios.Count(); b++)
 			{
 				StepFrequency(b);
 				Read(b, "t0");
 			}
-			m_iStep = 2;
 		}
-		else if (m_iStep == 2 && m_fElapsed >= 3)
+		else if (m_iPhase == PHASE_STEPPED && m_fElapsed - m_fSetAt >= 1)
 		{
+			m_iPhase = PHASE_READ_T1;
 			for (int c = 0; c < m_aRadios.Count(); c++)
 				Read(c, "t1");
-			m_iStep = 3;
 		}
-		else if (m_iStep == 3 && m_fElapsed >= 7)
+		else if (m_iPhase == PHASE_READ_T1 && m_fElapsed - m_fSetAt >= 5)
 		{
+			m_iPhase = PHASE_READ_T5;
 			for (int d = 0; d < m_aRadios.Count(); d++)
 				Read(d, "t5");
-			m_iStep = 4;
 		}
-		else if (m_iStep == 4 && m_fElapsed >= 9)
+		else if (m_iPhase == PHASE_READ_T5 && m_fElapsed - m_fSetAt >= 7)
 		{
+			m_iPhase = PHASE_MUTED;
 			for (int e = 0; e < m_aRadios.Count(); e++)
 				Mute(e);
-			m_iStep = 5;
 		}
-		else if (m_iStep == 5 && m_fElapsed >= 11)
+		else if (m_iPhase == PHASE_MUTED && m_fElapsed - m_fSetAt >= 9)
 		{
-			Cleanup();
+			m_iPhase = PHASE_DONE;
+			Finish(true);
 		}
 	}
 
 	override void OnDelete(IEntity owner)
 	{
 		if (m_bRunning)
-			Cleanup();
+			Finish(false);
 		super.OnDelete(owner);
 	}
 }
