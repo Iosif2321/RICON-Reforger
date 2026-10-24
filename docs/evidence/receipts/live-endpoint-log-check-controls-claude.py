@@ -82,13 +82,17 @@ def render(rows, seq0=0, drop=0, skip_dump=False):
     return body
 
 
-def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0, skip_dump=False):
+def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0, skip_dump=False, restart_marks=None):
     cycles = cycles if cycles is not None else [{}]
     body = [f"11:59:59.000 SCRIPT : {l}" for l in LAUNCH] if launcher else []
+    # the launcher's restart lines go between the cycles (codex 15efc1a)
+    marks = ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED"] if restart_marks is None and len(cycles) == 2 else (restart_marks or [])
     seq = 0
     for i, b in enumerate(cycles):
         rows = cycle(b.get("ordinal", i + 1), b)
         body += render(rows, seq if seq_continue else 0, drop, skip_dump)
+        if i == 0:
+            body += [f"12:00:31.000 SCRIPT : [RICON_LIVEB] restart={m}" for m in marks]
         seq += len(rows)
     body += list(extra_lines)
     return "\n".join(body) + "\n"
@@ -139,6 +143,9 @@ cases = [
     ("restart_cycle_number", build(cycles=[{"samples": 8}, {"ordinal": 1}]), RE, 1, "LOG_INVALID"),
     ("restart_seq_not_reset", build(cycles=[{"samples": 8}, {}], seq_continue=True), RE, 1, "LOG_INVALID"),
     ("restart_one_cycle", build(), RE, 1, "LOG_INVALID"),
+    ("restart_no_marks", build(cycles=[{"samples": 8}, {}], restart_marks=[]), RE, 1, "LOG_INVALID"),
+    ("restart_refused_mark", build(cycles=[{"samples": 8}, {}], restart_marks=["EDIT_REQUESTED", "REFUSED"]), RE, 1,
+     "LOG_INVALID"),
 ]
 passed = 0
 for name, text_, args, rc_expected, overall_expected in cases:

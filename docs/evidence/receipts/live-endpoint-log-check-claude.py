@@ -25,7 +25,8 @@ pc=1, controlled=1, one stable revision and the own playerId among members (LOCA
 player early in a cycle is not a log error). The end of an observation is not a proven role readiness (codex schema).
 Restart (codex #4579, -riconEndpointRestart=1: the launcher waits for >= 3 samples, requests Edit, waits for the edit mode
 and requests the second Play): cycle 1 must end ABORTED after at least 3 samples with GAME_END, WORLD_CLEANUP or
-WORLD_CHANGED, cycle 2 must end DONE; a cycle 1 that reached DONE did not exercise the cleanup
+WORLD_CHANGED, cycle 2 must end DONE, and the launcher lines restart=EDIT_REQUESTED and restart=SECOND_PLAY_REQUESTED
+are present without restart=REFUSED; a cycle 1 that reached DONE did not exercise the cleanup
 (ENDPOINT_RESTART_NOT_EXERCISED, not a pass).
 Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / ENDPOINT_RESTART_COMPLETE /
 ENDPOINT_RESTART_NOT_EXERCISED / LOG_INVALID.
@@ -280,6 +281,10 @@ def main(path, mode):
         ends = [r["end"] for r in rows]
         verdict = "ENDPOINT_CYCLE_COMPLETE" if ends and all(x == "ENDPOINT_DONE" for x in ends[-1:]) \
             else "ENDPOINT_CYCLE_ABORTED"
+        if mode == "restart":
+            marks = [m.group(1) for m in (re.search(r"\[RICON_LIVEB\] restart=(\w+)", l) for l in lines) if m]
+            if marks != ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED"]:
+                errors.append(f"restart launcher lines {marks} != EDIT_REQUESTED, SECOND_PLAY_REQUESTED")
         if mode == "restart" and len(rows) == 2:
             first, second = rows
             if first["end"] == "ENDPOINT_DONE":
