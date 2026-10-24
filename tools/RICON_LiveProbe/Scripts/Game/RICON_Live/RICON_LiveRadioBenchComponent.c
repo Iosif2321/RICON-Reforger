@@ -214,6 +214,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	static const string MODE_RADIO = "radio";
 	static const string MODE_PLAYER = "player";
 	static const string MODE_PLAYERMENU = "playermenu"; //!< A1-P2: player + путь меню на одной radio-entry игрока
+	static const string MODE_PLAYERSCREEN = "playerscreen"; //!< A1-S1: player + одно Open радиального меню и чтение виджетов
 	static const string MODE_INVALID = "INVALID";
 	static const int PLAYER_SAMPLES = 30;
 	protected int m_iSamples;
@@ -230,7 +231,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		string value;
 		if (!System.GetCLIParam("riconBenchMode", value))
 			return MODE_RADIO;
-		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU)
+		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU || value == MODE_PLAYERSCREEN)
 			return value;
 		return MODE_INVALID;
 	}
@@ -664,8 +665,150 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				return;
 			}
 		}
+		else if (Mode() == MODE_PLAYERSCREEN)
+		{
+			PlayerScreenStep(m_iSamples);
+			if (m_bScreenNotReady)
+			{
+				Finish(false);
+				return;
+			}
+		}
 		if (m_iSamples >= PLAYER_SAMPLES)
 			Finish(true);
+	}
+
+	//! A1-S1 (claude #4431, условия codex #4425, #4427, #4430, #4432): настоящий радиальный VON-меню локального игрока.
+	//! Срез 5 — состояние меню до опыта; срез 6 — один штатный SCR_SelectionMenu.Open(), только если меню закрыто (если
+	//! открыто — записывается и только читается); срезы 7–12 — по каждой entry цепочка EntryComponent → RootWidget →
+	//! FrequencyText/ChannelText: GetText (%XX), IsVisibleInHierarchy, экранные позиция и размер. Close, Perform,
+	//! OnMenuToggle и действия ввода не вызываются; процесс с открытым меню останавливает runner. Потеря меню или
+	//! VON-контроллера — SCREEN op=NOT_READY и BENCH_ABORTED. Уровень — живой виджет, не пиксели и не локализация.
+	protected SCR_SelectionMenu m_ScreenMenu;
+	protected PlayerController m_ScreenController;  //!< codex #4436: контроллер, VON и меню фиксируются на BEFORE
+	protected SCR_VONController m_ScreenVon;
+	protected bool m_bScreenNotReady;
+
+	//! codex #4436: текущие контроллер, VON-контроллер и его радиальное меню — те же, что на BEFORE.
+	protected bool ScreenSame(SCR_VONController von)
+	{
+		if (!von || !m_ScreenMenu || von != m_ScreenVon || GetGame().GetPlayerController() != m_ScreenController)
+			return false;
+		SCR_VONMenu vonMenu = von.GetVONMenu();
+		return vonMenu && vonMenu.GetRadialMenu() == m_ScreenMenu;
+	}
+
+	protected SCR_VONController ScreenVon()
+	{
+		PlayerController controller = GetGame().GetPlayerController();
+		if (!controller)
+			return null;
+		return SCR_VONController.Cast(controller.FindComponent(SCR_VONController));
+	}
+
+	protected static int Rounded(float value)
+	{
+		int result = Math.Round(value);
+		return result;
+	}
+
+	//! Состояние меню: открыто ли, есть ли отображение, выбранная (меню) и активная для передачи (контроллер) entry.
+	protected string ScreenMenuState(SCR_VONController von)
+	{
+		string text = "opened=" + Bit(m_ScreenMenu.IsOpened()) + ",hasDisplay=" + Bit(m_ScreenMenu.HasDisplay());
+		text = text + ",selectedId=" + m_ScreenMenu.GetSelectedEntryId().ToString();
+		int activeIdx = -1;
+		array<ref SCR_VONEntry> entries = {};
+		von.GetVONEntries(entries);
+		for (int i = 0; i < entries.Count(); i++)
+		{
+			if (entries[i] && entries[i] == von.GetActiveEntry())
+				activeIdx = i;
+		}
+		entries.Clear();
+		return text + ",activeIdx=" + activeIdx.ToString();
+	}
+
+	//! Один виджет по имени под корнем entry: текст (%XX), видимость по иерархии, экранные позиция и размер.
+	protected static string WidgetText(Widget root, string name, string prefix)
+	{
+		TextWidget widget = TextWidget.Cast(root.FindAnyWidget(name));
+		if (!widget)
+			return prefix + "=0";
+		float x, y, w, h;
+		widget.GetScreenPos(x, y);
+		widget.GetScreenSize(w, h);
+		string text = prefix + "=1," + prefix + "Text=" + RICON_LiveText.Esc(widget.GetText());
+		text = text + "," + prefix + "Vis=" + Bit(widget.IsVisibleInHierarchy());
+		text = text + "," + prefix + "X=" + Rounded(x).ToString() + "," + prefix + "Y=" + Rounded(y).ToString();
+		return text + "," + prefix + "W=" + Rounded(w).ToString() + "," + prefix + "H=" + Rounded(h).ToString();
+	}
+
+	protected void ScreenWidgets(int sample, SCR_VONController von)
+	{
+		array<ref SCR_VONEntry> entries = {};
+		von.GetVONEntries(entries);
+		for (int i = 0; i < entries.Count(); i++)
+		{
+			string text = "op=WIDGET,idx=" + i.ToString();
+			SCR_VONEntry entry = entries[i];
+			SCR_SelectionMenuEntryComponent component;
+			if (entry)
+				component = entry.GetEntryComponent();
+			Widget root;
+			if (component)
+				root = component.GetRootWidget();
+			text = text + ",component=" + Bit(component != null) + ",root=" + Bit(root != null);
+			if (root)
+			{
+				text = text + ",rootVis=" + Bit(root.IsVisibleInHierarchy());
+				text = text + "," + WidgetText(root, "FrequencyText", "f") + "," + WidgetText(root, "ChannelText", "c");
+			}
+			Note("SCREEN", sample, text);
+		}
+		entries.Clear();
+	}
+
+	protected void PlayerScreenStep(int sample)
+	{
+		if (sample < 5)
+			return;
+		SCR_VONController von = ScreenVon();
+		if (sample == 5)
+		{
+			SCR_VONMenu vonMenu;
+			if (von)
+				vonMenu = von.GetVONMenu();
+			if (vonMenu)
+				m_ScreenMenu = vonMenu.GetRadialMenu();
+			m_ScreenController = GetGame().GetPlayerController();
+			m_ScreenVon = von;
+		}
+		if (!ScreenSame(von))
+		{
+			m_bScreenNotReady = true;
+			Note("SCREEN", sample, "op=NOT_READY,von=" + Bit(von != null) + ",menu=" + Bit(m_ScreenMenu != null) + ",same=0");
+			return;
+		}
+		if (sample == 5)
+			Note("SCREEN", sample, "op=BEFORE," + ScreenMenuState(von));
+		else if (sample == 6)
+		{
+			if (m_ScreenMenu.IsOpened())
+				Note("SCREEN", sample, "op=ALREADY_OPEN," + ScreenMenuState(von));
+			else
+			{
+				m_ScreenMenu.Open();
+				Note("SCREEN", sample, "op=OPEN," + ScreenMenuState(von));
+			}
+		}
+		else if (sample <= 12)
+		{
+			Note("SCREEN", sample, "op=MENU," + ScreenMenuState(von));
+			ScreenWidgets(sample, von);
+		}
+		else if (sample == 20 || sample == 30)
+			Note("SCREEN", sample, "op=MENU," + ScreenMenuState(von));
 	}
 
 	//! A1-P2 (claude #4399, условия codex #4388, #4390, #4402): одна последовательность пути меню на одной radio-entry
@@ -1041,6 +1184,17 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				Note("BENCH_DONE", m_iSamples, "level=PLAYER_OBSERVATION,not=SPAWN|SET|CONTROL|RADIO|AUDIO");
 			else
 				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_OBSERVATION,samples=" + m_iSamples.ToString());
+		}
+		else if (Mode() == MODE_PLAYERSCREEN)
+		{
+			// Close не вызывается: Close может выполнить выбранную entry (SCR_SelectionMenu.c:314–316)
+			m_ScreenMenu = null;
+			m_ScreenController = null;
+			m_ScreenVon = null;
+			if (complete)
+				Note("BENCH_DONE", m_iSamples, "level=PLAYER_SCREEN_WIDGET,not=PIXELS|LOCALIZATION|INPUT|AUDIO|REPLICATION");
+			else
+				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_SCREEN_WIDGET,notReady=" + Bit(m_bScreenNotReady) + ",samples=" + m_iSamples.ToString());
 		}
 		else if (Mode() == MODE_PLAYERMENU)
 		{

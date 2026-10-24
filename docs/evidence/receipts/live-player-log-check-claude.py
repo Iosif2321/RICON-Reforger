@@ -19,7 +19,12 @@ plan CHOOSE(5) STEP(6) READ t1(7) READ t5(11) RESTORE(12) MUTE(14) UNMUTE(15) FI
 one STOP with nothing after it; values checked against the chosen raw0/target/muted0 (menu text x 1000 = raw,
 ToggleMuteEntry returns the new state), and the entries after FINAL equal those before CHOOSE. Verdicts
 PLAYER_MENU_RUNTIME_PASS / OBSERVED_MISMATCH / STOPPED; BENCH_DONE level=PLAYER_MENU_RUNTIME with stopped=0|1.
-Usage: python -I live-player-log-check-claude.py <console.log> [entries|menu]"""
+A1-S1 (claude #4431, codex #4425/#4427/#4430/#4432), second argument "screen" (implies entries, mode playerscreen):
+SCREEN records BEFORE(5), one OPEN or ALREADY_OPEN(6), MENU(7..12, 20, 30) with one WIDGET record per entry after each
+MENU of 7..12; PLAYER_SCREEN_WIDGET_PASS when the menu stays open, the active entry and all radio entries never change,
+and every entry's FrequencyText TextWidget is visible in the hierarchy with a non-zero size and shows exactly the entry's
+display text. A live widget is not a proof of pixels or localization.
+Usage: python -I live-player-log-check-claude.py <console.log> [entries|menu|screen]"""
 import hashlib
 import importlib.util
 import json
@@ -266,7 +271,125 @@ def check_acts(acts, errors, by_sample):
     return ("OBSERVED_MISMATCH" if mismatches else "PLAYER_MENU_RUNTIME_PASS"), rows
 
 
-def main(path, expect_entries=False, expect_menu=False):
+SCREEN_PLAN = [(5, "BEFORE"), (6, "OPEN")] + [(n, "MENU") for n in range(7, 13)] + [(20, "MENU"), (30, "MENU")]
+MENU_FIELDS = {"op", "opened", "hasDisplay", "selectedId", "activeIdx"}
+
+
+def widget_fields(f, prefix, errs):
+    """One TextWidget block of a WIDGET record: present=0 -> nothing else; present=1 -> text, visibility, pos, size."""
+    keys = {prefix}
+    if f.get(prefix) not in BIT:
+        errs.append(f"{prefix} not 0|1")
+        return keys, None
+    if f[prefix] == "0":
+        return keys, None
+    names = [prefix + s for s in ("Text", "Vis", "X", "Y", "W", "H")]
+    keys |= set(names)
+    if f.get(prefix + "Vis") not in BIT or not all(INT.fullmatch(f.get(n, "")) for n in names[2:]):
+        errs.append(f"{prefix} widget fields")
+        return keys, None
+    try:
+        text = codec.unescape(f.get(prefix + "Text", ""))
+    except ValueError as exc:
+        errs.append(f"{prefix}Text: {exc}")
+        return keys, None
+    return keys, {"text": text, "visible": f[prefix + "Vis"] == "1", "w": int(f[prefix + "W"]), "h": int(f[prefix + "H"]),
+                  "x": int(f[prefix + "X"]), "y": int(f[prefix + "Y"])}
+
+
+def check_screen(screens, by_sample, errors):
+    """A1-S1 (claude #4431, codex #4425/#4427/#4430/#4432): BEFORE (5), one OPEN or ALREADY_OPEN (6), MENU on 7..12, 20,
+    30, and after each MENU of 7..12 one WIDGET record per entry. Clean observation: the radio entries (frequency, mute,
+    active, transmit, text) and the active entry never change over all samples. Widget evidence per entry and sample: the
+    FrequencyText TextWidget exists, is visible in the hierarchy with a non-zero screen size, and its text equals the
+    entry's own display text of the same sample. Returns (verdict, summary)."""
+    menus = [s for s in screens if s["f"].get("op") != "WIDGET"]
+    widgets = [s for s in screens if s["f"].get("op") == "WIDGET"]
+    if any(s["f"].get("op") == "NOT_READY" for s in screens):
+        return "NOT_READY", {}
+    got = [(s["value"], s["f"].get("op")) for s in menus]
+    want = [(n, "ALREADY_OPEN" if op == "OPEN" and len(menus) > 1 and menus[1]["f"].get("op") == "ALREADY_OPEN" else op)
+            for n, op in SCREEN_PLAN]
+    if got != want:
+        errors.append(f"SCREEN sequence {got} != plan")
+    for s in menus:
+        f = s["f"]
+        if set(f) != MENU_FIELDS or f.get("opened") not in BIT or f.get("hasDisplay") not in BIT \
+                or not INT.fullmatch(f.get("selectedId", "")) or not INT.fullmatch(f.get("activeIdx", "")):
+            errors.append(f"SCREEN {s['value']} {f.get('op')}: menu fields")
+    before = next((s["f"] for s in menus if s["f"].get("op") == "BEFORE"), {})
+    opening = next((s["f"] for s in menus if s["f"].get("op") in ("OPEN", "ALREADY_OPEN")), {})
+    mismatches, rows = [], []
+    if opening.get("op") == "OPEN" and before.get("opened") != "0":
+        errors.append("OPEN although the menu was open before")
+    if opening.get("op") == "ALREADY_OPEN" and before.get("opened") != "1":
+        errors.append("ALREADY_OPEN although the menu was closed before")
+    for s in menus:
+        if s["value"] >= 6 and s["f"].get("opened") != "1":
+            mismatches.append(f"menu closed at {s['value']}")
+        # codex #4436: an opened menu must also have its display
+        if s["value"] >= 6 and s["f"].get("hasDisplay") != "1":
+            mismatches.append(f"menu without display at {s['value']}")
+        if s["f"].get("activeIdx") != before.get("activeIdx"):
+            mismatches.append(f"active entry changed at {s['value']}")
+    for n in range(7, 13):
+        mine = [w for w in widgets if w["value"] == n]
+        entries = by_sample.get(n, [])
+        if [w["f"].get("idx") for w in mine] != [str(i) for i in range(len(entries))]:
+            errors.append(f"sample {n}: WIDGET idx {[w['f'].get('idx') for w in mine]} != entries")
+        for w in mine:
+            f, errs = w["f"], []
+            keys = {"op", "idx", "component", "root"}
+            if f.get("component") not in BIT or f.get("root") not in BIT:
+                errs.append("component/root not 0|1")
+            elif f.get("component") == "0" and f.get("root") == "1":
+                errs.append("root without component")
+            fw = cw = None
+            if f.get("root") == "1":
+                keys.add("rootVis")
+                if f.get("rootVis") not in BIT:
+                    errs.append("rootVis not 0|1")
+                k1, fw = widget_fields(f, "f", errs)
+                k2, cw = widget_fields(f, "c", errs)
+                keys |= k1 | k2
+            if set(f) != keys:
+                errs.append(f"field set {sorted(set(f) ^ keys)}")
+            for x in errs:
+                errors.append(f"sample {n} WIDGET {f.get('idx')}: {x}")
+            entry = next((e for e in entries if e.get("idx") == f.get("idx")), {})
+            # codex #4427, #4436: GetText may keep the localization key (WIDGET_KEY = exactly the entry text); a different
+            # label with the same number is LABEL_UNVERIFIED (no verified translation), recorded as a fact, not a PASS
+            etext = entry.get("text") or ""
+            kind = None
+            if fw is not None:
+                if fw["text"] == etext:
+                    kind = "WIDGET_KEY" if "#" in etext else "WIDGET_EQUAL"
+                elif fw["text"].split(" ", 1)[0] == etext.split(" ", 1)[0] and "#" not in fw["text"] and " " in fw["text"]:
+                    # codex #4436: same number, a different label without a verified translation of the key
+                    kind = "LABEL_UNVERIFIED"
+            ok = kind is not None and fw["visible"] and fw["w"] > 0 and fw["h"] > 0 and f.get("rootVis") == "1"
+            if not ok:
+                mismatches.append(f"widget {f.get('idx')}@{n}")
+            rows.append({"n": n, "idx": f.get("idx"), "component": f.get("component"), "root": f.get("root"),
+                         "rootVisible": f.get("rootVis"), "frequency": fw, "channel": cw, "entryText": entry.get("text"),
+                         "textKind": kind})
+    # clean observation: the radio state seen through the entries never changes
+    first = json.dumps(by_sample.get(1, []), sort_keys=True)
+    changed = [n for n in sorted(by_sample) if json.dumps(by_sample[n], sort_keys=True) != first]
+    if changed:
+        mismatches.append(f"entries changed at {changed[:5]}")
+    summary = {"before": before, "opening": opening, "widgets": rows[:len(by_sample.get(7, []))],
+               "entriesChangedAt": changed, "mismatches": mismatches[:10],
+               "textKinds": sorted({str(r["textKind"]) for r in rows}),
+               "selectionChanged": sorted({s["f"].get("selectedId") for s in menus}) if len({s["f"].get("selectedId") for s in menus}) > 1 else []}
+    if mismatches:
+        return "OBSERVED_MISMATCH", summary
+    if any(r["textKind"] == "LABEL_UNVERIFIED" for r in rows):
+        return "PLAYER_SCREEN_WIDGET_LABEL_UNVERIFIED", summary
+    return "PLAYER_SCREEN_WIDGET_PASS", summary
+
+
+def main(path, expect_entries=False, expect_menu=False, expect_screen=False):
     raw = open(path, "rb").read()
     lines = raw.decode("utf-8", errors="replace").splitlines()
     errors = []
@@ -291,7 +414,8 @@ def main(path, expect_entries=False, expect_menu=False):
     start_f = starts[0]["f"] if len(starts) == 1 else {}
     if len(starts) != 1:
         errors.append(f"BENCH_START count {len(starts)}")
-    elif start_f.get("mode") != ("playermenu" if expect_menu else "player") or start_f.get("modeGiven") != "1":
+    elif start_f.get("mode") != ("playermenu" if expect_menu else "playerscreen" if expect_screen else "player") \
+            or start_f.get("modeGiven") != "1":
         errors.append(f"BENCH_START mode={start_f.get('mode')} modeGiven={start_f.get('modeGiven')}")
     not_ready = [e for e in events if e["kind"] == "BENCH_NOT_READY"]
     for e in not_ready:
@@ -303,6 +427,9 @@ def main(path, expect_entries=False, expect_menu=False):
     # codex #4402: in the menu mode a STOP aborts the run at its sample (BENCH_ABORTED, never a DONE)
     stop_value = next((e["value"] for e in events if e["kind"] == "PLAYER_ACT" and e["f"].get("op") == "STOP"), None) \
         if expect_menu else None
+    # A1-S1: a SCREEN op=NOT_READY aborts the run at its sample, like a STOP of the menu mode
+    if expect_screen:
+        stop_value = next((e["value"] for e in events if e["kind"] == "SCREEN" and e["f"].get("op") == "NOT_READY"), None)
     last_sample = stop_value if stop_value is not None else SAMPLES
     if [s["value"] for s in samples] != list(range(1, last_sample + 1)):
         errors.append(f"PLAYER_SAMPLE values {[s['value'] for s in samples]} != 1..{last_sample}")
@@ -325,11 +452,15 @@ def main(path, expect_entries=False, expect_menu=False):
     # A1-P1: PLAYER_ENTRY records follow their sample in the stream, value = sample number, idx 0..vonEntries-1;
     # samples without a VON controller have none. Without the expectation a log with entries is an error, and
     # vice versa (an A1-P0 log has none).
-    entries, current, by_sample, acts = [], None, {}, []
+    entries, current, by_sample, acts, screens = [], None, {}, [], []
     for e in events:
         if e["kind"] == "PLAYER_SAMPLE":
             current = e
             by_sample[e["value"]] = []
+        elif e["kind"] == "SCREEN":
+            if current is None or e["value"] != current["value"]:
+                errors.append(f"SCREEN value {e['value']} not after its sample")
+            screens.append(e)
         elif e["kind"] == "PLAYER_ACT":
             # A1-P2: an action record follows its sample (after that sample's entries)
             if current is None or e["value"] != current["value"]:
@@ -367,13 +498,17 @@ def main(path, expect_entries=False, expect_menu=False):
         restored = json.dumps(by_sample.get(4), sort_keys=True) == json.dumps(by_sample.get(21), sort_keys=True)
         if not restored:
             menu_verdict = "OBSERVED_MISMATCH"
-    level = "PLAYER_MENU_RUNTIME" if expect_menu else "PLAYER_OBSERVATION"
+    if screens and not expect_screen:
+        errors.append("log has SCREEN: pass the expectation 'screen'")
+    screen_verdict, screen_summary = (check_screen(screens, by_sample, errors) if expect_screen else (None, {}))
+    level = "PLAYER_MENU_RUNTIME" if expect_menu else "PLAYER_SCREEN_WIDGET" if expect_screen else "PLAYER_OBSERVATION"
     done = [e for e in events if e["kind"] == "BENCH_DONE"]
     aborted = [e for e in events if e["kind"] == "BENCH_ABORTED"]
     if stop_value is not None:
         if done or len(aborted) != 1 or events[-1]["kind"] != "BENCH_ABORTED" or aborted[0]["value"] != stop_value \
-                or aborted[0]["f"].get("level") != level or aborted[0]["f"].get("stopped") != "1":
-            errors.append(f"after STOP the single last event must be BENCH_ABORTED value={stop_value} level={level} stopped=1")
+                or aborted[0]["f"].get("level") != level \
+                or aborted[0]["f"].get("notReady" if expect_screen else "stopped") != "1":
+            errors.append(f"after STOP/NOT_READY the single last event must be BENCH_ABORTED value={stop_value} level={level}")
     else:
         if aborted:
             errors.append("BENCH_ABORTED present")
@@ -398,10 +533,13 @@ def main(path, expect_entries=False, expect_menu=False):
         overall = "LOG_INVALID"
     elif expect_menu:
         overall = menu_verdict
+    elif expect_screen:
+        overall = screen_verdict
     else:
         overall = "PLAYER_OBSERVATION_COMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "overall": overall,
                       "menuExpected": expect_menu, "acts": act_rows, "restoredEntriesEqual": restored,
+                      "screenExpected": expect_screen, "screen": screen_summary,
                       "finding": finding, "stateChangesAtSample": changes,
                       "entriesExpected": expect_entries, "entryStateChangesAtSample": entry_changes if entries else [],
                       "entriesFirstSample": by_sample.get(1, []), "entriesLastSample": by_sample.get(SAMPLES, []),
@@ -413,8 +551,9 @@ def main(path, expect_entries=False, expect_menu=False):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2 and sys.argv[2] not in ("entries", "menu"):
-        print(f"second argument must be 'entries' or 'menu', got {sys.argv[2]!r}")
+    if len(sys.argv) > 2 and sys.argv[2] not in ("entries", "menu", "screen"):
+        print(f"second argument must be 'entries', 'menu' or 'screen', got {sys.argv[2]!r}")
         sys.exit(2)
-    # 'menu' (A1-P2) implies the entries of A1-P1
-    sys.exit(main(sys.argv[1], len(sys.argv) > 2, len(sys.argv) > 2 and sys.argv[2] == "menu"))
+    # 'menu' (A1-P2) and 'screen' (A1-S1) imply the entries of A1-P1
+    arg = sys.argv[2] if len(sys.argv) > 2 else ""
+    sys.exit(main(sys.argv[1], bool(arg), arg == "menu", arg == "screen"))

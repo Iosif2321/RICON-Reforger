@@ -1,0 +1,44 @@
+# claude, A1 screen (2026-10-24): read-only WbReader windows into the vanilla VON menu and selection-menu scripts for the
+# screen step after A1-P2 (codex #4415, #4425, #4428, #4430). Runner tools/RICON_WbReader/run.ps1 (unchanged),
+# ScriptEditor, -wbSilent -exitAfterInit -noBackend; no world, Play, server or dialogs; at most 15 source lines per run,
+# printed only into the Workbench log outside the repo. Vanilla code is not reproduced: paths, line numbers, identifiers
+# and a paraphrase only. Each run: exit 0, plugin "done", SCRIPT (E) 0, Workbench processes after the run 0.
+#
+# sha256 of console.log                                             run                                              START/ACK/END
+9f3cb82492b84c9e5cf04018e4c76986f106dde3a42fae74d43537ade0d6de11  sc1 SCR_VONMenu.c grep OnMenuToggle ctx 7          #4420/#4419/#4421
+9393bd52d5bed3641a22e5e4b313372ac16a1f229ef542641aa0d83b179ec110  sc2 SCR_VONEntryComponent.c SetFrequencyText ctx 5
+fe411a7d276b94e32ea6e65015f1d9be4ee4fcc5d0373d6653ad391c5ce73b36  sc3 SCR_VONEntryComponent.c HandlerAttached ctx 7
+3b4c558868211bfd085eaadfb384ea6523d16b758b159584f271cce89c94c522  sd1 SCR_VONMenu.c "void ActionTuneFrequency" ctx 7  #4421/#4425/#4426
+d035de0a5845cf2f57438d04f8161622e31137ff32549ccae1afe5b8c3ad9edb  sd2 SCR_VONMenu.c "void OnMenuMuteToggle" ctx 7
+de997eefedebd127eeceff5128e1ca1bdf5022eefb5b3dd5f5a7370ecd468612  sd3 SCR_VONMenu.c "void OnMenuToggle(" ctx 7
+077c4e0747e9e067c791a656f88f5dc340c4fcf672fac57f5b270a0c7a9a63a9  sd4 SCR_VONEntryComponent.c window from 86
+9e588567fe8de7c418ea285ad3a0ff674ebfda110ab2477742c1d0c52a08b8a7  se1 SCR_VONMenu.c "void OnAdjustEntry" ctx 7        #4426/#4428/#4429
+d5c0b3b1b17491a058a40f28f4c14711db8a8836e527dd3e26aa5017cd328742  se2 SCR_VONMenu.c window from 392
+3d2a7d2fb7cac4342a58f1a796043bf1e02bb36f01eaa3918a4c067d6f2831a0  se3 SCR_SelectionMenu.c "void Open(" ctx 7
+93401d4e7ffbcc93af1e8d0077adf4e8f663171aa490d08a04cd5931530d5d97  se4 SCR_SelectionMenu.c "void Close(" ctx 7
+15711eb2509194b310a9f2b0b7918fee491f43f80a1e0233b5809d523e67b0a9  sf1 SCR_SelectionMenu.c window from 314            #4429/#4430/#4431
+4d04b5ae2aaefc6c65130930dcd33b241b2873456992c30c9b7c4fe6d660f74a  sf2 SCR_SelectionMenu.c window from 329
+2bf01100c1a43dee4adae2773fc7eb5ae881266e9298c54dfe322efa4c05e49f  sf3 SCR_SelectionMenu.c window from 247
+577745d304d5e23b33dba13d602ef65522ed566dda6ae03d83b2c21e71670bba  sf4 SCR_VONMenu.c window from 316
+#
+# Findings (WORKBENCH_STATIC, paraphrase; paths under $ArmaReforger:scripts/Game/):
+# 1. VON/SCR_VONMenu.c:232-239 OnOpenMenu (radial-menu event) registers the input actions VONMenuTuneFrequency ->
+#    ActionTuneFrequency, VONMenuCycleChannel -> ActionCycleChannel, VONMenuAction -> OnMenuToggle, VONMenuMuteAction ->
+#    OnMenuMuteToggle; OnCloseMenu starts at :243.
+# 2. The tune input path is closed: ActionTuneFrequency (:336-343) calls OnAdjustEntry(-1|+1, true); the neighbouring
+#    action (:355-357) OnAdjustEntry(+-1, false). OnAdjustEntry (:309-330) returns without a selected entry, shows the
+#    frequency list, and on the selected entry calls AdjustEntryModif(input) when isModif else AdjustEntry(input), then
+#    for a radio entry UpdateFrequencyList, SetChannelText(GetKnownChannel(...)) and Update(). The key-driven retune is
+#    therefore AdjustEntryModif(+-1) on the selected entry: the method that A1-P2 ran on the player's real entry.
+# 3. OnMenuMuteToggle (:385-406) calls ToggleMuteEntry() on the selected radio entry (:395), the method A1-P2 ran; when
+#    the entry becomes muted the menu selects another entry that is not muted (:397-406): a side effect on selection.
+# 4. OnMenuToggle (:362-369) calls ToggleEntry() of the selected entry (not mute, not opening); a vanilla comment (:379)
+#    notes that the toggle currently turns the whole radio off.
+# 5. VON/SCR_VONEntryComponent.c:52-55 SetFrequencyText passes the string unchanged to the frequency TextWidget; the
+#    widgets are found by name in HandlerAttached (:78-87): PowerIcon, ActiveIcon, MuteIcon, TransceiverText,
+#    FrequencyText, ChannelText. The menu text of A1-P2 is thus what the FrequencyText widget receives; translating the
+#    #AR-VON_FrequencyUnits_MHz key on screen is not covered.
+# 6. UI/HUD/SelectionMenu/SCR_SelectionMenu.c:239-261 Open(): before-open invoker, refusal of an empty menu or of an
+#    already open one, then the opened flags. Close() (:307-326): if m_bPerformOnClose, a selected entry exists and it
+#    was not performed yet, PerformEntry(selected) is called (:314-316), then OnClose/InvokeOnClose. Close is therefore
+#    not a side-effect-free observation; no cancel path without Perform was seen in these windows.
