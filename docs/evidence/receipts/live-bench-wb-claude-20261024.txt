@@ -1775,3 +1775,119 @@ LOGSHA B2A738906A938F130B584E5B055B6E376F1879EE47FE04B846B5389975CAD9DD size 908
 [RICON_LIVE] seq=25 t=7031 side=probe kind=SCREEN player=-1 device=-1 tr=-1 value=7 text=op=WIDGET,idx=0,component=0,root=0
 [RICON_LIVE] seq=26 t=7031 side=probe kind=SCREEN player=-1 device=-1 tr=-1 value=7 text=op=WIDGET,idx=1,component=0,root=0
 [RICON_LIVEB] watch t=7000ms isGameMode=1 fps=122.292
+
+--- ricon-a1s1b-claude-20261024-214154
+# A1-S1b (21:41:54): screen step through the VON menu's own config controller (claude #4468, conditions codex #4463,
+# #4465, #4467). Owner standing permission; START #4472, ACK #4473. Sources HEAD 4a6e1fe (bench 92118b83..., CRC
+# 747a539b; RICON_LiveVONMenuAccess.c 7003324b..., CRC c2a3bb14 — TOOL_ONLY modded SCR_VONMenu with one getter of
+# m_RadialController), the same Plain world, -riconBenchMode=playerscreen. Runner wb_bench.ps1 FF969AD9... PID 33012.
+# Result: NOT A SCREEN RESULT, caused by the bridge itself.
+#   - Dialog at t=13 s, the same authorization prompt; one "Yes" at 21:42:07.454; no unknown window.
+#   - Sample 5: SCREEN op=NOT_READY,von=1,menu=0,same=0 -> BENCH_ABORTED at sample 5; OnInputOpen was not called and no
+#     radio state was written. STOP BENCH_FINISHED at 23 s, SCRIPT (E) 0, sources stable, own PID gone.
+#   - New engine message compared with A1-S1 (21:07): "WORLD (E): Unknown keyword/data 'm_VONMenu' at offset 17392".
+#     With the modded SCR_VONMenu (declared without class attributes) the m_VONMenu attribute of SCR_VONController was
+#     not deserialised, so no VON menu existed for the player in this run. ("SCRIPT (W): Slot_VON Has no Content!" is
+#     present in A1-S1 and A1-P2 as well, so it is not new.)
+#   - Window capture: waited for SCREEN OPEN, which never came; no image.
+# Lesson: a modded class of a config (BaseContainerProps) class without the class attribute changes how the class is
+#   loaded even if it only adds a method. The next bridge must repeat the vanilla class attribute or avoid modding.
+# Settings snapshot: registry 0 changed lines (sha E38C14F3... before = after), 0 profile files changed.
+5bc5cc0cf75732afa40456832f4c4f7747cb41e9da10eb6190399b0fa504fe9b
+# runner output (selected lines)
+SETTINGS_BEFORE regLines=3276 profileFiles=5
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -logLevel verbose -log-scr-checksum -logsDir ricon-a1s1b-claude-20261024-214154 -forceUpdate -noFocus -maxFPS 30 -riconBenchMode=playerscreen
+WINDOW Hidden gameModeWait=0
+PID 33012 started 21:41:54
+OBSERVE t=10 responding=True cpuSec=10.34 threads=47 logSize=870447 windows=7 visible=2
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent*
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+DIALOG t=13 title="Script Authorization Required" handle=2098798
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_ONCE check textMatch=True buttons="No,No to All,Yes,Yes to All" buttonsMatch=True yesButtons=1
+YES_ONCE pressed button="Yes" count=1 t=13 at=21:42:07.454
+STOP reason=BENCH_FINISHED pid=33012 after=23 s exited=True
+YES_PRESSES=1
+SETTINGS_AFTER regLines=3276 regDiffLines=0 profileDiffLines=0
+  REGSHA before=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2 after=E38C14F3E1FD912BD3F074224AC443E75D96463EBA7FF7B8E66C32944F720EA2
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+LOGSHA 5BC5CC0CF75732AFA40456832F4C4F7747CB41E9DA10EB6190399B0FA504FE9B size 912360
+# log lines (timestamps stripped)
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] setup existing entities=21 gameModes=1 radioManagers=0 noInstance=0 gameModeParam=0: radioManagerParam=0:
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] setup created gameMode=0 gameModeOk=0 radioManager=0 via=class radioManagerOk=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1,radioManager=0,expectedManager=-1,setter=component,setterGiven=0,playerController=0,factionManager=1,mode=playerscreen,modeGiven=1
+[RICON_LIVEB] heartbeat=START
+[RICON_LIVEB] watch t=200ms isGameMode=1 fps=60.1165
+[RICON_LIVEB] lifecycle=FirstFrame world=1,editMode=0,active=1 running=1
+[RICON_LIVEB] heartbeat n=1 frames=36 phase=0 running=1 elapsed=0.759108
+[RICON_LIVEB] watch t=1000ms isGameMode=1 fps=84.3204
+[RICON_LIVE] seq=1 t=1002 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=1 text=elapsedMs=1002,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=2 t=1002 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=1 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=3 t=1002 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=1 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVEB] heartbeat n=2 frames=147 phase=0 running=1 elapsed=1.76773
+[RICON_LIVEB] watch t=2000ms isGameMode=1 fps=108.518
+[RICON_LIVE] seq=4 t=2012 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=2 text=elapsedMs=2012,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=5 t=2012 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=2 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=6 t=2012 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=2 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVEB] heartbeat n=3 frames=262 phase=0 running=1 elapsed=2.77508
+[RICON_LIVE] seq=7 t=3018 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=3 text=elapsedMs=3018,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=8 t=3018 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=3 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=9 t=3018 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=3 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVEB] watch t=3000ms isGameMode=1 fps=119.379
+[RICON_LIVEB] heartbeat n=4 frames=373 phase=0 running=1 elapsed=3.78211
+[RICON_LIVE] seq=10 t=4021 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=4 text=elapsedMs=4021,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=11 t=4021 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=4 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=12 t=4021 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=4 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVEB] watch t=4000ms isGameMode=1 fps=119.041
+[RICON_LIVEB] heartbeat n=5 frames=491 phase=0 running=1 elapsed=4.78814
+[RICON_LIVE] seq=13 t=5028 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=5 text=elapsedMs=5028,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=14 t=5028 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=5 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=15 t=5028 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=5 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=16 t=5028 side=probe kind=SCREEN player=-1 device=-1 tr=-1 value=5 text=op=NOT_READY,von=1,menu=0,same=0
+[RICON_LIVEB] heartbeat=STOP reason=FINISH n=5 frames=523
+[RICON_LIVE] seq=17 t=5028 side=probe kind=BENCH_ABORTED player=-1 device=-1 tr=-1 value=5 text=level=PLAYER_SCREEN_WIDGET,notReady=1,samples=5
+[RICON_LIVE] dump=BEGIN count=18 dropped=0 nextSeq=18
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1,radioManager=0,expectedManager=-1,setter=component,setterGiven=0,playerController=0,factionManager=1,mode=playerscreen,modeGiven=1
+[RICON_LIVE] seq=1 t=1002 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=1 text=elapsedMs=1002,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=2 t=1002 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=1 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=3 t=1002 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=1 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=4 t=2012 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=2 text=elapsedMs=2012,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=5 t=2012 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=2 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=6 t=2012 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=2 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=7 t=3018 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=3 text=elapsedMs=3018,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=8 t=3018 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=3 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=9 t=3018 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=3 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=10 t=4021 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=4 text=elapsedMs=4021,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=11 t=4021 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=4 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=12 t=4021 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=4 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=13 t=5028 side=probe kind=PLAYER_SAMPLE player=-1 device=-1 tr=-1 value=5 text=elapsedMs=5028,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1
+[RICON_LIVE] seq=14 t=5028 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=5 text=idx=0,entry=1,cls=SCR_VONEntryRadio,method=1,active=1,transmit=1,usable=1,dtext=32.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=1,entryFreq=32000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=32000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=0,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=15 t=5028 side=probe kind=PLAYER_ENTRY player=-1 device=-1 tr=-1 value=5 text=idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,radioEntry=1,trNumber=2,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=32000,max=68000,res=200,muted=0,radioPrefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,editorRadio=0,trIndex=1,inventorySlot=0,gadgetOwnerMatch=1
+[RICON_LIVE] seq=16 t=5028 side=probe kind=SCREEN player=-1 device=-1 tr=-1 value=5 text=op=NOT_READY,von=1,menu=0,same=0
+[RICON_LIVE] seq=17 t=5028 side=probe kind=BENCH_ABORTED player=-1 device=-1 tr=-1 value=5 text=level=PLAYER_SCREEN_WIDGET,notReady=1,samples=5
+[RICON_LIVE] dump=END
+[RICON_LIVEB] watch t=5000ms isGameMode=1 fps=109.881
+[RICON_LIVEB] watch t=6000ms isGameMode=1 fps=133.151
+[RICON_LIVEB] watch t=7000ms isGameMode=1 fps=135.064
