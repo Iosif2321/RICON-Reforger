@@ -1,0 +1,56 @@
+{
+  "runs": [
+    {
+      "run": "ricon-a1s1b-claude-20261024-214154",
+      "logSha256": "5bc5cc0cf75732afa40456832f4c4f7747cb41e9da10eb6190399b0fa504fe9b",
+      "status": "CONFIRMED_NOT_READY",
+      "events": 18,
+      "samples": 5,
+      "unchangedEntryRows": 10,
+      "configError": "Unknown keyword/data 'm_VONMenu'",
+      "openInvoked": false
+    },
+    {
+      "run": "ricon-a1s1c-claude-20261024-214617",
+      "logSha256": "67403433d320c7ce3fe20451cbc079a2a1126a2bb4ac841b7720acaf074fff9c",
+      "status": "CONTROLLER_AND_FREQUENCY_WIDGETS_CONFIRMED",
+      "events": 114,
+      "samples": 30,
+      "unchangedEntryRows": 60,
+      "widgetRows": 12,
+      "firstSampleMs": 1006,
+      "lastSampleMs": 30149,
+      "controllerConfig": {
+        "op": "OPEN",
+        "opened": "1",
+        "hasDisplay": "1",
+        "inputs": "1",
+        "selectedId": "0",
+        "activeIdx": "0",
+        "hadControl": "0",
+        "controls": "1",
+        "openAction": "VONMenu",
+        "closeOnRelease": "0",
+        "performOnClose": "0",
+        "closeOnPerform": "1"
+      },
+      "rawToWidget": [
+        {
+          "raw": 32000,
+          "text": "32.0 MHz"
+        },
+        {
+          "raw": 48000,
+          "text": "48.0 MHz"
+        }
+      ],
+      "channelWidgetText": "Error",
+      "channelTextIsNotPixelEvidence": true
+    }
+  ],
+  "screenshotPath": "C:\\Users\\Ded\\AppData\\Local\\Temp\\claude\\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\\583c292f-5bc1-43e3-9045-3fc153e17657\\scratchpad\\a1s1-window-214640.png",
+  "screenshotSha256": "4930f5697a71a687f5506354aba182f508b23688c0a595bc339f6ac64c410e67",
+  "manualVisualReview": "Codex открыл этот PNG через view_image: видны CH1 32.0 MHz и CH2 48.0 MHz; Error на пикселях не виден. Скрипт сверяет файл и размер, а не распознаёт изображение.",
+  "limits": "Два базовых значения подтверждены на экране. Шаг частоты на экране, полный InputManager, звук, RX/TX, репликация и избирательное A→B этим опытом не проверены.",
+  "checkerSha256": "bea6bca162e9233450d3c37591f00ea9712455eb4bdc5e09a8ad4d198dd44393"
+}
