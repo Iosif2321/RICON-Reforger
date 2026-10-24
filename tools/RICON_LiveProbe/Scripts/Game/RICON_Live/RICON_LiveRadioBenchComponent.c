@@ -50,6 +50,69 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	protected bool m_bFirstFrameLogged;
 	protected bool m_bStarted;
 
+	//! Сердцебиение через игровую очередь (codex #4176): идёт независимо от EOnFrame сущности и отделяет «у сущности
+	//! нет кадров» от «игра не обновляется». Повтор раз в HEARTBEAT_MS, не больше MAX_HEARTBEATS; Remove в Finish и OnDelete.
+	static const int HEARTBEAT_MS = 1000;
+	static const int MAX_HEARTBEATS = 90;
+	protected int m_iFrames;
+	protected int m_iHeartbeats;
+	protected bool m_bHeartbeat;
+
+	//! Внутри ли сущность границ своего мира (BaseWorld.GetBoundBox) по всем трём осям.
+	protected static bool IsInside(IEntity owner)
+	{
+		if (!owner || !owner.GetWorld())
+			return false;
+		vector mins, maxs;
+		owner.GetWorld().GetBoundBox(mins, maxs);
+		vector origin = owner.GetOrigin();
+		for (int k = 0; k < 3; k++)
+		{
+			if (origin[k] < mins[k] || origin[k] > maxs[k])
+				return false;
+		}
+		return true;
+	}
+
+	//! Положение сущности относительно границ её мира: печатается в OnPostInit и в отказе TryStart.
+	protected static string Placement(IEntity owner)
+	{
+		if (!owner || !owner.GetWorld())
+			return "placement=NONE";
+		vector mins, maxs;
+		owner.GetWorld().GetBoundBox(mins, maxs);
+		string text = "origin=" + owner.GetOrigin().ToString() + ",boundsMin=" + mins.ToString();
+		text = text + ",boundsMax=" + maxs.ToString() + ",inside=" + Bit(IsInside(owner));
+		return text;
+	}
+
+	protected void StartHeartbeat()
+	{
+		if (m_bHeartbeat || !GetGame() || !GetGame().GetCallqueue())
+			return;
+		GetGame().GetCallqueue().CallLater(Heartbeat, HEARTBEAT_MS, true);
+		m_bHeartbeat = true;
+		Print("[RICON_LIVEB] heartbeat=START");
+	}
+
+	protected void Heartbeat()
+	{
+		m_iHeartbeats++;
+		PrintFormat("[RICON_LIVEB] heartbeat n=%1 frames=%2 phase=%3 running=%4 elapsed=%5", m_iHeartbeats, m_iFrames, m_iPhase, m_bRunning, m_fElapsed);
+		if (m_iHeartbeats >= MAX_HEARTBEATS)
+			StopHeartbeat("CAP");
+	}
+
+	protected void StopHeartbeat(string reason)
+	{
+		if (!m_bHeartbeat)
+			return;
+		m_bHeartbeat = false;
+		if (GetGame() && GetGame().GetCallqueue())
+			GetGame().GetCallqueue().Remove(Heartbeat);
+		PrintFormat("[RICON_LIVEB] heartbeat=STOP reason=%1 n=%2 frames=%3", reason, m_iHeartbeats, m_iFrames);
+	}
+
 	//! Диагностика жизненного цикла (codex #4129): видно, создаётся ли компонент заново при переходе в Play.
 	protected static string WorldState(IEntity owner)
 	{
@@ -65,7 +128,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	{
 		super.OnPostInit(owner);
 		SetEventMask(owner, EntityEvent.INIT | EntityEvent.FRAME);
-		PrintFormat("[RICON_LIVEB] lifecycle=OnPostInit %1", WorldState(owner));
+		PrintFormat("[RICON_LIVEB] lifecycle=OnPostInit %1 %2", WorldState(owner), Placement(owner));
 		// codex #4138: ACTIVE у своей сущности стенда сразу, чтобы первый EOnFrame мог вызвать TryStart; логика в
 		// edit mode при этом не запускается (TryStart проверяет режим).
 		if (owner && (owner.GetFlags() & EntityFlags.ACTIVE) == 0)
@@ -87,6 +150,12 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!owner || !owner.GetWorld() || owner.GetWorld().IsEditMode())
 			return;
 		m_bStarted = true;
+		// codex #4180: координаты проверяются и в игровом экземпляре; вне границ — явный отказ до BENCH_START.
+		if (!IsInside(owner))
+		{
+			PrintFormat("[RICON_LIVEB] state=PLACEMENT_REFUSED where=play from=%1 %2", from, Placement(owner));
+			return;
+		}
 		bool activeBefore = (owner.GetFlags() & EntityFlags.ACTIVE) != 0;
 		if (!activeBefore)
 			owner.SetFlags(EntityFlags.ACTIVE, false);
@@ -100,6 +169,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		text = text + ",isClient=" + Bit(Replication.IsClient());
 		text = text + ",from=" + from + ",activeBefore=" + Bit(activeBefore);
 		Note("BENCH_START", -1, text);
+		StartHeartbeat();
 	}
 
 	protected int Note(string kind, int value, string text)
@@ -287,6 +357,8 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	//! RplComponent.DeleteRplEntity, codex #4108). BENCH_DONE — лишь после всех фаз; иначе BENCH_ABORTED с фазой.
 	protected void Finish(bool complete)
 	{
+		// codex #4180: очередь снимается до удаления своих раций.
+		StopHeartbeat("FINISH");
 		for (int i = 0; i < m_aRadios.Count(); i++)
 		{
 			IEntity radio = m_aRadios[i];
@@ -304,6 +376,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 
 	override void EOnFrame(IEntity owner, float timeSlice)
 	{
+		m_iFrames++;
 		if (!m_bFirstFrameLogged)
 		{
 			m_bFirstFrameLogged = true;
@@ -358,6 +431,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 
 	override void OnDelete(IEntity owner)
 	{
+		StopHeartbeat("DELETE");
 		if (m_bRunning)
 			Finish(false);
 		super.OnDelete(owner);

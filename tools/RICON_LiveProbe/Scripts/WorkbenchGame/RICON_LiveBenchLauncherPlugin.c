@@ -2,7 +2,9 @@
 //! в памяти создаёт одну GenericEntity «RICON_LiveBench» с RICON_LiveRadioBenchComponent и переходит в Play.
 //! Мир НЕ сохраняется: Save() не вызывается, файлы мира на диске не меняются. Документированные вызовы:
 //! WorldEditor.GetCmdLine/SetOpenedResource/GetApi/SwitchToGameMode, WorldEditorAPI.BeginEntityAction/CreateEntity/
-//! CreateComponent/EndEntityAction (Script API). Завершение процесса — внешним таймаутом (журнал стенда потоковый).
+//! CreateComponent/EndEntityAction/GetWorld/TryGetTerrainSurfaceY, BaseWorld.GetBoundBox (Script API).
+//! Точка стенда проверяется внутри границ мира (ChoosePoint), иначе явный отказ без создания сущности.
+//! Завершение процесса — внешним таймаутом (журнал стенда потоковый).
 //! Запуск — только после START → ACK → run → END на шине и source review codex (#4091).
 [WorkbenchPluginAttribute(name: "RICON: стенд раций в Play", description: "Открыть мир, добавить стенд в памяти, Play", wbModules: {"WorldEditor"})]
 class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
@@ -39,8 +41,11 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] state=NO_API");
 			return;
 		}
+		vector point;
+		if (!ChoosePoint(api, point))
+			return;
 		api.BeginEntityAction("RICON live bench");
-		IEntitySource bench = api.CreateEntity("GenericEntity", "RICON_LiveBench", api.GetCurrentEntityLayerId(), null, vector.Zero, vector.Zero);
+		IEntitySource bench = api.CreateEntity("GenericEntity", "RICON_LiveBench", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
 		IEntityComponentSource component;
 		if (bench)
 			component = api.CreateComponent(bench, "RICON_LiveRadioBenchComponent");
@@ -55,6 +60,42 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		PrintFormat("[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=%1", api.IsGameMode());
 		m_Api = api;
 		thread WatchGameMode();
+	}
+
+	static const float EDGE_MARGIN_M = 10.0;  //!< запас от края границ по x/z; рации ставятся в +0…+6 м по x от стенда
+	static const float HEIGHT_ABOVE_M = 1.0;  //!< высота стенда над рельефом
+
+	//! Попытки 5/5b: стенд в <0,0,0> «out world bounds» в Plain-мире (codex #4176). Точка — центр BaseWorld.GetBoundBox
+	//! по x/z, высота — WorldEditorAPI.TryGetTerrainSurfaceY + HEIGHT_ABOVE_M. Отказ (без создания стенда), если границы
+	//! уже 2·EDGE_MARGIN_M, в точке нет рельефа или точка с запасом не внутри границ по всем трём осям.
+	protected bool ChoosePoint(WorldEditorAPI api, out vector point)
+	{
+		BaseWorld world = api.GetWorld();
+		if (!world)
+		{
+			Print("[RICON_LIVEB] state=PLACEMENT_REFUSED reason=NO_WORLD");
+			return false;
+		}
+		vector mins, maxs;
+		world.GetBoundBox(mins, maxs);
+		float x = (mins[0] + maxs[0]) * 0.5;
+		float z = (mins[2] + maxs[2]) * 0.5;
+		float terrainY;
+		bool onTerrain = api.TryGetTerrainSurfaceY(x, z, terrainY);
+		point = Vector(x, terrainY + HEIGHT_ABOVE_M, z);
+		bool spanOk = maxs[0] - mins[0] > 2 * EDGE_MARGIN_M && maxs[2] - mins[2] > 2 * EDGE_MARGIN_M;
+		bool insideX = point[0] >= mins[0] + EDGE_MARGIN_M && point[0] <= maxs[0] - EDGE_MARGIN_M;
+		bool insideZ = point[2] >= mins[2] + EDGE_MARGIN_M && point[2] <= maxs[2] - EDGE_MARGIN_M;
+		bool insideY = point[1] >= mins[1] && point[1] <= maxs[1];
+		bool inside = insideX && insideZ && insideY;
+		PrintFormat("[RICON_LIVEB] placement boundsMin=%1 boundsMax=%2 point=%3 onTerrain=%4 terrainY=%5 spanOk=%6 inside=%7",
+			mins, maxs, point, onTerrain, terrainY, spanOk, inside);
+		if (!spanOk || !onTerrain || !inside)
+		{
+			PrintFormat("[RICON_LIVEB] state=PLACEMENT_REFUSED reason=spanOk:%1,onTerrain:%2,inside:%3", spanOk, onTerrain, inside);
+			return false;
+		}
+		return true;
 	}
 
 	protected WorldEditorAPI m_Api;

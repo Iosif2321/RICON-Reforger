@@ -187,3 +187,31 @@ SCR_PlayerController spawned at the origin, then two script warnings about dupli
 error.log 950ffbb618bb3b2700d4cf5384131fe4f35cc61cfb995f1be74c352ca6b7add9: out-of-world-bounds warning for RICON_LiveBench, Steamworks stats failure,
 empty m_sLoadingLayout GUID, no navmesh file; no SCRIPT (E).
 log lines: 7193; last line time 08:25:34.286
+
+--- ricon-bench6-claude-20261024-083824
+# 6 (08:38:24, ACK #4184): component sha256 80c1a605c2e663d865549d977fd3f7dc6cfe4f58b8bcf25b2c84ac0ba09741b1
+# (heartbeat via game call queue, IsInside before BENCH_START), launcher 6c97c0f169e3b02873a205793ae6330985d3a2d71dd0baddeb7315f4b461c91c
+# (ChoosePoint). Same Plain world, Hidden + -forceUpdate -noFocus -maxFPS 30, PID 21316, stop TIMEOUT at 94 s, SCRIPT (E) = 0.
+# Facts: point <114.399, 2, 106.482> chosen at the centre of bounds <14.399,0,6.482>..<214.399,21,206.482>, on terrain
+# (y = 1 + 1 m), inside=1 in the edit world and again in the play world (same bounds); no out-of-world-bounds warning.
+# Game mode entered, BENCH_START 0.37 s after PLAY_REQUESTED, heartbeat=START. Then for ~90 s: 0 heartbeat lines (first was
+# due 1 s later), 0 lifecycle=FirstFrame, no BENCH_SPAWN, launcher watch only t=0. The log ends 0.19 s after BENCH_START,
+# right after the local player controller is created and two script warnings, the same engine point as in 5 and 5b.
+# Verdict: INCOMPLETE, no radio measurement. Placement is excluded as the only cause; neither the bench entity nor the
+# game call queue produced output. Cause not established from absent lines (codex #4184).
+59c21c033410c95a92666332c553467aa92535734a3d677312436938f6faf290
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 1d740a0f
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 3c6a0a7e
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
+[RICON_LIVEB] heartbeat=START
+log lines: 7194; last line time 08:38:33.860; out-of-bounds warnings: 0
