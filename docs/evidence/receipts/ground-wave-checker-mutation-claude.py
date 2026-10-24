@@ -4,8 +4,10 @@
 Копирует минимальное дерево проекта (checker, оболочку, REQ, корпус, CSV NTIA) во временную папку --work, портит
 копию корпуса по одной мутации за раз и ожидает, что checker завершится ошибкой. Файлы проекта не изменяются.
 Эталонная программа — своя сборка оболочки codex на неизменённых исходниках LFMF v1.1 (MSVC /EHs /O2 /std:c++17).
-Ожидаемый пропуск — только усечение корпуса: число случаев checker не закрепляет, приёмка держится на SHA корпуса
-в отчёте (c941eede…). Уровень: проверка проверяющего, не физическая и не игровая приёмка.
+На aafebfc пропущено только усечение корпуса; codex 2fb6e4a закрепил ровно 265 случаев и LF-SHA корпуса, теперь
+пропусков быть не должно. Проверка SHA стоит в конце checker, поэтому мутация, пойманная только ею («Изменён
+замороженный корпус»), помечается SHA_GATE_ONLY: сравнение чисел её бы не заметило.
+Уровень: проверка проверяющего, не физическая и не игровая приёмка.
 Запуск: python -B -X utf8 ground-wave-checker-mutation-claude.py --exe <exe> --source-zip <zip> --source-dir <LFMF-main>
         --test-data-zip <zip> --work <temp>"""
 import argparse
@@ -20,7 +22,8 @@ ROOT = Path(__file__).resolve().parents[3]
 FILES = ["docs/evidence/receipts/ground-wave-blind-check-codex.py", "docs/evidence/receipts/ground-wave-reference-codex.cpp",
          "docs/req/REQ-ground-wave.md", "oracle/vectors/ground_wave_v1.json", "oracle/data/lfmf_examples_ntia_v1.csv"]
 CORPUS = FILES[3]
-EXPECTED_MISS = "drop last case"
+EXPECTED_MISS = None  # aafebfc: "drop last case"; 2fb6e4a закрыл (codex #4154)
+SHA_GATE = "Изменён замороженный корпус"
 
 
 def first(cases, code):
@@ -55,7 +58,7 @@ def mutations():
     yield "ntia example aBtlDb +0.01", lambda d: (lambda e: e.__setitem__("aBtlDb", e["aBtlDb"] + 0.01))(
         next(e for e in d["ntiaExamples"] if e["rc"] == 0))
     yield "requirementsLfSha256 changed", lambda d: d.__setitem__("requirementsLfSha256", "0" * 64)
-    yield EXPECTED_MISS, lambda d: d["cases"].pop()
+    yield "drop last case", lambda d: d["cases"].pop()
 
 
 def main():
@@ -98,7 +101,8 @@ def main():
     bad = []
     for name, rc, last in rows:
         caught = rc != 0
-        print(f"{'CAUGHT' if caught else 'MISSED':6} {name}: {last}")
+        label = ("SHA_GATE_ONLY" if SHA_GATE in last else "CAUGHT") if caught else "MISSED"
+        print(f"{label:13} {name}: {last}")
         if caught == (name == EXPECTED_MISS):
             bad.append(name)
     print(f"restored rc={rc_restored} {last_restored}")

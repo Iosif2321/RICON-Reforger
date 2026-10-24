@@ -4,7 +4,7 @@ claude, 2026-10-24: ревью независимого GW-checker и оболо
 sha256 lfmf.zip            be6ed041d4f095c8845e8cce800e1a4ffb568401dec6f5d93c14b7a8ce58fd95
 sha256 lfmf-test-data.zip  53f5331b2337a2b60376a3d2538fb14948a82611281a5bbed90e499ce0fa2be6
 sha256 my exe build        1d77056c780015031981557940646009776047565437ab661764003796b5b905
-sha256 checker (repo)      8d0656e08eb9bd33d6dff89cec7e8979bd78ebddc34bf292b99a6af77e6edd4d
+sha256 checker aafebfc     8d0656e08eb9bd33d6dff89cec7e8979bd78ebddc34bf292b99a6af77e6edd4d
 sha256 driver (repo)       3e2873d53249adc410b3e7b977f1bec46331769a07088919fab976d5de92b4a2
 sha256 corpus              c941eedeff0afe9351fc91a2a0e2a4095c23c48d66224243ca9f124d87bf57be
 sha256 REQ (LF)            f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f
@@ -13,7 +13,7 @@ sha256 REQ (LF)            f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b
 GW_BLIND_REFERENCE_PASS cases=265 examples=95 delta=5.68e-14dB published=0.047502dB
    отчёт отличается от ground-wave-blind-check-codex.json только полями: ['referenceExeSha256']
 
-2. Мутационная проверка (ground-wave-checker-mutation-claude.py):
+2. Мутационная проверка на checker aafebfc (первая версия receipt, ожидался один пропуск):
 baseline rc=0 GW_BLIND_REFERENCE_PASS cases=265 examples=95 delta=5.68e-14dB published=0.047502dB
 CAUGHT OK basicLossDb +2e-8: AssertionError: GW001: basicLossDb: -0.3585386430379458 != -0.3585386230379458
 CAUGHT OK fieldDbuVm -2e-8: AssertionError: GW001: fieldDbuVm: 168.36512880748023 != 168.36512878748024
@@ -45,7 +45,31 @@ GW_CHECKER_MUTATION_PASS
    - исключение C++ и не конечные A/E дают NUMERIC_FAILURE; rc != 0 внутри домена — ошибка проверки;
    - перестановка высот TX/RX проверяется для каждого входа внутри численного домена;
    - checker не импортирует oracle/*.py; CSV примеров сверяется с самостоятельно распакованным архивом NTIA.
-   Замечание без блокировки: число случаев не закреплено (см. пропуск мутации); приёмка держится на SHA корпуса.
+   Замечание (закрыто codex 2fb6e4a, #4154): число случаев не было закреплено, см. пропуск мутации в п. 2.
+
+4. После codex 2fb6e4a (ровно 265 случаев и LF-SHA корпуса обязательны), checker sha256 a4249f820ca6aa6adec20f77d7a0c7a5bc6d92b5abc690357db47f174a9b8d46:
+   проверка SHA стоит в конце checker, поэтому мутации по-прежнему проверяют сравнение чисел; SHA_GATE_ONLY не было.
+   baseline rc=0 GW_BLIND_REFERENCE_PASS cases=265 examples=95 delta=5.68e-14dB published=0.047502dB
+   CAUGHT        OK basicLossDb +2e-8: AssertionError: GW001: basicLossDb: -0.3585386430379458 != -0.3585386230379458
+   CAUGHT        OK fieldDbuVm -2e-8: AssertionError: GW001: fieldDbuVm: 168.36512880748023 != 168.36512878748024
+   CAUGHT        OK method swapped: AssertionError: GW001: Неверное method
+   CAUGHT        OK kr *(1+1e-11): AssertionError: GW001: kr
+   CAUGHT        OK heightToWavelength *(1+1e-11): AssertionError: GW001: heightToWavelength
+   CAUGHT        OK provenance changed: AssertionError: GW001: Неверное provenance
+   CAUGHT        OK extra field: AssertionError: GW001: Код или поля результата
+   CAUGHT        INVALID -> OOD: AssertionError: GW231: Код или поля результата
+   CAUGHT        OOD -> INVALID: AssertionError: GW215: Код или поля результата
+   CAUGHT        NUMERIC_FAILURE -> OK: AssertionError: GW246: Код или поля результата
+   CAUGHT        OK input distance x2: AssertionError: GW001: basicLossDb: 6.10535140930088 != -0.3585386430379458
+   CAUGHT        case id gap: AssertionError: Порядок/полнота ID
+   CAUGHT        jsonOnly not bool: AssertionError: Неверная метка JSON-only
+   CAUGHT        ntia example aBtlDb +0.01: AssertionError: Ожидание примера отличается от публикации
+   CAUGHT        requirementsLfSha256 changed: AssertionError: REQ изменился
+   CAUGHT        drop last case: AssertionError: Неполный замороженный корпус: ожидается 265 случаев
+   CAUGHT        duplicate JSON key: AssertionError: Повторный ключ JSON: version
+   restored rc=0 GW_BLIND_REFERENCE_PASS cases=265 examples=95 delta=5.68e-14dB published=0.047502dB
+   mutations=17 caught=17 expectedMiss=None unexpected=[]
+   GW_CHECKER_MUTATION_PASS
 
 Вердикт: AGENT_REVIEWED, checker и оболочка codex приняты; host-срез REQ-ground-wave v0.1 заморожен по REQ LF-SHA
 и SHA корпуса выше. Не закрыты: Enforce/binary32, подключение к оценщику, антенны у земли, реальные грунты, звук.

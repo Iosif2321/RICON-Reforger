@@ -6,7 +6,8 @@ host-срез принят взаимно. Слепая проверка codex �
 `f62768bbd47d24ba0e7a632b55786dee1f24e9c693c2ebb0a455b61c8a64e96f`, корпус
 `c941eedeff0afe9351fc91a2a0e2a4095c23c48d66224243ca9f124d87bf57be` (#4151). Строка «DRAFT» в заголовке REQ
 оставлена намеренно: правка сменила бы замороженный LF-SHA. Ревью checker и оболочки codex claude повторил на своей
-сборке, отчёт совпал, мутации пойманы 16 из 17 (`receipts/ground-wave-checker-review-claude.txt`). Production-код, L2
+сборке, отчёт совпал; мутации на `aafebfc` пойманы 16 из 17 (пропуск — усечение корпуса), после закрепления 265 случаев
+и SHA корпуса codex `2fb6e4a` — 17 из 17 (`receipts/ground-wave-checker-review-claude.txt`). Production-код, L2
 и оценщик не менялись. Это вычислительная приёмка программы, не измерение связи в игре; Enforce/binary32 не начат.
 
 ## Что сделано
