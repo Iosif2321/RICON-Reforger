@@ -29,7 +29,9 @@ proto-функции C++ для server/Workbench; совместимость о�
 A1-S1b — отрицательные диагностические прогоны, A1-S1c — меню VoN игрока на экране (принят codex), A1-S2 — шаг частоты
 на экране 48.0 → 48.2 → 48.0 MHz и production-reader (codex подтвердил `48bd442`); Q-F взаимно принят. A0-M —
 локальный Q-M на своих рациях: mute трансивера переживает шаг частоты и цикл питания, второй трансивер не меняется
-(codex подтвердил `adb655b`; мир без RadioManager). Сервер, второй клиент и звук не проверялись.
+(codex подтвердил `adb655b`; мир без RadioManager). B0a — наблюдатель роли процесса через modded
+ArmaReforgerScripted под гейтом: гейт выкл молчит, гейт вкл видит игрока и рацию, переживает Play → Edit → Play
+(codex подтвердил `dd0ada6`). Сервер, второй клиент и звук не проверялись.
 Ванильные файлы и звуковой граф читаем через Workbench (owner #2020).
 Обратная разработка — только узкий статический разбор файлов на диске в Ghidra «при необходимости» (owner #2970):
 без запуска игры, отладчика, памяти и правки бинарников; декомпилят не попадает в репозиторий (правила #2982;
@@ -42,7 +44,7 @@ A1-S1b — отрицательные диагностические прого�
 |---|---|---|---|---|---|
 | Э0 | Evidence baseline | M1 | baseline зафиксирован: корпус перенесён (хэши сверены), матрица Q1–Q34 + 15 разделов, лицензия APL-SA; ревью codex — agree (id394, id405, id410) | `598e4e8` | пробелы — в `E-coverage-matrix.md`, раздел «Что нужно для приоритетов» |
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
-| Э1r | Runtime-lab на одном ПК | M1 | частично (2026-10-24): в Play одного Workbench — частота и mute рации на стенде (V2 `NATIVE_ROUNDTRIP_PASS`, A1-E `MENU_ENTRY_RUNTIME_PASS`), локальный игрок и путь меню на его рации (A1-P0/P1/P2, `PLAYER_MENU_RUNTIME_PASS`); меню VoN игрока на экране через штатный config-контроллер (A1-S1c) и шаг частоты на экране с чтением production-reader (A1-S2, `PLAYER_SCREEN_STEP_LABEL_UNVERIFIED`; Q-F — кГц, взаимно принят); локальный Q-M на своих рациях (A0-M, `QM_LOCAL_OBSERVED`, взаимно принят) | `41904a4`, `ba0f4c8`, `82e3b66`, `4d51ffd`, `1efc205`, `567a4ac`, `7dea791`, `27d480f`, `a433072`, `48bd442`, `f1acbcc`, `76b5919`, `adb655b` | физическая клавиша, локализация подписи; звук, RX/TX, сервер + клиент |
+| Э1r | Runtime-lab на одном ПК | M1 | частично (2026-10-24): в Play одного Workbench — частота и mute рации на стенде (V2 `NATIVE_ROUNDTRIP_PASS`, A1-E `MENU_ENTRY_RUNTIME_PASS`), локальный игрок и путь меню на его рации (A1-P0/P1/P2, `PLAYER_MENU_RUNTIME_PASS`); меню VoN игрока на экране через штатный config-контроллер (A1-S1c) и шаг частоты на экране с чтением production-reader (A1-S2, `PLAYER_SCREEN_STEP_LABEL_UNVERIFIED`; Q-F — кГц, взаимно принят); локальный Q-M на своих рациях (A0-M, `QM_LOCAL_OBSERVED`, взаимно принят) | `41904a4`, `ba0f4c8`, `82e3b66`, `4d51ffd`, `1efc205`, `567a4ac`, `7dea791`, `27d480f`, `a433072`, `48bd442`, `f1acbcc`, `76b5919`, `adb655b`, `93754c2`, `c7e9e55` | физическая клавиша, локализация подписи; звук, RX/TX, сервер + клиент |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
 | Э2 | Контракты единого ядра | M1 | STATIC_IMPLEMENTED + code review; host oracle PASS (снимки 46, маршруты 48); REQ-core v0.8 (delta Э4T-s reviewed `dd73863`), ADR-002; менеджер (реестры, допуск моделей, epoch, seq, типы сетей), снимки, маршруты, seams антенны/шума/разборчивости/сессии вызова; фикстуры EXT-1…5 (`SELF_CHECK_PASS` — исполнены в Workbench раннером, спринт 15). `WORKBENCH_COMPILE_PASS` (2026-10-19, `E-workbench-source.md`), не заморожено. Ход по спринтам — таблица «Спринты» | ключевые: `7a6812a`, `9fa04f5`, `fe8e20b`, `eb83219`, `d0c4db3`, `e669e40`, `4d541e7`, `f0acd5f`, `ff8f500`, `b555f35` | ревью codex compile evidence (#760/#763); заморозка — после Э3-гейтов |
 | Э3 | Server-authoritative lifecycle | M1 | требования: `docs/req/REQ-lifecycle.md` v0.4 (codex; v0.4 — epoch выдачи в `VON_EXPIRY_INTENDED`; детерминированная host-модель: коды и их приоритет, effects, replay/seq, TTL и аномалия времени, fixed-window, ёмкости, ротация epoch). Эталон: `oracle/lifecycle_oracle.py` + 14 трасс / 209 шагов CT-LC-001…010 (векторы rev 2) — `LIFECYCLE_ORACLE_PASS` (claude; v0.3 — agree codex #873, v0.4 — agree codex #1149). Enforce: `RICON_Lifecycle.c` (codex) — `WORKBENCH_COMPILE_PASS` + `ENFORCE_PARITY` 14/14 трасс, 209/209 шагов на `2bf70a7` (исполнено в Workbench раннером `tools/RICON_TestRunner`, без Play/сервера) | REQ: `11f766b`…`9e6ce55`, `2bf70a7`; oracle: `25cc10b`…`0d58853`, `1413291`, `3ae10b3`; код: `284dde5`…`8ba6d3e`, `2bf70a7`; фикстура/раннер: `dfd15d1`, `8d3e450`, `36609bf`, `3ae10b3` | runtime (порядок callbacks, RPC sender, JIP) — BLOCKED_NO_RUNTIME |
@@ -278,6 +280,10 @@ RX/TX, слышимость, репликация и per-pair не провер�
     этого пути AN/PRC-68. Контракт REQ-radio-device-adapter v0.2 оставляет `m_iTuningValue` непрозрачным (codex #4494).
     Разбор — `PLAYER_SCREEN_STEP_LABEL_UNVERIFIED` по правилу подписи. Не проверены физическая клавиша, звук, RX/TX,
     репликация и клиент.
+  - **B0a: наблюдатель роли процесса (`93754c2`, `c7e9e55`; codex подтвердил `dd0ada6`).** Код codex: modded ArmaReforgerScripted и
+    RICON_LiveEndpointProbe под `-riconEndpointProbe=1`; разборщик claude 45/45. Гейт выкл: 0 строк; гейт вкл: 30 срезов,
+    игрок 1, AN/PRC-68 32000/48000, rplMode 0; Play → Edit → Play: первый цикл обрывается на GAME_END, второй полный,
+    cycle снова 1 (игровой объект пересоздаётся между Play). Клиент и сеть — следующий срез B0b.
   - **A0-M: локальный Q-M на своих рациях (`76b5919`, codex подтвердил `adb655b`).** Мир без `RadioManagerEntity`. Режим
     `radiomute`: четыре свои рации стенда, у каждой 2 трансивера; трансивер 1 — контроль без записей. На всех четырёх
     `SetMuteState(1)` ставит mute; он сохраняется после шага частоты и цикла питания всей рации (выключена ≥ 1 с);

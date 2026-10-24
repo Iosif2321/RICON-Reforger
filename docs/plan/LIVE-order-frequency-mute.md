@@ -26,7 +26,7 @@ H2 `SetMuteState` и единицы частоты рации) и **постоя
 - чтение раций (`RICON_LiveRadioReader`, 16/16) и стенд A0 реализованы;
 - стенд исполнен в Play: bench9, V1 с `RadioManagerEntity`, V2 с прямым `SetFrequency`, A1-E с собственной
   ванильной entry меню; режимы игрока A1-P0, A1-P1, A1-P2 приняты взаимно; A1-S1 и A1-S1b — отрицательные,
-  A1-S1c, A1-S2 и A0-M (локальный Q-M) приняты взаимно (§4).
+  A1-S1c, A1-S2 и A0-M (локальный Q-M) приняты взаимно; B0a (наблюдатель роли процесса) выполнен, codex подтвердил `dd0ada6` (§4).
 Компонент запуска на GameMode в Play не исполнялся. Сопоставления epoch/linkId/lease нет.
 [Доказательства](../evidence/E-live-observer.md), [инструкция компонента](../../tools/RICON_LiveProbe/README.md),
 `receipts/live-bench-wb-claude-20261024.txt`. Q-F закрыт (узкий scope выше); Q-M — локальная часть наблюдена, остальное
@@ -249,6 +249,18 @@ RX/TX, слышимость, репликацию и per-pair. Процесс з
   записями нет; FINAL = BASE. `SetMuteState` вернул 0 во всех 8 вызовах при фактической смене `IsMuted` (как в A1-E) —
   возвращаемое bool не равно ни новому, ни прежнему состоянию. Разбор — `QM_LOCAL_OBSERVED`. Не проверены слышимость,
   направление RX/TX флага, репликация на клиента, права клиента-прокси и точечный A→B.
+
+- **B0a (2026-10-24/25; код codex `0a039a2`, `15efc1a`, `f0d6d4f`; разборщик claude; codex подтвердил `dd0ada6`).** Наблюдатель роли
+  процесса без сущности launcher-а: modded `ArmaReforgerScripted` (OnGameStart, OnUpdate, OnGameEnd,
+  OnBeforeWorldCleanup, super ровно один раз), `RICON_LiveEndpointProbe` с собственным журналом и прежним читателем
+  раций, только под `-riconEndpointProbe=1`. Прогоны в Play одного Workbench: гейт выкл — ни одной строки
+  `[RICON_LIVE]` (`ENDPOINT_GATE_OFF_CLEAN`); гейт вкл — один цикл, 30 срезов, игрок 1, AN/PRC-68 32000/48000,
+  `rplMode` 0 при isServer=1/isClient=0 (`ENDPOINT_CYCLE_COMPLETE`, `LOCAL_ROLE_READY`); Play → Edit → Play — первый
+  цикл обрывается на GAME_END и сбрасывается, второй проходит полностью (`ENDPOINT_RESTART_COMPLETE`). Первая попытка
+  перезапуска потеряла второй Play во время перезагрузки мира редактора; launcher теперь ждёт устойчивый мир 5 с и
+  подтверждает вход. Во втором Play счётчик cycle снова 1 — в Workbench игровой объект пересоздаётся между Play.
+  Второе «Yes» на тот же запрос авторизации — только после маркера второго Play, по узкому правилу runner-а.
+  Клиент, сеть и голос этим не проверены; режим Server localhost для B0b ещё выбирается (codex #4601).
 
 **Фаза B (сервер + клиент; два участника).** Dedicated server не установлен; player-hosted сервер требует входа в
 backend. Постоянное разрешение владельца 2026-10-24 покрывает необходимые локальные действия, отдельный вопрос не
