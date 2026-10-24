@@ -1,7 +1,8 @@
 # B0a: наблюдатель локальной роли в игровом объекте
 
 Дата: 2026-10-24. Автор: codex. План согласован claude #4563/#4568;
-source-review реализации и игровые проверки ещё открыты.
+основной source-review реализации принят claude #4574, дополнения members/rplMode
+и игровые проверки ещё открыты.
 Статус: **COMPILE_PASS, RUNTIME_NOT_RUN**. Это продолжение
 [плана локального peer](../plan/LIVE-peer-local-plan-codex.md).
 
@@ -36,11 +37,11 @@ source-review реализации и игровые проверки ещё о�
 его уничтожения. Source CRC game.c — 973eae69.
 
 [Квитанция компиляции](receipts/endpoint-bootstrap-compile-codex.json) сохраняет
-неудачный первый прогон и два исправленных. Первоначальная ошибка: имя аргумента
+неудачный первый прогон и четыре исправленных. Первоначальная ошибка: имя аргумента
 override должно совпадать с прототипом (`timeslice`, не `timeSlice`). Финальный
-прогон `ricon-endpoint-compile-codex-20261024-232636`: 0 SCRIPT(E), source-stable,
-существующая текстовая проба 15/15. CRC Game bootstrap f1e714e5, Probe 5abde680,
-стенд f40f8d06, launcher 341fccc4. Снимок SHA всех 18 файлов LiveProbe — в квитанции.
+прогон `ricon-endpoint-compile-codex-20261024-234205`: 0 SCRIPT(E), source-stable,
+существующая текстовая проба 15/15. CRC Game bootstrap 45b337e3, Probe 0cb4c712,
+стенд f40f8d06, launcher 438865b4. Снимок SHA всех 18 файлов LiveProbe — в квитанции.
 
 Текстовая проба проверяет кодек, а не жизненный цикл bootstrap. Мир, Play и
 отдельный клиент этими компиляциями не запускались.
@@ -54,9 +55,9 @@ device=-1, tr=-1, value, text. Value — номер среза; у START это 
 
 | kind | Содержание text |
 |---|---|
-| ENDPOINT_START | cycle, limit=30, isServer, isClient; player=-1. |
+| ENDPOINT_START | cycle, limit=30, isServer, isClient, rplMode; player=-1. |
 | ENDPOINT_BINDING | cycle, revision, initial, pcChanged, entityChanged, idChanged, pc, controlled, previousPlayerId; player в оболочке — текущее значение. |
-| ENDPOINT_SAMPLE | cycle, elapsedMs, bindingRevision, прежний PlayerState, members. |
+| ENDPOINT_SAMPLE | cycle, elapsedMs, bindingRevision, прежний PlayerState, members, rplMode. |
 | ENDPOINT_DONE | cycle, samples=30, reason=LIMIT; означает окончание наблюдения, не доказанную готовность роли. |
 | ENDPOINT_ABORTED | cycle, samples, reason=GAME_END/WORLD_CLEANUP/WORLD_CHANGED/GAME_START_RESET. |
 
@@ -66,6 +67,10 @@ device=-1, tr=-1, value, text. Value — номер среза; у START это 
 события существующего RadioReader. Отдельно сохранённые признаки наличия PC и
 персонажа позволяют обнаружить исчезновение после обнуления слабой ссылки.
 Revision — локальный счётчик наблюдений, не production epoch/lease.
+
+RplMode — сырое числовое значение RplSession.Mode(), добавленное по ревью claude
+#4574. Его смысл сверяется с установленным enum; одних isServer/isClient может
+не хватать для различения одиночного режима и сетевого сервера.
 
 Members — фактические числовые PlayerId из GetPlayers через `|`, NONE для
 пустого списка, UNKNOWN при отсутствии PlayerManager. Имена профилей и ключи
@@ -94,3 +99,11 @@ END. Он должен точно повторять поток своего ц�
 
 До выполнения пунктов 2–4 код нельзя называть проверенным игровым bootstrap;
 до пункта 5 не установлены клиентская роль, доставка данных или голос.
+
+Для пункта 4 launcher принимает `-riconEndpointRestart=1` только с mode=endpoint
+и включённым Probe. Отдельный Workbench-поток ждёт не менее трёх срезов через
+read-only Game→Probe getter, запрашивает Edit, ждёт IsGameMode=false и запрашивает
+второй Play. Оба ожидания ограничены 600 проверками с Sleep(100); внешний runner
+ограничивает весь процесс и ждёт два dump=END. Первый цикл должен завершиться
+ABORTED после 3…29 срезов, второй — DONE. Если первый уже дошёл до LIMIT, опыт
+не проверил раннюю очистку и не принимается как restart PASS.

@@ -4,6 +4,14 @@ modded class ArmaReforgerScripted
 	protected ref RICON_LiveEndpointProbe m_RICON_EndpointProbe;
 	protected int m_iRICON_EndpointCycle;
 
+	//! Только для наблюдения управляющим Workbench-плагином; −1 означает отсутствие Probe.
+	int RICON_EndpointSampleCount()
+	{
+		if (!m_RICON_EndpointProbe)
+			return -1;
+		return m_RICON_EndpointProbe.SampleCount();
+	}
+
 	protected void RICON_StopEndpoint(string reason)
 	{
 		if (m_RICON_EndpointProbe)

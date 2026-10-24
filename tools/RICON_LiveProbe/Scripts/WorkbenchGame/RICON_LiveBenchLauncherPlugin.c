@@ -51,6 +51,13 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			return;
 		string benchMode;
 		bool endpointOnly = System.GetCLIParam("riconBenchMode", benchMode) && benchMode == "endpoint";
+		string restartValue;
+		bool restartEndpoint = System.GetCLIParam("riconEndpointRestart", restartValue) && restartValue == "1";
+		if (restartEndpoint && (!endpointOnly || !RICON_LiveEndpointProbe.IsRequested()))
+		{
+			Print("[RICON_LIVEB] state=SETUP_REFUSED reason=RESTART_REQUIRES_ENDPOINT_PROBE");
+			return;
+		}
 		IEntitySource bench;
 		IEntityComponentSource component;
 		bool createEntities = !endpointOnly || wantGameMode || wantManager;
@@ -91,6 +98,48 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		PrintFormat("[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=%1", api.IsGameMode());
 		m_Api = api;
 		thread WatchGameMode();
+		if (restartEndpoint)
+			thread RestartEndpoint(editor);
+	}
+
+	//! Тест жизненного цикла: прерываем активное наблюдение, затем запускаем новый Play, не сохраняя мир.
+	protected void RestartEndpoint(WorldEditor editor)
+	{
+		bool sampled;
+		for (int i = 0; i < 600; i++)
+		{
+			ArmaReforgerScripted game = ArmaReforgerScripted.Cast(GetGame());
+			if (m_Api.IsGameMode() && game && game.RICON_EndpointSampleCount() >= 3)
+			{
+				sampled = true;
+				break;
+			}
+			Sleep(100);
+		}
+		if (!sampled)
+		{
+			Print("[RICON_LIVEB] restart=REFUSED reason=NO_ACTIVE_SAMPLES");
+			return;
+		}
+		editor.SwitchToEditMode();
+		Print("[RICON_LIVEB] restart=EDIT_REQUESTED");
+		bool edited;
+		for (int j = 0; j < 600; j++)
+		{
+			if (!m_Api.IsGameMode())
+			{
+				edited = true;
+				break;
+			}
+			Sleep(100);
+		}
+		if (!edited)
+		{
+			Print("[RICON_LIVEB] restart=REFUSED reason=EDIT_NOT_REACHED");
+			return;
+		}
+		editor.SwitchToGameMode(false, false);
+		Print("[RICON_LIVEB] restart=SECOND_PLAY_REQUESTED");
 	}
 
 	static const float EDGE_MARGIN_M = 10.0;  //!< запас от края границ по x/z; рации ставятся в +0…+6 м по x от стенда

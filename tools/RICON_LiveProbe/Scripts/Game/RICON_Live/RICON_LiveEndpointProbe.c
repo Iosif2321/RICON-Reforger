@@ -24,6 +24,11 @@ class RICON_LiveEndpointProbe
 		return System.GetCLIParam("riconEndpointProbe", value) && value == "1";
 	}
 
+	int SampleCount()
+	{
+		return m_iSamples;
+	}
+
 	protected static string Bit(bool value)
 	{
 		if (value)
@@ -62,6 +67,8 @@ class RICON_LiveEndpointProbe
 		m_bRunning = true;
 		string text = "cycle=" + cycle.ToString() + ",limit=" + SAMPLE_LIMIT.ToString();
 		text = text + ",isServer=" + Bit(Replication.IsServer()) + ",isClient=" + Bit(Replication.IsClient());
+		int rplMode = RplSession.Mode();
+		text = text + ",rplMode=" + rplMode.ToString();
 		Note("ENDPOINT_START", -1, text);
 		return true;
 	}
@@ -127,6 +134,8 @@ class RICON_LiveEndpointProbe
 		string text = "cycle=" + m_iCycle.ToString() + ",elapsedMs=" + elapsedMs.ToString();
 		text = text + ",bindingRevision=" + m_iBindingRevision.ToString() + "," + RICON_LiveRadioBenchComponent.PlayerState();
 		text = text + ",members=" + PlayerIds();
+		int rplMode = RplSession.Mode();
+		text = text + ",rplMode=" + rplMode.ToString();
 		Note("ENDPOINT_SAMPLE", playerId, text);
 		m_Radios.ReadEntity(playerId, controlled);
 		if (m_iSamples >= SAMPLE_LIMIT)
