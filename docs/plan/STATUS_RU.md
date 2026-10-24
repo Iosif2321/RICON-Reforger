@@ -25,12 +25,14 @@ proto-функции C++ для server/Workbench; совместимость о�
 
 Режим выполненных проверок: ядро и слои — **Workbench без мира, Play и сервера**. Live-проверки частоты и mute
 (`LIVE-order-frequency-mute.md`) с 2026-10-24 идут в Play одного Workbench-процесса по разрешениям владельца
-(2026-10-23 и постоянное 2026-10-24): стенд A0 (bench9, V1, V2), A1-E, игрок A1-P0/P1/P2 — приняты; A1-S1 (экран) —
-отрицательный диагностический результат. Сервер, второй клиент и звук не проверялись.
+(2026-10-23 и постоянное 2026-10-24): стенд A0 (bench9, V1, V2), A1-E, игрок A1-P0/P1/P2 — приняты; экран: A1-S1 и
+A1-S1b — отрицательные диагностические прогоны, A1-S1c — меню VoN игрока на экране (принят codex), A1-S2 — шаг частоты
+на экране 48.0 → 48.2 → 48.0 MHz и production-reader (на ревью codex). Сервер, второй клиент и звук не проверялись.
 Ванильные файлы и звуковой граф читаем через Workbench (owner #2020).
 Обратная разработка — только узкий статический разбор файлов на диске в Ghidra «при необходимости» (owner #2970):
 без запуска игры, отладчика, памяти и правки бинарников; декомпилят не попадает в репозиторий (правила #2982;
-владелец в чате claude 2026-10-21: «ghidra разрешена»). Поэтому все runtime-критерии — `BLOCKED_NO_RUNTIME`.
+владелец в чате claude 2026-10-21: «ghidra разрешена»). Runtime-критерии вне перечисленных live-опытов —
+`BLOCKED_NO_RUNTIME`.
 
 ## Этапы
 
@@ -38,7 +40,7 @@ proto-функции C++ для server/Workbench; совместимость о�
 |---|---|---|---|---|---|
 | Э0 | Evidence baseline | M1 | baseline зафиксирован: корпус перенесён (хэши сверены), матрица Q1–Q34 + 15 разделов, лицензия APL-SA; ревью codex — agree (id394, id405, id410) | `598e4e8` | пробелы — в `E-coverage-matrix.md`, раздел «Что нужно для приоритетов» |
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
-| Э1r | Runtime-lab на одном ПК | M1 | частично (2026-10-24): в Play одного Workbench — частота и mute рации на стенде (V2 `NATIVE_ROUNDTRIP_PASS`, A1-E `MENU_ENTRY_RUNTIME_PASS`), локальный игрок и путь меню на его рации (A1-P0/P1/P2, `PLAYER_MENU_RUNTIME_PASS`); экранный виджет меню (A1-S1) не получен | `41904a4`, `ba0f4c8`, `82e3b66`, `4d51ffd`, `1efc205`, `567a4ac` | штатный путь открытия меню VoN; звук, RX/TX, сервер + клиент |
+| Э1r | Runtime-lab на одном ПК | M1 | частично (2026-10-24): в Play одного Workbench — частота и mute рации на стенде (V2 `NATIVE_ROUNDTRIP_PASS`, A1-E `MENU_ENTRY_RUNTIME_PASS`), локальный игрок и путь меню на его рации (A1-P0/P1/P2, `PLAYER_MENU_RUNTIME_PASS`); меню VoN игрока на экране через штатный config-контроллер (A1-S1c) и шаг частоты на экране с чтением production-reader (A1-S2, `PLAYER_SCREEN_STEP_LABEL_UNVERIFIED`, на ревью) | `41904a4`, `ba0f4c8`, `82e3b66`, `4d51ffd`, `1efc205`, `567a4ac`, `7dea791`, `27d480f` | физическая клавиша, локализация подписи; звук, RX/TX, сервер + клиент |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
 | Э2 | Контракты единого ядра | M1 | STATIC_IMPLEMENTED + code review; host oracle PASS (снимки 46, маршруты 48); REQ-core v0.8 (delta Э4T-s reviewed `dd73863`), ADR-002; менеджер (реестры, допуск моделей, epoch, seq, типы сетей), снимки, маршруты, seams антенны/шума/разборчивости/сессии вызова; фикстуры EXT-1…5 (`SELF_CHECK_PASS` — исполнены в Workbench раннером, спринт 15). `WORKBENCH_COMPILE_PASS` (2026-10-19, `E-workbench-source.md`), не заморожено. Ход по спринтам — таблица «Спринты» | ключевые: `7a6812a`, `9fa04f5`, `fe8e20b`, `eb83219`, `d0c4db3`, `e669e40`, `4d541e7`, `f0acd5f`, `ff8f500`, `b555f35` | ревью codex compile evidence (#760/#763); заморозка — после Э3-гейтов |
 | Э3 | Server-authoritative lifecycle | M1 | требования: `docs/req/REQ-lifecycle.md` v0.4 (codex; v0.4 — epoch выдачи в `VON_EXPIRY_INTENDED`; детерминированная host-модель: коды и их приоритет, effects, replay/seq, TTL и аномалия времени, fixed-window, ёмкости, ротация epoch). Эталон: `oracle/lifecycle_oracle.py` + 14 трасс / 209 шагов CT-LC-001…010 (векторы rev 2) — `LIFECYCLE_ORACLE_PASS` (claude; v0.3 — agree codex #873, v0.4 — agree codex #1149). Enforce: `RICON_Lifecycle.c` (codex) — `WORKBENCH_COMPILE_PASS` + `ENFORCE_PARITY` 14/14 трасс, 209/209 шагов на `2bf70a7` (исполнено в Workbench раннером `tools/RICON_TestRunner`, без Play/сервера) | REQ: `11f766b`…`9e6ce55`, `2bf70a7`; oracle: `25cc10b`…`0d58853`, `1413291`, `3ae10b3`; код: `284dde5`…`8ba6d3e`, `2bf70a7`; фикстура/раннер: `dfd15d1`, `8d3e450`, `36609bf`, `3ae10b3` | runtime (порядок callbacks, RPC sender, JIP) — BLOCKED_NO_RUNTIME |
@@ -260,6 +262,20 @@ RX/TX, слышимость, репликация и per-pair не провер�
     `SCR_SelectionMenu.c:244` (NULL), Workbench показал окно VM-исключения. Runner его не нажимал и остановил процесс;
     радиосостояние и реестр не менялись. Стенд исправлен: без display или inputs теперь NOT_READY, Open не вызывается.
     Экран и локализация MHz остаются открытыми; дальше — выяснить, при каком запуске Play меню строится.
+  - **A1-S1b не дал экрана из-за моста (`e8b856e`).** Modded `SCR_VONMenu` без атрибута класса сломал загрузку
+    атрибута `m_VONMenu` (WORLD (E) Unknown keyword), меню VoN не создано; стенд остановился на срезе 5 до открытия.
+  - **A1-S1c: меню VoN игрока на экране (`7dea791`, codex подтвердил `6146b66`).** Мост повторяет
+    `[BaseContainerProps()]` ванили; меню открыто штатным `OnInputOpen` собственного config-контроллера (действие
+    `VONMenu`, без Close/Perform). `FrequencyText` видимы и показывают «32.0 MHz» и «48.0 MHz» для raw 32000 и 48000;
+    снимок окна это подтверждает (файл вне репозитория, в квитанции SHA). Разбор — `PLAYER_SCREEN_WIDGET_LABEL_UNVERIFIED`.
+  - **A1-S2: шаг частоты на экране (квитанция `live-bench-wb-claude-20261024.txt`, на ревью codex).** При открытом
+    меню на неактивной entry 1 — `AdjustEntryModif(+1)` с проверкой до `entry.Update()`, затем возврат. Экран и виджет:
+    «48.0 MHz» → «48.2 MHz» → «48.0 MHz», три снимка окна по порядку относительно STEP и RESTORE. Production-reader
+    `RICON_BaseRadioObservationReader.TryRead` (authority) на тех же точках: `m_iTuningValue` = raw = 48000 / 48200 /
+    48000. Вывод Q-F: raw = round(МГц UI × 1000), единица raw — кГц на уровне RUNTIME_OBSERVED для ванили 1.8.0.13 и
+    этого пути AN/PRC-68. Контракт REQ-radio-device-adapter v0.2 оставляет `m_iTuningValue` непрозрачным (codex #4494).
+    Разбор — `PLAYER_SCREEN_STEP_LABEL_UNVERIFIED` по правилу подписи. Не проверены физическая клавиша, звук, RX/TX,
+    репликация и клиент.
   - **A1-P0 — только наблюдение локального игрока в установившемся Play** (режим стенда
     `-riconBenchMode=player`, 30 срезов, без спавна, Set* и контроля; claude #4360, условия codex #4365). Источник для
     A1-P (codex #4369, #4371): у World Editor есть «Play from camera position» с выбором Default Player Controller, а в
@@ -372,7 +388,7 @@ RX/TX, слышимость, репликация и per-pair не провер�
 | `[Workbench]` | заказ №002: компиляция `RICON_Core` на ревизии конца спринта 6 (`docs/evidence/WB-order-002.md`) | отправлен в конце спринта 6 |
 | `[Workbench]` | заказ №001: ванильные файлы для Q1, Q2, Q4, Q17, Q18, Q19 + компиляция `RICON_Core` (`docs/evidence/WB-order-001.md`) | **выполнен частично** 2026-10-19 (claude по разрешению владельца, проверка codex): `E-workbench-source.md` |
 | `[Workbench]` | пункт 2 заказа №001: звуковой граф VON (`Sounds/VON/von.acp`, `Von.sig`) в **Audio Editor** — узлы, входные сигналы, на что влияет `TransmissionQuality` | **структура прочитана** 2026-10-21 (`docs/evidence/E-acp-gui.md`): TransmissionQuality → Von.sig → искажение, шум и громкость радиоветви; прямой голос не зависит. Числа кривых прочитаны 2026-10-22, кроме частот HP/LP |
-| `[Решение]` | разрешение на runtime (Э1r) | **разрешено** 2026-10-23 («Разрешаю всё»: игра и локальный сервер для актуатора и единицы частоты); порядок — `LIVE-order-frequency-mute.md` (DRAFT); запусков игры пока не было |
+| `[Решение]` | разрешение на runtime (Э1r) | **разрешено** 2026-10-23 («Разрешаю всё»: игра и локальный сервер для актуатора и единицы частоты) и постоянно 2026-10-24 («Разрешены все необходимые действия сейчас и в будущем»); порядок — `LIVE-order-frequency-mute.md`; прогоны в Play Workbench идут с 2026-10-24 (A0 … A1-S2) |
 | `[Решение]` | охват глушения цепочки «говорящий → слушающий» | **только радио, прямая речь неприкосновенна** (2026-10-23) |
 | `[Решение]` | G-DLL: неофициальные native-расширения (interceptAR, только сервер/Workbench) — правовая оценка и использование | не задан |
 | `[Решение]` | внешняя голосовая программа у всех участников (трек 2 `AUDIO_CHAIN_CONTROL_RU.md`) | не задан |
