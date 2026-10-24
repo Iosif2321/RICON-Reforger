@@ -36,7 +36,7 @@ def widget(idx, ftext=None, fvis=1, fw=86, fh=24):
 
 
 def menu(op, opened=1, active=0, selected=0):
-    return f"op={op},opened={opened},hasDisplay=1,selectedId={selected},activeIdx={active}"
+    return f"op={op},opened={opened},hasDisplay=1,inputs=1,selectedId={selected},activeIdx={active}"
 
 
 def screens(before_open=0):
@@ -90,6 +90,9 @@ cases = [
     ("widget_idx_missing", build(change(8, [menu("MENU"), widget(0)])), S, 1, "LOG_INVALID"),
     ("open_when_open", build({**screens(), 5: [menu("BEFORE", opened=1, selected=-1)]}), S, 1, "LOG_INVALID"),
     ("bad_escape", build(change(7, [menu("MENU"), widget(0, ftext="32.0%2"), widget(1)])), S, 1, "LOG_INVALID"),
+    ("no_menu_ui", build({5: [menu("BEFORE", opened=0, selected=0).replace("hasDisplay=1,inputs=1", "hasDisplay=0,inputs=0")],
+                          6: ["op=NOT_READY,reason=NO_MENU_UI,opened=0,hasDisplay=0,inputs=0,selectedId=0,activeIdx=0"]}, last=6,
+                         end=("BENCH_ABORTED", 6, "level=PLAYER_SCREEN_WIDGET,notReady=1,samples=6")), S, 0, "NOT_READY"),
     ("not_ready", build({5: ["op=NOT_READY,von=1,menu=0"]}, last=5,
                         end=("BENCH_ABORTED", 5, "level=PLAYER_SCREEN_WIDGET,notReady=1,samples=5")), S, 0, "NOT_READY"),
     ("screen_with_entries_arg", build(), ["entries"], 1, "LOG_INVALID"),

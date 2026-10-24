@@ -272,7 +272,7 @@ def check_acts(acts, errors, by_sample):
 
 
 SCREEN_PLAN = [(5, "BEFORE"), (6, "OPEN")] + [(n, "MENU") for n in range(7, 13)] + [(20, "MENU"), (30, "MENU")]
-MENU_FIELDS = {"op", "opened", "hasDisplay", "selectedId", "activeIdx"}
+MENU_FIELDS = {"op", "opened", "hasDisplay", "inputs", "selectedId", "activeIdx"}
 
 
 def widget_fields(f, prefix, errs):
@@ -314,7 +314,7 @@ def check_screen(screens, by_sample, errors):
         errors.append(f"SCREEN sequence {got} != plan")
     for s in menus:
         f = s["f"]
-        if set(f) != MENU_FIELDS or f.get("opened") not in BIT or f.get("hasDisplay") not in BIT \
+        if set(f) != MENU_FIELDS or f.get("opened") not in BIT or f.get("hasDisplay") not in BIT or f.get("inputs") not in BIT \
                 or not INT.fullmatch(f.get("selectedId", "")) or not INT.fullmatch(f.get("activeIdx", "")):
             errors.append(f"SCREEN {s['value']} {f.get('op')}: menu fields")
     before = next((s["f"] for s in menus if s["f"].get("op") == "BEFORE"), {})

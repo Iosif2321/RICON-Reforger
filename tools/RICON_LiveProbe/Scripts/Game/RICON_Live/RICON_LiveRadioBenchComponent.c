@@ -716,6 +716,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	protected string ScreenMenuState(SCR_VONController von)
 	{
 		string text = "opened=" + Bit(m_ScreenMenu.IsOpened()) + ",hasDisplay=" + Bit(m_ScreenMenu.HasDisplay());
+		text = text + ",inputs=" + Bit(m_ScreenMenu.GetControllerInputs() != null);
 		text = text + ",selectedId=" + m_ScreenMenu.GetSelectedEntryId().ToString();
 		int activeIdx = -1;
 		array<ref SCR_VONEntry> entries = {};
@@ -796,6 +797,13 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		{
 			if (m_ScreenMenu.IsOpened())
 				Note("SCREEN", sample, "op=ALREADY_OPEN," + ScreenMenuState(von));
+			else if (!m_ScreenMenu.HasDisplay() || !m_ScreenMenu.GetControllerInputs())
+			{
+				// A1-S1 run 21:07: without display/controller inputs vanilla Open dereferences null
+				// (SCR_SelectionMenu.c:244) — no menu UI to observe, so no Open
+				m_bScreenNotReady = true;
+				Note("SCREEN", sample, "op=NOT_READY,reason=NO_MENU_UI," + ScreenMenuState(von));
+			}
 			else
 			{
 				m_ScreenMenu.Open();
