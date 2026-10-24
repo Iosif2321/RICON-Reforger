@@ -88,3 +88,63 @@ PID 26068, Hidden, остановка LIST_DONE через 14 с, SCRIPT (E) = 0
 - Вывод о прогоне 1: сам мир открывается в отдельном процессе; зависание связано со вторым SetOpenedResource
   после первого мира в том же процессе. Механизм (диалог, состояние редактора) не установлен.
 - Назначение мира (папка Tests/TestFramework) и содержимое EditorCommentEntity не прочитаны; Play в нём не запускался.
+
+== Прогон 3: подробности Autotest_GameMode_Plain (-riconListDetail=1, ACK codex #4165, START #4166) ==
+Плагин sha256 501937121ece444107212dd82838c8c390f140adf49cbcb105b0f20619964200.
+PID 20980, Hidden, остановка LIST_DONE через 14 с, SCRIPT (E) = 0, SOURCES_STABLE.
+Лог: logs/ricon-worlddetail-claude-20261024-081956/console.log, sha256 \baedd92e56a197643350e78879a3ca0afb4f1f1d5c3fc0c7d775bf2772c2dbd7, 7051 строк.
+
+Строки подробностей (компоненты GameMode и строковые поля EditorCommentEntity):
+  w=1 gameMode=1 entity=17 class=SCR_BaseGameMode prefab={1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et
+  w=1 entity=17 components=33
+  w=1 entity=17 component=0 class=Persistence
+  w=1 entity=17 component=1 class=SCR_AdditionalGameModeSettingsComponent
+  w=1 entity=17 component=2 class=SCR_ArsenalManagerComponent
+  w=1 entity=17 component=3 class=SCR_CallsignManagerComponent
+  w=1 entity=17 component=4 class=SCR_CommandingManagerComponent
+  w=1 entity=17 component=5 class=SCR_DataCollectorComponent
+  w=1 entity=17 component=6 class=SCR_DestructionManagerComponent
+  w=1 entity=17 component=7 class=SCR_EntityCatalogManagerComponent
+  w=1 entity=17 component=8 class=SCR_GameModeHealthSettings
+  w=1 entity=17 component=9 class=SCR_GameOverScreenManagerComponent
+  w=1 entity=17 component=10 class=SCR_GroupsManagerComponent
+  w=1 entity=17 component=11 class=SCR_HintManagerComponent
+  w=1 entity=17 component=12 class=SCR_IdentityManagerComponent
+  w=1 entity=17 component=13 class=SCR_MapConfigComponent
+  w=1 entity=17 component=14 class=SCR_MapMarkerManagerComponent
+  w=1 entity=17 component=15 class=SCR_NametagConfigComponent
+  w=1 entity=17 component=16 class=SCR_NightModeGameModeComponent
+  w=1 entity=17 component=17 class=SCR_NotificationSenderComponent
+  w=1 entity=17 component=18 class=SCR_PerceivedFactionManagerComponent
+  w=1 entity=17 component=19 class=SCR_PlayerListedAdminManagerComponent
+  w=1 entity=17 component=20 class=SCR_PlayersRestrictionZoneManagerComponent
+  w=1 entity=17 component=21 class=SCR_PossessingManagerComponent
+  w=1 entity=17 component=22 class=SCR_RadialMenuItemsComponent
+  w=1 entity=17 component=23 class=SCR_ReconnectComponent
+  w=1 entity=17 component=24 class=SCR_RespawnSystemComponent
+  w=1 entity=17 component=25 class=SCR_SpawnerAIGroupManagerComponent
+  w=1 entity=17 component=26 class=SCR_SupportStationManagerComponent
+  w=1 entity=17 component=27 class=SCR_TaskFinishHistoryManagerComponent
+  w=1 entity=17 component=28 class=SCR_TaskManagerUIComponent
+  w=1 entity=17 component=29 class=SCR_TextsTaskManagerComponent
+  w=1 entity=17 component=30 class=SCR_VotingManagerComponent
+  w=1 entity=17 component=31 class=SerializerInventoryStorageManagerComponent
+  w=1 entity=17 component=32 class=RplComponent
+  w=1 entity=19 var=userScript set=0 length=0 value=
+  w=1 entity=19 var=constructor set=0 length=0 value=
+  w=1 entity=19 var=destructor set=0 length=0 value=
+  w=1 entity=19 var=EOnTouch set=0 length=0 value=
+  w=1 entity=19 var=EOnInit set=0 length=0 value=
+  w=1 entity=19 var=EOnVisible set=0 length=0 value=
+  w=1 entity=19 var=EOnFrame set=0 length=0 value=
+  w=1 entity=19 var=EOnPostFrame set=0 length=0 value=
+  w=1 entity=19 vars=71 stringVarsPrinted=8
+  w=1 summary entities=21 nullSources=0 noInstance=0 noInstanceGameModeClass=0 distinctClasses=14 gameModes=1 isGameModeAfter=0
+
+Итог прогона 3:
+- GameMode_Plain.et: 33 компонента штатного режима (респаун, группы, задачи, карта, голосование, Persistence, RplComponent).
+  Компонента запуска набора тестов среди классов нет. Это не доказывает отсутствие автозапуска (codex #4165).
+- EditorCommentEntity (сущность 19): 71 переменная; лимит 8 строковых полей ушёл на пустые служебные поля
+  скриптовых обработчиков (userScript, constructor, EOn*). Текст комментария не прочитан.
+- Компонент Persistence есть в режиме: при Play он может писать данные сессии в профиль Workbench (вне репозитория);
+  это не проверено.

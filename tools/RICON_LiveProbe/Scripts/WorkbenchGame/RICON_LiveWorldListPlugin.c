@@ -22,6 +22,8 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEW] state=NO_WORLD_EDITOR");
 			return;
 		}
+		string detail;
+		m_bDetail = System.GetCLIParam("riconListDetail", detail) && detail == "1";
 		int listed = 0;
 		for (int w = 1; w <= MAX_WORLDS; w++)
 		{
@@ -90,13 +92,62 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			{
 				gameModes++;
 				if (gameModes <= MAX_GAME_MODES)
+				{
 					PrintFormat("[RICON_LIVEW] w=%1 gameMode=%2 entity=%3 class=%4 prefab=%5", w, gameModes, i, cls, prefab);
+					if (m_bDetail)
+						PrintComponents(w, i, src);
+				}
 			}
+			if (m_bDetail && cls == "EditorCommentEntity")
+				PrintStringVars(w, i, src);
 		}
 		for (int c = 0; c < order.Count() && c < MAX_CLASSES; c++)
 			PrintFormat("[RICON_LIVEW] w=%1 class=%2 count=%3", w, order[c], classes.Get(order[c]));
 		PrintFormat("[RICON_LIVEW] w=%1 summary entities=%2 nullSources=%3 noInstance=%4 noInstanceGameModeClass=%5 distinctClasses=%6 gameModes=%7 isGameModeAfter=%8",
 			w, count, nulls, noInstance, noInstanceGameModeClass, order.Count(), gameModes, api.IsGameMode());
+	}
+
+	static const int MAX_DETAIL = 40;        //!< классов компонентов GameMode
+	static const int MAX_STRING_VARS = 8;    //!< строковых полей EditorCommentEntity (codex #4165)
+	static const int MAX_VALUE_CHARS = 200;  //!< символов на значение (codex #4165)
+	protected bool m_bDetail;
+
+	//! Классы компонентов сущности (только чтение IEntitySource.GetComponentCount/GetComponent), не более MAX_DETAIL.
+	protected void PrintComponents(int w, int entity, IEntitySource src)
+	{
+		int n = src.GetComponentCount();
+		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 components=%3", w, entity, n);
+		for (int k = 0; k < n && k < MAX_DETAIL; k++)
+		{
+			IEntityComponentSource component = src.GetComponent(k);
+			if (component)
+				PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 class=%4", w, entity, k, component.GetClassName());
+		}
+	}
+
+	//! Строковые переменные сущности (GetDataVarType == STRING, тот же приём, что в RICON_AcpViewPlugin), не более MAX_STRING_VARS;
+	//! переводы строк заменяются пробелом, значение обрезается до MAX_VALUE_CHARS, length — длина до обрезки.
+	protected void PrintStringVars(int w, int entity, IEntitySource src)
+	{
+		int n = src.GetNumVars();
+		int printed = 0;
+		for (int v = 0; v < n && printed < MAX_STRING_VARS; v++)
+		{
+			string name = src.GetVarName(v);
+			if (src.GetDataVarType(v) != DataVarType.STRING)
+				continue;
+			string value;
+			if (!src.Get(name, value))
+				continue;
+			printed++;
+			value.Replace("\r", " ");
+			value.Replace("\n", " ");
+			int length = value.Length();
+			if (length > MAX_VALUE_CHARS)
+				value = value.Substring(0, MAX_VALUE_CHARS);
+			PrintFormat("[RICON_LIVEW] w=%1 entity=%2 var=%3 set=%4 length=%5 value=%6", w, entity, name, src.IsVariableSetDirectly(name), length, value);
+		}
+		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 vars=%3 stringVarsPrinted=%4", w, entity, n, printed);
 	}
 
 	//! Префаб, от которого унаследована сущность мира (пусто, если сущность создана без префаба).
