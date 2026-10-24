@@ -9,7 +9,12 @@ vonController (+ vonEntries), controlled; controlled=1 -> controlledPrefab decod
 gadgetManager); BENCH_DONE last with value 30 and level=PLAYER_OBSERVATION; no SCRIPT (E). Only the stream counts (the
 dump between dump=BEGIN/END repeats it). The finding is descriptive: LOCAL_PLAYER_ABSENT (pc=0 in every sample),
 LOCAL_PLAYER_PRESENT (pc=1 in every sample), LOCAL_PLAYER_CHANGED (otherwise, with the first sample of each state).
-Usage: python -I live-player-log-check-claude.py <console.log>"""
+A1-P1 (claude #4385, codex #4384), second argument "entries": after each sample with a VON controller exactly vonEntries
+PLAYER_ENTRY records (value = sample, idx 0..N-1) with a consistent field set per entry kind (radio entries add the
+transceiver number, entry frequency and mute, range, and the transceiver raw/min/max/res/mute and radio prefab); the
+player's own menu text is compared with the raw getter value descriptively (TEXT_MATCH / ROUNDED / MISMATCH / UNPARSED).
+Without the argument a log with PLAYER_ENTRY is an error (an A1-P0 log has none).
+Usage: python -I live-player-log-check-claude.py <console.log> [entries]"""
 import hashlib
 import importlib.util
 import json
@@ -70,7 +75,75 @@ def sample_errors(f):
     return errs, prefab
 
 
-def main(path):
+ENTRY_FULL = {"idx", "entry", "cls", "method", "active", "transmit", "usable", "dtext", "radioEntry"}
+MENU_TEXT = re.compile(r"^(-?\d+(?:\.\d+)?) #AR-VON_FrequencyUnits_MHz$")
+
+
+def entry_errors(f):
+    """A1-P1 field-set consistency of one PLAYER_ENTRY; returns (errors, summary dict)."""
+    errs, out = [], {"idx": f.get("idx")}
+    if f.get("entry") == "0":
+        if set(f) != {"idx", "entry"}:
+            errs.append(f"null entry field set {sorted(set(f))}")
+        return errs, out
+    want = set(ENTRY_FULL)
+    for k in ("active", "transmit", "usable", "radioEntry"):
+        if f.get(k) not in BIT:
+            errs.append(f"{k} not 0|1")
+    if not INT.fullmatch(f.get("method", "")) or not re.fullmatch(r"\w+", f.get("cls", "")):
+        errs.append("method/cls")
+    try:
+        out["text"] = codec.unescape(f.get("dtext", ""))
+    except ValueError as exc:
+        errs.append(f"dtext: {exc}")
+    out.update({k: f.get(k) for k in ("cls", "method", "active", "transmit", "usable", "radioEntry")})
+    if f.get("radioEntry") == "1":
+        want |= {"trNumber", "entryFreq", "emuted", "gadget", "transceiver"}
+        # codex #4390: every bool of a radio entry only 0|1 (longRange/muted when present)
+        for k in ("emuted", "gadget", "transceiver") + (("longRange",) if "longRange" in f else ()) \
+                + (("muted",) if "muted" in f else ()):
+            if f.get(k) not in BIT:
+                errs.append(f"{k} not 0|1")
+        if f.get("gadget") == "1":
+            want.add("longRange")
+        if f.get("transceiver") == "1":
+            want |= {"raw", "min", "max", "res", "muted", "radioPrefab", "trIndex", "inventorySlot"}
+            if f.get("gadget") == "1":
+                want.add("gadgetOwnerMatch")
+                if f.get("gadgetOwnerMatch") not in BIT:
+                    errs.append("gadgetOwnerMatch not 0|1")
+            try:
+                out["radioPrefab"] = codec.unescape(f.get("radioPrefab", ""))
+            except ValueError as exc:
+                errs.append(f"radioPrefab: {exc}")
+            for k in ("raw", "min", "max", "res", "trIndex", "inventorySlot"):
+                if not INT.fullmatch(f.get(k, "")):
+                    errs.append(f"{k} not an integer")
+            # codex #4388: entry <-> transceiver <-> radio in the controlled character's inventory (descriptive)
+            out.update({k: f.get(k) for k in ("trIndex", "inventorySlot", "gadgetOwnerMatch")})
+            if INT.fullmatch(f.get("trIndex", "")) and INT.fullmatch(f.get("inventorySlot", "")) \
+                    and INT.fullmatch(f.get("trNumber", "")):
+                # codex #4390: MAPPED needs a gadget whose owner is the radio; without a gadget only the
+                # transceiver <-> inventory part is known (PARTIAL), never an implied owner match
+                linked = int(f["trIndex"]) == int(f["trNumber"]) - 1 and int(f["inventorySlot"]) >= 0
+                out["mapping"] = ("NOT_MAPPED" if not linked or f.get("gadgetOwnerMatch") == "0" else
+                                  "MAPPED" if f.get("gadgetOwnerMatch") == "1" else "PARTIAL")
+        for k in ("trNumber", "entryFreq"):
+            if not INT.fullmatch(f.get(k, "")):
+                errs.append(f"{k} not an integer")
+        out.update({k: f.get(k) for k in ("trNumber", "entryFreq", "emuted", "longRange", "raw", "res", "muted")})
+        # descriptive Q-F point of the player's own menu entry: text number x 1000 against the raw getter value
+        m = MENU_TEXT.match(out.get("text", ""))
+        if f.get("transceiver") == "1" and INT.fullmatch(f.get("raw", "")):
+            raw = int(f["raw"])
+            out["menuText"] = ("TEXT_UNPARSED" if not m else "TEXT_ROUNDED" if raw % 100 else
+                               "TEXT_MATCH" if round(float(m.group(1)) * 1000) == raw else "TEXT_MISMATCH")
+    if set(f) != want:
+        errs.append(f"field set {sorted(set(f) ^ want)}")
+    return errs, out
+
+
+def main(path, expect_entries=False):
     raw = open(path, "rb").read()
     lines = raw.decode("utf-8", errors="replace").splitlines()
     errors = []
@@ -122,6 +195,37 @@ def main(path):
                      "vonController": s["f"].get("vonController"), "vonEntries": s["f"].get("vonEntries"),
                      "entityVoN": s["f"].get("entityVoN"), "gadgetManager": s["f"].get("gadgetManager"),
                      "isServer": s["f"].get("isServer"), "isClient": s["f"].get("isClient")})
+    # A1-P1: PLAYER_ENTRY records follow their sample in the stream, value = sample number, idx 0..vonEntries-1;
+    # samples without a VON controller have none. Without the expectation a log with entries is an error, and
+    # vice versa (an A1-P0 log has none).
+    entries, current, by_sample = [], None, {}
+    for e in events:
+        if e["kind"] == "PLAYER_SAMPLE":
+            current = e
+            by_sample[e["value"]] = []
+        elif e["kind"] == "PLAYER_ENTRY":
+            if current is None or e["value"] != current["value"]:
+                errors.append(f"PLAYER_ENTRY value {e['value']} not after its sample")
+                continue
+            errs, out = entry_errors(e["f"])
+            for x in errs:
+                errors.append(f"sample {e['value']} entry {e['f'].get('idx')}: {x}")
+            by_sample[e["value"]].append(out)
+            entries.append(out)
+    if entries and not expect_entries:
+        errors.append("log has PLAYER_ENTRY: pass the expectation 'entries'")
+    if expect_entries:
+        for s in samples:
+            n, f = s["value"], s["f"]
+            want = int(f["vonEntries"]) if f.get("pc") == "1" and f.get("vonController") == "1" \
+                and INT.fullmatch(f.get("vonEntries", "")) else 0
+            got = [x.get("idx") for x in by_sample.get(n, [])]
+            if got != [str(i) for i in range(want)]:
+                errors.append(f"sample {n}: entries idx {got} != 0..{want - 1}")
+        if not entries:
+            errors.append("expected PLAYER_ENTRY records, none found")
+    entry_states = [json.dumps(by_sample.get(r["n"], []), sort_keys=True) for r in rows]
+    entry_changes = [rows[i]["n"] for i in range(len(rows)) if i == 0 or entry_states[i] != entry_states[i - 1]]
     done = [e for e in events if e["kind"] == "BENCH_DONE"]
     if "BENCH_ABORTED" in {e["kind"] for e in events}:
         errors.append("BENCH_ABORTED present")
@@ -148,6 +252,8 @@ def main(path):
         overall = "PLAYER_OBSERVATION_COMPLETE"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "overall": overall,
                       "finding": finding, "stateChangesAtSample": changes,
+                      "entriesExpected": expect_entries, "entryStateChangesAtSample": entry_changes if entries else [],
+                      "entriesFirstSample": by_sample.get(1, []), "entriesLastSample": by_sample.get(SAMPLES, []),
                       "start": {k: start_f.get(k) for k in ("isServer", "isClient", "playerController", "factionManager",
                                                             "mode", "modeGiven", "radioManager")},
                       "samples": rows}, ensure_ascii=False, indent=1))
@@ -156,4 +262,7 @@ def main(path):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1]))
+    if len(sys.argv) > 2 and sys.argv[2] != "entries":
+        print(f"second argument must be 'entries', got {sys.argv[2]!r}")
+        sys.exit(2)
+    sys.exit(main(sys.argv[1], len(sys.argv) > 2))

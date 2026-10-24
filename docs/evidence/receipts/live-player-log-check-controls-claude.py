@@ -21,10 +21,12 @@ def line(seq, kind, value, text):
 
 
 def build(sample=lambda n: ABSENT, start=START, done="level=PLAYER_OBSERVATION,not=SPAWN|SET|CONTROL|RADIO|AUDIO",
-          values=None, extra=None, ms=lambda n: 1000 * n + 5, done_value=30):
+          values=None, extra=None, ms=lambda n: 1000 * n + 5, done_value=30, entries=lambda n: []):
     rows = [("BENCH_START", -1, start)]
     for n in (values or range(1, 31)):
         rows.append(("PLAYER_SAMPLE", n, f"elapsedMs={ms(n)}," + sample(n)))
+        for value, text in entries(n):
+            rows.append(("PLAYER_ENTRY", value, text))
     if extra:
         rows.insert(extra[0], extra[1])
     rows.append(("BENCH_DONE", done_value, done))
@@ -34,6 +36,13 @@ def build(sample=lambda n: ABSENT, start=START, done="level=PLAYER_OBSERVATION,n
     return "\n".join(body)
 
 
+DIRECT = "idx=0,entry=1,cls=SCR_VONEntry,method=0,active=1,transmit=1,usable=1,dtext=,radioEntry=0"
+RADIO = ("idx=1,entry=1,cls=SCR_VONEntryRadio,method=1,active=0,transmit=0,usable=1,dtext=48.0%20#AR-VON_FrequencyUnits_MHz,"
+         "radioEntry=1,trNumber=1,entryFreq=48000,emuted=0,gadget=1,longRange=0,transceiver=1,raw=48000,min=30000,"
+         "max=76000,res=200,muted=0,radioPrefab={ABCDEF0123456789}Prefabs/Items/Equipment/Radios/Radio_Test.et,"
+         "trIndex=0,inventorySlot=0,gadgetOwnerMatch=1")
+TWO = lambda n: [(n, DIRECT), (n, RADIO)]
+E = ["entries"]
 cases = [
     ("absent_ok", build(), 0, "PLAYER_OBSERVATION_COMPLETE", "LOCAL_PLAYER_ABSENT"),
     ("present_ok", build(lambda n: PRESENT), 0, "PLAYER_OBSERVATION_COMPLETE", "LOCAL_PLAYER_PRESENT"),
@@ -58,12 +67,41 @@ cases = [
                              line(1, "BENCH_NOT_READY", -1, "reason=MODE_PARAM,mode=INVALID,modeGiven=1"),
                              line(2, "BENCH_ABORTED", 0, "level=NATIVE_ROUNDTRIP,phase=0")]), 1, "NOT_READY", None),
     ("script_error", build() + "\n12:00:02.000 SCRIPT (E): NULL pointer to instance", 1, "LOG_INVALID", "LOCAL_PLAYER_ABSENT"),
+    # A1-P1 entries (second argument "entries")
+    ("entries_ok", build(lambda n: PRESENT, entries=TWO), 0, "PLAYER_OBSERVATION_COMPLETE", "LOCAL_PLAYER_PRESENT", E),
+    ("entries_without_expectation", build(lambda n: PRESENT, entries=TWO), 1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT"),
+    ("entries_expected_none", build(lambda n: PRESENT), 1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entries_missing_one", build(lambda n: PRESENT, entries=lambda n: TWO(n)[:1] if n == 7 else TWO(n)),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entries_wrong_sample", build(lambda n: PRESENT, entries=lambda n: [(n + 1 if n == 3 else n, x) for _, x in TWO(n)]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entry_radio_field_missing", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT), (n, RADIO.replace(",res=200", ""))]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entry_direct_with_radio_fields", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT + ",trNumber=1"), (n, RADIO)]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entry_bad_escape", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT), (n, RADIO.replace("48.0%20", "48.0%2"))]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entries_when_pc_absent", build(lambda n: ABSENT, entries=TWO), 1, "LOG_INVALID", "LOCAL_PLAYER_ABSENT", E),
+    ("entry_mapping_field_missing", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT), (n, RADIO.replace(",inventorySlot=0", ""))]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entry_bool_bad", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT), (n, RADIO.replace("emuted=0", "emuted=2"))]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entry_muted_bad", build(lambda n: PRESENT, entries=lambda n: [(n, DIRECT), (n, RADIO.replace("muted=0,radio", "muted=x,radio"))]),
+     1, "LOG_INVALID", "LOCAL_PLAYER_PRESENT", E),
+    ("entries_bad_argument", build(lambda n: PRESENT, entries=TWO), 2, None, None, ["entry"]),
 ]
 passed = 0
-for name, text, rc_expected, overall_expected, finding_expected in cases:
+for name, text, rc_expected, overall_expected, finding_expected, *rest in cases:
     path = f"{out}/{name}.log"
     open(path, "w", encoding="utf-8").write(text)
-    run = subprocess.run([sys.executable, "-X", "utf8", "-I", checker, path], capture_output=True, text=True, encoding="utf-8")
+    args = rest[0] if rest else []
+    run = subprocess.run([sys.executable, "-X", "utf8", "-I", checker, path, *args],
+                         capture_output=True, text=True, encoding="utf-8")
+    if rc_expected == 2:
+        ok = run.returncode == 2 and "}" not in run.stdout
+        passed += ok
+        print(f"{'PASS' if ok else 'FAIL'} {name}: rc={run.returncode} {run.stdout.strip()[:80]}")
+        continue
     report = json.loads(run.stdout[:run.stdout.rindex("}") + 1])
     ok = run.returncode == rc_expected and report["overall"] == overall_expected and report["finding"] == finding_expected
     passed += ok

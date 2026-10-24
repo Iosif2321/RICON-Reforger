@@ -647,8 +647,115 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		float ms = m_fElapsed * 1000.0;
 		int elapsedMs = ms;
 		Note("PLAYER_SAMPLE", m_iSamples, "elapsedMs=" + elapsedMs.ToString() + "," + PlayerState());
+		RecordEntries(m_iSamples);
 		if (m_iSamples >= PLAYER_SAMPLES)
 			Finish(true);
+	}
+
+	//! A1-P1 (claude #4385, codex #4384): сразу после среза — по одной записи PLAYER_ENTRY на каждую entry
+	//! SCR_VONController локального контроллера, value = номер среза. Только getter-ы: класс, метод VON, активна ли
+	//! (и активна ли для передачи), usable, текст (%XX); у SCR_VONEntryRadio ещё номер трансивера (1-базный),
+	//! локальная частота и mute entry, дальнобойность, а у её трансивера — raw, min/max/res, IsMuted и prefab рации.
+	protected void RecordEntries(int sample)
+	{
+		PlayerController controller = GetGame().GetPlayerController();
+		if (!controller)
+			return;
+		SCR_VONController von = SCR_VONController.Cast(controller.FindComponent(SCR_VONController));
+		if (!von)
+			return;
+		array<ref SCR_VONEntry> entries = {};
+		von.GetVONEntries(entries);
+		SCR_VONEntry active = von.GetActiveEntry();
+		for (int i = 0; i < entries.Count(); i++)
+		{
+			SCR_VONEntry entry = entries[i];
+			if (!entry)
+			{
+				Note("PLAYER_ENTRY", sample, "idx=" + i.ToString() + ",entry=0");
+				continue;
+			}
+			string text = "idx=" + i.ToString() + ",entry=1,cls=" + entry.ClassName();
+			int method = entry.GetVONMethod();
+			text = text + ",method=" + method.ToString() + ",active=" + Bit(entry.IsActive());
+			text = text + ",transmit=" + Bit(entry == active) + ",usable=" + Bit(entry.IsUsable());
+			text = text + ",dtext=" + RICON_LiveText.Esc(entry.GetDisplayText());
+			SCR_VONEntryRadio radioEntry = SCR_VONEntryRadio.Cast(entry);
+			text = text + ",radioEntry=" + Bit(radioEntry != null);
+			if (radioEntry)
+				text = text + "," + RadioEntryText(radioEntry, controller.GetControlledEntity());
+			Note("PLAYER_ENTRY", sample, text);
+		}
+		entries.Clear();
+	}
+
+	//! codex #4388: позиция рации трансивера entry среди раций управляемого персонажа (GadgetManager, RADIO затем
+	//! RADIO_BACKPACK — тот же порядок, что у RICON_LiveRadioReader), −1 — не найдена или нет менеджера.
+	protected static int InventorySlot(IEntity controlled, IEntity radioOwner)
+	{
+		if (!controlled || !radioOwner)
+			return -1;
+		SCR_GadgetManagerComponent manager = SCR_GadgetManagerComponent.GetGadgetManager(controlled);
+		if (!manager)
+			return -1;
+		int slot = 0;
+		array<EGadgetType> types = {EGadgetType.RADIO, EGadgetType.RADIO_BACKPACK};
+		foreach (EGadgetType type : types)
+		{
+			array<SCR_GadgetComponent> gadgets = manager.GetGadgetsByType(type);
+			if (!gadgets)
+				continue;
+			foreach (SCR_GadgetComponent gadget : gadgets)
+			{
+				if (gadget && gadget.GetOwner() == radioOwner)
+					return slot;
+				slot++;
+			}
+		}
+		return -1;
+	}
+
+	//! Индекс трансивера у его рации (−1 — не найден): сверяется с 1-базным номером entry.
+	protected static int TransceiverIndex(BaseRadioComponent radio, BaseTransceiver transceiver)
+	{
+		if (!radio || !transceiver)
+			return -1;
+		for (int t = 0; t < radio.TransceiversCount(); t++)
+		{
+			if (radio.GetTransceiver(t) == transceiver)
+				return t;
+		}
+		return -1;
+	}
+
+	protected static string RadioEntryText(SCR_VONEntryRadio entry, IEntity controlled)
+	{
+		string text = "trNumber=" + entry.GetTransceiverNumber().ToString();
+		text = text + ",entryFreq=" + entry.GetEntryFrequency().ToString() + ",emuted=" + Bit(entry.GetIsMuted());
+		text = text + ",gadget=" + Bit(entry.GetGadget() != null);
+		if (entry.GetGadget())
+			text = text + ",longRange=" + Bit(entry.IsLongRange());
+		BaseTransceiver transceiver = entry.GetTransceiver();
+		text = text + ",transceiver=" + Bit(transceiver != null);
+		if (!transceiver)
+			return text;
+		text = text + ",raw=" + transceiver.GetFrequency().ToString();
+		text = text + ",min=" + transceiver.GetMinFrequency().ToString() + ",max=" + transceiver.GetMaxFrequency().ToString();
+		text = text + ",res=" + transceiver.GetFrequencyResolution().ToString() + ",muted=" + Bit(transceiver.IsMuted());
+		string prefab = "UNKNOWN";
+		BaseRadioComponent radio = transceiver.GetRadio();
+		IEntity radioOwner;
+		if (radio)
+			radioOwner = radio.GetOwner();
+		if (radioOwner && radioOwner.GetPrefabData())
+			prefab = radioOwner.GetPrefabData().GetPrefabName();
+		text = text + ",radioPrefab=" + RICON_LiveText.Esc(prefab);
+		// codex #4388: точная связь entry ↔ трансивер ↔ рация в инвентаре управляемого персонажа
+		text = text + ",trIndex=" + TransceiverIndex(radio, transceiver).ToString();
+		text = text + ",inventorySlot=" + InventorySlot(controlled, radioOwner).ToString();
+		if (entry.GetGadget())
+			text = text + ",gadgetOwnerMatch=" + Bit(entry.GetGadget().GetOwner() == radioOwner);
+		return text;
 	}
 
 	//! Удаление только своих раций штатным SCR_EntityHelper.DeleteEntityAndChildren (обёртка
