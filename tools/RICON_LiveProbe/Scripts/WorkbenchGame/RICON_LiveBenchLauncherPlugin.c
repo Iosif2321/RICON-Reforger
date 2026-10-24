@@ -49,11 +49,19 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		bool wantGameMode, wantManager;
 		if (!ReadSetup(api, wantGameMode, wantManager))
 			return;
-		api.BeginEntityAction("RICON live bench");
-		IEntitySource bench = api.CreateEntity("GenericEntity", "RICON_LiveBench", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
+		string benchMode;
+		bool endpointOnly = System.GetCLIParam("riconBenchMode", benchMode) && benchMode == "endpoint";
+		IEntitySource bench;
 		IEntityComponentSource component;
-		if (bench)
-			component = api.CreateComponent(bench, "RICON_LiveRadioBenchComponent");
+		bool createEntities = !endpointOnly || wantGameMode || wantManager;
+		if (createEntities)
+			api.BeginEntityAction("RICON live bench");
+		if (!endpointOnly)
+		{
+			bench = api.CreateEntity("GenericEntity", "RICON_LiveBench", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
+			if (bench)
+				component = api.CreateComponent(bench, "RICON_LiveRadioBenchComponent");
+		}
 		// A0b (codex #4233): по имени класса (документированный CreateEntity(className, …)), без префаба и без fallback
 		IEntitySource gameMode;
 		if (wantGameMode)
@@ -61,9 +69,13 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		IEntitySource manager;
 		if (wantManager)
 			manager = api.CreateEntity(MANAGER_CLASS, "RICON_BenchRadioManager", api.GetCurrentEntityLayerId(), null, point, vector.Zero);
-		api.EndEntityAction("RICON live bench");
-		PrintFormat("[RICON_LIVEB] state=BENCH_CREATED entity=%1 component=%2 saved=0", bench != null, component != null);
-		if (!bench || !component)
+		if (createEntities)
+			api.EndEntityAction("RICON live bench");
+		if (endpointOnly)
+			Print("[RICON_LIVEB] state=ENDPOINT_ONLY bench=0 saved=0");
+		else
+			PrintFormat("[RICON_LIVEB] state=BENCH_CREATED entity=%1 component=%2 saved=0", bench != null, component != null);
+		if (!endpointOnly && (!bench || !component))
 			return;
 		PrintFormat("[RICON_LIVEB] setup created gameMode=%1 gameModeOk=%2 radioManager=%3 via=class radioManagerOk=%4",
 			wantGameMode, gameMode != null, wantManager, manager != null);

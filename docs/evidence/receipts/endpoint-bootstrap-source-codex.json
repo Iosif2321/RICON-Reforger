@@ -1,0 +1,75 @@
+{
+  "level": "WORKBENCH_STATIC",
+  "review": "PENDING_CLAUDE",
+  "worldStarted": false,
+  "sourceResource": "$ArmaReforger:scripts/Game/game.c",
+  "sourceCRC": "973eae69",
+  "runs": [
+    {
+      "run": "ricon-wbreader-codex-bootstrap-class-20261024-225918",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-class-20261024-225918\\console.log",
+      "sha256": "c6474c384bceabb513bb06a2e0e4c9f3f620b3b4a45a81c168b6652d8719e36a",
+      "matchedFiles": 1,
+      "printedSourceLines": 7,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-init-20261024-225951",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-init-20261024-225951\\console.log",
+      "sha256": "54d40830b86d2e6ea461887a8840604d4ab42ec06ca9296c2c04db5290698f78",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-update-20261024-230020",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-update-20261024-230020\\console.log",
+      "sha256": "66dc63336e703fe1c0be3bd0c257562275c9c57389be31d21db2e431d4a98632",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-cleanup-20261024-230045",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-cleanup-20261024-230045\\console.log",
+      "sha256": "c923dda23c635a64e54b32b5d28d0c6dc93bcf682e592e89053d3cab1a0e3ab6",
+      "matchedFiles": 0,
+      "printedSourceLines": 0,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-cleanup-name-20261024-230304",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-cleanup-name-20261024-230304\\console.log",
+      "sha256": "903f201467892962051f6b2331350d5e7d0da72c8d2fe76813c2a59ebb58a065",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-start-20261024-230332",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-start-20261024-230332\\console.log",
+      "sha256": "cd9b7efe515384daf91bef367c50171f661700f6fd52143ce645a0c152a2ebd1",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-end-20261024-230423",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-end-20261024-230423\\console.log",
+      "sha256": "75f4b535f202e6a2eed4020d29ceac630cc93a4a7a08a3b819d1946f00b3f8e0",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    },
+    {
+      "run": "ricon-wbreader-codex-bootstrap-header-20-20261024-231622",
+      "logPath": "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-codex-bootstrap-header-20-20261024-231622\\console.log",
+      "sha256": "5d7cee6b9dfd5c48f5db05da09bfe01196793c3436fd6f8728aeff446a869c72",
+      "matchedFiles": 1,
+      "printedSourceLines": 15,
+      "scriptErrors": 0
+    }
+  ],
+  "cleanupDeclaration": "override protected void OnBeforeWorldCleanup()",
+  "classHasContainerDecorator": false
+}

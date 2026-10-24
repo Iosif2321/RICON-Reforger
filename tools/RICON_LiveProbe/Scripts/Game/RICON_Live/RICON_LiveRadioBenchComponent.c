@@ -243,7 +243,8 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	}
 
 	//! Один срез: роль процесса, игроки, локальный контроллер и управляемая сущность (только getter-ы).
-	protected static string PlayerState()
+	//! Общий read-only снимок для стенда и Game-side наблюдателя B0a.
+	static string PlayerState()
 	{
 		int players = -1;
 		if (GetGame().GetPlayerManager())
