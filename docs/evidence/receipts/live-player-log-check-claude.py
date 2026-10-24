@@ -330,6 +330,9 @@ def check_screen(screens, by_sample, errors):
         # codex #4436: an opened menu must also have its display
         if s["value"] >= 6 and s["f"].get("hasDisplay") != "1":
             mismatches.append(f"menu without display at {s['value']}")
+        # codex #4458: after the opening the menu must also have its controller inputs (BEFORE may lack them: lazy)
+        if s["value"] >= 6 and s["f"].get("inputs") != "1":
+            mismatches.append(f"menu without controller inputs at {s['value']}")
         if s["f"].get("activeIdx") != before.get("activeIdx"):
             mismatches.append(f"active entry changed at {s['value']}")
     for n in range(7, 13):

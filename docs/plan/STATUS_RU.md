@@ -23,8 +23,10 @@ epoch/linkId/lease и сетевой сбор событий не реализо
 proto-функции C++ для server/Workbench; совместимость опубликованного host с установленной 1.8.0.13 и клиентский
 аудио-hook не подтверждены (`E-native-extension-feasibility.md`). DLL не устанавливалась.
 
-Режим выполненных проверок: **Workbench без мира, Play и сервера**. Запуск для проверки частоты/mute уже разрешён
-владельцем 2026-10-23; подготовка опыта описана в `LIVE-order-frequency-mute.md`, сам опыт пока не выполнен.
+Режим выполненных проверок: ядро и слои — **Workbench без мира, Play и сервера**. Live-проверки частоты и mute
+(`LIVE-order-frequency-mute.md`) с 2026-10-24 идут в Play одного Workbench-процесса по разрешениям владельца
+(2026-10-23 и постоянное 2026-10-24): стенд A0 (bench9, V1, V2), A1-E, игрок A1-P0/P1/P2 — приняты; A1-S1 (экран) —
+отрицательный диагностический результат. Сервер, второй клиент и звук не проверялись.
 Ванильные файлы и звуковой граф читаем через Workbench (owner #2020).
 Обратная разработка — только узкий статический разбор файлов на диске в Ghidra «при необходимости» (owner #2970):
 без запуска игры, отладчика, памяти и правки бинарников; декомпилят не попадает в репозиторий (правила #2982;
@@ -36,7 +38,7 @@ proto-функции C++ для server/Workbench; совместимость о�
 |---|---|---|---|---|---|
 | Э0 | Evidence baseline | M1 | baseline зафиксирован: корпус перенесён (хэши сверены), матрица Q1–Q34 + 15 разделов, лицензия APL-SA; ревью codex — agree (id394, id405, id410) | `598e4e8` | пробелы — в `E-coverage-matrix.md`, раздел «Что нужно для приоритетов» |
 | Э1s | Статическая capability-экспертиза | M1 | частично: офлайн Script API разобран (`E1s-von-api.md`, `E-offline-api.md`) | — | ванильные файлы → заказ `[Workbench]` |
-| Э1r | Runtime-lab на одном ПК | M1 | BLOCKED_NO_RUNTIME | — | разрешение владельца на запуск |
+| Э1r | Runtime-lab на одном ПК | M1 | частично (2026-10-24): в Play одного Workbench — частота и mute рации на стенде (V2 `NATIVE_ROUNDTRIP_PASS`, A1-E `MENU_ENTRY_RUNTIME_PASS`), локальный игрок и путь меню на его рации (A1-P0/P1/P2, `PLAYER_MENU_RUNTIME_PASS`); экранный виджет меню (A1-S1) не получен | `41904a4`, `ba0f4c8`, `82e3b66`, `4d51ffd`, `1efc205`, `567a4ac` | штатный путь открытия меню VoN; звук, RX/TX, сервер + клиент |
 | Э1b | Многоклиентский gate | M1 | BLOCKED_NO_RUNTIME | — | тестеры / multi-instance |
 | Э2 | Контракты единого ядра | M1 | STATIC_IMPLEMENTED + code review; host oracle PASS (снимки 46, маршруты 48); REQ-core v0.8 (delta Э4T-s reviewed `dd73863`), ADR-002; менеджер (реестры, допуск моделей, epoch, seq, типы сетей), снимки, маршруты, seams антенны/шума/разборчивости/сессии вызова; фикстуры EXT-1…5 (`SELF_CHECK_PASS` — исполнены в Workbench раннером, спринт 15). `WORKBENCH_COMPILE_PASS` (2026-10-19, `E-workbench-source.md`), не заморожено. Ход по спринтам — таблица «Спринты» | ключевые: `7a6812a`, `9fa04f5`, `fe8e20b`, `eb83219`, `d0c4db3`, `e669e40`, `4d541e7`, `f0acd5f`, `ff8f500`, `b555f35` | ревью codex compile evidence (#760/#763); заморозка — после Э3-гейтов |
 | Э3 | Server-authoritative lifecycle | M1 | требования: `docs/req/REQ-lifecycle.md` v0.4 (codex; v0.4 — epoch выдачи в `VON_EXPIRY_INTENDED`; детерминированная host-модель: коды и их приоритет, effects, replay/seq, TTL и аномалия времени, fixed-window, ёмкости, ротация epoch). Эталон: `oracle/lifecycle_oracle.py` + 14 трасс / 209 шагов CT-LC-001…010 (векторы rev 2) — `LIFECYCLE_ORACLE_PASS` (claude; v0.3 — agree codex #873, v0.4 — agree codex #1149). Enforce: `RICON_Lifecycle.c` (codex) — `WORKBENCH_COMPILE_PASS` + `ENFORCE_PARITY` 14/14 трасс, 209/209 шагов на `2bf70a7` (исполнено в Workbench раннером `tools/RICON_TestRunner`, без Play/сервера) | REQ: `11f766b`…`9e6ce55`, `2bf70a7`; oracle: `25cc10b`…`0d58853`, `1413291`, `3ae10b3`; код: `284dde5`…`8ba6d3e`, `2bf70a7`; фикстура/раннер: `dfd15d1`, `8d3e450`, `36609bf`, `3ae10b3` | runtime (порядок callbacks, RPC sender, JIP) — BLOCKED_NO_RUNTIME |

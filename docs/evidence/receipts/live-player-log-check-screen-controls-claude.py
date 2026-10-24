@@ -76,6 +76,11 @@ cases = [
      S, 0, "PLAYER_SCREEN_WIDGET_LABEL_UNVERIFIED"),
     ("menu_no_display", build(change(9, [menu("MENU").replace("hasDisplay=1", "hasDisplay=0"), widget(0), widget(1)])),
      S, 0, "OBSERVED_MISMATCH"),
+    # codex #4458: inputs=0 in every SCREEN record was a false PASS
+    ("inputs_missing", build({n: [x.replace("inputs=1", "inputs=0") for x in v] for n, v in screens().items()}),
+     S, 0, "OBSERVED_MISMATCH"),
+    ("inputs_lazy_before", build({**screens(), 5: [menu("BEFORE", opened=0, selected=-1).replace("inputs=1", "inputs=0")]}),
+     S, 0, "PLAYER_SCREEN_WIDGET_PASS"),
     ("root_without_component", build(change(9, [menu("MENU"), widget(0).replace("component=1", "component=0"), widget(1)])),
      S, 1, "LOG_INVALID"),
     ("widget_invisible", build(change(9, [menu("MENU"), widget(0, fvis=0), widget(1)])), S, 0, "OBSERVED_MISMATCH"),
