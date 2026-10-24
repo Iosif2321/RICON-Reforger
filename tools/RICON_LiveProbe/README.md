@@ -26,6 +26,16 @@
 - `Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c` — 30 проверок наблюдателя: подписки, отказы, игнор
   прямой речи, сохранение качества меньше одной промилле, частичная подписка, отписка и исчезнувший invoker.
   Компонент запуска скомпилирован; его жизненный цикл в Play ещё не проверялся.
+- `Scripts/Game/RICON_Live/RICON_LiveRadioReader.c` — показания раций управляемого персонажа для Q-F (только чтение):
+  `SCR_GadgetManagerComponent.GetGadgetsByType(RADIO/RADIO_BACKPACK)` → `BaseRadioComponent` → getter-ы трансивера;
+  `RADIO_STATE` только при изменении, `RADIO_GONE` при исчезновении; `device = −1`, `binding=LOCAL_ONLY,obs=…,slot=…`,
+  идентичность — слабая ссылка на сущность рации и индекс трансивера (codex #4083); сырой `GetPrefabName` в тексте.
+  Компонент запуска опрашивает его раз в секунду. Пробник `RICON_LiveRadioReaderProbePlugin.c` — 16 проверок.
+- `Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c` — только метаданные: ResourceName и путь префабов раций и
+  миров через `ResourceDatabase.SearchResources`, файлы не открываются.
+- `Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c` и `Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c` —
+  стенд фазы A0 (`docs/plan/LIVE-order-frequency-mute.md` §4): изолированные рации в Play без сохранения мира.
+  Скомпилированы, **не запускались**; запуск — после source review codex и START/ACK.
 - `Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c` — потоковый режим: 1000 записей при ёмкости 8, 7 проверок;
   сами строки потока проверяет внешний разбор всего тегированного транскрипта
   `docs/evidence/receipts/live-stream-log-check-claude.py` (плагин не видит собственный вывод).

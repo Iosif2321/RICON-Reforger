@@ -1,0 +1,67 @@
+# LiveProbe Q-F reader + resource metadata (claude, 2026-10-24): Workbench ScriptEditor, hidden, no world/Play/server,
+# via tools/RICON_LiveProbe/addon.gproj. Run 06:10:25 (reader v1, 13 checks) had NO START/ACK — protocol breach, reported
+# retroactively in agora #4080; superseded by reader v2 (identity per codex #4083). Series 06:28 under ACK codex #4098.
+# World list (kind=world) is kept in the log only; here only the radio resources.
+
+=== 06:10:25 reader v1 (superseded, run without START) ===
+06:10:33.256  SCRIPT       : [RICON_LIVER] checks=13 passed=13 count=6 recorded=6
+06:10:33.256  SCRIPT       : [RICON_LIVER] done: PASS
+\6c5da96e327a72941d4afddb053c6b414470197e10a1a52e37c281415e53932c *C:\\Users\\Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-liveradio-claude-20261024-061025-RICON_LiveRadioReaderProbePlugin/console.log
+
+=== series 06:28 (ACK #4098) ===
+--- ricon-liveradio2-claude-20261024-062834-RICON_LiveRadioReaderProbePlugin
+\57c6352a18106b7778eb23f70077383699e7f6b855838483ccc73b483b485834 *C:\\Users\\Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-liveradio2-claude-20261024-062834-RICON_LiveRadioReaderProbePlugin/console.log
+06:28:38.500    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+06:28:38.500    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+06:28:38.500    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+06:28:38.500    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 7c5c82a7
+06:28:38.500    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: f34d61cb
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+06:28:40.007    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+06:28:42.502  SCRIPT       : [RICON_LIVER] checks=16 passed=16 count=11 recorded=6 gone=5
+06:28:42.503  SCRIPT       : [RICON_LIVER] done: PASS
+--- ricon-liveradio2-claude-20261024-062843-RICON_LiveObserverProbePlugin
+\3127b19555e8258663fd8f6ecdc28af83328fce675fe984278a7605653a67f92 *C:\\Users\\Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-liveradio2-claude-20261024-062843-RICON_LiveObserverProbePlugin/console.log
+06:28:47.215    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+06:28:47.215    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+06:28:47.215    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+06:28:47.215    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 7c5c82a7
+06:28:47.215    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: f34d61cb
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+06:28:48.644    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+06:28:51.139  SCRIPT       : [RICON_LIVEO] checks=30 passed=30 count=6 ignored=2 now=-1
+06:28:51.140  SCRIPT       : [RICON_LIVEO] done: PASS
+--- ricon-liveradio2-claude-20261024-062851-RICON_LiveResourceProbePlugin
+\4769705fc977a79d106c5fcd5337599d2dba4693e782e85212033d1218a6e1c7 *C:\\Users\\Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-liveradio2-claude-20261024-062851-RICON_LiveResourceProbePlugin/console.log
+06:28:55.913    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+06:28:55.913    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+06:28:55.913    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+06:28:55.913    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: 7c5c82a7
+06:28:55.913    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: f34d61cb
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+06:28:57.342    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+06:28:59.814  SCRIPT       : [RICON_LIVERES] kind=radio resource={54C68E438DD34265}Prefabs/Items/Equipment/Radios/Radio_R107M.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M.et
+06:28:59.814  SCRIPT       : [RICON_LIVERES] kind=radio resource={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et
+06:28:59.815  SCRIPT       : [RICON_LIVERES] kind=radio resource={9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et
+06:28:59.815  SCRIPT       : [RICON_LIVERES] kind=radio resource={C44F542754C0C46F}Prefabs/Items/Equipment/Radios/Radio_ANPRC77_COK.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_ANPRC77_COK.et
+06:28:59.815  SCRIPT       : [RICON_LIVERES] kind=radio resource={540C08AD5F21A5FA}Prefabs/Items/Equipment/Radios/Radio_R148_FIA.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148_FIA.et
+06:28:59.816  SCRIPT       : [RICON_LIVERES] kind=radio resource={4181B1C8B5E56392}Prefabs/Items/Equipment/Radios/Radio_R107M_FIA.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R107M_FIA.et
+06:28:59.816  SCRIPT       : [RICON_LIVERES] kind=radio resource={73EFD7591F4134D3}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10.et
+06:28:59.816  SCRIPT       : [RICON_LIVERES] kind=radio resource={E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_R148.et
+06:28:59.817  SCRIPT       : [RICON_LIVERES] kind=radio resource={5879D8E9C56E358E}Prefabs/Items/Equipment/Radios/Radio_Deployable_Base.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_Deployable_Base.et
+06:28:59.817  SCRIPT       : [RICON_LIVERES] kind=radio resource={B15E9D81210CFC1C}Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10_base.et path=$ArmaReforger:Prefabs/Items/Equipment/Radios/Radio_RF10/Radio_RF10_base.et
+06:28:59.818  SCRIPT       : [RICON_LIVERES] kind=radio root=$ArmaReforger:Prefabs/Items/Equipment/Radios/ listed=1 found=10 printed=10
+06:28:59.856  SCRIPT       : [RICON_LIVERES] kind=world root=$ArmaReforger:worlds/ listed=1 found=103 printed=103
+06:28:59.857  SCRIPT       : [RICON_LIVERES] done: PASS

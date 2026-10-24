@@ -9,6 +9,7 @@ class RICON_LiveProbeComponent : ScriptComponent
 	protected ref RICON_LiveJournal m_Journal;
 	protected ref RICON_LiveObserver m_Server;
 	protected ref RICON_LiveObserver m_Client;
+	protected ref RICON_LiveRadioReader m_Radios;   //!< показания раций для Q-F, только чтение (claude #4075)
 	protected SCR_VoNComponent m_CurrentVon;
 	protected bool m_bRunning;
 	protected bool m_bClientBindingObserved;
@@ -57,6 +58,7 @@ class RICON_LiveProbeComponent : ScriptComponent
 			}
 		}
 		m_Client = new RICON_LiveObserver(m_Journal, "client");
+		m_Radios = new RICON_LiveRadioReader(m_Journal, "client");
 		m_bRunning = true;
 		m_bClientBindingObserved = false;
 		m_fPollElapsed = 0;
@@ -74,14 +76,18 @@ class RICON_LiveProbeComponent : ScriptComponent
 		if (game)
 			controller = game.GetPlayerController();
 		SCR_VoNComponent von;
+		IEntity controlled;
 		m_Client.m_iLocalPlayerId = -1;
 		if (controller)
 		{
 			m_Client.m_iLocalPlayerId = controller.GetPlayerId();
-			IEntity controlled = controller.GetControlledEntity();
+			controlled = controller.GetControlledEntity();
 			if (controlled)
 				von = SCR_VoNComponent.Cast(controlled.FindComponent(SCR_VoNComponent));
 		}
+		// Q-F: показания раций каждый опрос; запись только изменений, идентичность — сама сущность рации
+		// (смена персонажа или предмета даёт RADIO_GONE и новое наблюдение, codex #4083).
+		m_Radios.ReadEntity(m_Client.m_iLocalPlayerId, controlled);
 		bool bindingStable = (von && m_Client.m_iAttached == 2) || (!von && m_Client.m_iAttached == 0);
 		if (m_bClientBindingObserved && von == m_CurrentVon && bindingStable)
 			return;
@@ -127,6 +133,7 @@ class RICON_LiveProbeComponent : ScriptComponent
 			m_Client.Detach();
 		m_Server = null;
 		m_Client = null;
+		m_Radios = null;
 		m_CurrentVon = null;
 		if (m_bRunning)
 		{
