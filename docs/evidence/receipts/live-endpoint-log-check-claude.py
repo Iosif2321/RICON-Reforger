@@ -25,8 +25,9 @@ pc=1, controlled=1, one stable revision and the own playerId among members in ea
 player early in a cycle is not a log error). The end of an observation is not a proven role readiness (codex schema).
 Restart (codex #4579, -riconEndpointRestart=1: the launcher waits for >= 3 samples, requests Edit, waits for the edit mode
 and requests the second Play): cycle 1 must end ABORTED after at least 3 samples with GAME_END, WORLD_CLEANUP or
-WORLD_CHANGED, cycle 2 must end DONE, and the launcher lines restart=EDIT_REQUESTED and restart=SECOND_PLAY_REQUESTED
-are present without restart=REFUSED; a cycle 1 that reached DONE did not exercise the cleanup
+WORLD_CHANGED, cycle 2 must end DONE, and the launcher lines are exactly restart=EDIT_REQUESTED,
+restart=SECOND_PLAY_REQUESTED and restart=SECOND_PLAY_ENTERED (no REFUSED); cycle 2 may carry cycle=2 (same game object) or
+cycle=1 (game object recreated), recorded as cycleField; a cycle 1 that reached DONE did not exercise the cleanup
 (ENDPOINT_RESTART_NOT_EXERCISED, not a pass).
 Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / ENDPOINT_RESTART_COMPLETE /
 ENDPOINT_RESTART_NOT_EXERCISED / LOG_INVALID.
@@ -83,7 +84,10 @@ def player_state_errors(f):
     return errs, want
 
 
-def check_cycle(ordinal, events, dump, errors):
+def check_cycle(ordinal, events, dump, errors, allowed_cycles=None):
+    """allowed_cycles: the cycle numbers ENDPOINT_START may carry (default: the ordinal). A restart may recreate the
+    game object ("Workbench Reload Game", codex #4594), so its second cycle may count from 1 again."""
+    allowed = allowed_cycles or [str(ordinal)]
     """One observation cycle: stream events (already split), its dump lines; returns the finding row."""
     tag = f"cycle {ordinal}"
     row = {"cycle": ordinal, "samples": 0, "end": None, "reason": None}
@@ -91,11 +95,12 @@ def check_cycle(ordinal, events, dump, errors):
         errors.append(f"{tag}: seq not consecutive from 0")
     start = events[0]["f"] if events and events[0]["kind"] == "ENDPOINT_START" else {}
     want = {"cycle", "limit", "isServer", "isClient", "rplMode"}
-    if set(start) != want or not INT.fullmatch(start.get("rplMode", "")) or start.get("cycle") != str(ordinal) or start.get("limit") != str(LIMIT) \
+    if set(start) != want or not INT.fullmatch(start.get("rplMode", "")) or start.get("cycle") not in allowed or start.get("limit") != str(LIMIT) \
             or start.get("isServer") not in BIT or start.get("isClient") not in BIT \
             or events[0]["value"] != 0 or events[0]["player"] != -1:
         errors.append(f"{tag}: ENDPOINT_START {start}")
     row["role"] = {k: start.get(k) for k in ("isServer", "isClient", "rplMode") if k in start}
+    row["cycleField"] = start.get("cycle")
     ends = [i for i, e in enumerate(events) if e["kind"] in ("ENDPOINT_DONE", "ENDPOINT_ABORTED")]
     if ends != [len(events) - 1]:
         errors.append(f"{tag}: one ENDPOINT_DONE/ABORTED must close the cycle (at {ends})")
@@ -111,7 +116,7 @@ def check_cycle(ordinal, events, dump, errors):
                 errors.append(f"{tag}: BINDING value {v} is not the next sample {sample + 1}")
             want = {"cycle", "revision", "initial", "pcChanged", "entityChanged", "idChanged", "pc", "controlled",
                     "previousPlayerId"}
-            if set(f) != want or f.get("cycle") != str(ordinal) or any(f.get(x) not in BIT for x in
+            if set(f) != want or f.get("cycle") != start.get("cycle") or any(f.get(x) not in BIT for x in
                                                                      ("initial", "pcChanged", "entityChanged",
                                                                       "idChanged", "pc", "controlled")) \
                     or not INT.fullmatch(f.get("revision", "")) or not INT.fullmatch(f.get("previousPlayerId", "")):
@@ -137,7 +142,7 @@ def check_cycle(ordinal, events, dump, errors):
                 errs.append("rplMode not an integer")
             if set(f) != want:
                 errs.append(f"field set {sorted(set(f) ^ want)}")
-            if f.get("cycle") != str(ordinal) or not INT.fullmatch(f.get("elapsedMs", "")) \
+            if f.get("cycle") != start.get("cycle") or not INT.fullmatch(f.get("elapsedMs", "")) \
                     or not MEMBERS.fullmatch(f.get("members", "")):
                 errs.append("cycle/elapsedMs/members")
             for x in errs:
@@ -182,7 +187,7 @@ def check_cycle(ordinal, events, dump, errors):
             if set(f) != {"binding", "obs"} or f.get("binding") != "LOCAL_ONLY" or v != -1:
                 errors.append(f"{tag}: RADIO_GONE {e['line'][-80:]}")
         elif k in ("ENDPOINT_DONE", "ENDPOINT_ABORTED"):
-            if set(f) != {"cycle", "samples", "reason"} or f.get("cycle") != str(ordinal) \
+            if set(f) != {"cycle", "samples", "reason"} or f.get("cycle") != start.get("cycle") \
                     or f.get("samples") != str(sample) or v != sample:
                 errors.append(f"{tag}: {k} fields {f} value {v} after {sample} samples")
             if k == "ENDPOINT_DONE" and (sample != LIMIT or f.get("reason") != "LIMIT"):
@@ -277,14 +282,15 @@ def main(path, mode):
         want = 2 if mode == "restart" else 1
         if len(cycles) != want:
             errors.append(f"{len(cycles)} cycles, expected {want}")
-        rows = [check_cycle(i + 1, ev, du, errors) for i, (ev, du) in enumerate(cycles)]
+        rows = [check_cycle(i + 1, ev, du, errors, ["2", "1"] if mode == "restart" and i == 1 else None)
+                for i, (ev, du) in enumerate(cycles)]
         ends = [r["end"] for r in rows]
         verdict = "ENDPOINT_CYCLE_COMPLETE" if ends and all(x == "ENDPOINT_DONE" for x in ends[-1:]) \
             else "ENDPOINT_CYCLE_ABORTED"
         if mode == "restart":
             marks = [m.group(1) for m in (re.search(r"\[RICON_LIVEB\] restart=(\w+)", l) for l in lines) if m]
-            if marks != ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED"]:
-                errors.append(f"restart launcher lines {marks} != EDIT_REQUESTED, SECOND_PLAY_REQUESTED")
+            if marks != ["EDIT_REQUESTED", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"]:
+                errors.append(f"restart launcher lines {marks} != EDIT_REQUESTED, SECOND_PLAY_REQUESTED, SECOND_PLAY_ENTERED")
         if mode == "restart" and len(rows) == 2:
             first, second = rows
             if first["end"] == "ENDPOINT_DONE":
