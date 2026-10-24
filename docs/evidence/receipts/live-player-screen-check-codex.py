@@ -1,4 +1,4 @@
-"""Независимая проверка фиксированных S1b/S1c; пиксели просмотрены отдельно, не распознаны этим скриптом."""
+"""Независимая проверка S1b/S1c. Нужны внешние логи и PNG; пиксели просмотрены отдельно, не распознаны скриптом."""
 import hashlib
 import json
 from pathlib import Path
@@ -94,12 +94,14 @@ for name, expected_sha, count, size in runs:
                         channelWidgetText='Error', channelTextIsNotPixelEvidence=True))
 
 png = Path(r'C:\Users\Ded\AppData\Local\Temp\claude\C--Users-Ded-Documents-Projects-ARMA-3-Scripts-RICON-Reforger\583c292f-5bc1-43e3-9045-3fc153e17657\scratchpad\a1s1-window-214640.png')
+assert png.is_file(), 'Исходный PNG отсутствует: без него повторная проверка экранного доказательства невозможна.'
 image = png.read_bytes()
 assert hashlib.sha256(image).hexdigest() == '4930f5697a71a687f5506354aba182f508b23688c0a595bc339f6ac64c410e67'
 assert image[:8] == b'\x89PNG\r\n\x1a\n' and struct.unpack('>II', image[16:24]) == (1936, 1056)
 report = dict(runs=reports, screenshotPath=str(png), screenshotSha256=hashlib.sha256(image).hexdigest(),
               manualVisualReview='Codex открыл этот PNG через view_image: видны CH1 32.0 MHz и CH2 48.0 MHz; Error на пикселях не виден. Скрипт сверяет файл и размер, а не распознаёт изображение.',
               limits='Два базовых значения подтверждены на экране. Шаг частоты на экране, полный InputManager, звук, RX/TX, репликация и избирательное A→B этим опытом не проверены.',
+              replayRequirements='Нужны исходные логи и PNG по указанным внешним путям. Очистка scratchpad удалит PNG; тогда проверка остановится, прежний вывод не будет выдан за новый PASS.',
               checkerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
 (folder / 'live-player-screen-review-codex.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print('SCREEN_REVIEW_CONFIRMED S1b=NOT_READY S1c=114events/30samples/60entries/12widgets PNG_SHA_MATCH')
