@@ -56,7 +56,7 @@ def cycle(ordinal, b):
         shown_rev = rev - 1 if b.get("stale_rev_at") == n else rev
         rows.append(("ENDPOINT_SAMPLE", pid, -1, n,
                      f"cycle={ordinal},elapsedMs={ms},bindingRevision={shown_rev},{player_state(pc, controlled, pid)},"
-                     f"members={members}" + (b.get("sample_extra", "") if n == 5 else "")))
+                     f"members={members}" + b.get("sample_rpl", "") + (b.get("sample_extra", "") if n == 5 else "")))
         if controlled and (prev is None or prev[1] == 0):
             for t, f in ((0, 32000), (1, 48000)):
                 extra = b.get("radio_extra", "")
@@ -105,7 +105,12 @@ cases = [
     ("off_without_endpoint_only", build(cycles=[], launcher=False), OFF, 1, "LOG_INVALID"),
     ("off_never_played", build(cycles=[]).replace("isGameMode=1", "isGameMode=0"), OFF, 1, "LOG_INVALID"),
     ("on_complete", build(), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
-    ("on_with_rplmode", build(cycles=[{"start_extra": ",rplMode=1"}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
+    ("on_with_rplmode", build(cycles=[{"start_extra": ",rplMode=1", "sample_rpl": ",rplMode=1"}]), ON, 0,
+     "ENDPOINT_CYCLE_COMPLETE"),
+    ("on_rplmode_start_only", build(cycles=[{"start_extra": ",rplMode=1"}]), ON, 1, "LOG_INVALID"),
+    ("on_rplmode_sample_only", build(cycles=[{"sample_rpl": ",rplMode=1"}]), ON, 1, "LOG_INVALID"),
+    ("on_rplmode_not_int", build(cycles=[{"start_extra": ",rplMode=1", "sample_rpl": ",rplMode=Listen"}]), ON, 1,
+     "LOG_INVALID"),
     ("on_never_player", build(cycles=[{"never": True}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
     ("on_self_not_member", build(cycles=[{"members": "2"}]), ON, 0, "ENDPOINT_CYCLE_COMPLETE"),
     ("on_aborted", build(cycles=[{"samples": 12}]), ON, 0, "ENDPOINT_CYCLE_ABORTED"),

@@ -8,7 +8,8 @@ Modes:
             Verdict ENDPOINT_GATE_OFF_CLEAN.
   on      - exactly one observation cycle; restart - exactly two (Play -> Edit -> Play in one process).
 For every cycle: the stream from ENDPOINT_START (seq 0) to ENDPOINT_DONE / ENDPOINT_ABORTED with consecutive seq; START
-fields cycle, limit=30, isServer, isClient (rplMode optional); per sample n = 1.. an optional ENDPOINT_BINDING (value n), then
+fields cycle, limit=30, isServer, isClient (rplMode = RplSession.Mode() optional, codex #4574; when START has it, every
+SAMPLE has it too and it is an integer); per sample n = 1.. an optional ENDPOINT_BINDING (value n), then
 ENDPOINT_SAMPLE (value n), then RADIO_STATE / RADIO_GONE of the radio reader; elapsedMs >= 1000 for the first sample and at
 least 999 ms after the previous one; each BINDING raises revision by one, the first one has initial=1 and
 previousPlayerId=-1, a BINDING is required whenever pc, controlled or playerId differ from the previous sample, and its
@@ -93,7 +94,7 @@ def check_cycle(ordinal, events, dump, errors):
     if ends != [len(events) - 1]:
         errors.append(f"{tag}: one ENDPOINT_DONE/ABORTED must close the cycle (at {ends})")
     sample, revision, prev, last_ms, players, members_seen, tail = 0, 0, None, None, set(), set(), []
-    radios, binding_at = {}, None
+    radios, binding_at, rpl_seen = {}, None, set()
     for e in events[1:]:
         k, f, v = e["kind"], e["f"], e["value"]
         if k not in ALLOWED:
@@ -125,6 +126,10 @@ def check_cycle(ordinal, events, dump, errors):
             sample = v
             errs, want = player_state_errors(f)
             want |= {"cycle", "elapsedMs", "bindingRevision", "members"}
+            if "rplMode" in start:
+                want.add("rplMode")
+                if not INT.fullmatch(f.get("rplMode", "")):
+                    errs.append("rplMode not an integer")
             if set(f) != want:
                 errs.append(f"field set {sorted(set(f) ^ want)}")
             if f.get("cycle") != str(ordinal) or not INT.fullmatch(f.get("elapsedMs", "")) \
@@ -155,6 +160,8 @@ def check_cycle(ordinal, events, dump, errors):
             if pid >= 0:
                 players.add(pid)
             members_seen.add(f["members"])
+            if "rplMode" in f:
+                rpl_seen.add(f["rplMode"])
             tail.append({"n": v, "pc": cur["pc"], "controlled": cur["controlled"], "player": pid,
                          "revision": revision, "members": f["members"]})
             prev = cur
@@ -196,7 +203,7 @@ def check_cycle(ordinal, events, dump, errors):
                 "members": sorted(members_seen), "firstLocalPlayerSample": next((t["n"] for t in tail if t["pc"] == "1"),
                                                                               None),
                 "firstControlledSample": next((t["n"] for t in tail if t["controlled"] == "1"), None),
-                "radios": radios, "role": row["role"],
+                "radios": radios, "role": row["role"], "rplModesInSamples": sorted(rpl_seen),
                 "localRole": "LOCAL_ROLE_READY" if ready else "LOCAL_ROLE_NOT_READY"})
     return row
 
