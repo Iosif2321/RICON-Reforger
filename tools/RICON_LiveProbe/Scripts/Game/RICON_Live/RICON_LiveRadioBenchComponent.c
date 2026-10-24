@@ -18,7 +18,10 @@
 //! ToggleMuteEntry дважды и затем прямой SetMuteState туда и обратно; чтения трансивера 0 дополняются частотой, mute и
 //! сырым текстом entry (%XX, RICON_LiveText). Уровень MENU_ENTRY_RUNTIME: исполнен ванильный объект меню на настоящем
 //! трансивере, но не экран, не VON-контроллер игрока и не ветка GetKnownChannel. BENCH_START пишет наличие контроллера
-//! игрока и менеджера фракций. Ключи шифрования не читаются.
+//! игрока и менеджера фракций. A1-P0 (claude #4360, codex #4365): режим -riconBenchMode=player вместо радиофаз —
+//! 30 записей PLAYER_SAMPLE раз в секунду (роль процесса, игроки, локальный контроллер, управляемая сущность, её VoN
+//! и GadgetManager, SCR_VONController) и BENCH_DONE level=PLAYER_OBSERVATION; ни спавна, ни Set*, ни контроля.
+//! Ключи шифрования не читаются.
 class RICON_LiveRadioBenchComponentClass : ScriptComponentClass
 {
 }
@@ -199,6 +202,65 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			StopHeartbeat("CAP");
 	}
 
+	//! A1-P0 (claude #4360, условия codex #4365): режим -riconBenchMode=player — только наблюдение локального игрока.
+	//! Ни спавна, ни Set*, ни радиофаз: PLAYER_SAMPLES записей PLAYER_SAMPLE раз в секунду игрового времени, затем
+	//! BENCH_DONE value=PLAYER_SAMPLES level=PLAYER_OBSERVATION. Без параметра — прежний радиостенд; другое значение,
+	//! в том числе пустое, — BENCH_NOT_READY reason=MODE_PARAM до любых действий.
+	static const string MODE_RADIO = "radio";
+	static const string MODE_PLAYER = "player";
+	static const string MODE_INVALID = "INVALID";
+	static const int PLAYER_SAMPLES = 30;
+	protected int m_iSamples;
+	protected float m_fLastSample;  //!< игровое время последнего среза (0 до первого: первый — при elapsed ≥ 1 с)
+
+	protected static bool ModeGiven()
+	{
+		string value;
+		return System.GetCLIParam("riconBenchMode", value);
+	}
+
+	protected static string Mode()
+	{
+		string value;
+		if (!System.GetCLIParam("riconBenchMode", value))
+			return MODE_RADIO;
+		if (value == MODE_RADIO || value == MODE_PLAYER)
+			return value;
+		return MODE_INVALID;
+	}
+
+	//! Один срез: роль процесса, игроки, локальный контроллер и управляемая сущность (только getter-ы).
+	protected static string PlayerState()
+	{
+		int players = -1;
+		if (GetGame().GetPlayerManager())
+		{
+			array<int> ids = {};
+			players = GetGame().GetPlayerManager().GetPlayers(ids);
+		}
+		string text = "isServer=" + Bit(Replication.IsServer()) + ",isClient=" + Bit(Replication.IsClient());
+		text = text + ",players=" + players.ToString();
+		PlayerController controller = GetGame().GetPlayerController();
+		if (!controller)
+			return text + ",pc=0";
+		text = text + ",pc=1,playerId=" + controller.GetPlayerId().ToString();
+		SCR_VONController von = SCR_VONController.Cast(controller.FindComponent(SCR_VONController));
+		text = text + ",vonController=" + Bit(von != null);
+		if (von)
+			text = text + ",vonEntries=" + von.GetVONEntryCount().ToString();
+		IEntity controlled = controller.GetControlledEntity();
+		text = text + ",controlled=" + Bit(controlled != null);
+		if (!controlled)
+			return text;
+		string prefab = "UNKNOWN";
+		EntityPrefabData data = controlled.GetPrefabData();
+		if (data)
+			prefab = data.GetPrefabName();
+		text = text + ",controlledPrefab=" + RICON_LiveText.Esc(prefab);
+		text = text + ",entityVoN=" + Bit(controlled.FindComponent(SCR_VoNComponent) != null);
+		return text + ",gadgetManager=" + Bit(SCR_GadgetManagerComponent.GetGadgetManager(controlled) != null);
+	}
+
 	protected void StopHeartbeat(string reason)
 	{
 		if (!m_bHeartbeat)
@@ -269,6 +331,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		// A1-E (codex #4327): наличие контроллера и менеджера фракций измеряется, а не предполагается.
 		text = text + ",playerController=" + Bit(GetGame().GetPlayerController() != null);
 		text = text + ",factionManager=" + Bit(GetGame().GetFactionManager() != null);
+		text = text + ",mode=" + Mode() + ",modeGiven=" + Bit(ModeGiven());
 		Note("BENCH_START", -1, text);
 		StartHeartbeat();
 	}
@@ -565,6 +628,29 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		Record("BENCH_MUTE", device, 0, -1, text);
 	}
 
+	//! A1-P0: неверный режим — NOT_READY до любых действий; иначе один PLAYER_SAMPLE на каждую секунду игрового времени
+	//! и после PLAYER_SAMPLES записей BENCH_DONE. Рации, entry и контроль не трогаются.
+	protected void StepPlayer()
+	{
+		if (Mode() == MODE_INVALID)
+		{
+			Note("BENCH_NOT_READY", -1, "reason=MODE_PARAM,mode=" + MODE_INVALID + ",modeGiven=" + Bit(ModeGiven()));
+			Finish(false);
+			return;
+		}
+		// codex #4372: каждый срез не раньше чем через 1 с игрового времени после предыдущего, а не «догоняющая»
+		// серия кадров после задержки — 30 срезов покрывают не меньше 30 с.
+		if (m_fElapsed < m_fLastSample + 1)
+			return;
+		m_fLastSample = m_fElapsed;
+		m_iSamples++;
+		float ms = m_fElapsed * 1000.0;
+		int elapsedMs = ms;
+		Note("PLAYER_SAMPLE", m_iSamples, "elapsedMs=" + elapsedMs.ToString() + "," + PlayerState());
+		if (m_iSamples >= PLAYER_SAMPLES)
+			Finish(true);
+	}
+
 	//! Удаление только своих раций штатным SCR_EntityHelper.DeleteEntityAndChildren (обёртка
 	//! RplComponent.DeleteRplEntity, codex #4108). BENCH_DONE — лишь после всех фаз; иначе BENCH_ABORTED с фазой.
 	protected void Finish(bool complete)
@@ -580,7 +666,14 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 				SCR_EntityHelper.DeleteEntityAndChildren(radio);
 		}
 		m_aRadios.Clear();
-		if (complete && Setter() == SETTER_ENTRY)
+		if (Mode() == MODE_PLAYER)
+		{
+			if (complete)
+				Note("BENCH_DONE", m_iSamples, "level=PLAYER_OBSERVATION,not=SPAWN|SET|CONTROL|RADIO|AUDIO");
+			else
+				Note("BENCH_ABORTED", m_iSamples, "level=PLAYER_OBSERVATION,samples=" + m_iSamples.ToString());
+		}
+		else if (complete && Setter() == SETTER_ENTRY)
 			Note("BENCH_DONE", m_iPhase, "level=MENU_ENTRY_RUNTIME,not=SCREEN|PLAYER_VON|KNOWN_CHANNEL|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
 		else if (complete)
 			Note("BENCH_DONE", m_iPhase, "level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR");
@@ -602,6 +695,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!m_bRunning || timeSlice <= 0)
 			return;
 		m_fElapsed += timeSlice;
+		if (Mode() != MODE_RADIO)
+		{
+			StepPlayer();
+			return;
+		}
 		if (m_iPhase == PHASE_IDLE && m_fElapsed >= 1)
 		{
 			if (!ManagerReady(owner) || !SetterReady())
