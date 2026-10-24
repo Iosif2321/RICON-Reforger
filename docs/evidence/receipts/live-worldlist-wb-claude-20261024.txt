@@ -1,0 +1,40 @@
+claude, 2026-10-24: состав миров-кандидатов для стенда A0, только чтение (START #4156, дельта #4160, ACK codex #4157/#4161).
+Плагин tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c sha256 39157e98ab0a9508653918200606f173141e54c74014f508002b986a5fc7a040
+Запуск: ArmaReforgerWorkbenchSteamDiag.exe, окно Hidden, -noBackend -wbModule=WorldEditor -plugin=RICON_LiveWorldListPlugin,
+-riconListWorld1="{761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent",
+-riconListWorld2="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent", предел 60 с, свой PID 25916.
+Без SwitchToGameMode, CreateEntity и Save. Исходники LiveProbe до и после прогона совпали (SOURCES_STABLE).
+Лог: logs/ricon-worldlist-claude-20261024-081138/console.log, sha256 \6d60a1c8f94b713de63dc3f533a37aa2847a403ac7d503e41a2eb7c39185c2b6, 6962 строк.
+Остановка: TIMEOUT через 63 с, процесс завершён скриптом, SCRIPT (E) = 0.
+Движок при загрузке мира 1 сообщил RESOURCES (E): неверный GUID ресурса в свойстве WeatherStateMachine (пустая ссылка).
+
+Строки плагина (все, тег RICON_LIVEW):
+  w=1 state=OPEN world={761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent opened=1
+  w=1 entities=9 subScenes=2 isGameModeBefore=0
+  w=1 entity=0 class=GenericWorldEntity name=world prefab=-
+  w=1 entity=1 class=GenericTerrainEntity name=Terrain prefab=-
+  w=1 entity=2 class=ChimeraSunAndMoon name=MainLighting1 prefab={433C5D70D3FAC026}Prefabs/Terrain/MainLighting.et
+  w=1 entity=3 class=SCR_CameraManager name=CameraManager1 prefab=-
+  w=1 entity=4 class=BaseWeatherManagerEntity name= prefab=-
+  w=1 entity=5 class=GenericEntity name=Underworld_01 prefab=-
+  w=1 entity=6 class=SCR_CompositionValidationEntity name= prefab={452AF633AFB87889}Prefabs/Editor/Common/ValidationEntity.et
+  w=1 entity=7 class=SCR_SiteSlotEntity name= prefab={588A3DAF0296B0C1}PrefabsEditable/Slots/Flat/E_SlotFlatSmall.et
+  w=1 entity=8 class=StaticModelEntity name= prefab=-
+  w=1 class=GenericWorldEntity count=1
+  w=1 class=GenericTerrainEntity count=1
+  w=1 class=ChimeraSunAndMoon count=1
+  w=1 class=SCR_CameraManager count=1
+  w=1 class=BaseWeatherManagerEntity count=1
+  w=1 class=GenericEntity count=1
+  w=1 class=SCR_CompositionValidationEntity count=1
+  w=1 class=SCR_SiteSlotEntity count=1
+  w=1 class=StaticModelEntity count=1
+  w=1 summary entities=9 nullSources=0 noInstance=0 noInstanceGameModeClass=0 distinctClasses=9 gameModes=0 isGameModeAfter=0
+
+Итог:
+- w1 SlotFlatSmall: открыт, 9 сущностей, 2 подсцены, все с экземпляром (noInstance=0), BaseGameMode.Cast = 0.
+  В мире нет игрового режима; есть мир, рельеф, свет, камера, погода, слот-композиция. IsGameMode до и после = 0.
+- w2 Autotest_GameMode_Plain: строки OPEN нет. Лог обрывается сразу после итога w1 (последняя строка файла).
+  Второй SetOpenedResource в том же процессе не вернул управление за ~55 с и ничего не записал в лог.
+  Причина не установлена: модальный диалог в скрытом окне, долгая загрузка или зависание. Автоповтора не было.
+Уровень: WORKBENCH_STATIC (чтение состава мира через WorldEditorAPI), не Play и не измерение раций.
