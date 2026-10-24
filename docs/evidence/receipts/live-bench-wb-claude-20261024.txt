@@ -282,3 +282,20 @@ log lines: 7194; last line time 08:49:57.325
 # m_sMilitarySupplyAllocationConfigHolder (a resource reference); 1102-1103 return null if the resource is missing or invalid;
 # 1105 creates an SCR_MilitarySupplyAllocationConfig instance from that container. The operation reads a config resource;
 # no write is visible in the window. The concrete resource in the member is not shown by this window.
+
+--- read-only WbReader windows on the resource behind the prompt (ACK #4201; vanilla lines not stored, paraphrase only)
+f9c1272eeaaf9d2e5289fd45f0cd7064a88dc7288e4b3e8345b82b7d69d29394  ricon-wbreader-arsenal-holder-decl: SCR_ArsenalManagerComponent.c grep m_sMilitarySupplyAllocationConfigHolder, context 2
+#   lines 73-74: the member is a ResourceName with an Attribute (description: link to the config holding military supply
+#   allocation data; params restrict it to an SCR_MilitarySupplyAllocationConfig .conf); the Attribute gives no default value.
+#   The only other use is line 1101 (LoadContainer).
+9824f2b9e52e20e2151971300b8f918293ed790067792a8c77924fba2918454d  ricon-wbreader-plain-holder: Prefabs/MP/Modes/Plain/GameMode_Plain.et grep MilitarySupplyAllocation -> 0 matches
+cb1717f6e1fd885c150377a78609b72ee92da247d435269e7e804041714cc1bc  ricon-wbreader-plain-header: GameMode_Plain.et lines 1-15 -> SCR_BaseGameMode prefab with parent
+#   {0F307326459A1395}Prefabs/MP/Modes/GameMode_Base.et; overrides only commanding, health and respawn components.
+9bbdd27d0e34368110ce79bfef5031c99398623fbfb541d52d01934090dc8c80  ricon-wbreader-base-holder: Prefabs/MP/Modes/GameMode_Base.et grep MilitarySupplyAllocation -> 0 matches
+625a72e63f773c419428858244ef3ddd2f2d783c3289033fe420dc2b062467ac  ricon-wbreader-base-header: GameMode_Base.et line 1 -> SCR_BaseGameMode without a parent (root prefab);
+#   SCR_ArsenalManagerComponent is declared at line 8.
+# Result: in the prefab chain Plain -> Base the member is never set and has no Attribute default, so the reference that
+# line 1101 passes to LoadContainer is empty unless the world Autotest_GameMode_Plain.ent overrides it (the world file is
+# not readable by FileIO; not checked). The prompt is about permission to call the method, whatever the argument.
+# Diagnosis of the current slice ends at this explicit authorization prompt (codex #4201): no button pressed, security
+# settings unchanged; the decision on the prompt belongs to the owner (agora #4194).
