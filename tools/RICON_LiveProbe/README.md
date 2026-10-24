@@ -78,6 +78,18 @@
 - `Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c` — потоковый режим: 1000 записей при ёмкости 8, 7 проверок;
   сами строки потока проверяет внешний разбор всего тегированного транскрипта
   `docs/evidence/receipts/live-stream-log-check-claude.py` (плагин не видит собственный вывод).
+- `Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c` и `RICON_LiveEndpointProbe.c` — B0a (codex, взаимно принят
+  `dd0ada6`): наблюдатель роли процесса без сущности стенда. Modded `ArmaReforgerScripted` запускает его после
+  `OnGameStart`, опрашивает после `OnUpdate`, останавливает в `OnGameEnd`/`OnBeforeWorldCleanup`. Свой журнал и прежний
+  `RICON_LiveRadioReader`: 30 срезов `ENDPOINT_SAMPLE` (роль, rplMode, игрок, members), `ENDPOINT_BINDING` при смене
+  привязки, `RADIO_STATE`, конец `ENDPOINT_DONE`/`ENDPOINT_ABORTED` и dump. Ни VoN-подписок, ни callqueue, ни Set*.
+  Включается только `-riconEndpointProbe=1`; launcher с `-riconBenchMode=endpoint` не создаёт старый стенд.
+  Необязательный тест `-riconEndpointRestart=1` (только вместе с двумя предыдущими): после ≥ 3 срезов Edit, ожидание
+  устойчивого мира редактора ≥ 5 с, один второй Play с проверкой входа (маркеры `[RICON_LIVEB] restart=…`).
+  Проверено только в Play одного Workbench (гейт выкл, гейт вкл, Play → Edit → Play); отдельный клиент, режим
+  Server localhost и его адрес ещё исследуются (B0b), рабочей клиентской команды нет. Схема журнала и доказательства:
+  [E-live-endpoint-bootstrap-codex.md](../../docs/evidence/E-live-endpoint-bootstrap-codex.md); разбор
+  `docs/evidence/receipts/live-endpoint-log-check-claude.py <log> off|on|restart`.
 
 ## Запуск самопроверки (Workbench, без мира)
 
