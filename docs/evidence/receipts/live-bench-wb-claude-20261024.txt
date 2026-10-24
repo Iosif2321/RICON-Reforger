@@ -452,3 +452,52 @@ OWN_PID_GONE
 [RICON_LIVEB] heartbeat n=11 frames=1393 phase=5 running=1 elapsed=10.7282
 [RICON_LIVEB] heartbeat=STOP reason=FINISH n=11 frames=1433
 [RICON_LIVE] seq=45 t=11018 side=probe kind=BENCH_DONE player=-1 device=-1 tr=-1 value=6 text=level=NATIVE_ROUNDTRIP,not=UI_MHz|RX_TX|AUDIBLE|REPLICATION|PER_PAIR
+
+--- ricon-a0b1-claude-20261024-114206
+# A0b-1 (11:42:06, ACK #4244; sources 94be69a: launcher 7daa97b0..., bench fd6efd73...; compile probe
+# ricon-a0b-validate-claude-20261024-114019 exit 0, validation successful, SCRIPT (E) = 0). Control run of the pair agreed in
+# agora #4228/#4233: SlotFlatSmall in memory (no Save), Hidden + -forceUpdate -noFocus -maxFPS 30, runner wb_bench.ps1
+# a932211c... -Observe -ReadDialog (no press), -riconBenchGameMode=SCR_BaseGameMode -riconBenchRadioManager=0. PID 30452.
+# Setup as designed: existing entities=9 gameModes=0 radioManagers=0 noInstance=0; bench and one SCR_BaseGameMode created by
+# class name, no manager. On init of the bare game mode the vanilla game-mode script logged SCRIPT (E) "SCR_BaseGameMode is
+# missing RplComponent!" and (W) "... missing SCR_RespawnSystemComponent!". After PLAY_REQUESTED isGameMode stayed 0 (watch
+# 0-2 s), then the log stopped (last line 11:42:16.755). At t=10 s the own PID showed a visible modal Workbench window titled
+# "World needs to be saved" (text not read; no "Script Authorization Required" window). Runner stop NOT_READY at 13 s on the
+# SCRIPT (E) line; own PID gone; nothing pressed; sources stable. No BENCH_START, so no radio or manager measurement.
+# Result: NOT_READY. The bare class-name SCR_BaseGameMode is not a working game mode here (missing RplComponent) and Play did
+# not start; the save prompt is a second blocker whose cause is not established. Per codex #4233 the A0b pair stops here:
+# A0b-2 is not started; next step is the prepared V1 (Plain world + RadioManagerEntity), which needs a new owner decision.
+c4238553621d454fd16909fe6579aac24806f15284f2401466a1ecde8c7655a9
+# runner output (selected lines)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent" -logLevel verbose -log-scr-checksum -logsDir ricon-a0b1-claude-20261024-114206 -forceUpdate -noFocus -maxFPS 30 -riconBenchGameMode=SCR_BaseGameMode -riconBenchRadioManager=0
+WINDOW Hidden gameModeWait=0
+PID 30452 started 11:42:06
+OBSERVE t=10 responding=True cpuSec=9.45 threads=47 logSize=869349 windows=8 visible=3
+  WINDOW V|Qt683QWindowIcon|World needs to be saved
+  WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent*
+  WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|Qt683QWindowIcon|Arma Reforger Workbench
+  WINDOW h|MSCTFIME UI|MSCTFIME UI
+  WINDOW h|IME|Default IME
+DIALOG title="Script Authorization Required" not found
+STOP reason=NOT_READY pid=30452 after=13 s exited=True
+scriptErrors=1
+LOGSHA C4238553621D454FD16909FE6579AAC24806F15284F2401466A1ECDE8C7655A9 size 869433
+SOURCES_STABLE
+OWN_PID_GONE
+# log lines (timestamps stripped)
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={761C249B3D026B6C}worlds/Editor/Slots/Slots/Flat/SlotFlatSmall/SlotFlatSmall.ent opened=1
+[RICON_LIVEB] placement boundsMin=<-100.033,-6.671,-100.033> boundsMax=<228.033,39.469,228.033> point=<64,1,64> onTerrain=1 terrainY=0 spanOk=1 inside=1
+[RICON_LIVEB] setup existing entities=9 gameModes=0 radioManagers=0 noInstance=0 gameModeParam=1:SCR_BaseGameMode radioManagerParam=1:0
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<64, 1, 64>,boundsMin=<-100.033, -6.671, -100.033>,boundsMax=<228.033, 39.469, 228.033>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+SCRIPT    (E): SCR_BaseGameMode is missing RplComponent!
+SCRIPT    (W): SCR_BaseGameMode is missing SCR_RespawnSystemComponent!
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] setup created gameMode=1 gameModeOk=1 radioManager=0 via=class radioManagerOk=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] watch t=1000ms isGameMode=0 fps=60.4951
+[RICON_LIVEB] watch t=2000ms isGameMode=0 fps=59.8218
