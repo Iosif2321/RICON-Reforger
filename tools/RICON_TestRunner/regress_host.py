@@ -69,6 +69,10 @@ run("material profile vectors", [str(O / "build_material_profile_vectors.py"), "
 run("p3.2b log self-check (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2b-log-check-claude.py"),
                                      "--self-check", str(V / "material_profile_v1.json"), "--slab-oracle", str(O)],
     "P3_2B_LOG_SELFCHECK_PASS")
+run("ground wave", [str(O / "ground_wave_oracle.py"), "--check", str(V / "ground_wave_v1.json")], "PASS")
+run("ground wave vectors", [str(O / "build_ground_wave_vectors.py"), "--check"], "PASS")
+run("live stream log self-check (claude)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "live-stream-log-check-claude.py"),
+                                           "--self-check"], "LIVE_STREAM_LOG_SELFCHECK_PASS")
 run("p3.2b log validator self-test (codex)", ["-I", str(repo / "docs" / "evidence" / "receipts" / "p3-2b-log-check-codex.py")],
     "validatorSelfTest")
 run("vegetation overcanopy vectors", [str(O / "build_vegetation_overcanopy_vectors.py"), "--check"], "PASS")

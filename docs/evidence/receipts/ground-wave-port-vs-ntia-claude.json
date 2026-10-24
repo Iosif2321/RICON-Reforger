@@ -1,0 +1,37 @@
+{
+ "summary": {
+  "corpus_ok_cases": 222,
+  "corpus_bad": 0,
+  "corpus_worst_abs_dev": 4.969891165274021e-10,
+  "cases": 16502,
+  "rc_counts": {
+   "0": 16399,
+   "32": 12,
+   "33": 11,
+   "34": 12,
+   "35": 11,
+   "36": 12,
+   "37": 12,
+   "38": 11,
+   "39": 11,
+   "40": 11
+  },
+  "worst_abs_dev": {
+   "A_btl": 1.037449237628607e-09,
+   "E": 1.1544187827894348e-09,
+   "P_rx": 1.1295071544736857e-09
+  },
+  "mismatches": 0,
+  "numeric_failures": 0,
+  "exe_non_finite": 0,
+  "examples": 95,
+  "examples_bad": 0,
+  "examples_worst_dev": 0.04750220676358374,
+  "t_exe_s": 0.3,
+  "t_port_s": 4.9
+ },
+ "corpus_bad": [],
+ "mismatch": [],
+ "failures": [],
+ "examples_bad": []
+}
