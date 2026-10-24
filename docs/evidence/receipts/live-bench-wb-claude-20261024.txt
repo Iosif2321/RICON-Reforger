@@ -124,3 +124,39 @@ Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
 
 --- ricon-wbreader-isgamemode2-claude-20261024-073144 (read-only window SCR_FPSDiagnosticPlugin.c:364-378, paraphrase in agora #4142; vanilla lines not stored)
 \ae88f1f0a1aa8480210bf7590b71569a6f8edb42d9f986005258f1983b69627
+
+--- ricon-bench5-claude-20261024-082158
+# 5 (08:21:58, ACK #4169): world {3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent (SCR_BaseGameMode,
+# GameMode_Plain.et), Hidden + -forceUpdate -noFocus -maxFPS 30, sources unchanged. First entry into game mode: the bench
+# component is re-created with editMode=0 and BENCH_START is emitted 0.38 s after PLAY_REQUESTED. The run was then cut by
+# a defect of the runner wb_bench.ps1: its loose readiness pattern 'entity=0' matched the engine line 'identity=0xFFFFFFFE'
+# (log line 7175), so the own PID was stopped at 14 s, ~2 s after BENCH_START. Verdict: INCOMPLETE (harness), not a radio
+# result; no BENCH_SPAWN/READ/SET/MUTE in the log. Runner fixed: markers anchored to [RICON_LIVEB] state=...; on this log
+# the new pattern gives 0 matches, on 6 synthetic readiness lines 6/6, on 4 benign lines 0/4.
+\466af310a00867a1f7ab4c20baddc203f1c3e2947f4017f47c4086e55c2e200e
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f19c0174
+Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 05fecf75
+Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 1392562e
+Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: f829c068
+Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
+engine (paraphrase, line 7175): WORLD (D) world controller node with identity 0xFFFFFFFE, playerId 0 (matched 'entity=0')
+log lines: 7193; last line time 08:22:07.620
+# The file ends at 08:22:07.620 although the process ran until ~08:22:12: lines after that were not flushed before the forced
+# stop, so events between 0.6 s after BENCH_START and the stop are unknown (the 1 s watch line is also missing).
