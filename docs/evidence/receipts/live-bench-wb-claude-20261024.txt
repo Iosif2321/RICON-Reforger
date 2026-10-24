@@ -245,3 +245,28 @@ a89d9fb36609d85085917012c195dfcaf87668d03770eedfec806b5bdae653c1
 [RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
 [RICON_LIVEB] heartbeat=START
 log lines: 7194; last line time 08:43:58.640
+
+--- ricon-bench8-claude-20261024-084948
+# 8 (08:49:48, ACK #4191): sources as in 6/7 (1ac37ad), same Plain world and flags, PID 27608; wb_bench.ps1 -Observe -ReadDialog.
+# Read-only UI Automation of the own PID's visible window titled exactly 'Script Authorization Required' (FromHandle,
+# FindAll Descendants, ControlType + Name only, <= 20 elements); no patterns invoked, no focus, no input. Stop DIALOG_READ at 12 s.
+# At t=10 s the same three visible windows as in 7. Dialog content (7 elements):
+#   Image; Text: Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially
+#   dangerous method 'BaseContainerTools.LoadContainer'?; Group; Buttons: Yes, Yes to All, No, No to All.
+# Fact: the modal prompt is raised by Workbench script security for a vanilla game-mode script (SCR_ArsenalManagerComponent is
+# component 2 of GameMode_Plain.et, see live-worldlist receipt), not by RICON code. Nothing was answered. Whether this prompt
+# alone explains the stall in 5-7 is not proven: it is the only foreign modal window seen at every sample of 7 and in 8.
+6c9e33487b09d7fad1ab493efda296d1bfed934d7d2ea16752983f8f5dbd2ff0
+[RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+[RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+[RICON_LIVEB] placement boundsMin=<14.399,0,6.482> boundsMax=<214.399,21,206.482> point=<114.399,2,106.482> onTerrain=1 terrainY=1 spanOk=1 inside=1
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=1,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=1,active=1 isServer=1
+[RICON_LIVEB] state=BENCH_CREATED entity=1 component=1 saved=0
+[RICON_LIVEB] state=PLAY_REQUESTED isGameModeNow=0
+[RICON_LIVEB] watch t=0ms isGameMode=0 fps=1000
+[RICON_LIVEB] lifecycle=OnPostInit world=1,editMode=0,active=0 origin=<114.399, 2, 106.482>,boundsMin=<14.399, 0, 6.482>,boundsMax=<214.399, 21, 206.482>,inside=1
+[RICON_LIVEB] lifecycle=EOnInit world=1,editMode=0,active=1 isServer=1
+[RICON_LIVE] seq=0 t=0 side=probe kind=BENCH_START player=-1 device=-1 tr=-1 value=-1 text=level=NATIVE_ROUNDTRIP,prefabs=4,isServer=1,isClient=0,from=EOnInit,activeBefore=1
+[RICON_LIVEB] heartbeat=START
+log lines: 7194; last line time 08:49:57.325
