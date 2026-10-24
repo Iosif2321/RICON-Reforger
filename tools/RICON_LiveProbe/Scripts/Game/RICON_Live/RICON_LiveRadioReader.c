@@ -13,6 +13,7 @@ class RICON_LiveRadioSeen
 	Managed m_Key;        //!< слабая ссылка на сущность рации; обнуляется при удалении сущности
 	int m_iTransceiver;
 	int m_iObservation;
+	int m_iPlayerId;      //!< последний наблюдавшийся игрок; сохраняется для RADIO_GONE
 	string m_sLast;       //!< "частота|состояние" последней записи
 	bool m_bSeen;         //!< встречена в текущем опросе
 }
@@ -75,7 +76,7 @@ class RICON_LiveRadioReader
 		return null;
 	}
 
-	//! Пишет RADIO_STATE при первом появлении пары или изменении частоты/состояния; иначе −1.
+	//! Пишет RADIO_STATE при первом появлении пары или изменении игрока/частоты/состояния; иначе −1.
 	int Observe(int playerId, Managed key, int slot, int transceiver, int rawFrequency, string state)
 	{
 		if (!key)
@@ -91,12 +92,13 @@ class RICON_LiveRadioReader
 			m_iNextObservation++;
 			m_aSeen.Insert(seen);
 		}
-		else if (seen.m_sLast == current)
+		else if (seen.m_iPlayerId == playerId && seen.m_sLast == current)
 		{
 			seen.m_bSeen = true;
 			return -1;
 		}
 		seen.m_bSeen = true;
+		seen.m_iPlayerId = playerId;
 		seen.m_sLast = current;
 		m_iRecorded++;
 		string text = "binding=LOCAL_ONLY,obs=" + seen.m_iObservation.ToString();
@@ -105,8 +107,8 @@ class RICON_LiveRadioReader
 		return m_Journal.Add(RICON_LiveObserver.Now(), m_sSide, "RADIO_STATE", playerId, -1, transceiver, rawFrequency, text);
 	}
 
-	//! Конец опроса: невстреченные пары и пары с удалённой сущностью пишутся как RADIO_GONE и забываются.
-	int EndPoll(int playerId)
+	//! Исчезнувшие пары закрываются с последним наблюдавшимся игроком, даже когда контроллер уже отсутствует.
+	int EndPoll()
 	{
 		int gone = 0;
 		for (int i = m_aSeen.Count() - 1; i >= 0; i--)
@@ -115,7 +117,7 @@ class RICON_LiveRadioReader
 			if (seen.m_bSeen && seen.m_Key)
 				continue;
 			string text = "binding=LOCAL_ONLY,obs=" + seen.m_iObservation.ToString();
-			m_Journal.Add(RICON_LiveObserver.Now(), m_sSide, "RADIO_GONE", playerId, -1, seen.m_iTransceiver, -1, text);
+			m_Journal.Add(RICON_LiveObserver.Now(), m_sSide, "RADIO_GONE", seen.m_iPlayerId, -1, seen.m_iTransceiver, -1, text);
 			m_aSeen.RemoveOrdered(i);
 			gone++;
 		}
@@ -139,7 +141,7 @@ class RICON_LiveRadioReader
 				read = read + ReadType(playerId, manager, EGadgetType.RADIO_BACKPACK, slot);
 			}
 		}
-		EndPoll(playerId);
+		EndPoll();
 		return read;
 	}
 
