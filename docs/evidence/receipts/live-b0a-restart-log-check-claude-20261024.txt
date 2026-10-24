@@ -1,0 +1,53 @@
+{
+ "logSha256": "8eb19eb768e58a8f0a84db496725e376228e901f3ceb8fba218cf013f00f4612",
+ "mode": "restart",
+ "errors": [
+  "1 cycles, expected 2"
+ ],
+ "overall": "LOG_INVALID",
+ "liveLines": 18,
+ "endpointOnly": true,
+ "cycles": [
+  {
+   "cycle": 1,
+   "samples": 3,
+   "end": "ENDPOINT_ABORTED",
+   "reason": "GAME_END",
+   "role": {
+    "isServer": "1",
+    "isClient": "0",
+    "rplMode": "0"
+   },
+   "bindingRevisions": 1,
+   "playerIds": [
+    1
+   ],
+   "members": [
+    "1"
+   ],
+   "firstLocalPlayerSample": 1,
+   "firstControlledSample": 1,
+   "radios": {
+    "0": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 0,
+     "raw": [
+      32000
+     ]
+    },
+    "1": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 1,
+     "raw": [
+      48000
+     ]
+    }
+   },
+   "rplModesInSamples": [
+    "0"
+   ],
+   "localRole": "LOCAL_ROLE_NOT_READY"
+  }
+ ]
+}
+LIVE_ENDPOINT_LOG_CHECK_FAIL

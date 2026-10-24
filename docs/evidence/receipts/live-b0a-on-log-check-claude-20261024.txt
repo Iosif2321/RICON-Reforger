@@ -1,0 +1,51 @@
+{
+ "logSha256": "3405ae560f096c6ee412a4a4029552ed59a17da7953f3b526ddb9ae907764007",
+ "mode": "on",
+ "errors": [],
+ "overall": "ENDPOINT_CYCLE_COMPLETE",
+ "liveLines": 72,
+ "endpointOnly": true,
+ "cycles": [
+  {
+   "cycle": 1,
+   "samples": 30,
+   "end": "ENDPOINT_DONE",
+   "reason": "LIMIT",
+   "role": {
+    "isServer": "1",
+    "isClient": "0",
+    "rplMode": "0"
+   },
+   "bindingRevisions": 1,
+   "playerIds": [
+    1
+   ],
+   "members": [
+    "1"
+   ],
+   "firstLocalPlayerSample": 1,
+   "firstControlledSample": 1,
+   "radios": {
+    "0": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 0,
+     "raw": [
+      32000
+     ]
+    },
+    "1": {
+     "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+     "tr": 1,
+     "raw": [
+      48000
+     ]
+    }
+   },
+   "rplModesInSamples": [
+    "0"
+   ],
+   "localRole": "LOCAL_ROLE_READY"
+  }
+ ]
+}
+LIVE_ENDPOINT_LOG_CHECK_PASS
