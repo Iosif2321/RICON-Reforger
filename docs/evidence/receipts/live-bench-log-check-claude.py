@@ -18,45 +18,44 @@ A1-E (setter entry): per radio one BENCH_ENTRY (own vanilla SCR_VONEntryRadio of
 the step and of the tr0 reads (entryFreq, usable, emuted, dtext = %XX-escaped GetDisplayText), and the entry mute path.
 Q-F at level MENU_ENTRY_RUNTIME: the number of the decoded menu text x 1000 must equal the raw getter value at every
 point whose raw is a multiple of 100 (TEXT_MATCH); other raw values are TEXT_ROUNDED without a verdict (codex #4315).
+The five text points init/step/t0/t1/t5 are mandatory and decoded with the strict shared codec live_text_codec_claude.py
+(codex #4338, #4339). Any log error turns an overall *_PASS into LOG_INVALID.
 Usage: python -I live-bench-log-check-claude.py <console.log> <radio_model_catalog_v1.json> [expectManager 0|1|-]
        [expectSetter component|transceiver|entry]"""
 import hashlib
+import importlib.util
 import json
+import pathlib
 import re
 import sys
 
 LINE = re.compile(r"\[RICON_LIVE\] seq=(\d+) t=(-?\d+) side=(\w+) kind=(\w+) player=(-?\d+) device=(-?\d+) "
                   r"tr=(-?\d+) value=(-?\d+) text=(\S+)$")
 
+# Strict %XX codec shared with live-text-log-check-claude.py (codex #4339), loaded by explicit path for python -I.
+_spec = importlib.util.spec_from_file_location(
+    "live_text_codec_claude", pathlib.Path(__file__).resolve().parent / "live_text_codec_claude.py")
+codec = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(codec)
 
 SETTERS = ("component", "transceiver", "entry")
 MENU_TEXT = re.compile(r"^(-?\d+(?:\.\d+)?) #AR-VON_FrequencyUnits_MHz$")
 
 
-def unescape(text):
-    """Inverse of RICON_LiveText.Escape: %XX -> byte, %uXXXX -> UTF-8 of the code point."""
-    out, i = bytearray(), 0
-    while i < len(text):
-        if text[i] == "%":
-            if text[i + 1:i + 2] == "u":
-                out += chr(int(text[i + 2:i + 6], 16)).encode("utf-8")
-                i += 6
-            else:
-                out.append(int(text[i + 1:i + 3], 16))
-                i += 3
-        else:
-            out.append(ord(text[i]))
-            i += 1
-    return out.decode("utf-8", errors="replace")
-
-
 def menu_point(f, raw):
-    """Q-F point of one record: decoded menu text, its number and the comparison with the raw getter value."""
-    if "dtext" not in f:
-        return None
-    text = unescape(f["dtext"])
+    """Q-F point of one record: decoded menu text, its number and the comparison with the raw getter value.
+    A missing text or entryFreq is TEXT_MISSING, a malformed %XX form TEXT_UNDECODABLE (codex #4338, #4339): both are
+    log errors at the caller and never part of a PASS."""
+    if "dtext" not in f or not re.fullmatch(r"-?\d+", f.get("entryFreq", "")):
+        return {"raw": raw, "status": "TEXT_MISSING"}
+    point = {"raw": raw, "entryFreq": int(f["entryFreq"])}
+    try:
+        text = codec.unescape(f["dtext"])
+    except ValueError as exc:
+        point.update(status="TEXT_UNDECODABLE", error=str(exc))
+        return point
+    point["text"] = text
     m = MENU_TEXT.match(text)
-    point = {"raw": raw, "text": text, "entryFreq": int(f.get("entryFreq", "-1"))}
     if not m:
         point["status"] = "TEXT_UNPARSED"
     elif raw % 100 != 0:
@@ -254,7 +253,12 @@ def main(argv):
         entry_ok = True
         entry_state_ok = True
         if entry_mode:
-            # A1-E: one BENCH_ENTRY before the step; InitEntry's AdjustEntryModif(0) must not move the frequency
+            # A1-E (codex #4338): every printed entry field is checked. The five text points init/step/t0/t1/t5 are
+            # mandatory; a missing or undecodable one is a log error and never part of a PASS. A record that
+            # contradicts itself (BENCH_ENTRY value != its entryFreq) is a log error; a disagreement between the
+            # entry and the transceiver (InitEntry moved the frequency, entry not usable, GetIsMuted != IsMuted, local
+            # frequency != step target) is an observation: OBSERVED_MISMATCH.
+            stepped = bool(step) and step[0]["kind"] == "BENCH_SET_FREQUENCY"
             if len(entries) != 1:
                 errors.append(f"device {device}: entry records {len(entries)}")
                 entry_ok = False
@@ -262,33 +266,37 @@ def main(argv):
                 ef = entries[0]["f"]
                 row["entry"] = entries[0]["text"]
                 if entries[0]["value"] < 0 or "reason" in ef:
-                    entry_ok = False
-                elif ef.get("usable") != "1" or ef.get("rawBefore") != ef.get("raw") or ef.get("entryFreq") != ef.get("raw"):
-                    errors.append(f"device {device}: entry init {entries[0]['text']}")
-                    entry_ok = False
+                    entry_ok = False  # the bench could not build its entry: no measurement
                 else:
-                    text_points.append(("init", menu_point(ef, int(ef["raw"]))))
+                    numbers = [ef.get(k, "") for k in ("rawBefore", "raw")]
+                    point = menu_point(ef, int(ef["raw"]) if re.fullmatch(r"-?\d+", ef.get("raw", "")) else -1)
+                    if not all(re.fullmatch(r"-?\d+", n) for n in numbers) or ef.get("usable") not in ("0", "1") \
+                            or ef.get("emuted") not in ("0", "1") or ef.get("entryFreq") != str(entries[0]["value"]):
+                        errors.append(f"device {device}: entry init record {entries[0]['text']}")
+                    elif ef.get("usable") != "1" or ef["rawBefore"] != ef["raw"] or ef["entryFreq"] != ef["raw"]:
+                        entry_state_ok = False
+                    text_points.append(("init", point))
                 if step and events.index(entries[0]) > events.index(step[0]):
                     errors.append(f"device {device}: BENCH_ENTRY after the step")
-            if step and step[0]["kind"] == "BENCH_SET_FREQUENCY":
+            if stepped:
                 sf = step[0]["f"]
-                if sf.get("modifier") not in ("1", "-1") or "dtext" not in sf or "entryFreq" not in sf:
-                    errors.append(f"device {device}: entry step fields {step[0]['text']}")
-                elif int(sf["entryFreq"]) != step[0]["value"]:
-                    errors.append(f"device {device}: entry frequency after the step {sf['entryFreq']} != target")
+                if sf.get("modifier") not in ("1", "-1"):
+                    errors.append(f"device {device}: entry step modifier {sf.get('modifier')}")
+                point = menu_point(sf, step[0]["value"])
+                if "entryFreq" in point and (point["entryFreq"] != step[0]["value"] or sf.get("usable") != "1"):
+                    entry_state_ok = False
+                text_points.append(("step", point))
             for p in ("t0", "t1", "t5"):
                 if p in reads:
-                    point = menu_point(reads[p]["f"], reads[p]["value"])
-                    if point is None:
-                        errors.append(f"device {device}: read {p} without entry fields")
-                    else:
-                        # entry state agrees with the transceiver: usable, GetIsMuted == IsMuted, local frequency
-                        # == the step target (observations: a disagreement is OBSERVED_MISMATCH, not a log error)
-                        rf = reads[p]["f"]
-                        if rf.get("usable") != "1" or rf.get("emuted") != rf.get("muted") \
-                                or step and step[0]["kind"] == "BENCH_SET_FREQUENCY" and point["entryFreq"] != step[0]["value"]:
-                            entry_state_ok = False
+                    rf = reads[p]["f"]
+                    point = menu_point(rf, reads[p]["value"])
+                    if "entryFreq" in point and (rf.get("usable") != "1" or rf.get("emuted") != rf.get("muted")
+                                                 or stepped and point["entryFreq"] != step[0]["value"]):
+                        entry_state_ok = False
                     text_points.append((p, point))
+            for p, q in text_points:
+                if q["status"] in ("TEXT_MISSING", "TEXT_UNDECODABLE"):
+                    errors.append(f"device {device}: {p} {q['status']} {q.get('error', '')}".rstrip())
             row["menuText"] = {p: q for p, q in text_points}
             row["entryStateOk"] = entry_state_ok
         if len(step) != 1:
@@ -324,7 +332,11 @@ def main(argv):
         # toggle and restore both took effect; SKIP or failed spawn → INCOMPLETE; any mismatch → OBSERVED_MISMATCH.
         frequency_ok = row.get("step") == "BENCH_SET_FREQUENCY" and row.get("raw_t5") == row.get("target")
         m = fields(mute[0]["text"]) if mute else {}
-        mute_ok = bool(m) and m.get("after") == m.get("requested") and m.get("after2") == m.get("restoreTo")
+        # codex #4343: a real toggle and restore — requested is the opposite of before and restoreTo is before, not
+        # merely two recorded fields that agree with each other
+        mute_ok = bool(m) and m.get("before") in ("0", "1") and m.get("requested") == str(1 - int(m["before"])) \
+            and m.get("restoreTo") == m.get("before") \
+            and m.get("after") == m.get("requested") and m.get("after2") == m.get("restoreTo")
         if entry_mode and m:
             # entry path: ToggleMuteEntry and the direct SetMuteState act on one state that entry.GetIsMuted reads
             if m.get("path") != "entry":
@@ -370,6 +382,9 @@ def main(argv):
         overall = "OBSERVED_MISMATCH"
     else:
         overall = "INCOMPLETE"
+    # codex #4338: a log with any error is never reported as a PASS, whatever the per-radio values say
+    if errors and overall.endswith("_PASS"):
+        overall = "LOG_INVALID"
     print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "errors": errors, "notes": notes,
                       "overall": overall, "level": level, "observed": observed, "radioManager": manager,
                       "setter": setter, "radios": summary}, ensure_ascii=False, indent=1))

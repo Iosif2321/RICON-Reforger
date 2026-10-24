@@ -60,3 +60,95 @@ PASS v2_as_is: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
 ENTRY_PARSER_CONTROLS 24/24
 A0B_PARSER_CONTROLS 17/17
 V2_PARSER_CONTROLS 20/20
+#
+# Revision after codex #4338/#4339/#4343 (6 false PASS on parser 706f8703, lax decoder, mute invariants):
+# - one strict codec live_text_codec_claude.py (both parsers load it by explicit path); native %uXXXX removed, a code
+#   outside 0..255 gives the refusal marker %ZZ (rejected by the codec) and counts in wide; new native case U+1F600;
+# - the five menu-text points init/step/t0/t1/t5 are mandatory (TEXT_MISSING/TEXT_UNDECODABLE are log errors); a
+#   self-contradicting record (BENCH_ENTRY value != entryFreq) is a log error; entry vs transceiver disagreement is
+#   OBSERVED_MISMATCH; mute requires requested = not before and restoreTo = before; any log error turns *_PASS into
+#   LOG_INVALID.
+# Compile + text-2: START #4341, ACK codex #4342. PID 37368, exit 0, SCRIPT (E) 0, 15 LiveProbe files stable, processes 0;
+# CRC bench 1493fae8 (unchanged), LiveText d3500602, probe 51c76174. Sources: LiveText 6e373594..., probe d1955a43...
+94ea46dfebd860f0bf8b5fbdf697ee008eff781289c3c0f023566c6160d9dc3a   ricon-livetext-claude-20261024-183233
+[RICON_LIVET] case=emoji_4byte length=4 wide=0 escaped=%F0%9F%98%80
+[RICON_LIVET] checks=15 passed=15
+[RICON_LIVET] done: PASS
+ "codecSelfTest": "16/16",
+LIVE_TEXT_LOG_CHECK_PASS
+# host: parser 8db049b4..., codec cf68ef86..., entry controls 0337acf2...
+PASS entry_ok: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+PASS text_mismatch_t5: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS text_unparsed: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS step_wrong_text: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS text_rounded_init: rc=0 overall=INCOMPLETE errors=[]
+PASS entry_no_gadget: rc=0 overall=INCOMPLETE errors=[]
+PASS entry_init_moved: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS init_unusable: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS step_entryfreq_wrong: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS read_wrong_entryfreq_t5: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS read_entryfreq_stale: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS read_unusable_t5: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS read_mute_diverges_t5: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS read_emuted_diverges_t1: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_entry_diverges: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_toggle_failed: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_toggle_return_wrong: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_requested_equals_before: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS mute_restore_to_wrong: rc=0 overall=OBSERVED_MISMATCH errors=[]
+PASS init_missing_text: rc=1 overall=INCOMPLETE errors=['device 0: init TEXT_MISSING']
+PASS init_value_conflict: rc=1 overall=LOG_INVALID errors=['device 0: entry init record bench=0,phase=init,rawBefore=32000,raw=32000,entryFreq=32000,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz']
+PASS init_bad_escape: rc=1 overall=INCOMPLETE errors=["device 1: init TEXT_UNDECODABLE bad escape '%2#' at 4"]
+PASS step_without_dtext: rc=1 overall=INCOMPLETE errors=['device 0: step TEXT_MISSING']
+PASS step_lowercase_escape: rc=1 overall=INCOMPLETE errors=["device 1: step TEXT_UNDECODABLE bad escape '%2a' at 4"]
+PASS step_refusal_marker: rc=1 overall=INCOMPLETE errors=["device 2: step TEXT_UNDECODABLE bad escape '%ZZ' at 4"]
+PASS read_without_entry: rc=1 overall=INCOMPLETE errors=['device 2: t1 TEXT_MISSING']
+PASS read_invalid_utf8: rc=1 overall=INCOMPLETE errors=["device 3: t5 TEXT_UNDECODABLE 'utf-8' codec can't decode byte 0xff in position 4: invalid start byte"]
+PASS entry_missing: rc=1 overall=INCOMPLETE errors=['device 2: entry records 0']
+PASS entry_after_step: rc=1 overall=LOG_INVALID errors=['device 0: BENCH_ENTRY after the step']
+PASS mute_path_missing: rc=1 overall=OBSERVED_MISMATCH errors=['device 0: mute path None != entry']
+PASS done_level_wrong: rc=1 overall=LOG_INVALID errors=['BENCH_DONE level=NATIVE_ROUNDTRIP != MENU_ENTRY_RUNTIME']
+PASS expect_transceiver: rc=1 overall=LOG_INVALID errors=['BENCH_START setter=entry setterGiven=1 != given transceiver']
+PASS no_expectation: rc=1 overall=LOG_INVALID errors=['log was run with setter=entry: pass the expectation explicitly']
+PASS v2_expect_entry: rc=1 overall=LOG_INVALID errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+PASS entry_in_transceiver_mode: rc=1 overall=LOG_INVALID errors=['BENCH_ENTRY without setter=entry']
+PASS v2_as_is: rc=0 overall=NATIVE_ROUNDTRIP_PASS errors=[]
+ENTRY_PARSER_CONTROLS 36/36
+A0B_PARSER_CONTROLS 17/17
+V2_PARSER_CONTROLS 20/20
+# real V2 log, expectations 1 transceiver:
+ "overall": "NATIVE_ROUNDTRIP_PASS",
+LIVE_BENCH_LOG_CHECK_PASS
+# codex corruption logs %TEMP%/ricon-entry-review-codex-20261024 (expectations 1 entry):
+done_level_wrong.log: rc=1 overall=LOG_INVALID errors=['BENCH_DONE level=NATIVE_ROUNDTRIP != MENU_ENTRY_RUNTIME']
+entry_after_step.log: rc=1 overall=LOG_INVALID errors=['device 0: BENCH_ENTRY after the step']
+entry_in_transceiver_mode.log: rc=1 overall=LOG_INVALID errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+entry_init_moved.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+entry_missing.log: rc=1 overall=INCOMPLETE errors=['device 2: entry records 0']
+entry_no_gadget.log: rc=0 overall=INCOMPLETE errors=[]
+entry_ok.log: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+expect_transceiver.log: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+init_missing_text.log: rc=1 overall=INCOMPLETE errors=['device 0: init TEXT_MISSING']
+init_value_conflict.log: rc=1 overall=LOG_INVALID errors=['device 0: entry init record bench=0,phase=init,rawBefore=32000,raw=32000,entryFreq=32000,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz']
+mute_entry_diverges.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+mute_noop.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+mute_noop_ret_consistent.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+mute_path_missing.log: rc=1 overall=OBSERVED_MISMATCH errors=['device 0: mute path None != entry']
+mute_toggle_failed.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+mute_wrong_restore.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+mute_wrong_restore_ret_consistent.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+no_expectation.log: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+positive.log: rc=0 overall=MENU_ENTRY_RUNTIME_PASS errors=[]
+read_mute_diverges.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+read_unusable.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+read_without_entry.log: rc=1 overall=INCOMPLETE errors=['device 2: t1 TEXT_MISSING']
+read_wrong_entryfreq.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+step_entryfreq_wrong.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+step_without_dtext.log: rc=1 overall=INCOMPLETE errors=['device 0: step TEXT_MISSING']
+step_wrong_text.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+text_mismatch_t5.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+text_rounded_init.log: rc=1 overall=INCOMPLETE errors=['device 0: entry init record bench=0,phase=init,rawBefore=32050,raw=32050,entryFreq=32050,usable=1,emuted=0,dtext=32.0%20#AR-VON_FrequencyUnits_MHz']
+text_unparsed.log: rc=0 overall=OBSERVED_MISMATCH errors=[]
+v2_as_is.log: rc=1 overall=LOG_INVALID errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+v2_expect_entry.log: rc=1 overall=LOG_INVALID errors=['BENCH_START setter=transceiver setterGiven=1 != given entry']
+# Note: expect_transceiver/no_expectation/positive/entry_ok in that folder are valid entry logs whose control lies in the parser arguments; with '1 entry' they are correctly MENU_ENTRY_RUNTIME_PASS.
