@@ -95,7 +95,7 @@ $wbPid = [uint32]$proc.Id
 "PID $wbPid started $($started.ToString('HH:mm:ss'))"
 $watchdog = StartWatchdog $proc (($Seconds + 30) * 1000)
 "WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
-$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""; $script:mainFound = $false
+$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""; $script:mainFound = $false; $nextList = 5
 # "" when the UI may be read now, else the stop reason: prompt, unknown window, exited process or deadline
 function Blocked {
 	$proc.Refresh()
@@ -116,6 +116,14 @@ try {
 			if ($parts[0] -eq "V" -and ($parts[2] -ceq "World Editor" -or $parts[2].StartsWith("World Editor - ", [StringComparison]::Ordinal))) { $mainTitle = $parts[2] }
 		}
 		if ($mainTitle) { $main = [RiconWin]::FindByTitle($wbPid, $mainTitle); $script:mainFound = $true; break }
+		# every 10 s while waiting: the own visible windows (class|title, title cut at 80), so a refusal shows what was there
+		$tw = [int]((Get-Date) - $started).TotalSeconds
+		if ($tw -ge $nextList) {
+			$vis = @([RiconWin]::List($wbPid) | Where-Object { $_.StartsWith("V|") })
+			"OWN_WINDOWS t=$tw visible=$($vis.Count)"
+			$vis | Select-Object -First 8 | ForEach-Object { "  WINDOW $(Short $_)" }
+			$nextList += 10
+		}
 		Start-Sleep -Seconds 1
 	}
 	if ($main -ne [IntPtr]::Zero) {
