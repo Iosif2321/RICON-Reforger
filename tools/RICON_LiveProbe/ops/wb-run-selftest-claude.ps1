@@ -602,6 +602,14 @@ Case "async cleanup done" (CleanupAsyncInvoke $jobA 1000) "DONE COMPLETED"
 Case "async cleanup none" (CleanupAsyncInvoke $null 1000) "NONE"
 # the plugin start (codex #4850): a missing item invokes nothing and lists what was there; the exact item goes through
 # the same worker, and the menu ends Collapsed without being touched again
+# As in the runner (FlipTarget closed the menus before the Invoke), Game must be closed first. A full run on 019aa1a once
+# read no Plugins items at all (NO_ITEM, empty names); in the two repeat runs Game was already Collapsed here and all
+# passed, so the cause is open and this check only rules out an open Game menu.
+$gm = FindTopMenu $ah "Game"
+$gs = try { [string]$gm.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch { "UNREAD" }
+"INFO game menu before plugins: $gs"
+if (-not (ClosedOk $gs)) { try { $gm.GetCurrentPattern($ECP::Pattern).Collapse() } catch {}; Start-Sleep -Milliseconds 400 }
+Case "game closed before plugins" (ClosedOk (FindTopMenu $ah "Game").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
 $prepP = PrepareMenuCommand $ah "Plugins" "RICON: Missing"
 Case "plugins missing item refused" $prepP.result "NO_ITEM"
 Case "plugins missing item lists names" (@($prepP.names) -join ",") "RICON: Play,RICON: Other"
