@@ -55,7 +55,7 @@ $mRegistered = '\[RICON_WBMODE\] registered=1'
 $mOpenOnly = '\[RICON_LIVEB\] state=OPEN_ONLY saved=0 isGameMode=0'
 $mWaitFlag = '\[RICON_LIVEB\] inspect=WAIT_FLAG'
 $mEditStable = '\[RICON_LIVEB\] inspect=EDIT_STABLE'
-$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED|PLAY_REQUESTED|BENCH_CREATED|ENDPOINT_ONLY)|inspect=REFUSED|restart=)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)'
+$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED|PLAY_REQUESTED|BENCH_CREATED|ENDPOINT_ONLY)|inspect=REFUSED|restart=)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added'
 $earlyPlay = 'kind=ENDPOINT_START|\[RICON_WBMODE\] event=|\[RICON_LIVEB\] inspect=(PLAY_ENTERED|FLAG_SEEN|FLAG_PLAY_REQUESTED)'
 $flagPath = "$repo\tools\RICON_LiveProbe\ops\RICON_B0b_start.flag"
 
@@ -105,7 +105,9 @@ $script:mainFound = $false; $script:played = $false; $script:switchedOn = $false
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
-$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
+# the gproj dependencies resolve through "./addons", so Workbench must start in the repository root (run 171812 started
+# in ops\, lost RICON_Core/RICON_CoreTests and with them the launcher)
+$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden -WorkingDirectory $repo
 $wbPid = [uint32]$wbProc.Id
 
 # One observation step; "" or the stop reason. Before Play nothing may start and no prompt may show.

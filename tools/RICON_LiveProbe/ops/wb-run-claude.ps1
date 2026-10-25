@@ -41,7 +41,7 @@ $regKey = "HKCU\Software\Bohemia Interactive"
 $profileDir = "$myGames\ArmaReforgerWorkbench\profile"
 $secondMarker = '\[RICON_LIVEB\] restart=SECOND_PLAY_REQUESTED'
 # launcher refusals, the B0b mode-observer check (codex #4626) and script errors end the run at once
-$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)'
+$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added'
 
 # --- argument checks ---
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
@@ -97,7 +97,8 @@ $tracked = @{}      # pid -> @{ name; ppid; created; descendant; held = Process 
 $netSeen = @{}      # key -> first t
 $reason = "TIMEOUT"; $armed = $false; $stopSeenAt = $null; $newCount = 0
 $started = Get-Date
-$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
+# the gproj dependencies resolve through "./addons": start Workbench in the repository root, whatever the caller's cwd
+$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden -WorkingDirectory $repo
 $wbPid = [uint32]$wbProc.Id
 # everything after a successful Start-Process: any runner error ends with RUNNER_ERROR and the finally block still runs
 try {

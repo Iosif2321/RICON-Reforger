@@ -73,7 +73,8 @@ $setBefore = SettingsSnap "before"
 "SETTINGS_BEFORE regLines=$($setBefore.reg.Count) profileFiles=$($setBefore.prof.Count)"
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
-$proc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
+# the gproj dependencies resolve through "./addons": start Workbench in the repository root, whatever the caller's cwd
+$proc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden -WorkingDirectory $repo
 $null = $proc.Handle
 $wbPid = [uint32]$proc.Id
 "PID $wbPid started $($started.ToString('HH:mm:ss'))"

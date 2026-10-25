@@ -734,3 +734,44 @@ SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="Arm
   PLAYMODE_TERMS_IN_DIFF=0
 SOURCES_STABLE
 RAW <scratchpad>\ricon-b0b-authread-claude-20261025-154527-raw.jsonl (local only)
+
+# ======================================================================================================================
+# A2 with -LauncherYes after the owner's answer (a) to agora #4815: START #4831 / ACK #4834 / END #4836.
+# Runner 66e412a (wb-serverplay B95B1D00 / lib 6892C25F). Not a test of the Yes guard: the run never reached a prompt.
+# Observed: the operator's shell had its working directory in tools\RICON_LiveProbe\ops; Start-Process passed it on, and
+#   Workbench logged that directory as its current one. The addon dir "./addons" then pointed at ops\addons, so the gproj
+#   dependency RICON_Core (7C060DB9E8B90AC7) was missing: "ENGINE (E): Addon 'RICON_LiveProbe' dependency
+#   '7C060DB9E8B90AC7' can't be added". script.log lists no RICON script at all; the launcher never printed a line, the
+#   world never opened (MAIN_WINDOW stayed "Unnamed empty world"), and the run waited for REGISTERED until DEADLINE.
+#   The fail pattern matched only SCRIPT (E), so this ENGINE (E) line did not stop it. Nothing was pressed or toggled,
+#   no flag was created; registry B0146B67389ADF02 before and after, diff 0, profile diff 0.
+# Fix (next commit): the three runners start Workbench with -WorkingDirectory set to the repository root, and the
+#   serverplay and wb-run fail patterns stop on "(E): Addon ... dependency ... can't be added". Checked on the logs: the
+#   pattern matches 171812 and one older validate run among 527 log dirs, and none of 125954/131244/154043/154527.
+
+--- ricon-b0b-serverplay-claude-20261025-171812
+# A2 -LauncherYes (wb-serverplay B95B1D00 / lib 6892C25F): STOP DEADLINE phase=OPEN result=NOT_REACHED t=241 yesPresses=0; console.log sha256 da6089846bd11eb4c004429aea2b162e03d349ec0d47ff6f4ec23f54705646ef
+# stdout serverplay-a2-yes.txt sha256 9dc0bbee8de2ad48f21aaaffac869dc4530d5842e8337fb1bff3cada415e3859 (23 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-serverplay-claude-20261025-171812 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -riconBenchStartFlag=1 -log-scr-checksum
+RUNNER B95B1D00F29277CD LIB 6892C25F9283BFE3
+LIMITS seconds=240 watchdogSeconds=270 settle=15 maxChildren=3 readAuthOnly=False launcherYes=True
+FLAG path=tools/RICON_LiveProbe/ops/RICON_B0b_start.flag absent=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2225"
+PID 23352 started 17:18:13
+WATCHDOG pid=19956 limitMs=270000
+MAIN_WINDOW t=9 title="World Editor - Unnamed empty world"
+STOP reason=DEADLINE phase=OPEN result=NOT_REACHED t=241 yesPresses=0
+TEARDOWN pid=23352 action=KILL_ROOT
+PROC_END pid=23352 name=root alive=False
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0b-serverplay-claude-20261025-171812/console.log
+scriptErrors=0
+LOGSHA DA6089846BD11EB4C004429AEA2B162E03D349EC0D47FF6F4EC23F54705646EF size 851513
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2229"
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-171812-raw.jsonl (local only)
