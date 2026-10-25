@@ -43,6 +43,14 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] state=NO_API");
 			return;
 		}
+		string benchMode;
+		System.GetCLIParam("riconBenchMode", benchMode);
+		if (benchMode == "inspect")
+		{
+			// B0b: доступ к меню открытого edit-мира, без создания стенда и без перехода в Play.
+			PrintFormat("[RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=%1", api.IsGameMode());
+			return;
+		}
 		if (RICON_LiveEndpointProbe.IsRequested())
 		{
 			WorkbenchPlugin modeObserver = editor.GetPlugin(RICON_LivePlayModeObserverPlugin);
@@ -56,8 +64,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		bool wantGameMode, wantManager;
 		if (!ReadSetup(api, wantGameMode, wantManager))
 			return;
-		string benchMode;
-		bool endpointOnly = System.GetCLIParam("riconBenchMode", benchMode) && benchMode == "endpoint";
+		bool endpointOnly = benchMode == "endpoint";
 		string restartValue;
 		bool restartEndpoint = System.GetCLIParam("riconEndpointRestart", restartValue) && restartValue == "1";
 		if (restartEndpoint && (!endpointOnly || !RICON_LiveEndpointProbe.IsRequested()))
