@@ -45,18 +45,23 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		string benchMode;
 		System.GetCLIParam("riconBenchMode", benchMode);
-		if (benchMode == "inspect")
-		{
-			// B0b: доступ к меню открытого edit-мира, без создания стенда и без перехода в Play.
-			PrintFormat("[RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=%1", api.IsGameMode());
-			return;
-		}
 		if (RICON_LiveEndpointProbe.IsRequested())
 		{
 			WorkbenchPlugin modeObserver = editor.GetPlugin(RICON_LivePlayModeObserverPlugin);
 			PrintFormat("[RICON_WBMODE] registered=%1", modeObserver != null);
 			if (!modeObserver)
 				return;
+		}
+		if (benchMode == "inspect")
+		{
+			// B0b: доступ к меню открытого edit-мира, без создания стенда и без перехода в Play.
+			PrintFormat("[RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=%1", api.IsGameMode());
+			if (RICON_LiveEndpointProbe.IsRequested())
+			{
+				m_Api = api;
+				thread ReturnFromInspectedPlay(editor);
+			}
+			return;
 		}
 		vector point;
 		if (!ChoosePoint(api, point))
@@ -116,6 +121,43 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			thread RestartEndpoint(editor);
 	}
 
+	//! B0b: Play запускает оператор через меню; после наблюдения возвращаемся в edit для восстановления настройки.
+	protected void ReturnFromInspectedPlay(WorldEditor editor)
+	{
+		Print("[RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000");
+		int waitSteps;
+		while (!m_Api.IsGameMode() && waitSteps < 1200)
+		{
+			Sleep(100);
+			waitSteps++;
+		}
+		if (!m_Api.IsGameMode())
+		{
+			Print("[RICON_LIVEB] inspect=REFUSED reason=PLAY_NOT_ENTERED");
+			return;
+		}
+		Print("[RICON_LIVEB] inspect=PLAY_ENTERED");
+		int samples;
+		for (int i = 0; i < 450 && m_Api.IsGameMode(); i++)
+		{
+			ArmaReforgerScripted game = ArmaReforgerScripted.Cast(GetGame());
+			if (game)
+				samples = game.RICON_EndpointSampleCount();
+			if (samples >= RICON_LiveEndpointProbe.SAMPLE_LIMIT)
+				break;
+			Sleep(100);
+		}
+		PrintFormat("[RICON_LIVEB] inspect=OBSERVATION_END samples=%1 complete=%2 isGameMode=%3", samples,
+			samples >= RICON_LiveEndpointProbe.SAMPLE_LIMIT, m_Api.IsGameMode());
+		if (m_Api.IsGameMode())
+			editor.SwitchToEditMode();
+		Print("[RICON_LIVEB] inspect=EDIT_REQUESTED");
+		if (WaitForStableEdit())
+			Print("[RICON_LIVEB] inspect=EDIT_STABLE checks=51");
+		else
+			Print("[RICON_LIVEB] inspect=REFUSED reason=EDIT_NOT_REACHED");
+	}
+
 	//! Тест жизненного цикла: прерываем активное наблюдение, затем запускаем новый Play, не сохраняя мир.
 	protected void RestartEndpoint(WorldEditor editor)
 	{
@@ -137,37 +179,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		editor.SwitchToEditMode();
 		Print("[RICON_LIVEB] restart=EDIT_REQUESTED");
-		bool edited;
-		BaseWorld editWorld;
-		int stableChecks;
-		for (int j = 0; j < 600; j++)
-		{
-			BaseWorld currentWorld = m_Api.GetWorld();
-			bool validEdit = !m_Api.IsGameMode() && currentWorld && currentWorld.IsEditMode();
-			if (validEdit && m_Api.GetEditorEntityCount() > 0)
-			{
-				if (currentWorld == editWorld)
-					stableChecks++;
-				else
-				{
-					editWorld = currentWorld;
-					stableChecks = 1;
-				}
-				// 51 проверка с 50 промежутками: не менее 5 с после появления одного и того же edit-мира.
-				if (stableChecks >= 51)
-				{
-					edited = true;
-					break;
-				}
-			}
-			else
-			{
-				editWorld = null;
-				stableChecks = 0;
-			}
-			Sleep(100);
-		}
-		if (!edited)
+		if (!WaitForStableEdit())
 		{
 			Print("[RICON_LIVEB] restart=REFUSED reason=EDIT_NOT_REACHED");
 			return;
@@ -185,6 +197,37 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Sleep(100);
 		}
 		Print("[RICON_LIVEB] restart=REFUSED reason=SECOND_PLAY_NOT_ENTERED");
+	}
+
+	protected bool WaitForStableEdit()
+	{
+		BaseWorld editWorld;
+		int stableChecks;
+		for (int j = 0; j < 600; j++)
+		{
+			BaseWorld currentWorld = m_Api.GetWorld();
+			bool validEdit = !m_Api.IsGameMode() && currentWorld && currentWorld.IsEditMode();
+			if (validEdit && m_Api.GetEditorEntityCount() > 0)
+			{
+				if (currentWorld == editWorld)
+					stableChecks++;
+				else
+				{
+					editWorld = currentWorld;
+					stableChecks = 1;
+				}
+				// 51 проверка с 50 промежутками: не менее 5 с после появления одного и того же edit-мира.
+				if (stableChecks >= 51)
+					return true;
+			}
+			else
+			{
+				editWorld = null;
+				stableChecks = 0;
+			}
+			Sleep(100);
+		}
+		return false;
 	}
 
 	static const float EDGE_MARGIN_M = 10.0;  //!< запас от края границ по x/z; рации ставятся в +0…+6 м по x от стенда
