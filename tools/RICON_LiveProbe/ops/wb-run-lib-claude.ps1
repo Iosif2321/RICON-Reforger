@@ -365,18 +365,33 @@ function CloseOptions($h, [IntPtr]$mainHandle) {
 	if ($null -eq $game) { return $false }
 	try { return (ClosedOk $game.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) } catch { return $false }
 }
-# Ordered name -> ToggleState of the Toggle-capable direct items of the open Options element.
+# Ordered name -> ToggleState of the Toggle-capable items of the open Options element, plus "bad" (codex #4675): an item
+# that offers TogglePattern but whose state cannot be read, or a repeated name, makes the whole snapshot unusable.
 function ReadToggles($opt) {
-	$map = [ordered]@{}
+	$map = [ordered]@{}; $bad = ""
 	foreach ($i in (OfType $opt $CT::MenuItem)) {
-		try { $map[$i.Current.Name] = [string]$i.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Current.ToggleState } catch {}
+		$tp = $null
+		$name = $i.Current.Name
+		if (-not $i.TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$tp)) { continue }
+		if ($map.Contains($name)) { $bad = "DUPLICATE `"$name`""; continue }
+		try { $map[$name] = [string]$tp.Current.ToggleState } catch { $bad = "READ_ERROR `"$name`"" }
 	}
-	return $map
+	return @{ map = $map; bad = $bad }
+}
+# Pure (codex #4675): "" when the snapshot is complete and definite, else the reason. Every state must be exactly On or
+# Off, every required name present, and after the baseline the same names in the same order.
+function SnapshotProblem($map, [string[]]$baseKeys, [string[]]$required) {
+	foreach ($k in @($map.Keys)) { if ($map[$k] -cne "On" -and $map[$k] -cne "Off") { return "STATE_NOT_ON_OFF `"$k`"=$($map[$k])" } }
+	foreach ($r in @($required | Where-Object { $_ })) { if (-not $map.Contains($r)) { return "MISSING `"$r`"" } }
+	if ($null -ne $baseKeys -and (@($map.Keys) -join "|") -cne (@($baseKeys) -join "|")) { return "KEYS_CHANGED" }
+	return ""
 }
 function ToggleItem($opt, [string]$name) {
 	foreach ($i in (OfType $opt $CT::MenuItem)) {
 		if ($i.Current.Name -ceq $name) {
-			try { $i.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle(); return $true } catch { return $false }
+			$tp = $null
+			if (-not $i.TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$tp)) { return $false }
+			try { $tp.Toggle(); return $true } catch { return $false }
 		}
 	}
 	return $false
@@ -394,12 +409,18 @@ function MapText($m) { (@($m.Keys | ForEach-Object { "$_=$($m[$_])" }) -join " |
 # $mustBeOff (codex #4674): every listed item must read exactly Off in the baseline, else nothing is toggled.
 function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [string[]]$mustBeOff, [int]$maxRestore = 3) {
 	$script:roundTripToggles = 0
+	$required = @($target) + @($mustBeOff | Where-Object { $_ })
+	$baseKeys = $null
+	# a snapshot is returned only when complete and definite; otherwise $null and no further toggle follows
 	$snap = {
 		$h = OpenOptions $mainHandle $ownPid
 		if ($null -eq $h) { return $null }
-		$m = ReadToggles $h.opt
+		$r = ReadToggles $h.opt
 		if (-not (CloseOptions $h $mainHandle)) { "  ROUNDTRIP menus not Collapsed after read" | Write-Host; return $null }
-		return $m
+		if ($r.bad) { "  ROUNDTRIP snapshot unusable: $($r.bad)" | Write-Host; return $null }
+		$why = SnapshotProblem $r.map $baseKeys $required
+		if ($why) { "  ROUNDTRIP snapshot unusable: $why" | Write-Host; return $null }
+		return $r.map
 	}
 	$flip = {
 		param([string]$name)
@@ -416,9 +437,16 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	}
 	$base = & $snap
 	if ($null -eq $base) { return "BASELINE_READ_FAILED" }
+	$baseKeys = @($base.Keys)
 	"  ROUNDTRIP BASELINE $(MapText $base)" | Write-Host
 	foreach ($n in @($target) + @($mustBeOff | Where-Object { $_ })) { if (-not $base.Contains($n) -or $base[$n] -cne "Off") { "  ROUNDTRIP baseline `"$n`" is not Off" | Write-Host; return "BASELINE_NOT_OFF" } }
-	if (-not (& $flip $target)) { $s = & $snap; if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }; return "TOGGLE_FAILED" }
+	if (-not (& $flip $target)) {
+		# the first toggle was not confirmed; read once more to report, never toggle again from here
+		$s = & $snap
+		if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }
+		if ($script:roundTripToggles -gt 0) { return "TOGGLE_FAILED|CHECK_STATE" }
+		return "TOGGLE_FAILED"
+	}
 	$s1 = & $snap
 	if ($null -eq $s1) { return "STATE1_READ_FAILED" }
 	$d = ToggleDiff $base $s1

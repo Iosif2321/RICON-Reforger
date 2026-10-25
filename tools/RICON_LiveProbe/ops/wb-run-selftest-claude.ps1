@@ -281,13 +281,26 @@ foreach (`$i in @(`$vp, `$sv, `$pt)) { [void]`$opt.Items.Add(`$i) }
 }
 function DoneOpts($f) { if (-not $f.p.HasExited) { $f.p.Kill() }; Remove-Item $f.mk -Force -ErrorAction SilentlyContinue }
 $a = [ordered]@{ "x" = "On"; "y" = "Off" }; $b2 = [ordered]@{ "x" = "Off"; "y" = "Off"; "z" = "Off" }
+# snapshot completeness (codex #4675): no restore from an unknown state
+$req = @("Server localhost", "Server localhost + PeerTool")
+$good = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "Off"; "Server localhost + PeerTool" = "Off" }
+Case "snapshot complete" (SnapshotProblem $good $null $req) ""
+Case "snapshot same keys later" (SnapshotProblem $good @("Play inside Viewport", "Server localhost", "Server localhost + PeerTool") $req) ""
+$noTarget = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost + PeerTool" = "Off" }
+Case "snapshot missing target" (SnapshotProblem $noTarget $null $req) 'MISSING "Server localhost"'
+$indet = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "Indeterminate"; "Server localhost + PeerTool" = "Off" }
+Case "snapshot indeterminate" (SnapshotProblem $indet $null $req) 'STATE_NOT_ON_OFF "Server localhost"=Indeterminate'
+$extra = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "On"; "Server localhost + PeerTool" = "Off"; "New" = "Off" }
+Case "snapshot keys changed" (SnapshotProblem $extra @("Play inside Viewport", "Server localhost", "Server localhost + PeerTool") $req) "KEYS_CHANGED"
+$reordered = [ordered]@{ "Server localhost" = "Off"; "Play inside Viewport" = "On"; "Server localhost + PeerTool" = "Off" }
+Case "snapshot reordered" (SnapshotProblem $reordered @("Play inside Viewport", "Server localhost", "Server localhost + PeerTool") $req) "KEYS_CHANGED"
 Case "toggle diff" (ToggleDiff $a $b2) @("x", "z")
 Case "toggle diff equal" (ToggleDiff $a $a).Count 0
 $fo = FakeOptions $true $false "excl"
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip exclusive result" $rt "TOGGLED_ON|RESTORE_OK"
 Case "roundtrip exclusive toggles" $script:roundTripToggles 3
-$h = OpenOptions $fo.h ([uint32]$fo.p.Id); $m = ReadToggles $h.opt; $null = CloseOptions $h $fo.h
+$h = OpenOptions $fo.h ([uint32]$fo.p.Id); $m = (ReadToggles $h.opt).map; $null = CloseOptions $h $fo.h
 Case "roundtrip exclusive final" (MapText $m) "Play inside Viewport=On | Server localhost=Off | Server localhost + PeerTool=Off"
 DoneOpts $fo
 $fo = FakeOptions $false $false "indep"
