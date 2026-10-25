@@ -36,7 +36,16 @@ class RICON_LivePlayModeObserverPlugin : WorldEditorPlugin
 		PrintFormat("[RICON_RPLMODE] checks=4 passed=%1", passed);
 		int signalPassed = RICON_LiveBenchLauncherPlugin.CheckPluginSignal();
 		PrintFormat("[RICON_PLUGIN_SIGNAL] checks=4 passed=%1", signalPassed);
-		if (passed == 4 && signalPassed == 4)
+		array<string> sampleValues = {"", "30", "120", "", "0", "121", "120junk", "0120"};
+		array<int> sampleExpected = {30, 30, 120, 0, 0, 0, 0, 0};
+		int samplePassed;
+		for (int j = 0; j < sampleValues.Count(); j++)
+		{
+			if (RICON_LiveEndpointProbe.ResolveSampleLimit(j > 0, sampleValues[j]) == sampleExpected[j])
+				samplePassed++;
+		}
+		PrintFormat("[RICON_PROBE_CONFIG] checks=8 passed=%1", samplePassed);
+		if (passed == 4 && signalPassed == 4 && samplePassed == 8)
 		{
 			Print("[RICON_RPLMODE] done: PASS");
 			Workbench.Exit(0);

@@ -14,6 +14,7 @@ class RICON_LiveEndpointProbe
 	protected bool m_bRunning;
 	protected int m_iCycle;
 	protected int m_iSamples;
+	protected int m_iSampleLimit = SAMPLE_LIMIT;
 	protected int m_iBindingRevision;
 	protected float m_fElapsed;
 	protected float m_fLastSample;
@@ -22,6 +23,23 @@ class RICON_LiveEndpointProbe
 	{
 		string value;
 		return System.GetCLIParam("riconEndpointProbe", value) && value == "1";
+	}
+
+	//! Два проверяемых режима: прежний короткий опыт и окно для загрузки отдельного клиента.
+	static int ResolveSampleLimit(bool configured, string value)
+	{
+		if (!configured || value == "30")
+			return SAMPLE_LIMIT;
+		if (value == "120")
+			return 120;
+		return 0;
+	}
+
+	static int RequestedSampleLimit()
+	{
+		string value;
+		bool configured = System.GetCLIParam("riconEndpointSamples", value);
+		return ResolveSampleLimit(configured, value);
 	}
 
 	int SampleCount()
@@ -59,13 +77,20 @@ class RICON_LiveEndpointProbe
 	{
 		if (m_bRunning || !world || world.IsEditMode())
 			return false;
+		m_iSampleLimit = RequestedSampleLimit();
+		if (m_iSampleLimit == 0)
+		{
+			Print("[RICON_PROBE] config=REFUSED reason=SAMPLE_LIMIT", LogLevel.ERROR);
+			return false;
+		}
 		m_World = world;
 		m_iCycle = cycle;
-		m_Journal = new RICON_LiveJournal(256);
+		// Пропорциональный ограниченный журнал сохраняет прежнюю ёмкость 256 для 30 срезов.
+		m_Journal = new RICON_LiveJournal(256 * m_iSampleLimit / SAMPLE_LIMIT);
 		m_Journal.SetStream(true);
 		m_Radios = new RICON_LiveRadioReader(m_Journal, "probe");
 		m_bRunning = true;
-		string text = "cycle=" + cycle.ToString() + ",limit=" + SAMPLE_LIMIT.ToString();
+		string text = "cycle=" + cycle.ToString() + ",limit=" + m_iSampleLimit.ToString();
 		text = text + ",isServer=" + Bit(Replication.IsServer()) + ",isClient=" + Bit(Replication.IsClient());
 		int rplMode = RplSession.Mode();
 		text = text + ",rplMode=" + rplMode.ToString();
@@ -143,7 +168,7 @@ class RICON_LiveEndpointProbe
 		text = text + ",rplMode=" + rplMode.ToString();
 		Note("ENDPOINT_SAMPLE", playerId, text);
 		m_Radios.ReadEntity(playerId, controlled);
-		if (m_iSamples >= SAMPLE_LIMIT)
+		if (m_iSamples >= m_iSampleLimit)
 			Stop("LIMIT");
 	}
 
@@ -153,7 +178,7 @@ class RICON_LiveEndpointProbe
 		if (!m_bRunning)
 			return;
 		string kind = "ENDPOINT_ABORTED";
-		if (reason == "LIMIT" && m_iSamples == SAMPLE_LIMIT)
+		if (reason == "LIMIT" && m_iSamples == m_iSampleLimit)
 			kind = "ENDPOINT_DONE";
 		string text = "cycle=" + m_iCycle.ToString() + ",samples=" + m_iSamples.ToString() + ",reason=" + reason;
 		Note(kind, m_iPreviousPlayerId, text);

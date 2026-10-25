@@ -93,6 +93,11 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		string benchMode;
 		System.GetCLIParam("riconBenchMode", benchMode);
+		if (RICON_LiveEndpointProbe.IsRequested() && RICON_LiveEndpointProbe.RequestedSampleLimit() == 0)
+		{
+			Print("[RICON_LIVEB] inspect=REFUSED reason=ENDPOINT_SAMPLES");
+			return;
+		}
 		string pluginValue;
 		bool pluginStart = System.GetCLIParam("riconBenchPluginStart", pluginValue);
 		if (pluginStart && (pluginValue != "1" || benchMode != "inspect" || !RICON_LiveEndpointProbe.IsRequested()))
@@ -179,6 +184,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 	//! B0b: Play запускает оператор через меню; после наблюдения возвращаемся в edit для восстановления настройки.
 	protected void ReturnFromInspectedPlay(WorldEditor editor, bool pluginStart)
 	{
+		int sampleLimit = RICON_LiveEndpointProbe.RequestedSampleLimit();
 		if (pluginStart && !StartFromPlugin(editor))
 			return;
 		Print("[RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000");
@@ -195,17 +201,18 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		Print("[RICON_LIVEB] inspect=PLAY_ENTERED");
 		int samples;
-		for (int i = 0; i < 450 && m_Api.IsGameMode(); i++)
+		int observationSteps = (sampleLimit + 15) * 10;
+		for (int i = 0; i < observationSteps && m_Api.IsGameMode(); i++)
 		{
 			ArmaReforgerScripted game = ArmaReforgerScripted.Cast(GetGame());
 			if (game)
 				samples = game.RICON_EndpointSampleCount();
-			if (samples >= RICON_LiveEndpointProbe.SAMPLE_LIMIT)
+			if (samples >= sampleLimit)
 				break;
 			Sleep(100);
 		}
 		PrintFormat("[RICON_LIVEB] inspect=OBSERVATION_END samples=%1 complete=%2 isGameMode=%3", samples,
-			samples >= RICON_LiveEndpointProbe.SAMPLE_LIMIT, m_Api.IsGameMode());
+			samples >= sampleLimit, m_Api.IsGameMode());
 		if (m_Api.IsGameMode())
 			editor.SwitchToEditMode();
 		Print("[RICON_LIVEB] inspect=EDIT_REQUESTED");
