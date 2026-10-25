@@ -2,6 +2,7 @@
 # off-screen WPF stand-in (wb-run-fakedlg-claude.ps1) in its own process. Prints one line per case and PASS n/m.
 param([string]$WorkDir = $env:TEMP)
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
+. (Join-Path $PSScriptRoot "wb-restore-lib-claude.ps1")
 $script:pass = 0; $script:total = 0
 function Case($name, $got, $want) {
 	$script:total++
@@ -331,6 +332,20 @@ $script:afterCalls = 0
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { $script:afterCalls++; if ($script:afterCalls -ge 2) { "NEW_PROCESS" } else { "" } } @("Server localhost + PeerTool") 3 "Invoke" 6>$null
 Case "roundtrip stop after action" $rt "STOPPED_AFTER_ACTION|NEW_PROCESS"
 Case "roundtrip stop after action count" $script:roundTripToggles 1
+DoneOpts $fo
+# contingency RestoreOff (codex #4690): from On to Off only; Off -> nothing; PeerTool On -> nothing
+$fo = FakeOptions $false $true "restore"
+$rs = RestoreOff $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
+Case "restore off from on" $rs "RESTORED_OFF"
+Case "restore off one action" $script:restoreActions 1
+$rs = RestoreOff $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
+Case "restore off when off" $rs "NOT_ON"
+Case "restore off when off no action" $script:restoreActions 0
+DoneOpts $fo
+$fo = FakeOptions $false $true "restorepeer" $true
+$rs = RestoreOff $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
+Case "restore off peer on refused" $rs "OTHER_NOT_OFF"
+Case "restore off peer on no action" $script:restoreActions 0
 DoneOpts $fo
 $fo = FakeOptions $false $true "on"
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null

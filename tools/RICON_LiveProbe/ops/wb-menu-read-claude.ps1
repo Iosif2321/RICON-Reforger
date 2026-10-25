@@ -19,9 +19,11 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [string]$SubMenu = "",
       [switch]$Roundtrip,
       [string]$RoundtripMethod = "Toggle",
+      [switch]$RestoreOff,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
+. (Join-Path $PSScriptRoot "wb-restore-lib-claude.ps1")
 $steam = "C:\Program Files (x86)\Steam\steamapps\common"
 $wb = "$steam\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
@@ -39,6 +41,8 @@ if ($SubMenu -and -not $Expand) { "SUBMENU_NEEDS_EXPAND"; exit 2 }
 # the UI TogglePattern of the own editor window only; needs -OpenWorld; no menu listing in this mode.
 if ($Roundtrip -and (-not $OpenWorld -or $Expand -or $SubMenu)) { "ROUNDTRIP_NEEDS_OPENWORLD_ONLY"; exit 2 }
 if ($RoundtripMethod -cnotin @("Toggle", "Invoke")) { "BAD_ROUNDTRIP_METHOD"; exit 2 }
+# -RestoreOff (contingency, codex #4690): only Server localhost from an observed On back to Off, needs -OpenWorld only
+if ($RestoreOff -and (-not $OpenWorld -or $Expand -or $SubMenu -or $Roundtrip)) { "RESTOREOFF_NEEDS_OPENWORLD_ONLY"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
 $OutDir = (Resolve-Path $OutDir).Path
 if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_INSIDE_REPO"; exit 2 }
@@ -53,7 +57,7 @@ $playPattern = '\[RICON_LIVEB\] state=PLAY_REQUESTED|kind=ENDPOINT_START|\[RICON
 function LogText { if (Test-Path $log) { return (Get-Content $log -Raw) } else { return "" } }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld subMenu=`"$SubMenu`" roundtrip=$Roundtrip method=$RoundtripMethod"
+"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld subMenu=`"$SubMenu`" roundtrip=$Roundtrip method=$RoundtripMethod restoreOff=$RestoreOff"
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
@@ -131,6 +135,11 @@ try {
 		if (-not $b) { Start-Sleep -Seconds ([math]::Max(0, [math]::Min($Settle, [int]$left))) }
 		if (-not $b) { $b = Blocked }
 		if ($b) { $reason = $b }
+		elseif ($RestoreOff) {
+			$rs = RestoreOff $main $wbPid "Server localhost" { Blocked } @("Server localhost + PeerTool")
+			"RESTORE_OFF_RESULT $rs actions=$($script:restoreActions)"
+			$reason = "RESTORE_OFF_DONE"
+		}
 		elseif ($Roundtrip) {
 			$kids = @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$wbPid" -Property ProcessId, Name)
 			$script:procBaseline = @(@($kids | ForEach-Object { [uint32]$_.ProcessId }) +
