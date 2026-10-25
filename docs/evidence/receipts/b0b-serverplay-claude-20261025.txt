@@ -12,8 +12,10 @@
 #   listening on address 0.0.0.0:2001", RplStartupEvent Started; then ENDPOINT_START isServer=1 isClient=0 rplMode=2 and
 #   "[RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1" at 13:01:00; after 13:01:00.202 the log has no line
 #   until the process was killed at 13:03 (no ENDPOINT_SAMPLE, no [RICON_WBMODE] event=START, no inspect=PLAY_ENTERED);
-# - no child process of the Workbench and no other Reforger process appeared; the process was stopped through its held
-#   handle; registry branch and profile files equal before and after (counts and hashes only);
+# - the runner recorded no child process of the Workbench and no other Reforger process, but only before the Play
+#   Invoke and at teardown: while Invoke blocked (about 125 s) nothing was observed, so this is not a continuous check
+#   and not proof that no separate process existed (codex #4720); the process was stopped through its held handle;
+#   registry branch and profile files equal before and after (counts and hashes only);
 # - the result of the run stays SETTING_MAY_REMAIN_ON (Server localhost was On when the process was killed); the
 #   separate follow-up read in a new process (second section) observed Server localhost=Off and all other items as in
 #   the baseline, registry unchanged.
