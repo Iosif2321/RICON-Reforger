@@ -960,3 +960,190 @@ SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="Arm
   PLAYMODE_TERMS_IN_DIFF=0
 SOURCES_STABLE
 RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-174552-raw.jsonl (local only)
+
+# ======================================================================================================================
+# A2 plugin start, repeat on 019aa1a (passive Play window, codex #4870): START #4875 / ACK #4878 / END #4879.
+# Runner wb-serverplay DF8B4122 / lib 22D24A79; launcher 6b62869 (CRC 124aa0bd); Workbench cwd = repository root.
+# Observed, in order:
+#   B (second menu read) with both server items Off; "Server localhost" toggled On; S1 = B + Server localhost=On.
+#   Plugins > "RICON: Play" READY at t=48; the worker completed in 566 ms; the launcher logged PLUGIN_SIGNAL_ACCEPTED,
+#   PLUGIN_SEEN and PLUGIN_PLAY_REQUESTED.
+#   t=48 the Qt window "Arma Reforger Workbench" became visible: class Qt683QWindowPopupDropShadowSaveBits, size 0x0,
+#   no UI Automation elements. It was read once, never given input, and was no longer visible at t=50.
+#   t=50 a new UDP endpoint of the Workbench PID: address class ANY, port 2001.
+#   t=50 the exact vanilla :1101 prompt got its one guarded "Yes" (after PLUGIN_SEEN); no other prompt showed.
+#   Probe: ENDPOINT_START isServer=1 isClient=0 rplMode=2, RICON_NET rplName=Listen listenPresent=1, WBMODE
+#   event=START mode=Server localhost, PLAY_ENTERED; binding pc=1 controlled=1; 30 of 30 samples with players=1,
+#   playerId=1, vonController=1, vonEntries=2, entityVoN=1, members=1, rplMode=2; two RADIO_STATE (ANPRC68,
+#   binding LOCAL_ONLY); ENDPOINT_DONE samples=30, dump dropped=0.
+#   OBSERVATION_END complete=1, EDIT_REQUESTED, WBMODE END, EDIT_STABLE at t=89. The worker was done and Plugins
+#   Collapsed; S2 = B + Server localhost=On; Server localhost was invoked back; FINAL = B (RESTORE_OK).
+#   Registry B0146B67389ADF02 before and after, diff 0, profile diff 0; sources stable; no other process.
+# Result: the own Workbench process ran Play as a listen server (RplMode Listen, UDP 2001 on any address) with one
+#   local player, and the setting was put back. Not covered: a second client, its connection, and voice.
+
+--- ricon-b0b-serverplay-claude-20261025-175912
+# A2 plugin start (wb-serverplay DF8B4122 / lib 22D24A79): STOP DONE phase=RESTORE result=RESTORE_OK t=97 yesPresses=1; console.log sha256 ea359c6abc1e53513a87187b8929a1905f1018246d138325181edd902ba026c2
+# stdout serverplay-a2-plugin2.txt sha256 92e77f11ec965ba3fcc7898504eb15f50433512e4251ba75205a936f75d30c7c (162 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-serverplay-claude-20261025-175912 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -riconBenchPluginStart=1 -log-scr-checksum
+RUNNER DF8B4122D2DE39EE LIB 22D24A790909EC97
+LIMITS seconds=240 watchdogSeconds=270 settle=15 maxChildren=3 readAuthOnly=False yesTotal=1
+PLUGIN menu="Plugins" item="RICON: Play"
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2241"
+PID 21452 started 17:59:13
+WATCHDOG pid=23080 limitMs=270000
+MAIN_WINDOW t=12 title="World Editor - Unnamed empty world"
+SEEN REGISTERED t=13
+SEEN OPEN_ONLY t=14
+SEEN WAIT_PLUGIN t=15
+  ROUNDTRIP no Play Game Options
+  SNAPSHOT try=1 menus not opened
+BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+INVOKE "Server localhost" from=Off result=TOGGLED try=1
+STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off
+PLUGIN_ITEM t=48 result=READY
+PLUGIN_INVOKE_STARTED t=48
+PLUGIN_INVOKE_DONE t=48 result=COMPLETED afterMs=566
+PLAY_WINDOW t=48 title="Arma Reforger Workbench" handle=2820496 class=Qt683QWindowPopupDropShadowSaveBits (passive, read once)
+  PW size=0x0 elements=0 buttons=0
+NET_NEW t=50 phase=OBSERVE pid=21452 proto=UDP class=ANY port=2001
+DIALOG t=50 title="Script Authorization Required" handle=10357040 presses=0 total=1 allowed="ARSENAL_1101"
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_GUARD site=ARSENAL_1101 buttons="No,No to All,Yes,Yes to All"
+YES_GUARD pressed button="Yes" site=ARSENAL_1101 count=1 t=50 at=18:00:04.359
+PLAY_WINDOW_HIDDEN t=50 title="Arma Reforger Workbench" (no visible window with it)
+SEEN EDIT_STABLE t=89
+PLUGIN_INVOKE_AT_EDIT done=True result="COMPLETED"
+PLUGINS_MENU state=Collapsed
+STATE2 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off
+INVOKE "Server localhost" from=On result=TOGGLED try=1
+FINAL Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off diffFromBaseline=
+STOP reason=DONE phase=RESTORE result=RESTORE_OK t=97 yesPresses=1
+TEARDOWN pid=21452 action=KILL_ROOT
+PROC_END pid=21452 name=root alive=False
+PLUGIN_INVOKE_CLEANUP DONE COMPLETED
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0b-serverplay-claude-20261025-175912/console.log
+scriptErrors=0
+17:59:18.092    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+17:59:18.092    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+17:59:18.092    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+17:59:18.092    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+17:59:18.092    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+17:59:18.094    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+17:59:18.094    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+17:59:18.095    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+17:59:18.095    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 124aa0bd
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 350473c2
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+17:59:21.298    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+17:59:24.993  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+17:59:25.584  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+17:59:25.586  SCRIPT       : [RICON_WBMODE] registered=1
+17:59:25.587  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+17:59:25.587  SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLUGIN limitMs=120000
+18:00:01.486 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SIGNAL_ACCEPTED
+18:00:01.563 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SEEN
+18:00:01.564 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_PLAY_REQUESTED
+18:00:01.564 SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000
+18:00:02.347 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=2
+18:00:02.354 SCRIPT       : [RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1
+18:00:05.068 SCRIPT       : [RICON_WBMODE] event=START mode=Server%20localhost world=$ArmaReforger:worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent fromCamera=1
+18:00:05.073 SCRIPT       : [RICON_LIVEB] inspect=PLAY_ENTERED
+18:00:05.990 SCRIPT       : [RICON_LIVE] seq=1 t=766 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+18:00:05.991 SCRIPT       : [RICON_LIVE] seq=2 t=766 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1005,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:05.991 SCRIPT       : [RICON_LIVE] seq=3 t=766 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+18:00:05.992 SCRIPT       : [RICON_LIVE] seq=4 t=766 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+18:00:06.990 SCRIPT       : [RICON_LIVE] seq=5 t=1767 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2006,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:07.995 SCRIPT       : [RICON_LIVE] seq=6 t=2771 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3011,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:09.000 SCRIPT       : [RICON_LIVE] seq=7 t=3776 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=4 text=cycle=1,elapsedMs=4015,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:10.003 SCRIPT       : [RICON_LIVE] seq=8 t=4779 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=5 text=cycle=1,elapsedMs=5018,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:11.009 SCRIPT       : [RICON_LIVE] seq=9 t=5785 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=6 text=cycle=1,elapsedMs=6024,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:12.012 SCRIPT       : [RICON_LIVE] seq=10 t=6789 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=7 text=cycle=1,elapsedMs=7028,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:13.020 SCRIPT       : [RICON_LIVE] seq=11 t=7796 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=8 text=cycle=1,elapsedMs=8035,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:14.026 SCRIPT       : [RICON_LIVE] seq=12 t=8802 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=9 text=cycle=1,elapsedMs=9041,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:15.032 SCRIPT       : [RICON_LIVE] seq=13 t=9808 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=10 text=cycle=1,elapsedMs=10047,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:16.032 SCRIPT       : [RICON_LIVE] seq=14 t=10808 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=11 text=cycle=1,elapsedMs=11048,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:17.038 SCRIPT       : [RICON_LIVE] seq=15 t=11811 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=12 text=cycle=1,elapsedMs=12050,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:18.038 SCRIPT       : [RICON_LIVE] seq=16 t=12815 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=13 text=cycle=1,elapsedMs=13054,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:19.040 SCRIPT       : [RICON_LIVE] seq=17 t=13817 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=14 text=cycle=1,elapsedMs=14057,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:20.042 SCRIPT       : [RICON_LIVE] seq=18 t=14819 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=15 text=cycle=1,elapsedMs=15058,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:21.044 SCRIPT       : [RICON_LIVE] seq=19 t=15821 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=16 text=cycle=1,elapsedMs=16060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:22.044 SCRIPT       : [RICON_LIVE] seq=20 t=16821 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=17 text=cycle=1,elapsedMs=17060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:23.049 SCRIPT       : [RICON_LIVE] seq=21 t=17825 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=18 text=cycle=1,elapsedMs=18064,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:24.056 SCRIPT       : [RICON_LIVE] seq=22 t=18832 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=19 text=cycle=1,elapsedMs=19071,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:25.058 SCRIPT       : [RICON_LIVE] seq=23 t=19835 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=20 text=cycle=1,elapsedMs=20074,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:26.063 SCRIPT       : [RICON_LIVE] seq=24 t=20840 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=21 text=cycle=1,elapsedMs=21079,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:27.069 SCRIPT       : [RICON_LIVE] seq=25 t=21844 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=22 text=cycle=1,elapsedMs=22083,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:28.075 SCRIPT       : [RICON_LIVE] seq=26 t=22852 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=23 text=cycle=1,elapsedMs=23091,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:29.081 SCRIPT       : [RICON_LIVE] seq=27 t=23859 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=24 text=cycle=1,elapsedMs=24098,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:30.087 SCRIPT       : [RICON_LIVE] seq=28 t=24864 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=25 text=cycle=1,elapsedMs=25103,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:31.089 SCRIPT       : [RICON_LIVE] seq=29 t=25865 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=26 text=cycle=1,elapsedMs=26105,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:32.089 SCRIPT       : [RICON_LIVE] seq=30 t=26866 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=27 text=cycle=1,elapsedMs=27105,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:33.093 SCRIPT       : [RICON_LIVE] seq=31 t=27870 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=28 text=cycle=1,elapsedMs=28110,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:34.093 SCRIPT       : [RICON_LIVE] seq=32 t=28871 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=29 text=cycle=1,elapsedMs=29110,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.096 SCRIPT       : [RICON_LIVE] seq=33 t=29873 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=30 text=cycle=1,elapsedMs=30113,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.097 SCRIPT       : [RICON_LIVE] seq=34 t=29873 side=probe kind=ENDPOINT_DONE player=1 device=-1 tr=-1 value=30 text=cycle=1,samples=30,reason=LIMIT
+18:00:35.097 SCRIPT       : [RICON_LIVE] dump=BEGIN count=35 dropped=0 nextSeq=35
+18:00:35.097 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=2
+18:00:35.098 SCRIPT       : [RICON_LIVE] seq=1 t=766 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+18:00:35.098 SCRIPT       : [RICON_LIVE] seq=2 t=766 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1005,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.099 SCRIPT       : [RICON_LIVE] seq=3 t=766 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+18:00:35.102 SCRIPT       : [RICON_LIVE] seq=4 t=766 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+18:00:35.103 SCRIPT       : [RICON_LIVE] seq=5 t=1767 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2006,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.103 SCRIPT       : [RICON_LIVE] seq=6 t=2771 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3011,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.104 SCRIPT       : [RICON_LIVE] seq=7 t=3776 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=4 text=cycle=1,elapsedMs=4015,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.104 SCRIPT       : [RICON_LIVE] seq=8 t=4779 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=5 text=cycle=1,elapsedMs=5018,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.105 SCRIPT       : [RICON_LIVE] seq=9 t=5785 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=6 text=cycle=1,elapsedMs=6024,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.105 SCRIPT       : [RICON_LIVE] seq=10 t=6789 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=7 text=cycle=1,elapsedMs=7028,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.106 SCRIPT       : [RICON_LIVE] seq=11 t=7796 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=8 text=cycle=1,elapsedMs=8035,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.106 SCRIPT       : [RICON_LIVE] seq=12 t=8802 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=9 text=cycle=1,elapsedMs=9041,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.106 SCRIPT       : [RICON_LIVE] seq=13 t=9808 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=10 text=cycle=1,elapsedMs=10047,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.107 SCRIPT       : [RICON_LIVE] seq=14 t=10808 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=11 text=cycle=1,elapsedMs=11048,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.107 SCRIPT       : [RICON_LIVE] seq=15 t=11811 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=12 text=cycle=1,elapsedMs=12050,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.108 SCRIPT       : [RICON_LIVE] seq=16 t=12815 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=13 text=cycle=1,elapsedMs=13054,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.108 SCRIPT       : [RICON_LIVE] seq=17 t=13817 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=14 text=cycle=1,elapsedMs=14057,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.109 SCRIPT       : [RICON_LIVE] seq=18 t=14819 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=15 text=cycle=1,elapsedMs=15058,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.109 SCRIPT       : [RICON_LIVE] seq=19 t=15821 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=16 text=cycle=1,elapsedMs=16060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.110 SCRIPT       : [RICON_LIVE] seq=20 t=16821 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=17 text=cycle=1,elapsedMs=17060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.110 SCRIPT       : [RICON_LIVE] seq=21 t=17825 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=18 text=cycle=1,elapsedMs=18064,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.111 SCRIPT       : [RICON_LIVE] seq=22 t=18832 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=19 text=cycle=1,elapsedMs=19071,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.112 SCRIPT       : [RICON_LIVE] seq=23 t=19835 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=20 text=cycle=1,elapsedMs=20074,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.113 SCRIPT       : [RICON_LIVE] seq=24 t=20840 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=21 text=cycle=1,elapsedMs=21079,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.113 SCRIPT       : [RICON_LIVE] seq=25 t=21844 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=22 text=cycle=1,elapsedMs=22083,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.113 SCRIPT       : [RICON_LIVE] seq=26 t=22852 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=23 text=cycle=1,elapsedMs=23091,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.114 SCRIPT       : [RICON_LIVE] seq=27 t=23859 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=24 text=cycle=1,elapsedMs=24098,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.114 SCRIPT       : [RICON_LIVE] seq=28 t=24864 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=25 text=cycle=1,elapsedMs=25103,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.115 SCRIPT       : [RICON_LIVE] seq=29 t=25865 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=26 text=cycle=1,elapsedMs=26105,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.116 SCRIPT       : [RICON_LIVE] seq=30 t=26866 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=27 text=cycle=1,elapsedMs=27105,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.117 SCRIPT       : [RICON_LIVE] seq=31 t=27870 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=28 text=cycle=1,elapsedMs=28110,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.117 SCRIPT       : [RICON_LIVE] seq=32 t=28871 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=29 text=cycle=1,elapsedMs=29110,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.118 SCRIPT       : [RICON_LIVE] seq=33 t=29873 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=30 text=cycle=1,elapsedMs=30113,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+18:00:35.118 SCRIPT       : [RICON_LIVE] seq=34 t=29873 side=probe kind=ENDPOINT_DONE player=1 device=-1 tr=-1 value=30 text=cycle=1,samples=30,reason=LIMIT
+18:00:35.118 SCRIPT       : [RICON_LIVE] dump=END
+18:00:35.125 SCRIPT       : [RICON_LIVEB] inspect=OBSERVATION_END samples=30 complete=1 isGameMode=1
+18:00:35.125 SCRIPT       : [RICON_LIVEB] inspect=EDIT_REQUESTED
+18:00:35.145 SCRIPT       : [RICON_WBMODE] event=END
+18:00:40.935 SCRIPT       : [RICON_LIVEB] inspect=EDIT_STABLE checks=51
+LOGSHA EA359C6ABC1E53513A87187B8929A1905F1018246D138325181EDD902BA026C2 size 936217
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2245"
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-175912-raw.jsonl (local only)
