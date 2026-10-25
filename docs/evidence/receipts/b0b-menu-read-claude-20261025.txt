@@ -1,0 +1,466 @@
+# claude, B0b step 1: World Editor menu read through UI Automation (LIVE-peer-local-plan-codex.md section B0b; agora
+# #4623, #4627, #4634, #4639-#4666). Runner tools/RICON_LiveProbe/ops/wb-menu-read-claude.ps1 + wb-run-lib-claude.ps1
+# (hashes printed in each run). Each run: START -> codex ACK -> run -> END on the bus; one own Workbench, no Play, no
+# entity, no Save; opening only through ExpandCollapsePattern.Expand/Collapse of the top-level menu Game and (run 6) its
+# one item "Play Game Options"; no Invoke, Toggle, Select, keyboard or mouse; the Script Authorization prompt or any
+# unknown window stops the run; a watchdog process kills the own Workbench at Seconds + 30 s; the own process is stopped
+# through its held Process handle. Settings snapshot (HKCU Bohemia Interactive branch, Workbench profile files): counts
+# and hashes only. Raw Workbench logs stay local (they hold account details); only their SHA-256 is quoted.
+#
+# Result (run 6): Game has the direct items Play Game, Play Game Options, Script Debug Mode, Reload Game Scripts, Save RDB
+# Cache, Copy View Link. "Play Game Options" is a submenu; its direct items are checkable (Toggle) entries: Play inside
+# Viewport (On), Play in Fullscreen (Off), Play from Camera Position (On), Use Game Camera Position at Return (On), Skip
+# Disabled Layers (Off), Save Changes Before Playing (Off), World Systems Config (submenu, not opened), Use Local Storage
+# (Off), Use Online Storage (Off), Server localhost (Off), Server localhost + PeerTool (Off). The toolbar "Play Game
+# Button" exposes only Invoke+Value (no ExpandCollapse) and was not touched. Lines marked [win "Enfusion Workbench - ..."]
+# are the menu bar of the other own top-level window, not items of Game.
+# Level: UI_OBSERVED (names and current toggle states of the own Workbench); the meaning of a toggle for Play, the
+# processes it starts and its persistence were NOT exercised.
+
+--- ricon-b0b-menu-claude-20261025-112156
+# menu-read 4B966C2D / lib 79C791EC; no world; stopped at t=2 on the startup title (unknown then)
+# stdout b0b-menu-run.txt sha256 be5a1e19a30d25d8fc986a7d78b6af635fed492d986e1e0e7c8053d5f5040544 (17 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-112156 -noFocus -maxFPS 30
+RUNNER A1A10F8CF9C33220 LIB 79C791EC8461937B
+LIMITS seconds=120 settle=15 expand=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 29852 started 11:21:56
+WATCHDOG pid=37764 limitMs=150000
+UNKNOWN_WINDOW title="Arma Reforger Workbench" (read only)
+STOP reason=DIALOG_UNKNOWN_WINDOW t=2
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+LOGSHA A230D7C18FD459240BFAFBC0E492FB2E4371E00E3E4AB7F5050599059F9D562E size 9919
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-menu-claude-20261025-112602
+# menu-read 5216FBC9 / lib 24971B4A; no world; startup title passive; DEADLINE: no 'World Editor[ - ...]' window
+# stdout b0b-menu-run2.txt sha256 1d3a4d8d98e69dbefc73683231c8c964752a4624e640d208a452d273558b48b3 (16 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-112602 -noFocus -maxFPS 30
+RUNNER 5216FBC9C7F0E091 LIB 24971B4AA24A807B
+LIMITS seconds=120 settle=15 expand=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 19384 started 11:26:02
+WATCHDOG pid=16688 limitMs=150000
+STOP reason=DEADLINE t=121
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+LOGSHA 12B401501355942C04E2834AE7EFE2019C651A3A9C7C36D53D44C65724170A46 size 21766
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-menu-claude-20261025-113351
+# menu-read DA906FDC / lib 24971B4A; -OpenWorld; stopped at t=8 on 'MainWindow' (unknown then)
+# stdout b0b-menu-run3.txt sha256 8a2d1c0dd15d16483c5631c3b466926d34451f77573a8bc6c4831cf946ab0c39 (38 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-113351 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER DA906FDC0F75611E LIB 24971B4AA24A807B
+LIMITS seconds=120 settle=15 expand=True openWorld=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 31632 started 11:33:51
+WATCHDOG pid=28288 limitMs=150000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+UNKNOWN_WINDOW title="MainWindow" mainFound=False (read only)
+STOP reason=DIALOG_UNKNOWN_WINDOW t=8
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=0 playOrBenchLines=0
+11:33:55.592    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+11:33:55.592    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+11:33:55.592    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+11:33:55.592    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+11:33:55.592    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+11:33:55.593    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+11:33:55.593    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+11:33:55.593    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+11:33:55.593    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+11:33:57.128    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+LOGSHA AD38CA18CC9C0A3C7BF50F9096B2E7910F34997CF41510B4C80BDBE9118B72A2 size 862030
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-menu-claude-20261025-113705
+# menu-read DA906FDC / lib EAC3AA33; -OpenWorld; READ_DONE, but ExpandRead output was swallowed (defect fixed in 4cd6d0e): not accepted as menu content
+# stdout b0b-menu-run4.txt sha256 598356eeb34679e9b87f4115002634d489a53f2f214f51cb3ed11e183be604a9 (99 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-113705 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER DA906FDC0F75611E LIB EAC3AA338BCE59CE
+LIMITS seconds=120 settle=15 expand=True openWorld=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 1624 started 11:37:05
+WATCHDOG pid=35244 limitMs=150000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=9 title="World Editor - Unnamed empty world"
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - Unnamed empty world
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=11
+MENUBARS count=1
+MENU[0] "File" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[1] "Edit" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[2] "View" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[3] "Game" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[4] "Tools" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[5] "Window" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[6] "Plugins" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[7] "Entities" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[8] "Help" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+TOOLBARS count=5
+TOOL[0] "New World" type=ControlType.Button patterns=Invoke+Value
+TOOL[1] "Load World" type=ControlType.Button patterns=Invoke+Value
+TOOL[2] "Save World" type=ControlType.Button patterns=Invoke+Value
+TOOL[3] "Go to World File" type=ControlType.Button patterns=Invoke+Value
+TOOL[4] "Undo" type=ControlType.Button patterns=Invoke+Value
+TOOL[5] "Redo" type=ControlType.Button patterns=Invoke+Value
+TOOL[6] "Copy" type=ControlType.Button patterns=Invoke+Value
+TOOL[7] "Paste on Same Position" type=ControlType.Button patterns=Invoke+Value
+TOOL[8] "Cut" type=ControlType.Button patterns=Invoke+Value
+TOOL[9] "Play Game Button" type=ControlType.Button patterns=Invoke+Value
+TOOL[10] "Toggle Gizmo Space" type=ControlType.Button patterns=Invoke+Value
+TOOL[11] "Select Parent Entities" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[12] "Ground Manipulation Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[13] "Move" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[14] "Rotate" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[15] "Scale" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[16] "Vector Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[17] "Bounding Volume Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[18] "Terrain Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[19] "RoadNetwork Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[20] "Navmesh Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[21] "Measure Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[22] "Object Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[23] "Prefab Bone-Snapping Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[24] "Object Selection Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[25] "Prefab Destruction Setup Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[26] "Prefab Management Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[27] "Destructible Prefab Finder Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[28] "Bake MLOD Texture" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[29] "Batch prefabs operations tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[30] "Coords Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[31] "Shape Brush Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[32] "Destruction indices assign tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[33] "Autotest Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[34] "Shape Area Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[35] "Entity Replacer" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[36] "Windows Prefabs Generator Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[37] "Export Map data" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[38] "Autospawner Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[39] "Parallel Shape Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[40] "Camera" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[41] "Shading" type=ControlType.Button patterns=Invoke+Value
+TOOL[42] "Placement" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[43] "Selection" type=ControlType.Button patterns=Invoke+Value
+STOP reason=READ_DONE t=27
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+11:37:10.156    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+11:37:10.156    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+11:37:10.156    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+11:37:10.157    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+11:37:10.157    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+11:37:10.157    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+11:37:10.158    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+11:37:10.159    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+11:37:10.159    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+11:37:11.866    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+11:37:11.867    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+11:37:14.808  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+11:37:15.335  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+11:37:15.335  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA 1DEBE74AC5D0251136D53F64C923CBACD7D09E13A3CE2C7334C13309B0288BA5 size 870669
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-menu-claude-20261025-114055
+# menu-read 55E47EC3 / lib 312B87A3; -OpenWorld; Game opened and closed (Collapsed)
+# stdout b0b-menu-run5.txt sha256 ebfc647d90e8e82adf0e47337a67fd17d284d93150a09ce22a4ed5e5339618fd (116 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-114055 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER 55E47EC3B429A145 LIB 312B87A3B6C788B7
+LIMITS seconds=120 settle=15 expand=True openWorld=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 34644 started 11:40:55
+WATCHDOG pid=29960 limitMs=150000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=9 title="World Editor - Unnamed empty world"
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - Unnamed empty world
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=10
+MENUBARS count=1
+MENU[0] "File" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[1] "Edit" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[2] "View" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[3] "Game" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+  MENU[3] "Game" OPENED items=14
+    ITEM "Play Game"
+    ITEM "Play Game Options"
+    ITEM "Script Debug Mode"
+    ITEM "Reload Game Scripts"
+    ITEM "Save RDB Cache"
+    ITEM "Copy View Link"
+    ITEM "File state=Collapsed"
+    ITEM "Editors state=Collapsed"
+    ITEM "View state=Collapsed"
+    ITEM "Edit state=Collapsed"
+    ITEM "Window state=Collapsed"
+    ITEM "Utilities state=Collapsed"
+    ITEM "Plugins state=Collapsed"
+    ITEM "Help state=Collapsed"
+  MENU[3] "Game" CLOSED state=Collapsed
+MENU[4] "Tools" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[5] "Window" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[6] "Plugins" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[7] "Entities" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[8] "Help" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+TOOLBARS count=5
+TOOL[0] "New World" type=ControlType.Button patterns=Invoke+Value
+TOOL[1] "Load World" type=ControlType.Button patterns=Invoke+Value
+TOOL[2] "Save World" type=ControlType.Button patterns=Invoke+Value
+TOOL[3] "Go to World File" type=ControlType.Button patterns=Invoke+Value
+TOOL[4] "Undo" type=ControlType.Button patterns=Invoke+Value
+TOOL[5] "Redo" type=ControlType.Button patterns=Invoke+Value
+TOOL[6] "Copy" type=ControlType.Button patterns=Invoke+Value
+TOOL[7] "Paste on Same Position" type=ControlType.Button patterns=Invoke+Value
+TOOL[8] "Cut" type=ControlType.Button patterns=Invoke+Value
+TOOL[9] "Play Game Button" type=ControlType.Button patterns=Invoke+Value
+  TOOL[9] "Play Game Button" NO_EXPAND_COLLAPSE (not opened)
+TOOL[10] "Toggle Gizmo Space" type=ControlType.Button patterns=Invoke+Value
+TOOL[11] "Select Parent Entities" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[12] "Ground Manipulation Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[13] "Move" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[14] "Rotate" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[15] "Scale" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[16] "Vector Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[17] "Bounding Volume Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[18] "Terrain Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[19] "RoadNetwork Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[20] "Navmesh Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[21] "Measure Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[22] "Object Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[23] "Prefab Bone-Snapping Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[24] "Object Selection Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[25] "Prefab Destruction Setup Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[26] "Prefab Management Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[27] "Destructible Prefab Finder Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[28] "Bake MLOD Texture" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[29] "Batch prefabs operations tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[30] "Coords Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[31] "Shape Brush Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[32] "Destruction indices assign tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[33] "Autotest Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[34] "Shape Area Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[35] "Entity Replacer" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[36] "Windows Prefabs Generator Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[37] "Export Map data" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[38] "Autospawner Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[39] "Parallel Shape Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[40] "Camera" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[41] "Shading" type=ControlType.Button patterns=Invoke+Value
+TOOL[42] "Placement" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[43] "Selection" type=ControlType.Button patterns=Invoke+Value
+STOP reason=READ_DONE t=27
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+11:40:59.496    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+11:40:59.497    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+11:40:59.497    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+11:41:01.495    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+11:41:01.495    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+11:41:01.495    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+11:41:01.495    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+11:41:01.495    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+11:41:01.496    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+11:41:01.496    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+11:41:01.496    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+11:41:01.496    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+11:41:04.332  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+11:41:04.771  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+11:41:04.772  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA 9F149884AF3A2E530705069375DA7519AF12F78BEF5F9833138EB9B979F1F036 size 870668
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-menu-claude-20261025-114611
+# menu-read F1C3A1AB / lib B9E40B01; -OpenWorld -SubMenu 'Play Game Options'; Game > Play Game Options opened and both closed (Collapsed)
+# stdout b0b-menu-run6.txt sha256 e3daa4c18820dc2d6d823d8cbc2f59f8c2f3464e93fc55feb50c27c7ddd4d291 (138 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-114611 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER F1C3A1AB1E6F1F74 LIB B9E40B019227C785
+LIMITS seconds=120 settle=15 expand=True openWorld=True subMenu="Play Game Options"
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 14276 started 11:46:12
+WATCHDOG pid=37900 limitMs=150000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=9 title="World Editor - Unnamed empty world"
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - Unnamed empty world
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=11
+MENUBARS count=1
+MENU[0] "File" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[1] "Edit" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[2] "View" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[3] "Game" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+  MENU[3] "Game" OPENED items=14
+    ITEM "[el] Play Game enabled=True"
+    ITEM "[el] Play Game Options enabled=True state=Collapsed"
+    ITEM "[el] Script Debug Mode enabled=True toggle=On"
+    ITEM "[el] Reload Game Scripts enabled=True"
+    ITEM "[el] Save RDB Cache enabled=True"
+    ITEM "[el] Copy View Link enabled=True"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] File enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Editors enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] View enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Edit enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Window enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Utilities enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Plugins enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Help enabled=True state=Collapsed"
+  MENU[3] "Game" > "Play Game Options" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+  MENU[3] "Game" > "Play Game Options" OPENED items=19
+    ITEM "[el] Play inside Viewport enabled=True toggle=On"
+    ITEM "[el] Play in Fullscreen enabled=True toggle=Off"
+    ITEM "[el] Play from Camera Position enabled=True toggle=On"
+    ITEM "[el] Use Game Camera Position at Return enabled=True toggle=On"
+    ITEM "[el] Skip Disabled Layers enabled=True toggle=Off"
+    ITEM "[el] Save Changes Before Playing enabled=True toggle=Off"
+    ITEM "[el] World Systems Config enabled=True state=Collapsed"
+    ITEM "[el] Use Local Storage enabled=True toggle=Off"
+    ITEM "[el] Use Online Storage enabled=True toggle=Off"
+    ITEM "[el] Server localhost enabled=True toggle=Off"
+    ITEM "[el] Server localhost + PeerTool enabled=True toggle=Off"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] File enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Editors enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] View enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Edit enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Window enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Utilities enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Plugins enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Help enabled=True state=Collapsed"
+  MENU[3] "Game" > "Play Game Options" CLOSED state=Collapsed
+  MENU[3] "Game" CLOSED state=Collapsed
+MENU[4] "Tools" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[5] "Window" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[6] "Plugins" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[7] "Entities" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[8] "Help" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+TOOLBARS count=5
+TOOL[0] "New World" type=ControlType.Button patterns=Invoke+Value
+TOOL[1] "Load World" type=ControlType.Button patterns=Invoke+Value
+TOOL[2] "Save World" type=ControlType.Button patterns=Invoke+Value
+TOOL[3] "Go to World File" type=ControlType.Button patterns=Invoke+Value
+TOOL[4] "Undo" type=ControlType.Button patterns=Invoke+Value
+TOOL[5] "Redo" type=ControlType.Button patterns=Invoke+Value
+TOOL[6] "Copy" type=ControlType.Button patterns=Invoke+Value
+TOOL[7] "Paste on Same Position" type=ControlType.Button patterns=Invoke+Value
+TOOL[8] "Cut" type=ControlType.Button patterns=Invoke+Value
+TOOL[9] "Play Game Button" type=ControlType.Button patterns=Invoke+Value
+  TOOL[9] "Play Game Button" NO_EXPAND_COLLAPSE (not opened)
+TOOL[10] "Toggle Gizmo Space" type=ControlType.Button patterns=Invoke+Value
+TOOL[11] "Select Parent Entities" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[12] "Ground Manipulation Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[13] "Move" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[14] "Rotate" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[15] "Scale" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[16] "Vector Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[17] "Bounding Volume Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[18] "Terrain Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[19] "RoadNetwork Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[20] "Navmesh Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[21] "Measure Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[22] "Object Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[23] "Prefab Bone-Snapping Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[24] "Object Selection Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[25] "Prefab Destruction Setup Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[26] "Prefab Management Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[27] "Destructible Prefab Finder Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[28] "Bake MLOD Texture" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[29] "Batch prefabs operations tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[30] "Coords Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[31] "Shape Brush Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[32] "Destruction indices assign tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[33] "Autotest Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[34] "Shape Area Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[35] "Entity Replacer" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[36] "Windows Prefabs Generator Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[37] "Export Map data" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[38] "Autospawner Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[39] "Parallel Shape Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[40] "Camera" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[41] "Shading" type=ControlType.Button patterns=Invoke+Value
+TOOL[42] "Placement" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[43] "Selection" type=ControlType.Button patterns=Invoke+Value
+STOP reason=READ_DONE t=29
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+11:46:16.894    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+11:46:16.894    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+11:46:16.894    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+11:46:16.894    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+11:46:16.894    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+11:46:16.895    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+11:46:16.895    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+11:46:16.895    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+11:46:16.895    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+11:46:18.489    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+11:46:21.299  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+11:46:21.777  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+11:46:21.777  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA B436A390DE0887BE41AFC7E314EC9B53C94787823FD016B492B03C299CC52D1E size 870669
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
