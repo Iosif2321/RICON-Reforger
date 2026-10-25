@@ -17,6 +17,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [switch]$Expand,
       [switch]$OpenWorld,
       [string]$SubMenu = "",
+      [switch]$Roundtrip,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -33,6 +34,9 @@ if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
 # -SubMenu: the one nested item of Game that may be opened (codex #4661 proposal); nothing else is accepted
 if ($SubMenu -and $SubMenu -cne "Play Game Options") { "BAD_SUBMENU"; exit 2 }
 if ($SubMenu -and -not $Expand) { "SUBMENU_NEEDS_EXPAND"; exit 2 }
+# -Roundtrip (codex #4668): Server localhost Off -> On -> back to the baseline of every Play Game Options toggle, through
+# the UI TogglePattern of the own editor window only; needs -OpenWorld; no menu listing in this mode.
+if ($Roundtrip -and (-not $OpenWorld -or $Expand -or $SubMenu)) { "ROUNDTRIP_NEEDS_OPENWORLD_ONLY"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
 $OutDir = (Resolve-Path $OutDir).Path
 if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_INSIDE_REPO"; exit 2 }
@@ -47,7 +51,7 @@ $playPattern = '\[RICON_LIVEB\] state=PLAY_REQUESTED|kind=ENDPOINT_START|\[RICON
 function LogText { if (Test-Path $log) { return (Get-Content $log -Raw) } else { return "" } }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld subMenu=`"$SubMenu`""
+"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld subMenu=`"$SubMenu`" roundtrip=$Roundtrip"
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
@@ -117,6 +121,15 @@ try {
 		if (-not $b) { Start-Sleep -Seconds ([math]::Max(0, [math]::Min($Settle, [int]$left))) }
 		if (-not $b) { $b = Blocked }
 		if ($b) { $reason = $b }
+		elseif ($Roundtrip) {
+			$before = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
+			$rt = RoundTrip $main $wbPid "Server localhost" { Blocked }
+			$after = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
+			"ROUNDTRIP_RESULT $rt toggles=$($script:roundTripToggles) otherProcessesBefore=$before after=$after"
+			$reason = "ROUNDTRIP_DONE"
+			$b = Blocked
+			if ($b) { "BLOCKED_AFTER_ROUNDTRIP $b" }
+		}
 		else {
 			$el = $U::FromHandle($main)
 			$bars = OfType $el $CT::MenuBar

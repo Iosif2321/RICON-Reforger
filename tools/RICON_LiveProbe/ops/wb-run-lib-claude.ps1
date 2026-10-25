@@ -330,3 +330,118 @@ function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle, [
 	"  $label CLOSED state=$state" | Write-Host
 	return ($childOk -and (ClosedOk $state))
 }
+
+# --- toggle roundtrip (codex #4668) ---
+# One target toggle of Game > Play Game Options, changed once and put back, judged only by re-read states:
+#   baseline B (all Toggle items) -> target must be Off -> Toggle(target) -> re-read S1 -> D = items that differ from B
+#   -> Toggle(target) again only if it differs from B -> re-read -> for every other item of D that still differs, one
+#   Toggle each (an exclusive group may have switched it), at most $maxRestore -> final read must equal B.
+# Only items changed by this run are ever toggled; every step opens the menus fresh and closes them (Collapsed).
+function FindTopMenu([IntPtr]$mainHandle, [string]$name) {
+	foreach ($i in (OfType ($U::FromHandle($mainHandle)) $CT::MenuItem)) { if ($i.Current.Name -ceq $name) { return $i } }
+	return $null
+}
+function OpenOptions([IntPtr]$mainHandle, [uint32]$ownPid) {
+	$game = FindTopMenu $mainHandle "Game"
+	if ($null -eq $game) { "  ROUNDTRIP no Game menu" | Write-Host; return $null }
+	try { $game.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Game expand error" | Write-Host; return $null }
+	Start-Sleep -Milliseconds 600
+	$opt = FindMenuChild $game "Play Game Options" $ownPid $mainHandle
+	if ($null -eq $opt) { "  ROUNDTRIP no Play Game Options" | Write-Host; $null = CloseOptions @{ game = $game; opt = $null } $mainHandle; return $null }
+	try { $opt.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Options expand error" | Write-Host; return $null }
+	Start-Sleep -Milliseconds 600
+	return @{ game = $game; opt = $opt }
+}
+# Collapses Options then Game when still open; true only if a fresh Game element reads exactly Collapsed.
+function CloseOptions($h, [IntPtr]$mainHandle) {
+	foreach ($el in @($h.opt, $h.game)) {
+		if ($null -eq $el) { continue }
+		try {
+			$p = $el.GetCurrentPattern($ECP::Pattern)
+			if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse(); Start-Sleep -Milliseconds 300 }
+		} catch {}
+	}
+	$game = FindTopMenu $mainHandle "Game"
+	if ($null -eq $game) { return $false }
+	try { return (ClosedOk $game.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) } catch { return $false }
+}
+# Ordered name -> ToggleState of the Toggle-capable direct items of the open Options element.
+function ReadToggles($opt) {
+	$map = [ordered]@{}
+	foreach ($i in (OfType $opt $CT::MenuItem)) {
+		try { $map[$i.Current.Name] = [string]$i.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Current.ToggleState } catch {}
+	}
+	return $map
+}
+function ToggleItem($opt, [string]$name) {
+	foreach ($i in (OfType $opt $CT::MenuItem)) {
+		if ($i.Current.Name -ceq $name) {
+			try { $i.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle(); return $true } catch { return $false }
+		}
+	}
+	return $false
+}
+# Pure: names whose state differs between two maps (a missing name counts as different).
+function ToggleDiff($a, $b) {
+	$names = New-Object System.Collections.Generic.List[string]
+	foreach ($k in @($a.Keys) + @($b.Keys)) {
+		if ($names.Contains($k)) { continue }
+		if (-not ($a.Contains($k) -and $b.Contains($k) -and $a[$k] -ceq $b[$k])) { $names.Add($k) }
+	}
+	return , $names.ToArray()
+}
+function MapText($m) { (@($m.Keys | ForEach-Object { "$_=$($m[$_])" }) -join " | ") }
+function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [int]$maxRestore = 3) {
+	$script:roundTripToggles = 0
+	$snap = {
+		$h = OpenOptions $mainHandle $ownPid
+		if ($null -eq $h) { return $null }
+		$m = ReadToggles $h.opt
+		if (-not (CloseOptions $h $mainHandle)) { "  ROUNDTRIP menus not Collapsed after read" | Write-Host; return $null }
+		return $m
+	}
+	$flip = {
+		param([string]$name)
+		$b = & $blocked
+		if ($b) { "  ROUNDTRIP blocked before toggle: $b" | Write-Host; return $false }
+		$h = OpenOptions $mainHandle $ownPid
+		if ($null -eq $h) { return $false }
+		$ok = ToggleItem $h.opt $name
+		$script:roundTripToggles++
+		"  ROUNDTRIP TOGGLE `"$name`" invoked=$ok count=$($script:roundTripToggles)" | Write-Host
+		Start-Sleep -Milliseconds 700
+		$closed = CloseOptions $h $mainHandle
+		return ($ok -and $closed)
+	}
+	$base = & $snap
+	if ($null -eq $base) { return "BASELINE_READ_FAILED" }
+	"  ROUNDTRIP BASELINE $(MapText $base)" | Write-Host
+	if (-not $base.Contains($target) -or $base[$target] -cne "Off") { return "BASELINE_NOT_OFF" }
+	if (-not (& $flip $target)) { $s = & $snap; if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }; return "TOGGLE_FAILED" }
+	$s1 = & $snap
+	if ($null -eq $s1) { return "STATE1_READ_FAILED" }
+	$d = ToggleDiff $base $s1
+	"  ROUNDTRIP STATE1 $(MapText $s1) diff=$($d -join ',')" | Write-Host
+	$phase = if ($s1[$target] -ceq "On") { "TOGGLED_ON" } else { "TOGGLE_NO_EFFECT" }
+	$cur = $s1
+	if ($cur[$target] -cne $base[$target]) {
+		if (-not (& $flip $target)) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		$cur = & $snap
+		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }
+		"  ROUNDTRIP STATE2 $(MapText $cur) diff=$((ToggleDiff $base $cur) -join ',')" | Write-Host
+	}
+	$extra = 0
+	foreach ($n in $d) {
+		if ($n -ceq $target -or $cur[$n] -ceq $base[$n]) { continue }
+		if ($extra -ge $maxRestore) { break }
+		if (-not (& $flip $n)) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		$extra++
+		$cur = & $snap
+		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }
+		"  ROUNDTRIP STATE_AFTER_$($n -replace ' ', '_') $(MapText $cur)" | Write-Host
+	}
+	$left = ToggleDiff $base $cur
+	"  ROUNDTRIP FINAL $(MapText $cur) diffFromBaseline=$($left -join ',') toggles=$($script:roundTripToggles)" | Write-Host
+	if ($left.Count -eq 0) { return "$phase|RESTORE_OK" }
+	return "$phase|RESTORE_INCOMPLETE"
+}

@@ -249,4 +249,60 @@ if ($gameItem.Count -eq 1) {
 if (-not $mp.HasExited) { $mp.Kill() }
 Remove-Item $mk -Force
 
+# RoundTrip on a WPF stand-in Options menu (codex #4668): exclusive pair Viewport/Server, PeerTool independent
+function FakeOptions($exclusive, $serverOn, $tag) {
+	$mk = Join-Path $WorkDir "ricon-fakeopts-$tag.ps1"
+	$ex = if ($exclusive) { '$true' } else { '$false' }
+	$so = if ($serverOn) { '$true' } else { '$false' }
+	@"
+Add-Type -AssemblyName PresentationFramework
+`$w = New-Object System.Windows.Window
+`$w.Title = "World Editor - Fake $tag"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
+`$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
+`$menu = New-Object System.Windows.Controls.Menu
+`$game = New-Object System.Windows.Controls.MenuItem; `$game.Header = "Game"
+`$opt = New-Object System.Windows.Controls.MenuItem; `$opt.Header = "Play Game Options"
+`$vp = New-Object System.Windows.Controls.MenuItem; `$vp.Header = "Play inside Viewport"; `$vp.IsCheckable = `$true; `$vp.IsChecked = -not $so
+`$sv = New-Object System.Windows.Controls.MenuItem; `$sv.Header = "Server localhost"; `$sv.IsCheckable = `$true; `$sv.IsChecked = $so
+`$pt = New-Object System.Windows.Controls.MenuItem; `$pt.Header = "Server localhost + PeerTool"; `$pt.IsCheckable = `$true
+if ($ex) { `$sv.Add_Checked({ `$vp.IsChecked = `$false }.GetNewClosure()); `$vp.Add_Checked({ `$sv.IsChecked = `$false }.GetNewClosure()) }
+foreach (`$i in @(`$vp, `$sv, `$pt)) { [void]`$opt.Items.Add(`$i) }
+[void]`$game.Items.Add(`$opt); [void]`$menu.Items.Add(`$game)
+`$w.Content = `$menu
+`$t = New-Object System.Windows.Threading.DispatcherTimer; `$t.Interval = [TimeSpan]::FromSeconds(40); `$t.Add_Tick({ `$w.Close() }.GetNewClosure()); `$t.Start()
+[void]`$w.ShowDialog()
+"@ | Set-Content -Path $mk -Encoding ASCII
+	$p = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-File", "`"$mk`"")
+	$title = "World Editor - Fake $tag"
+	for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$p.Id, $title) -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
+	Start-Sleep -Milliseconds 500
+	return @{ p = $p; h = [RiconWin]::FindByTitle([uint32]$p.Id, $title); mk = $mk }
+}
+function DoneOpts($f) { if (-not $f.p.HasExited) { $f.p.Kill() }; Remove-Item $f.mk -Force -ErrorAction SilentlyContinue }
+$a = [ordered]@{ "x" = "On"; "y" = "Off" }; $b2 = [ordered]@{ "x" = "Off"; "y" = "Off"; "z" = "Off" }
+Case "toggle diff" (ToggleDiff $a $b2) @("x", "z")
+Case "toggle diff equal" (ToggleDiff $a $a).Count 0
+$fo = FakeOptions $true $false "excl"
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+Case "roundtrip exclusive result" $rt "TOGGLED_ON|RESTORE_OK"
+Case "roundtrip exclusive toggles" $script:roundTripToggles 3
+$h = OpenOptions $fo.h ([uint32]$fo.p.Id); $m = ReadToggles $h.opt; $null = CloseOptions $h $fo.h
+Case "roundtrip exclusive final" (MapText $m) "Play inside Viewport=On | Server localhost=Off | Server localhost + PeerTool=Off"
+DoneOpts $fo
+$fo = FakeOptions $false $false "indep"
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+Case "roundtrip independent result" $rt "TOGGLED_ON|RESTORE_OK"
+Case "roundtrip independent toggles" $script:roundTripToggles 2
+DoneOpts $fo
+$fo = FakeOptions $false $true "on"
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+Case "roundtrip baseline on refused" $rt "BASELINE_NOT_OFF"
+Case "roundtrip baseline on no toggle" $script:roundTripToggles 0
+DoneOpts $fo
+$fo = FakeOptions $false $false "blocked"
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "DEADLINE" } 6>$null
+Case "roundtrip blocked before first toggle" $rt "TOGGLE_FAILED"
+Case "roundtrip blocked no toggle" $script:roundTripToggles 0
+DoneOpts $fo
+
 "PASS $($script:pass)/$($script:total)"
