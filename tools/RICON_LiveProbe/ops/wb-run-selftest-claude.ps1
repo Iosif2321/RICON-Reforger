@@ -362,4 +362,51 @@ Case "roundtrip blocked before first toggle" $rt "TOGGLE_FAILED"
 Case "roundtrip blocked no toggle" $script:roundTripToggles 0
 DoneOpts $fo
 
+# server-mode helpers: OnlyTargetChanged (pure), StrictSnapshot and InvokeMenuCommand on a stand-in with a Play Game command
+$bb = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "Off"; "Server localhost + PeerTool" = "Off" }
+$s1ok = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "On"; "Server localhost + PeerTool" = "Off" }
+$s1two = [ordered]@{ "Play inside Viewport" = "Off"; "Server localhost" = "On"; "Server localhost + PeerTool" = "Off" }
+Case "only target changed ok" (OnlyTargetChanged $bb $s1ok "Server localhost") ""
+Case "only target changed two" (OnlyTargetChanged $bb $s1two "Server localhost") "DIFF Play inside Viewport,Server localhost"
+Case "only target changed none" (OnlyTargetChanged $bb $bb "Server localhost") "DIFF "
+$mk = Join-Path $WorkDir "ricon-fakeplay-claude.ps1"
+$clickFile = Join-Path $WorkDir "ricon-fakeplay-click.txt"
+if (Test-Path $clickFile) { Remove-Item $clickFile -Force }
+@"
+Add-Type -AssemblyName PresentationFramework
+`$w = New-Object System.Windows.Window
+`$w.Title = "World Editor - Fake play"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
+`$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
+`$menu = New-Object System.Windows.Controls.Menu
+`$game = New-Object System.Windows.Controls.MenuItem; `$game.Header = "Game"
+`$play = New-Object System.Windows.Controls.MenuItem; `$play.Header = "Play Game"
+`$play.Add_Click({ Add-Content -Path "$clickFile" -Value "Play Game" })
+`$opt = New-Object System.Windows.Controls.MenuItem; `$opt.Header = "Play Game Options"
+`$sv = New-Object System.Windows.Controls.MenuItem; `$sv.Header = "Server localhost"; `$sv.IsCheckable = `$true
+`$pt = New-Object System.Windows.Controls.MenuItem; `$pt.Header = "Server localhost + PeerTool"; `$pt.IsCheckable = `$true
+[void]`$opt.Items.Add(`$sv); [void]`$opt.Items.Add(`$pt)
+`$dbg = New-Object System.Windows.Controls.MenuItem; `$dbg.Header = "Script Debug Mode"; `$dbg.IsCheckable = `$true
+foreach (`$i in @(`$play, `$opt, `$dbg)) { [void]`$game.Items.Add(`$i) }
+[void]`$menu.Items.Add(`$game)
+`$w.Content = `$menu
+`$t = New-Object System.Windows.Threading.DispatcherTimer; `$t.Interval = [TimeSpan]::FromSeconds(40); `$t.Add_Tick({ `$w.Close() }.GetNewClosure()); `$t.Start()
+[void]`$w.ShowDialog()
+"@ | Set-Content -Path $mk -Encoding ASCII
+$pp = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-File", "`"$mk`"")
+for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$pp.Id, "World Editor - Fake play") -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
+Start-Sleep -Milliseconds 500
+$ph = [RiconWin]::FindByTitle([uint32]$pp.Id, "World Editor - Fake play")
+$snapP = StrictSnapshot $ph ([uint32]$pp.Id) $null @("Server localhost", "Server localhost + PeerTool") 6>$null
+Case "strict snapshot fake" (MapText $snapP) "Server localhost=Off | Server localhost + PeerTool=Off"
+Case "invoke command options refused" (InvokeMenuCommand $ph "Game" "Play Game Options") "NOT_A_COMMAND"
+Case "invoke command toggle refused" (InvokeMenuCommand $ph "Game" "Script Debug Mode") "NOT_A_COMMAND"
+Case "invoke command missing" (InvokeMenuCommand $ph "Game" "Stop Game") "NO_ITEM"
+Case "invoke command no menu" (InvokeMenuCommand $ph "Run" "Play Game") "NO_MENU"
+Case "invoke refused cases no click" (Test-Path $clickFile) $false
+Case "invoke command play" (InvokeMenuCommand $ph "Game" "Play Game") "INVOKED"
+Start-Sleep -Milliseconds 500
+Case "invoke command clicked once" (@(Get-Content $clickFile -ErrorAction SilentlyContinue)) @("Play Game")
+if (-not $pp.HasExited) { $pp.Kill() }
+Remove-Item $mk, $clickFile -Force -ErrorAction SilentlyContinue
+
 "PASS $($script:pass)/$($script:total)"

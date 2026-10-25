@@ -517,3 +517,57 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	if ($left.Count -eq 0) { return "$phase|RESTORE_OK" }
 	return "$phase|RESTORE_INCOMPLETE"
 }
+
+# --- server-mode Play from the UI (B0b step 2, codex #4693/#4694) ---
+# One strict snapshot of Game > Play Game Options outside RoundTrip: up to 3 reads (a read toggles nothing), each complete
+# and definite as in RoundTrip; $null when none is.
+function StrictSnapshot([IntPtr]$mainHandle, [uint32]$ownPid, $baseKeys, [string[]]$required) {
+	for ($try = 1; $try -le 3; $try++) {
+		$h = OpenOptions $mainHandle $ownPid
+		if ($null -ne $h) {
+			$r = ReadToggles $h.opt
+			$closed = CloseOptions $h $mainHandle
+			$why = if (-not $closed) { "menus not Collapsed after read" } elseif ($r.bad) { $r.bad } else { SnapshotProblem $r.map $baseKeys $required }
+			if (-not $why) { return $r.map }
+			"  SNAPSHOT try=$($try) unusable: $why" | Write-Host
+			if (-not $closed) { return $null }
+		} else { "  SNAPSHOT try=$($try) menus not opened" | Write-Host }
+		Start-Sleep -Milliseconds 500
+	}
+	return $null
+}
+# Invokes one command of a top-level menu: the child must be found exactly once by exact name among the open menu's
+# items and must be a plain command (InvokePattern, no TogglePattern, no ExpandCollapse). Returns INVOKED, NO_MENU,
+# NO_ITEM, AMBIGUOUS, NOT_A_COMMAND, NO_INVOKE, INVOKE_ERROR or NOT_CLOSED (the menu stayed open after Invoke).
+function InvokeMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
+	$top = FindTopMenu $mainHandle $menu
+	if ($null -eq $top) { return "NO_MENU" }
+	try { $top.GetCurrentPattern($ECP::Pattern).Expand() } catch { return "NO_MENU" }
+	$hits = @()
+	for ($k = 0; $k -lt 15 -and $hits.Count -eq 0; $k++) {
+		Start-Sleep -Milliseconds 200
+		$hits = @(OfType $top $CT::MenuItem | Where-Object { $_.Current.Name -ceq $item })
+	}
+	$close = { try { $p = $top.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {} }
+	if ($hits.Count -eq 0) { & $close; return "NO_ITEM" }
+	if ($hits.Count -gt 1) { & $close; return "AMBIGUOUS" }
+	$x = $null
+	if ($hits[0].TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$x) -or
+		$hits[0].TryGetCurrentPattern($ECP::Pattern, [ref]$x)) { & $close; return "NOT_A_COMMAND" }
+	$ip = $null
+	if (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { & $close; return "NO_INVOKE" }
+	try { $ip.Invoke() } catch { & $close; return "INVOKE_ERROR" }
+	Start-Sleep -Milliseconds 700
+	& $close
+	Start-Sleep -Milliseconds 300
+	$fresh = FindTopMenu $mainHandle $menu
+	try { if (-not (ClosedOk $fresh.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState)) { return "NOT_CLOSED" } } catch { return "NOT_CLOSED" }
+	return "INVOKED"
+}
+# Pure: the only allowed difference after switching the target On is exactly {target}; "" when so, else the reason.
+function OnlyTargetChanged($base, $snap, [string]$target) {
+	$d = ToggleDiff $base $snap
+	if ($d.Count -ne 1 -or $d[0] -cne $target) { return "DIFF " + ($d -join ",") }
+	if ($snap[$target] -cne "On") { return "TARGET_NOT_ON" }
+	return ""
+}
