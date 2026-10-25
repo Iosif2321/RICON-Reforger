@@ -16,6 +16,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Settle = 15,
       [switch]$Expand,
       [switch]$OpenWorld,
+      [string]$SubMenu = "",
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -29,6 +30,9 @@ $regKey = "HKCU\Software\Bohemia Interactive"
 $profileDir = "$myGames\ArmaReforgerWorkbench\profile"
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
+# -SubMenu: the one nested item of Game that may be opened (codex #4661 proposal); nothing else is accepted
+if ($SubMenu -and $SubMenu -cne "Play Game Options") { "BAD_SUBMENU"; exit 2 }
+if ($SubMenu -and -not $Expand) { "SUBMENU_NEEDS_EXPAND"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
 $OutDir = (Resolve-Path $OutDir).Path
 if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_INSIDE_REPO"; exit 2 }
@@ -43,7 +47,7 @@ $playPattern = '\[RICON_LIVEB\] state=PLAY_REQUESTED|kind=ENDPOINT_START|\[RICON
 function LogText { if (Test-Path $log) { return (Get-Content $log -Raw) } else { return "" } }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld"
+"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld subMenu=`"$SubMenu`""
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
@@ -125,7 +129,8 @@ try {
 					if ($Expand -and $item.Current.Name -match '^(?i)(game|play)$') {
 						$b = Blocked
 						if ($b) { $reason = $b; break }
-						if (-not (ExpandRead $item $label $wbPid $main)) { $reason = "COLLAPSE_FAILED"; break }
+						$child = if ($item.Current.Name -ceq "Game") { $SubMenu } else { "" }
+						if (-not (ExpandRead $item $label $wbPid $main $child)) { $reason = "COLLAPSE_FAILED"; break }
 					}
 					$k++
 				}

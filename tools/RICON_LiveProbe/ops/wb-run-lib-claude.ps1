@@ -265,18 +265,24 @@ function OfType($el, $type) {
 	@($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, $c))
 }
 # Items of an opened menu: popups are separate top-level windows of the own PID in Qt, so read both the element's
-# own descendants and every own top-level window other than the main one. Nested items: name and state only.
+# own descendants ([el]) and every own top-level window other than the main one ([win], with the window title, codex
+# review of run 114055: the other editor window's menu bar showed up there). Nested items: name and state only.
 function OpenedItems($el, [uint32]$ownPid, [IntPtr]$mainHandle) {
 	$names = New-Object System.Collections.Generic.List[string]
-	foreach ($i in (OfType $el $CT::MenuItem)) { $names.Add((Short $i.Current.Name)) }
+	foreach ($i in (OfType $el $CT::MenuItem)) {
+		$state = ""
+		try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
+		$names.Add("[el] " + (Short $i.Current.Name) + $state)
+	}
 	$root = [System.Windows.Automation.AutomationElement]::RootElement
 	$c = New-Object System.Windows.Automation.PropertyCondition($U::ProcessIdProperty, [int]$ownPid)
 	foreach ($w in @($root.FindAll([System.Windows.Automation.TreeScope]::Children, $c))) {
 		if ($w.Current.NativeWindowHandle -eq $mainHandle.ToInt32()) { continue }
+		$src = "[win `"" + (Short $w.Current.Name) + "`"] "
 		foreach ($i in (OfType $w $CT::MenuItem)) {
 			$state = ""
 			try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
-			$names.Add((Short $i.Current.Name) + $state)
+			$names.Add($src + (Short $i.Current.Name) + $state)
 		}
 	}
 	return , $names.ToArray()
@@ -285,16 +291,39 @@ function OpenedItems($el, [uint32]$ownPid, [IntPtr]$mainHandle) {
 # the element stays expanded or Collapse throws (the caller stops). All text goes through Write-Host: in the first
 # OpenWorld read (ricon-b0b-menu-claude-20261025-113705) pipeline output here became part of the return value, so
 # the lines were lost and a failed Collapse could not be seen.
-function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle) {
+# Child menu item with exactly this name, first among the element's descendants, then in the own popup windows.
+function FindMenuChild($el, [string]$name, [uint32]$ownPid, [IntPtr]$mainHandle) {
+	foreach ($i in (OfType $el $CT::MenuItem)) { if ($i.Current.Name -ceq $name) { return $i } }
+	$root = [System.Windows.Automation.AutomationElement]::RootElement
+	$c = New-Object System.Windows.Automation.PropertyCondition($U::ProcessIdProperty, [int]$ownPid)
+	foreach ($w in @($root.FindAll([System.Windows.Automation.TreeScope]::Children, $c))) {
+		if ($w.Current.NativeWindowHandle -eq $mainHandle.ToInt32()) { continue }
+		foreach ($i in (OfType $w $CT::MenuItem)) { if ($i.Current.Name -ceq $name) { return $i } }
+	}
+	return $null
+}
+# $childName (codex #4661 proposal): while $el is open, open exactly that one child the same way, read it, close it,
+# then close $el. One level only: the inner call gets no child name.
+function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle, [string]$childName = "") {
 	try { $p = $el.GetCurrentPattern($ECP::Pattern) } catch { "  $label NO_EXPAND_COLLAPSE (not opened)" | Write-Host; return $true }
 	try { $p.Expand() } catch { "  $label EXPAND_ERROR $($_.Exception.GetType().Name)" | Write-Host; return $true }
 	Start-Sleep -Milliseconds 700
 	$items = OpenedItems $el $ownPid $mainHandle
 	"  $label OPENED items=$($items.Count)" | Write-Host
 	foreach ($n in @($items | Select-Object -First 40)) { "    ITEM `"$n`"" | Write-Host }
+	$childOk = $true
+	if ($childName) {
+		$child = FindMenuChild $el $childName $ownPid $mainHandle
+		if ($null -eq $child) { "  $label CHILD_NOT_FOUND `"$childName`"" | Write-Host }
+		else {
+			$childLabel = "$label > `"$childName`""
+			"  $childLabel type=$($child.Current.ControlType.ProgrammaticName) patterns=$(Patterns $child)" | Write-Host
+			$childOk = [bool](ExpandRead $child $childLabel $ownPid $mainHandle "")
+		}
+	}
 	try { $p.Collapse() } catch { "  $label COLLAPSE_ERROR $($_.Exception.GetType().Name)" | Write-Host; return $false }
 	Start-Sleep -Milliseconds 400
 	$state = $p.Current.ExpandCollapseState
 	"  $label CLOSED state=$state" | Write-Host
-	return ($state -ne [System.Windows.Automation.ExpandCollapseState]::Expanded)
+	return ($childOk -and $state -ne [System.Windows.Automation.ExpandCollapseState]::Expanded)
 }

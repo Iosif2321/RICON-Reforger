@@ -208,6 +208,9 @@ $w.ShowActivated = $false; $w.ShowInTaskbar = $false; $w.WindowStartupLocation =
 $menu = New-Object System.Windows.Controls.Menu
 $game = New-Object System.Windows.Controls.MenuItem; $game.Header = "Game"
 foreach ($h in @("Play Fake", "Server Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; [void]$game.Items.Add($i) }
+$opt = New-Object System.Windows.Controls.MenuItem; $opt.Header = "Play Game Options"
+foreach ($h in @("Inner Server Fake", "Inner Peer Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; [void]$opt.Items.Add($i) }
+[void]$game.Items.Add($opt)
 [void]$menu.Items.Add($game)
 $w.Content = $menu
 $t = New-Object System.Windows.Threading.DispatcherTimer; $t.Interval = [TimeSpan]::FromSeconds(25); $t.Add_Tick({ $w.Close() }.GetNewClosure()); $t.Start()
@@ -223,9 +226,17 @@ if ($gameItem.Count -eq 1) {
 	$printed = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh 6>&1 | ForEach-Object { [string]$_ })
 	$ret = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh 6>$null)
 	Case "expandread returns one bool" (@($ret | ForEach-Object { $_.GetType().Name + ":" + $_ })) @("Boolean:True")
-	Case "expandread prints items" (@($printed | Where-Object { $_ -match 'ITEM "(Play Fake|Server Fake)' }).Count) 2
+	Case "expandread prints items" (@($printed | Where-Object { $_ -match 'ITEM "\[(el|win[^]]*)\] (Play Fake|Server Fake)' }).Count) 2
+	Case "expandread no inner items without child" (@($printed | Where-Object { $_ -match 'Inner (Server|Peer) Fake' }).Count) 0
 	Case "expandread closed again" (@($printed | Where-Object { $_ -match 'CLOSED state=Collapsed' }).Count) 1
 	Case "expandread state after" ($gameItem[0].GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState.ToString()) "Collapsed"
+	$printed2 = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh "Play Game Options" 6>&1 | ForEach-Object { [string]$_ })
+	$ret2 = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh "Play Game Options" 6>$null)
+	Case "child returns one bool" (@($ret2 | ForEach-Object { $_.GetType().Name + ":" + $_ })) @("Boolean:True")
+	Case "child items printed" (@($printed2 | Where-Object { $_ -match 'ITEM "\[(el|win[^]]*)\] Inner (Server|Peer) Fake' }).Count -ge 2) $true
+	Case "child closed then parent closed" (@($printed2 | Where-Object { $_ -match 'CLOSED state=Collapsed' }).Count) 2
+	Case "child missing reported" (@(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh "No Such Item" 6>&1 | ForEach-Object { [string]$_ } | Where-Object { $_ -match 'CHILD_NOT_FOUND' }).Count) 1
+	Case "parent state after child run" ($gameItem[0].GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState.ToString()) "Collapsed"
 }
 if (-not $mp.HasExited) { $mp.Kill() }
 Remove-Item $mk -Force
