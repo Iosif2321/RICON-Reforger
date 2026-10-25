@@ -66,6 +66,15 @@ Case "known save prompt" (WindowKnown "World needs to be saved") $false
 Case "known bare editor" (WindowKnown "World Editor") $true
 Case "known bare editor suffix" (WindowKnown "World Editor 2") $false
 
+# startup title of the menu reader (codex #4647): exact, before the editor window, within 30 s
+Case "startup exact early" (StartupWindowAllowed "Arma Reforger Workbench" $false 2) $true
+Case "startup lowercase" (StartupWindowAllowed "arma reforger workbench" $false 2) $false
+Case "startup suffix" (StartupWindowAllowed "Arma Reforger Workbench 2" $false 2) $false
+Case "startup after main" (StartupWindowAllowed "Arma Reforger Workbench" $true 2) $false
+Case "startup after 30 s" (StartupWindowAllowed "Arma Reforger Workbench" $false 30.5) $false
+Case "startup at 30 s" (StartupWindowAllowed "Arma Reforger Workbench" $false 30) $true
+Case "startup not globally known" (WindowKnown "Arma Reforger Workbench") $false
+
 # teardown ownership (codex #4631): pure decisions, no process is killed here
 $launch = Get-Date "2026-10-25 10:00:00"
 function Ent($o) { $e = @{ pid = 101; descendant = $true; recordedCreated = $launch.AddSeconds(5); launch = $launch; held = $true; heldExited = $false; heldStart = $launch.AddSeconds(5) }; foreach ($k in $o.Keys) { $e[$k] = $o[$k] }; $e }
@@ -168,8 +177,14 @@ $f = FakeDlg "Background Server" "" "OK" "child"
 Case "unknown child window" (UnknownWindow ([uint32]$f.p.Id) $false) "Background Server"
 Case "unknown child auth title" (UnknownWindow ([uint32]$f.p.Id) $true) "Background Server"
 Done $f
+$f = FakeDlg "Arma Reforger Workbench" "" "OK" "startup"
+Case "startup window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 3) ""
+Case "startup window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 3) "Arma Reforger Workbench"
+Case "startup window late stops" (UnknownWindowStartup ([uint32]$f.p.Id) $false 31) "Arma Reforger Workbench"
+Done $f
 $f = FakeDlg "World Editor - Plain" "" "OK" "editor"
 Case "known editor window" (UnknownWindow ([uint32]$f.p.Id) $true) ""
+Case "startup check passes editor" (UnknownWindowStartup ([uint32]$f.p.Id) $false 3) ""
 Case "editor title in child" (UnknownWindow ([uint32]$f.p.Id) $false) "World Editor - Plain"
 Done $f
 

@@ -220,6 +220,25 @@ function YesGuard([uint32]$wbPid, [int]$t, [bool]$restartRun, [bool]$secondPlayM
 	return "PRESSED"
 }
 
+# Menu reader only (codex #4647): the exact startup title of the own Workbench is passive while the editor window has not
+# appeared yet and at most 30 s have passed; it is never opened or pressed. Not part of WindowKnown.
+$script:StartupTitle = "Arma Reforger Workbench"
+function StartupWindowAllowed([string]$title, [bool]$mainFound, [double]$elapsed) {
+	return ($title -ceq $script:StartupTitle -and -not $mainFound -and $elapsed -le 30)
+}
+
+# Like UnknownWindow for the Workbench PID, but every visible titled window is checked and the startup title is let
+# through only under StartupWindowAllowed.
+function UnknownWindowStartup([uint32]$id, [bool]$mainFound, [double]$elapsed) {
+	foreach ($w in @([RiconWin]::List($id))) {
+		if (-not $w.StartsWith("V|")) { continue }
+		$title = ($w -split "\|", 3)[2]
+		if ($title -eq "" -or (WindowKnown $title) -or (StartupWindowAllowed $title $mainFound $elapsed)) { continue }
+		return $title
+	}
+	return ""
+}
+
 # First visible window of a tracked PID whose title is not known; "" when none. For a child PID even the
 # authorization title is unknown here: a prompt in another process is read, never pressed.
 function UnknownWindow([uint32]$id, [bool]$isWorkbench) {

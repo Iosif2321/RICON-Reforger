@@ -95,15 +95,15 @@ $wbPid = [uint32]$proc.Id
 "PID $wbPid started $($started.ToString('HH:mm:ss'))"
 $watchdog = StartWatchdog $proc (($Seconds + 30) * 1000)
 "WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
-$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""
+$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""; $script:mainFound = $false
 # "" when the UI may be read now, else the stop reason: prompt, unknown window, exited process or deadline
 function Blocked {
 	$proc.Refresh()
 	if ($proc.HasExited) { return "WORKBENCH_EXITED" }
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
 	if ([RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { "AUTH_PROMPT seen (read only, not pressed)" | Write-Host; return "DIALOG_AUTH_PROMPT" }
-	$u = UnknownWindow $wbPid $true
-	if ($u) { "UNKNOWN_WINDOW title=`"$u`" (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
+	$u = UnknownWindowStartup $wbPid $script:mainFound ((Get-Date) - $started).TotalSeconds
+	if ($u) { "UNKNOWN_WINDOW title=`"$u`" mainFound=$($script:mainFound) (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
 	return ""
 }
 try {
@@ -115,7 +115,7 @@ try {
 			$parts = $w -split "\|", 3
 			if ($parts[0] -eq "V" -and ($parts[2] -ceq "World Editor" -or $parts[2].StartsWith("World Editor - ", [StringComparison]::Ordinal))) { $mainTitle = $parts[2] }
 		}
-		if ($mainTitle) { $main = [RiconWin]::FindByTitle($wbPid, $mainTitle); break }
+		if ($mainTitle) { $main = [RiconWin]::FindByTitle($wbPid, $mainTitle); $script:mainFound = $true; break }
 		Start-Sleep -Seconds 1
 	}
 	if ($main -ne [IntPtr]::Zero) {
