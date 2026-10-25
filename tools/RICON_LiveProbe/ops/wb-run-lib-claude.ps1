@@ -221,12 +221,10 @@ function YesGuard([uint32]$wbPid, [int]$t, [bool]$restartRun, [bool]$secondPlayM
 	return "PRESSED"
 }
 
-# A2 with the launcher's start flag (codex #4813; run 154527 read the :174 text): exact prompt texts per call site. The
-# vanilla :1101 text is the one PromptVerdict checks; the two launcher sites are its FileIO.FileExists calls.
+# Exact prompt texts per call site (codex #4813). Only the vanilla :1101 one is left: the A2 file flag and with it the
+# launcher's FileIO.FileExists sites :174/:187 are gone (run 172649: a "Yes" on :187 did not cover the next poll pass).
 $script:SiteMessages = [ordered]@{
 	"ARSENAL_1101" = $script:ExpectedMessage
-	"LAUNCHER_174" = "Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:174' to access potentially dangerous method 'FileIO.FileExists'?"
-	"LAUNCHER_187" = "Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:187' to access potentially dangerous method 'FileIO.FileExists'?"
 }
 # Site key of a prompt, NOT_READY or UNEXPECTED; the same exact text and four-button checks as PromptVerdict.
 function PromptSite([string[]]$texts, [string[]]$captions) {
@@ -237,12 +235,12 @@ function PromptSite([string[]]$texts, [string[]]$captions) {
 	foreach ($k in $script:SiteMessages.Keys) { if ($texts[0] -ceq $script:SiteMessages[$k]) { return $k } }
 	return "UNEXPECTED"
 }
-# Sites that may get a "Yes" in the current phase of a -LauncherYes run (codex #4817, #4819): the launcher's two sites
-# only before Play; the vanilla one only after the flag (played) once the launcher logged FLAG_SEEN (printed right
-# before its SwitchToGameMode, :189) and before the observation ended or edit mode was requested.
+# Sites that may get a "Yes" in the current phase of a plugin-start run (codex #4848, #4850): none before the plugin
+# command was invoked (played); after it only the vanilla one, once the launcher logged PLUGIN_SEEN (printed right
+# before its SwitchToGameMode) and before the observation ended or edit mode was requested (codex #4817, #4819).
 function SitesAllowed([bool]$played, [string]$logText) {
-	if (-not $played) { return , @("LAUNCHER_174", "LAUNCHER_187") }
-	if ($logText -notmatch '\[RICON_LIVEB\] inspect=FLAG_SEEN') { return , @() }
+	if (-not $played) { return , @() }
+	if ($logText -notmatch '\[RICON_LIVEB\] inspect=PLUGIN_SEEN') { return , @() }
 	if ($logText -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED|EDIT_STABLE)') { return , @() }
 	return , @("ARSENAL_1101")
 }
@@ -659,8 +657,10 @@ function PrepareMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 		$hits[0].TryGetCurrentPattern($ECP::Pattern, [ref]$x)) { $why = "NOT_A_COMMAND" }
 	elseif (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { $why = "NO_INVOKE" }
 	if ($why) {
+		# names only, for the stop line: the first read of a menu (Plugins, codex #4850) must show what was there instead
+		$names = @(OfType $top $CT::MenuItem | ForEach-Object { Short $_.Current.Name } | Select-Object -First 40)
 		try { $p = $top.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
-		return @{ result = $why }
+		return @{ result = $why; names = $names }
 	}
 	return @{ result = "READY"; ip = $ip; top = $top }
 }
@@ -690,24 +690,6 @@ function CleanupAsyncInvoke($job, [int]$ms) {
 	if ($job.done) { return "DONE " + $job.result }
 	try { [void]$job.ps.BeginStop($null, $null) } catch {}
 	return "WORKER_LEFT"
-}
-
-# a .NET exception from a method call reaches PowerShell wrapped in MethodInvocationException; name the inner one
-function InnerName($x) { if ($x -is [Management.Automation.MethodInvocationException] -and $x.InnerException) { $x = $x.InnerException }; return $x.GetType().Name }
-
-# Creates the A2 start flag with CreateNew; @{ made; error }. made is true as soon as Open succeeded (the launcher may
-# already see the file, so the caller never treats the attempt as "before Play", codex #4746) and only then: a file that
-# already existed is not ours and is never removed (codex #4751). $close is replaceable only for the self-test.
-function NewStartFlag([string]$path, [scriptblock]$close = { param($s) $s.Close() }) {
-	$fs = $null; $made = $false; $err = ""
-	try {
-		$fs = [IO.File]::Open($path, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
-		$made = $true
-	} catch { $err = "OPEN_" + (InnerName $_.Exception) }
-	finally {
-		if ($fs) { try { & $close $fs } catch { $err = "CLOSE_" + (InnerName $_.Exception); try { $fs.Dispose() } catch {} } }
-	}
-	return @{ made = $made; error = $err }
 }
 
 # Pure: the only allowed difference after switching the target On is exactly {target}; "" when so, else the reason.

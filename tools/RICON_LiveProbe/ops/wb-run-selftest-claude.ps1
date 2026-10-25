@@ -56,24 +56,28 @@ Case "verdict extra text" (PromptVerdict @($msg, "more") $four) "UNEXPECTED"
 Case "verdict three buttons" (PromptVerdict @($msg) @("Yes", "No", "No to All")) "UNEXPECTED"
 Case "verdict lowercase yes" (PromptVerdict @($msg) @("yes", "Yes to All", "No", "No to All")) "UNEXPECTED"
 Case "verdict not ready" (PromptVerdict @($msg) @()) "NOT_READY"
-# per-site texts (codex #4813): the launcher's two FileIO.FileExists sites and the vanilla one
-$m174 = $script:SiteMessages["LAUNCHER_174"]
-$m187 = $script:SiteMessages["LAUNCHER_187"]
+# per-site texts (codex #4813): only the vanilla site is real now; two test-only sites keep the per-site rules covered
+Case "site table only 1101" (@($script:SiteMessages.Keys) -join ",") "ARSENAL_1101"
+$m174 = "Allow script 'Scripts/WorkbenchGame/RICON_SelfTest.c:174' to access potentially dangerous method 'FileIO.FileExists'?"
+$m187 = $m174.Replace(":174", ":187")
+$script:SiteMessages["TEST_174"] = $m174
+$script:SiteMessages["TEST_187"] = $m187
 Case "site 1101" (PromptSite @($msg) $four) "ARSENAL_1101"
-Case "site 174" (PromptSite @($m174) $four) "LAUNCHER_174"
-Case "site 187" (PromptSite @($m187) $four) "LAUNCHER_187"
+Case "site 174" (PromptSite @($m174) $four) "TEST_174"
+Case "site 187" (PromptSite @($m187) $four) "TEST_187"
 Case "site other line" (PromptSite @($m174.Replace(":174", ":175")) $four) "UNEXPECTED"
 Case "site other method" (PromptSite @($m174.Replace("FileExists", "OpenFile")) $four) "UNEXPECTED"
-Case "site other script" (PromptSite @($m174.Replace("RICON_LiveBenchLauncherPlugin", "RICON_LiveOther")) $four) "UNEXPECTED"
+Case "site other script" (PromptSite @($m174.Replace("RICON_SelfTest", "RICON_Other")) $four) "UNEXPECTED"
 Case "site extra text" (PromptSite @($m174, "more") $four) "UNEXPECTED"
 Case "site three buttons" (PromptSite @($m174) @("Yes", "No", "No to All")) "UNEXPECTED"
 Case "site not ready" (PromptSite @($m174) @()) "NOT_READY"
-# phase of a -LauncherYes run (codex #4817, #4819)
-$lSeen = "[RICON_LIVEB] inspect=WAIT_FLAG`n[RICON_LIVEB] inspect=FLAG_SEEN`n"
-Case "allowed before play" (SitesAllowed $false "") @("LAUNCHER_174", "LAUNCHER_187")
-Case "allowed before play, seen in log" (SitesAllowed $false $lSeen) @("LAUNCHER_174", "LAUNCHER_187")
-Case "allowed played, no FLAG_SEEN" (SitesAllowed $true "[RICON_LIVEB] inspect=WAIT_FLAG`n") @()
-Case "allowed played, FLAG_SEEN" (SitesAllowed $true $lSeen) @("ARSENAL_1101")
+# phase of a plugin-start run (codex #4817, #4819, #4850)
+$lSeen = "[RICON_LIVEB] inspect=WAIT_PLUGIN`n[RICON_LIVEB] inspect=PLUGIN_SEEN`n"
+Case "allowed before play" (SitesAllowed $false "") @()
+Case "allowed before play, seen in log" (SitesAllowed $false $lSeen) @()
+Case "allowed played, no PLUGIN_SEEN" (SitesAllowed $true "[RICON_LIVEB] inspect=WAIT_PLUGIN`n") @()
+Case "allowed played, old FLAG_SEEN only" (SitesAllowed $true "[RICON_LIVEB] inspect=FLAG_SEEN`n") @()
+Case "allowed played, PLUGIN_SEEN" (SitesAllowed $true $lSeen) @("ARSENAL_1101")
 Case "allowed after OBSERVATION_END" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=OBSERVATION_END samples=3`n")) @()
 Case "allowed after EDIT_REQUESTED" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_REQUESTED`n")) @()
 Case "allowed after EDIT_STABLE" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_STABLE checks=51`n")) @()
@@ -204,7 +208,7 @@ Done $f
 
 # YesGuardSites: one press per allowed site, a repeat or a site outside the phase stops, 3 in all
 $script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
-$pre = @("LAUNCHER_174", "LAUNCHER_187")
+$pre = @("TEST_174", "TEST_187")
 $f = FakeDlg $script:AuthTitle $m174 $btns "s174"
 Case "sites 174 pressed" (YesGuardSites ([uint32]$f.p.Id) 1 $pre 3 6>$null) "PRESSED"
 Case "sites 174 clicked Yes" (Clicks $f) @("Yes")
@@ -247,18 +251,36 @@ Done $f
 # a handle reused by a prompt of another site (codex #4819), simulated by recording 174 as pressed on this window
 $f = FakeDlg $script:AuthTitle $m187 $btns "sreuse"
 $hw = [RiconWin]::FindByTitle([uint32]$f.p.Id, $script:AuthTitle)
-$script:yesPressed = 1; $script:sitePressed = @{ "LAUNCHER_174" = @{ h = $hw; at = Get-Date } }
+$script:yesPressed = 1; $script:sitePressed = @{ "TEST_174" = @{ h = $hw; at = Get-Date } }
 Case "sites reused handle other site pressed" (YesGuardSites ([uint32]$f.p.Id) 10 $pre 3 6>$null) "PRESSED"
 Case "sites reused handle clicked Yes" (Clicks $f) @("Yes")
 Done $f
 $f = FakeDlg $script:AuthTitle $m174 $btns "sgrace"
 $hw = [RiconWin]::FindByTitle([uint32]$f.p.Id, $script:AuthTitle)
-$script:yesPressed = 1; $script:sitePressed = @{ "LAUNCHER_174" = @{ h = $hw; at = Get-Date } }
+$script:yesPressed = 1; $script:sitePressed = @{ "TEST_174" = @{ h = $hw; at = Get-Date } }
 Case "sites same site same handle in grace" (YesGuardSites ([uint32]$f.p.Id) 11 $pre 3 6>$null) "CLOSING"
-$script:sitePressed["LAUNCHER_174"].at = (Get-Date).AddSeconds(-10)
+$script:sitePressed["TEST_174"].at = (Get-Date).AddSeconds(-10)
 Case "sites same site same handle after grace" (YesGuardSites ([uint32]$f.p.Id) 12 $pre 3 6>$null) "PRESS_NO_EFFECT"
 Case "sites same handle no click" (Clicks $f).Count 0
 Case "sites same handle presses" $script:yesPressed 1
+Done $f
+# the plugin-start run (codex #4850): no site before the Invoke, then :1101 once, total 1
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
+$f = FakeDlg $script:AuthTitle $msg $btns "p1101pre"
+Case "plugin 1101 before invoke refused" (YesGuardSites ([uint32]$f.p.Id) 1 (SitesAllowed $false $lSeen) 1 6>$null) "SITE_NOT_ALLOWED"
+Case "plugin 1101 before invoke no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "p1101"
+Case "plugin 1101 after PLUGIN_SEEN pressed" (YesGuardSites ([uint32]$f.p.Id) 2 (SitesAllowed $true $lSeen) 1 6>$null) "PRESSED"
+Case "plugin 1101 clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "p1101b"
+Case "plugin 1101 second window refused" (YesGuardSites ([uint32]$f.p.Id) 3 (SitesAllowed $true $lSeen) 1 6>$null) "SITE_REPEAT"
+Case "plugin 1101 second window no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $m174 $btns "p174"
+Case "plugin other site after the one press" (YesGuardSites ([uint32]$f.p.Id) 4 @("ARSENAL_1101", "TEST_174") 1 6>$null) "LIMIT_REACHED"
+Case "plugin presses" $script:yesPressed 1
 Done $f
 $script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
 $f = FakeDlg "Background Server" "" "OK" "child"
@@ -540,6 +562,9 @@ $hidePopups
 	[void]`$d.ShowDialog()
 }.GetNewClosure())
 [void]`$game.Items.Add(`$play); [void]`$menu.Items.Add(`$game)
+`$plugins = New-Object System.Windows.Controls.MenuItem; `$plugins.Header = "Plugins"
+foreach (`$n in @("RICON: Play", "RICON: Other")) { `$pi = New-Object System.Windows.Controls.MenuItem; `$pi.Header = `$n; [void]`$plugins.Items.Add(`$pi) }
+[void]`$menu.Items.Add(`$plugins)
 `$w.Content = `$menu
 `$t = New-Object System.Windows.Threading.DispatcherTimer; `$t.Interval = [TimeSpan]::FromSeconds(40); `$t.Add_Tick({ `$w.Close() }.GetNewClosure()); `$t.Start()
 [void]`$w.ShowDialog()
@@ -564,22 +589,22 @@ Case "async worker completed" $doneA $true
 Case "async worker result" $jobA.result "COMPLETED"
 Case "async cleanup done" (CleanupAsyncInvoke $jobA 1000) "DONE COMPLETED"
 Case "async cleanup none" (CleanupAsyncInvoke $null 1000) "NONE"
+# the plugin start (codex #4850): a missing item invokes nothing and lists what was there; the exact item goes through
+# the same worker, and the menu ends Collapsed without being touched again
+$prepP = PrepareMenuCommand $ah "Plugins" "RICON: Missing"
+Case "plugins missing item refused" $prepP.result "NO_ITEM"
+Case "plugins missing item lists names" (@($prepP.names) -join ",") "RICON: Play,RICON: Other"
+Case "plugins closed after refusal" (ClosedOk (FindTopMenu $ah "Plugins").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
+$prepP = PrepareMenuCommand $ah "Plugins" "RICON: Play"
+Case "plugins item ready" $prepP.result "READY"
+$jobP = StartAsyncInvoke $prepP.ip
+$doneP = $false
+for ($i = 0; $i -lt 40 -and -not $doneP; $i++) { Start-Sleep -Milliseconds 250; $doneP = PollAsyncInvoke $jobP }
+Case "plugins invoke completed" $jobP.result "COMPLETED"
+Start-Sleep -Milliseconds 500
+Case "plugins closed after invoke" (ClosedOk (FindTopMenu $ah "Plugins").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
+Case "plugins cleanup done" (CleanupAsyncInvoke $jobP 1000) "DONE COMPLETED"
 if (-not $ap.HasExited) { $ap.Kill() }
 Remove-Item $mk -Force -ErrorAction SilentlyContinue
-
-# A2 start flag (codex #4746): made from a successful Open on, also when Close fails; Open on an existing file fails
-$fp = Join-Path $WorkDir "ricon-selftest-start.flag"
-Remove-Item $fp -Force -ErrorAction SilentlyContinue
-$f1 = NewStartFlag $fp
-Case "flag normal" @($f1.made, $f1.error, (Test-Path $fp)) @("True", "", "True")
-Set-Content -Path $fp -Value "existing" -NoNewline
-$f2 = NewStartFlag $fp
-Case "flag exists open fails, not ours" @($f2.made, $f2.error, (Get-Content $fp -Raw)) @("False", "OPEN_IOException", "existing")
-Remove-Item $fp -Force
-$f3 = NewStartFlag $fp { param($s) throw [IO.IOException]::new("mock close") }
-Case "flag close fails still made" @($f3.made, $f3.error, (Test-Path $fp)) @("True", "CLOSE_IOException", "True")
-Remove-Item $fp -Force
-$f4 = NewStartFlag (Join-Path $WorkDir "no-such-dir\x.flag")
-Case "flag open fails nothing made" @($f4.made, $f4.error) @("False", "OPEN_DirectoryNotFoundException")
 
 "PASS $($script:pass)/$($script:total)"
