@@ -95,7 +95,8 @@ $script:ExpectedSite = "Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponen
 $script:ExpectedMethod = "BaseContainerTools.LoadContainer"
 $script:ExpectedMessage = "Allow script '" + $script:ExpectedSite + "' to access potentially dangerous method '" + $script:ExpectedMethod + "'?"
 $script:AuthTitle = "Script Authorization Required"
-$script:KnownTitles = @("Script Authorization Required")
+# bare module titles: an editor without an opened world (menu read, claude #4627) shows no " - <world>" suffix
+$script:KnownTitles = @("Script Authorization Required", "World Editor", "Enfusion Workbench")
 $script:KnownPrefixes = @("World Editor - ", "Enfusion Workbench - ")
 
 # texts: non-empty names of non-button elements minus the button captions; captions: button names.

@@ -63,6 +63,8 @@ Case "known auth" (WindowKnown "Script Authorization Required") $true
 Case "known editor" (WindowKnown "World Editor - Plain") $true
 Case "known lowercase" (WindowKnown "world editor - Plain") $false
 Case "known save prompt" (WindowKnown "World needs to be saved") $false
+Case "known bare editor" (WindowKnown "World Editor") $true
+Case "known bare editor suffix" (WindowKnown "World Editor 2") $false
 
 # UI Automation cases on stand-in windows in a separate process
 function FakeDlg($title, $message, $buttons, $tag) {
