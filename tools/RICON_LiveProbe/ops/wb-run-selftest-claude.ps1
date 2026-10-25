@@ -28,6 +28,20 @@ Case "addr 172.16" (AddrClass "172.16.0.9") "PRIVATE_V4"
 Case "addr 172.32" (AddrClass "172.32.0.9") "OTHER"
 Case "addr 192.168" (AddrClass "192.168.50.7") "PRIVATE_V4"
 Case "addr apipa" (AddrClass "169.254.3.4") "LINKLOCAL_V4"
+# B0c host address (codex #4899): one PRIVATE_V4 Preferred Dhcp on an Up adapter with a gateway, else no client
+function A($ip, $if, $st = "Preferred", $po = "Dhcp") { [pscustomobject]@{ IPAddress = $ip; InterfaceIndex = $if; AddressState = $st; PrefixOrigin = $po } }
+$lan = A "192.168.1.20" 20
+$set = @((A "127.0.0.1" 1 "Preferred" "WellKnown"), (A "169.254.9.9" 12 "Tentative" "WellKnown"), (A "100.70.1.2" 19 "Preferred" "Manual"),
+	(A "192.168.56.1" 34 "Preferred" "Manual"), (A "10.0.75.1" 2 "Preferred" "Manual"), $lan, (A "172.20.0.1" 4 "Preferred" "Manual"))
+$r = SelectHostAddress $set @(19, 20)
+Case "host addr like this PC" @($r.result, $r.count, $r.address, $r.ifIndex) @("OK", "1", "192.168.1.20", "20")
+Case "host addr no gateway if" (SelectHostAddress $set @(19)).result "NONE"
+Case "host addr manual only" (SelectHostAddress @((A "192.168.1.20" 20 "Preferred" "Manual")) @(20)).result "NONE"
+Case "host addr tentative" (SelectHostAddress @((A "192.168.1.20" 20 "Tentative")) @(20)).result "NONE"
+Case "host addr not private" (SelectHostAddress @((A "100.70.1.2" 19)) @(19)).result "NONE"
+$two = SelectHostAddress @($lan, (A "10.1.1.5" 21)) @(20, 21)
+Case "host addr two dhcp" @($two.result, $two.count) @("AMBIGUOUS", "2")
+Case "host addr empty" (SelectHostAddress @() @()).result "NONE"
 Case "addr fe80" (AddrClass "fe80::1") "LINKLOCAL_V6"
 Case "addr fd" (AddrClass "fd12:3456::1") "PRIVATE_V6"
 Case "addr public" (AddrClass "8.8.8.8") "OTHER"

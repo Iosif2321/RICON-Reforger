@@ -55,6 +55,24 @@ function AddrClass([string]$a) {
 	return "OTHER"
 }
 
+# B0c host address (codex #4894, #4899): World Editor's Server localhost is not reached through 127.0.0.1, so the client
+# gets one real local IPv4. Pure: $addrs are objects with IPAddress, InterfaceIndex, AddressState and PrefixOrigin;
+# $upGatewayIfs the indexes of Up adapters with an IPv4 default gateway. Candidates are PRIVATE_V4, Preferred, Dhcp, on
+# such an adapter; exactly one must remain, else NONE or AMBIGUOUS and no client is started. The address itself goes
+# only to the raw JSONL; stdout carries the result, the class and the candidate count.
+function SelectHostAddress($addrs, [int[]]$upGatewayIfs) {
+	$c = @($addrs | Where-Object { (AddrClass ([string]$_.IPAddress)) -eq "PRIVATE_V4" -and [string]$_.AddressState -eq "Preferred" -and
+		[string]$_.PrefixOrigin -eq "Dhcp" -and $upGatewayIfs -contains [int]$_.InterfaceIndex })
+	if ($c.Count -eq 0) { return @{ result = "NONE"; count = 0 } }
+	if ($c.Count -gt 1) { return @{ result = "AMBIGUOUS"; count = $c.Count } }
+	return @{ result = "OK"; count = 1; address = [string]$c[0].IPAddress; ifIndex = [int]$c[0].InterfaceIndex }
+}
+# The live inputs of SelectHostAddress (read only).
+function LocalHostAddress {
+	$ifs = @(Get-NetIPConfiguration -ErrorAction SilentlyContinue | Where-Object { $_.IPv4DefaultGateway -and $_.NetAdapter.Status -eq "Up" } | ForEach-Object { [int]$_.InterfaceIndex })
+	return SelectHostAddress @(Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue) $ifs
+}
+
 # Names of the command-line switches only, in order, without values (paths and addresses are values).
 function FlagNames([string]$cmd) {
 	if (-not $cmd) { return , @() }
