@@ -6,7 +6,8 @@
 #      the launcher's inspect=WAIT_PLAY.
 #   2. Strict snapshot B of Game > Play Game Options (both server items Off); InvokePattern of "Server localhost" after
 #      the fresh Off check; strict S1 must differ from B by exactly Server localhost=On (else put back and stop).
-#   3. Invoke of the plain command Game > Play Game (found once; no Toggle, no ExpandCollapse).
+#   3. Invoke of the plain command Game > Play Game (found once; no Toggle, no ExpandCollapse), in a separate runspace
+#      (codex #4717/#4719): the synchronous UIA call blocked run 125954 for ~125 s; observation now goes on meanwhile.
 #   4. Observation once per second (as wb-run-claude.ps1): the Workbench PID and its descendants (held handles), other
 #      new ArmaReforger* processes, their UDP endpoints/TCP listeners as address class and port, their windows; the
 #      vanilla Script Authorization prompt gets at most one guarded "Yes", only on the Workbench PID; a prompt in another
@@ -83,7 +84,7 @@ foreach ($p in @(Get-CimInstance Win32_Process -Property ProcessId)) { $baseline
 $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name })
 
 $tracked = @{}; $netSeen = @{}; $newCount = 0
-$script:mainFound = $false; $script:played = $false; $script:switchedOn = $false
+$script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:playJob = $null
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
@@ -93,6 +94,11 @@ $wbPid = [uint32]$wbProc.Id
 # One observation step; "" or the stop reason. Before Play nothing may start and no prompt may show.
 function Tick {
 	$t = [int]((Get-Date) - $started).TotalSeconds
+	if ($script:playJob -and -not $script:playJob.done -and (PollAsyncInvoke $script:playJob)) {
+		"PLAY_INVOKE_DONE t=$t afterMs=$([int]((Get-Date) - $script:playJob.started).TotalMilliseconds) result=$($script:playJob.result)" | Write-Host
+		Raw @{ t = $t; kind = "PLAY_INVOKE_DONE"; result = $script:playJob.result }
+		try { $p = $script:playTop.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
+	}
 	$wbProc.Refresh()
 	if ($wbProc.HasExited) { return "WORKBENCH_EXITED" }
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
@@ -226,13 +232,16 @@ try {
 	if (-not $reason) { $reason = Tick }
 	if (-not $reason) {
 		$phase = "PLAY"
-		$script:menuCommandAttempted = $false
-		$r = InvokeMenuCommand $script:main "Game" "Play Game"
-		# codex #4703: once Invoke() was attempted, Play may have started whatever $r says: no pre-Play put-back, no retry
-		$script:played = [bool]$script:menuCommandAttempted
-		"PLAY_INVOKE result=$r attempted=$($script:played) t=$([int]((Get-Date) - $started).TotalSeconds)"
-		Raw @{ kind = "PLAY_INVOKE"; result = $r; attempted = $script:played }
-		if ($r -cne "INVOKED") { $reason = "PLAY_$r" }
+		$prep = PrepareMenuCommand $script:main "Game" "Play Game"
+		if ($prep.result -cne "READY") { $reason = "PLAY_$($prep.result)"; "PLAY_PREPARE result=$($prep.result) (not attempted)" }
+		else {
+			# codex #4703/#4717: the attempt counts from the worker start: no pre-Play put-back, no second Play
+			$script:played = $true
+			$script:playTop = $prep.top
+			$script:playJob = StartAsyncInvoke $prep.ip
+			"PLAY_INVOKE_STARTED t=$([int]((Get-Date) - $started).TotalSeconds) (worker runspace)"
+			Raw @{ kind = "PLAY_INVOKE_STARTED" }
+		}
 	}
 	# a stop after switching On but before Play: put the target back from On in the same process, then re-read
 	if ($reason -and $script:switchedOn -and -not $script:played) {
@@ -244,6 +253,11 @@ try {
 	if (-not $reason) {
 		$phase = "OBSERVE"
 		$reason = WaitFor $mEditStable "EDIT_STABLE"
+	}
+	if (-not $reason) {
+		# the menus are touched again only after the Play worker has returned (at most 10 s more after EDIT_STABLE)
+		for ($k = 0; $k -lt 10 -and $script:playJob -and -not $script:playJob.done -and -not $reason; $k++) { Start-Sleep -Seconds 1; $reason = Tick }
+		if (-not $reason -and $script:playJob -and -not $script:playJob.done) { $reason = "PLAY_INVOKE_STILL_RUNNING" }
 	}
 	if (-not $reason) {
 		$phase = "RESTORE"
@@ -296,6 +310,8 @@ finally {
 		$alive = if ($h) { [string](-not $h.HasExited) } else { "UNVERIFIED_NO_HANDLE" }
 		"PROC_END pid=$id name=$($tracked[$id].name) descendant=$($tracked[$id].descendant) held=$([bool]$h) alive=$alive"
 	}
+	# the worker only after the own Workbench is gone (its blocked UIA call then fails or returns); never a blocking Stop
+	"PLAY_WORKER " + (CleanupAsyncInvoke $script:playJob 10000)
 	if ($watchdog) { $watchdog.Refresh(); if (-not $watchdog.HasExited) { try { $watchdog.Kill() } catch {} }; "WATCHDOG_END exited=$($watchdog.HasExited)" }
 	"others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
 	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason; result = $result }

@@ -427,4 +427,54 @@ Case "invoke command clicked once" (@(Get-Content $clickFile -ErrorAction Silent
 if (-not $pp.HasExited) { $pp.Kill() }
 Remove-Item $mk, $clickFile -Force -ErrorAction SilentlyContinue
 
+# async Play (codex #4719): a Play Game command whose click opens a modal prompt; the caller keeps observing, answers it
+# through YesGuard, and the worker completes; WPF may run the click asynchronously, so this checks the mechanics only
+$mk = Join-Path $WorkDir "ricon-fakeasync-claude.ps1"
+$msgA = $script:ExpectedMessage
+@"
+Add-Type -AssemblyName PresentationFramework
+`$w = New-Object System.Windows.Window
+`$w.Title = "World Editor - Fake async"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
+`$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
+`$menu = New-Object System.Windows.Controls.Menu
+`$game = New-Object System.Windows.Controls.MenuItem; `$game.Header = "Game"
+`$play = New-Object System.Windows.Controls.MenuItem; `$play.Header = "Play Game"
+`$play.Add_Click({
+	`$d = New-Object System.Windows.Window
+	`$d.Title = "Script Authorization Required"; `$d.Width = 420; `$d.Height = 160; `$d.Left = -3000; `$d.Top = -2700
+	`$d.ShowActivated = `$false; `$d.WindowStartupLocation = "Manual"
+	`$sp = New-Object System.Windows.Controls.StackPanel
+	`$tb = New-Object System.Windows.Controls.TextBlock; `$tb.Text = "$msgA"; [void]`$sp.Children.Add(`$tb)
+	foreach (`$c in @("Yes", "Yes to All", "No", "No to All")) { `$b = New-Object System.Windows.Controls.Button; `$b.Content = `$c; `$b.Add_Click({ `$d.Close() }.GetNewClosure()); [void]`$sp.Children.Add(`$b) }
+	`$d.Content = `$sp
+	[void]`$d.ShowDialog()
+}.GetNewClosure())
+[void]`$game.Items.Add(`$play); [void]`$menu.Items.Add(`$game)
+`$w.Content = `$menu
+`$t = New-Object System.Windows.Threading.DispatcherTimer; `$t.Interval = [TimeSpan]::FromSeconds(40); `$t.Add_Tick({ `$w.Close() }.GetNewClosure()); `$t.Start()
+[void]`$w.ShowDialog()
+"@ | Set-Content -Path $mk -Encoding ASCII
+$ap = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-File", "`"$mk`"")
+for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$ap.Id, "World Editor - Fake async") -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
+Start-Sleep -Milliseconds 500
+$ah = [RiconWin]::FindByTitle([uint32]$ap.Id, "World Editor - Fake async")
+$prepA = PrepareMenuCommand $ah "Game" "Play Game"
+Case "async prepare ready" $prepA.result "READY"
+Case "async prepare refuses submenu-less missing" (PrepareMenuCommand $ah "Game" "Stop Game").result "NO_ITEM"
+$prepA = PrepareMenuCommand $ah "Game" "Play Game"
+$jobA = StartAsyncInvoke $prepA.ip
+$seen = $false; $ticks = 0
+for ($i = 0; $i -lt 40 -and -not $seen; $i++) { Start-Sleep -Milliseconds 250; $ticks++; $seen = [RiconWin]::FindByTitle([uint32]$ap.Id, $script:AuthTitle) -ne [IntPtr]::Zero }
+Case "async caller keeps running and sees the prompt" $seen $true
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null
+Case "async prompt answered" (YesGuard ([uint32]$ap.Id) 1 $false $false 6>$null) "PRESSED"
+$doneA = $false
+for ($i = 0; $i -lt 40 -and -not $doneA; $i++) { Start-Sleep -Milliseconds 250; $doneA = PollAsyncInvoke $jobA }
+Case "async worker completed" $doneA $true
+Case "async worker result" $jobA.result "COMPLETED"
+Case "async cleanup done" (CleanupAsyncInvoke $jobA 1000) "DONE COMPLETED"
+Case "async cleanup none" (CleanupAsyncInvoke $null 1000) "NONE"
+if (-not $ap.HasExited) { $ap.Kill() }
+Remove-Item $mk -Force -ErrorAction SilentlyContinue
+
 "PASS $($script:pass)/$($script:total)"

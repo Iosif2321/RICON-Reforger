@@ -1,0 +1,224 @@
+# claude, B0b step 2, first server-mode attempt (agora #4704-#4719). START -> codex ACK (#4708) -> run -> END (#4713).
+# One own Workbench, Plain world in edit mode (-riconBenchMode=inspect) with the endpoint probe gate
+# (-riconEndpointProbe=1); launcher e67514a registers the play-mode observer and waits for an external Play.
+# Runner tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1: strict snapshot (both server items Off), InvokePattern of
+# Game > Play Game Options > Server localhost from Off (S1 differs exactly by Server localhost=On), then InvokePattern of
+# the plain command Game > Play Game.
+#
+# Observed in this run:
+# - the synchronous InvokePattern.Invoke() of Play Game did not return for about 125 s and then threw (INVOKE_ERROR);
+#   during that time the runner made no observation (no window read, no "Yes", no endpoint read); no button was pressed;
+# - the Workbench console.log (raw, local; SHA below) shows at 13:00:59 "Switching to game mode", "Starting RPL server,
+#   listening on address 0.0.0.0:2001", RplStartupEvent Started; then ENDPOINT_START isServer=1 isClient=0 rplMode=2 and
+#   "[RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1" at 13:01:00; after 13:01:00.202 the log has no line
+#   until the process was killed at 13:03 (no ENDPOINT_SAMPLE, no [RICON_WBMODE] event=START, no inspect=PLAY_ENTERED);
+# - no child process of the Workbench and no other Reforger process appeared; the process was stopped through its held
+#   handle; registry branch and profile files equal before and after (counts and hashes only);
+# - the result of the run stays SETTING_MAY_REMAIN_ON (Server localhost was On when the process was killed); the
+#   separate follow-up read in a new process (second section) observed Server localhost=Off and all other items as in
+#   the baseline, registry unchanged.
+# Not established: why the log and the Invoke stopped (a modal prompt is a hypothesis: no window was observed), the
+# listening endpoint as seen by the runner, any client, network traffic or voice. The engine line "listening on
+# 0.0.0.0:2001" is a log statement, not an observed accepted connection.
+# Level: RUNTIME_OBSERVED (log) for the Workbench process in Listen mode (rplMode 2) after the UI Play with Server
+# localhost On; the runner side of the run is incomplete.
+
+--- ricon-b0b-serverplay-claude-20261025-125954
+# wb-serverplay 1B68D19E / lib 2049FBA2 (d5685ec), launcher e67514a; result of THIS run as printed: STOP reason=PLAY_INVOKE_ERROR phase=PLAY result=SETTING_MAY_REMAIN_ON
+# stdout b0b-serverplay-run1.txt sha256 bb057b6d4d779d61649daa494b513d28f20ecddef2c23438ec6924dfed8bed7f (54 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-serverplay-claude-20261025-125954 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -log-scr-checksum
+RUNNER 1B68D19E56B12D06 LIB 2049FBA224472AD1
+LIMITS seconds=240 watchdogSeconds=270 settle=15 maxChildren=3
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2185"
+PID 17064 started 12:59:55
+WATCHDOG pid=18224 limitMs=270000
+MAIN_WINDOW t=12 title="World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.e..."
+SEEN REGISTERED t=13
+SEEN OPEN_ONLY t=15
+SEEN WAIT_PLAY t=16
+BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+INVOKE "Server localhost" from=Off result=TOGGLED try=1
+STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off
+PLAY_INVOKE result=INVOKE_ERROR attempted=True t=185
+STOP reason=PLAY_INVOKE_ERROR phase=PLAY result=SETTING_MAY_REMAIN_ON t=185 yesPresses=0
+TEARDOWN pid=17064 action=KILL_ROOT
+PROC_END pid=17064 name=root alive=False
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0b-serverplay-claude-20261025-125954/console.log
+scriptErrors=0
+13:00:00.438    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+13:00:00.439    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+13:00:00.441    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+13:00:00.441    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 35ddbc56
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+13:00:01.968    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+13:00:05.430  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+13:00:05.988  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+13:00:05.989  SCRIPT       : [RICON_WBMODE] registered=1
+13:00:05.990  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+13:00:05.990  SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000
+13:01:00.185 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=1,isClient=0,rplMode=2
+13:01:00.192 SCRIPT       : [RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1
+LOGSHA E637BF0AC77B742AE7B07BE97CC818587D275BDB450A02BB05DA8B162D1B8C96 size 888926
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2189"
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW C:\Users\Ded\.claude\jobs\f819c792\tmp\ricon-b0b-serverplay-claude-20261025-125954-raw.jsonl (local only, not for the repository)
+
+--- ricon-b0b-menu-claude-20261025-130447
+# follow-up read only (menu-read FCBAA0DA / lib 2049FBA2): -Expand -OpenWorld -SubMenu 'Play Game Options'; a new process reads Server localhost=Off and the other nine items as in the baseline
+# stdout b0b-menu-run7.txt sha256 afe7ab54122042ce3ab3b162f170ffaae8bb784ad9cf03b821e013f5cf2f91ce (138 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-menu-claude-20261025-130447 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER FCBAA0DAFC9A8899 LIB 2049FBA224472AD1
+LIMITS seconds=120 settle=15 expand=True openWorld=True subMenu="Play Game Options" roundtrip=False method=Toggle restoreOff=False
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 32480 started 13:04:47
+WATCHDOG pid=21844 limitMs=150000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=9 title="World Editor - Unnamed empty world"
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - Unnamed empty world
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=11
+MENUBARS count=1
+MENU[0] "File" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[1] "Edit" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[2] "View" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[3] "Game" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+  MENU[3] "Game" OPENED items=14
+    ITEM "[el] Play Game enabled=True"
+    ITEM "[el] Play Game Options enabled=True state=Collapsed"
+    ITEM "[el] Script Debug Mode enabled=True toggle=On"
+    ITEM "[el] Reload Game Scripts enabled=True"
+    ITEM "[el] Save RDB Cache enabled=True"
+    ITEM "[el] Copy View Link enabled=True"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] File enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Editors enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] View enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Edit enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Window enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Utilities enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Plugins enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Help enabled=True state=Collapsed"
+  MENU[3] "Game" > "Play Game Options" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+  MENU[3] "Game" > "Play Game Options" OPENED items=19
+    ITEM "[el] Play inside Viewport enabled=True toggle=On"
+    ITEM "[el] Play in Fullscreen enabled=True toggle=Off"
+    ITEM "[el] Play from Camera Position enabled=True toggle=On"
+    ITEM "[el] Use Game Camera Position at Return enabled=True toggle=On"
+    ITEM "[el] Skip Disabled Layers enabled=True toggle=Off"
+    ITEM "[el] Save Changes Before Playing enabled=True toggle=Off"
+    ITEM "[el] World Systems Config enabled=True state=Collapsed"
+    ITEM "[el] Use Local Storage enabled=True toggle=Off"
+    ITEM "[el] Use Online Storage enabled=True toggle=Off"
+    ITEM "[el] Server localhost enabled=True toggle=Off"
+    ITEM "[el] Server localhost + PeerTool enabled=True toggle=Off"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] File enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Editors enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] View enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Edit enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Window enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Utilities enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Plugins enabled=True state=Collapsed"
+    ITEM "[win "Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Workshop)"] Help enabled=True state=Collapsed"
+  MENU[3] "Game" > "Play Game Options" CLOSED state=Collapsed
+  MENU[3] "Game" CLOSED state=Collapsed
+MENU[4] "Tools" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[5] "Window" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[6] "Plugins" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[7] "Entities" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+MENU[8] "Help" type=ControlType.MenuItem patterns=Invoke+Value+ExpandCollapse
+TOOLBARS count=5
+TOOL[0] "New World" type=ControlType.Button patterns=Invoke+Value
+TOOL[1] "Load World" type=ControlType.Button patterns=Invoke+Value
+TOOL[2] "Save World" type=ControlType.Button patterns=Invoke+Value
+TOOL[3] "Go to World File" type=ControlType.Button patterns=Invoke+Value
+TOOL[4] "Undo" type=ControlType.Button patterns=Invoke+Value
+TOOL[5] "Redo" type=ControlType.Button patterns=Invoke+Value
+TOOL[6] "Copy" type=ControlType.Button patterns=Invoke+Value
+TOOL[7] "Paste on Same Position" type=ControlType.Button patterns=Invoke+Value
+TOOL[8] "Cut" type=ControlType.Button patterns=Invoke+Value
+TOOL[9] "Play Game Button" type=ControlType.Button patterns=Invoke+Value
+  TOOL[9] "Play Game Button" NO_EXPAND_COLLAPSE (not opened)
+TOOL[10] "Toggle Gizmo Space" type=ControlType.Button patterns=Invoke+Value
+TOOL[11] "Select Parent Entities" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[12] "Ground Manipulation Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[13] "Move" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[14] "Rotate" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[15] "Scale" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[16] "Vector Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[17] "Bounding Volume Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[18] "Terrain Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[19] "RoadNetwork Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[20] "Navmesh Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[21] "Measure Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[22] "Object Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[23] "Prefab Bone-Snapping Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[24] "Object Selection Brush" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[25] "Prefab Destruction Setup Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[26] "Prefab Management Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[27] "Destructible Prefab Finder Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[28] "Bake MLOD Texture" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[29] "Batch prefabs operations tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[30] "Coords Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[31] "Shape Brush Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[32] "Destruction indices assign tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[33] "Autotest Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[34] "Shape Area Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[35] "Entity Replacer" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[36] "Windows Prefabs Generator Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[37] "Export Map data" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[38] "Autospawner Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[39] "Parallel Shape Tool" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[40] "Camera" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[41] "Shading" type=ControlType.Button patterns=Invoke+Value
+TOOL[42] "Placement" type=ControlType.CheckBox patterns=Invoke+Value+Toggle
+TOOL[43] "Selection" type=ControlType.Button patterns=Invoke+Value
+STOP reason=READ_DONE t=29
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+13:04:51.658    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+13:04:51.659    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+13:04:51.659    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 35ddbc56
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+13:04:53.240    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+13:04:56.636  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+13:04:57.235  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+13:04:57.236  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA 5A0C6296A2ACB383B3F07EADA53BE8DB6EF977A1D0289C5779C5E7B064C092ED size 870668
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0

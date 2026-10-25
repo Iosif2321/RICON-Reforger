@@ -568,6 +568,60 @@ function InvokeMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 	try { if (-not (ClosedOk $fresh.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState)) { return "NOT_CLOSED" } } catch { return "NOT_CLOSED" }
 	return "INVOKED"
 }
+# Async Play (codex #4717/#4719): the run 125954 sat ~125 s inside a synchronous InvokePattern.Invoke() of Game > Play
+# Game with no observation. PrepareMenuCommand does every check of InvokeMenuCommand and leaves the menu open, returning
+# @{ result = "READY"; ip; top } (or a refusal with the menu closed); StartAsyncInvoke runs only ip.Invoke() in a separate
+# runspace of this process, so the caller's loop keeps observing. EndInvoke only after IsCompleted.
+function PrepareMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
+	$top = FindTopMenu $mainHandle $menu
+	if ($null -eq $top) { return @{ result = "NO_MENU" } }
+	try { $top.GetCurrentPattern($ECP::Pattern).Expand() } catch { return @{ result = "NO_MENU" } }
+	$hits = @()
+	for ($k = 0; $k -lt 15 -and $hits.Count -eq 0; $k++) {
+		Start-Sleep -Milliseconds 200
+		$hits = @(OfType $top $CT::MenuItem | Where-Object { $_.Current.Name -ceq $item })
+	}
+	$why = ""
+	$x = $null; $ip = $null
+	if ($hits.Count -eq 0) { $why = "NO_ITEM" }
+	elseif ($hits.Count -gt 1) { $why = "AMBIGUOUS" }
+	elseif ($hits[0].TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$x) -or
+		$hits[0].TryGetCurrentPattern($ECP::Pattern, [ref]$x)) { $why = "NOT_A_COMMAND" }
+	elseif (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { $why = "NO_INVOKE" }
+	if ($why) {
+		try { $p = $top.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
+		return @{ result = $why }
+	}
+	return @{ result = "READY"; ip = $ip; top = $top }
+}
+function StartAsyncInvoke($ip) {
+	$ps = [powershell]::Create()
+	[void]$ps.AddScript({ param($p) $p.Invoke() }).AddArgument($ip)
+	$ar = $ps.BeginInvoke()
+	return @{ ps = $ps; ar = $ar; started = Get-Date; done = $false; result = "" }
+}
+# Non-blocking: once the worker completed, EndInvoke once and record COMPLETED or ERROR <type>; returns $true when done.
+function PollAsyncInvoke($job) {
+	if ($job.done) { return $true }
+	if (-not $job.ar.IsCompleted) { return $false }
+	try {
+		$null = $job.ps.EndInvoke($job.ar)
+		$job.result = if ($job.ps.HadErrors) { "ERROR " + (@($job.ps.Streams.Error | ForEach-Object { $_.Exception.GetType().Name }) -join ",") } else { "COMPLETED" }
+	} catch { $job.result = "ERROR " + $_.Exception.GetType().Name }
+	$job.done = $true
+	try { $job.ps.Dispose() } catch {}
+	return $true
+}
+# After the own Workbench is gone: wait at most $ms for the worker, then dispose it or leave it (never a blocking Stop).
+function CleanupAsyncInvoke($job, [int]$ms) {
+	if ($null -eq $job) { return "NONE" }
+	$until = (Get-Date).AddMilliseconds($ms)
+	while (-not (PollAsyncInvoke $job) -and (Get-Date) -lt $until) { Start-Sleep -Milliseconds 200 }
+	if ($job.done) { return "DONE " + $job.result }
+	try { [void]$job.ps.BeginStop($null, $null) } catch {}
+	return "WORKER_LEFT"
+}
+
 # Pure: the only allowed difference after switching the target On is exactly {target}; "" when so, else the reason.
 function OnlyTargetChanged($base, $snap, [string]$target) {
 	$d = ToggleDiff $base $snap
