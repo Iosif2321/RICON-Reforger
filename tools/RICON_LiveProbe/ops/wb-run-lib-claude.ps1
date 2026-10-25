@@ -220,6 +220,55 @@ function YesGuard([uint32]$wbPid, [int]$t, [bool]$restartRun, [bool]$secondPlayM
 	return "PRESSED"
 }
 
+# A2 with the launcher's start flag (codex #4813; run 154527 read the :174 text): exact prompt texts per call site. The
+# vanilla :1101 text is the one PromptVerdict checks; the two launcher sites are its FileIO.FileExists calls.
+$script:SiteMessages = [ordered]@{
+	"ARSENAL_1101" = $script:ExpectedMessage
+	"LAUNCHER_174" = "Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:174' to access potentially dangerous method 'FileIO.FileExists'?"
+	"LAUNCHER_187" = "Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:187' to access potentially dangerous method 'FileIO.FileExists'?"
+}
+# Site key of a prompt, NOT_READY or UNEXPECTED; the same exact text and four-button checks as PromptVerdict.
+function PromptSite([string[]]$texts, [string[]]$captions) {
+	if ($captions.Count -eq 0) { return "NOT_READY" }
+	$okButtons = (@($captions | Sort-Object) -join ",") -ceq "No,No to All,Yes,Yes to All"
+	$yes = @($captions | Where-Object { $_ -ceq "Yes" }).Count
+	if (-not $okButtons -or $yes -ne 1 -or $texts.Count -ne 1) { return "UNEXPECTED" }
+	foreach ($k in $script:SiteMessages.Keys) { if ($texts[0] -ceq $script:SiteMessages[$k]) { return $k } }
+	return "UNEXPECTED"
+}
+$script:sitePressed = @{}
+# Like YesGuard, but by site: at most one "Yes" per site of $allowed and process, at most $total in all. A new window
+# of a site already pressed is SITE_REPEAT, a known site outside $allowed is SITE_NOT_ALLOWED; both stop the run.
+function YesGuardSites([uint32]$wbPid, [int]$t, [string[]]$allowed, [int]$total = 3) {
+	$h = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)
+	if ($h -eq [IntPtr]::Zero) { return "NONE" }
+	if ($script:yesHandles -contains $h) {
+		if (((Get-Date) - $script:yesAt).TotalSeconds -lt 6) { return "CLOSING" }
+		"DIALOG_AFTER_PRESS t=$t handle=$h same handle, read only" | Write-Host
+		try { $null = DialogElements $h } catch { "  UIA_ERROR $($_.Exception.Message)" | Write-Host }
+		return "PRESS_NO_EFFECT"
+	}
+	"DIALOG t=$t title=`"$($script:AuthTitle)`" handle=$h presses=$($script:yesPressed) total=$total allowed=`"$($allowed -join ',')`"" | Write-Host
+	try { $all = DialogElements $h } catch { "  UIA_ERROR $($_.Exception.Message)" | Write-Host; return "UIA_ERROR" }
+	$btn = [System.Windows.Automation.ControlType]::Button
+	$captions = @($all | Where-Object { $_.Current.ControlType -eq $btn } | ForEach-Object { $_.Current.Name })
+	$texts = @($all | Where-Object { $_.Current.ControlType -ne $btn } | ForEach-Object { $_.Current.Name -replace "`r|`n", " " } |
+		Where-Object { $_ -ne "" -and $captions -cnotcontains $_ })
+	$site = PromptSite $texts $captions
+	"YES_GUARD site=$site buttons=`"$(@($captions | Sort-Object) -join ',')`"" | Write-Host
+	if ($site -eq "NOT_READY") { return "NOT_READY" }
+	if ($site -eq "UNEXPECTED") { return "UNEXPECTED_DIALOG" }
+	if ($script:sitePressed.ContainsKey($site)) { return "SITE_REPEAT" }
+	if ($allowed -cnotcontains $site) { return "SITE_NOT_ALLOWED" }
+	if ($script:yesPressed -ge $total) { return "LIMIT_REACHED" }
+	$yes = @($all | Where-Object { $_.Current.ControlType -eq $btn -and $_.Current.Name -ceq "Yes" })
+	try { $ip = $yes[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern) } catch { return "NO_INVOKE" }
+	$script:yesPressed++; $script:yesHandles += $h; $script:yesAt = Get-Date; $script:sitePressed[$site] = $h
+	try { $ip.Invoke() } catch { "  INVOKE_ERROR $($_.Exception.Message)" | Write-Host; return "INVOKE_ERROR" }
+	"YES_GUARD pressed button=`"Yes`" site=$site count=$($script:yesPressed) t=$t at=$($script:yesAt.ToString('HH:mm:ss.fff'))" | Write-Host
+	return "PRESSED"
+}
+
 # Menu reader only (codex #4647, #4656): two exact startup titles of the own Workbench (both seen at t=2..11 s in earlier
 # runs) are passive while the editor window has not appeared yet and at most 30 s have passed; they are never opened
 # or pressed. Not part of WindowKnown; once the editor is found or 30 s passed, they stop the run like any other title.

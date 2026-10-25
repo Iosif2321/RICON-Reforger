@@ -22,6 +22,10 @@
 # prompt of the own PID before Play is only read (its UIA names, never a pattern call) and stops the run with
 # AUTH_PROMPT_READ; without a prompt the run stops after WAIT_FLAG and one settle as READ_AUTH_NO_PROMPT. In this mode
 # the menus are never opened, nothing is toggled and no flag is created.
+# -LauncherYes (codex #4813, only with the owner's answer to agora #4815): YesGuardSites instead of the plain guard. Before
+# Play at most one "Yes" each on the exact prompts of the launcher's FileIO.FileExists sites :174 and :187; after Play
+# (flag created and the launcher's FLAG_SEEN in the log) at most one on the vanilla :1101 prompt; 3 in all. Any other
+# prompt, or a second window of a pressed site, stops the run.
 # Repo-facing stdout carries address classes, ports, PIDs, switch names and hashes; raw addresses and command lines go to
 # the raw JSONL in -OutDir, outside the repository. Never writes the registry or profile.
 param([Parameter(Mandatory = $true)][string]$Tag,
@@ -30,6 +34,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Settle = 15,
       [int]$MaxChildren = 3,
       [switch]$ReadAuthOnly,
+      [switch]$LauncherYes,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -68,7 +73,8 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 	"-riconEndpointProbe=1", "-riconBenchStartFlag=1", "-log-scr-checksum")
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly"
+"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly launcherYes=$LauncherYes"
+if ($ReadAuthOnly -and $LauncherYes) { "BAD_MODES (-ReadAuthOnly never presses)"; exit 2 }
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if (Test-Path $flagPath) { "FLAG_STALE (start flag exists before launch; not removed by this run)"; exit 3 }
@@ -145,7 +151,11 @@ function Tick {
 	$text = LogText
 	if ($text -match $failPattern) { return "LOG_FAILURE" }
 	if (-not $script:played -and $text -match $earlyPlay) { return "PLAY_BEFORE_REQUEST" }
-	if ($script:played) {
+	if ($LauncherYes) {
+		$allowed = if (-not $script:played) { @("LAUNCHER_174", "LAUNCHER_187") } elseif ($text -match '\[RICON_LIVEB\] inspect=FLAG_SEEN') { @("ARSENAL_1101") } else { @() }
+		$y = YesGuardSites $wbPid $t $allowed 3
+		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
+	} elseif ($script:played) {
 		$y = YesGuard $wbPid $t $false $false
 		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
 	} elseif (($ah = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)) -ne [IntPtr]::Zero) {

@@ -56,6 +56,18 @@ Case "verdict extra text" (PromptVerdict @($msg, "more") $four) "UNEXPECTED"
 Case "verdict three buttons" (PromptVerdict @($msg) @("Yes", "No", "No to All")) "UNEXPECTED"
 Case "verdict lowercase yes" (PromptVerdict @($msg) @("yes", "Yes to All", "No", "No to All")) "UNEXPECTED"
 Case "verdict not ready" (PromptVerdict @($msg) @()) "NOT_READY"
+# per-site texts (codex #4813): the launcher's two FileIO.FileExists sites and the vanilla one
+$m174 = $script:SiteMessages["LAUNCHER_174"]
+$m187 = $script:SiteMessages["LAUNCHER_187"]
+Case "site 1101" (PromptSite @($msg) $four) "ARSENAL_1101"
+Case "site 174" (PromptSite @($m174) $four) "LAUNCHER_174"
+Case "site 187" (PromptSite @($m187) $four) "LAUNCHER_187"
+Case "site other line" (PromptSite @($m174.Replace(":174", ":175")) $four) "UNEXPECTED"
+Case "site other method" (PromptSite @($m174.Replace("FileExists", "OpenFile")) $four) "UNEXPECTED"
+Case "site other script" (PromptSite @($m174.Replace("RICON_LiveBenchLauncherPlugin", "RICON_LiveOther")) $four) "UNEXPECTED"
+Case "site extra text" (PromptSite @($m174, "more") $four) "UNEXPECTED"
+Case "site three buttons" (PromptSite @($m174) @("Yes", "No", "No to All")) "UNEXPECTED"
+Case "site not ready" (PromptSite @($m174) @()) "NOT_READY"
 Case "limit plain" (YesLimit $false $false) 1
 Case "limit marker without restart" (YesLimit $false $true) 1
 Case "limit restart before marker" (YesLimit $true $false) 1
@@ -180,6 +192,50 @@ $f = FakeDlg $script:AuthTitle $msg "Yes,No" "buttons"
 Case "uia two buttons refused" (YesGuard ([uint32]$f.p.Id) 7 $false $false 6>$null) "UNEXPECTED_DIALOG"
 Case "uia two buttons no click" (Clicks $f).Count 0
 Done $f
+
+# YesGuardSites: one press per allowed site, a repeat or a site outside the phase stops, 3 in all
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
+$pre = @("LAUNCHER_174", "LAUNCHER_187")
+$f = FakeDlg $script:AuthTitle $m174 $btns "s174"
+Case "sites 174 pressed" (YesGuardSites ([uint32]$f.p.Id) 1 $pre 3 6>$null) "PRESSED"
+Case "sites 174 clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $m174 $btns "s174b"
+Case "sites 174 again refused" (YesGuardSites ([uint32]$f.p.Id) 2 $pre 3 6>$null) "SITE_REPEAT"
+Case "sites 174 again no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "s1101pre"
+Case "sites 1101 before play refused" (YesGuardSites ([uint32]$f.p.Id) 3 $pre 3 6>$null) "SITE_NOT_ALLOWED"
+Case "sites 1101 before play no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $m187 $btns "s187"
+Case "sites 187 pressed" (YesGuardSites ([uint32]$f.p.Id) 4 $pre 3 6>$null) "PRESSED"
+Case "sites 187 clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $m187 $btns "s187play"
+Case "sites 187 after play refused" (YesGuardSites ([uint32]$f.p.Id) 5 @("ARSENAL_1101") 3 6>$null) "SITE_REPEAT"
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "s1101"
+Case "sites 1101 after play pressed" (YesGuardSites ([uint32]$f.p.Id) 6 @("ARSENAL_1101") 3 6>$null) "PRESSED"
+Case "sites 1101 clicked Yes" (Clicks $f) @("Yes")
+Case "sites presses" $script:yesPressed 3
+Done $f
+$script:sitePressed = @{}
+$f = FakeDlg $script:AuthTitle $m174 $btns "s4th"
+Case "sites fourth refused" (YesGuardSites ([uint32]$f.p.Id) 7 $pre 3 6>$null) "LIMIT_REACHED"
+Case "sites fourth no click" (Clicks $f).Count 0
+Done $f
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
+$f = FakeDlg $script:AuthTitle $m174.Replace(":174", ":175") $btns "sline"
+Case "sites other line refused" (YesGuardSites ([uint32]$f.p.Id) 8 $pre 3 6>$null) "UNEXPECTED_DIALOG"
+Case "sites other line no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $m174 $btns "snone"
+Case "sites none allowed refused" (YesGuardSites ([uint32]$f.p.Id) 9 @() 3 6>$null) "SITE_NOT_ALLOWED"
+Case "sites none allowed no click" (Clicks $f).Count 0
+Case "sites none allowed presses" $script:yesPressed 0
+Done $f
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
 $f = FakeDlg "Background Server" "" "OK" "child"
 Case "unknown child window" (UnknownWindow ([uint32]$f.p.Id) $false) "Background Server"
 Case "unknown child auth title" (UnknownWindow ([uint32]$f.p.Id) $true) "Background Server"
