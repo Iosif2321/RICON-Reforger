@@ -874,3 +874,89 @@ SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="Arm
   PLAYMODE_TERMS_IN_DIFF=0
 SOURCES_STABLE
 RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-172649-raw.jsonl (local only)
+
+# ======================================================================================================================
+# A2 with the plugin start (codex launcher 6b62869, runner 147f771 + 24666c3): START #4863 / ACK #4866 / END #4867.
+# Runner wb-serverplay 21838A88 / lib 6CF69822; launcher CRC 124aa0bd; Workbench cwd = repository root.
+# Observed: WAIT_PLUGIN t=15. Baseline B needed three menu reads (twice "no Play Game Options", as after a world load
+#   before) and read both server items Off. "Server localhost" was toggled On, and S1 = B + Server localhost=On. Then
+#   Plugins > "RICON: Play" was READY and invoked in a worker; the worker completed in 585 ms. The log shows
+#   PLUGIN_SIGNAL_ACCEPTED, PLUGIN_SEEN, PLUGIN_PLAY_REQUESTED and WAIT_PLAY within 30 ms, then "Workbench Reload Game"
+#   and "Switching to game mode". No Script Authorization prompt and no FileIO prompt showed.
+#   At t=51 the own Qt window "Arma Reforger Workbench" became visible (until then seen visible only at startup). The
+#   startup rule lets that title through only before the editor window and within 30 s, so the run stopped with
+#   DIALOG_UNKNOWN_WINDOW in phase OBSERVE (yesPresses=0). The process was killed before edit mode, so the toggle could
+#   not be put back in that process ("SETTING_MAY_REMAIN_ON"), but registry B0146B67389ADF02 before and after, diff 0,
+#   profile diff 0.
+# Result: the plugin signal works without any prompt. The window's content was not read; the next runner reads it
+#   (size, element names, no pattern call) and lets it through only from PLUGIN_SEEN until EDIT_STABLE, while it has no
+#   button.
+
+--- ricon-b0b-serverplay-claude-20261025-174552
+# A2 plugin start (wb-serverplay 21838A88 / lib 6CF69822): STOP DIALOG_UNKNOWN_WINDOW phase=OBSERVE result=SETTING_MAY_REMAIN_ON t=52 yesPresses=0; console.log sha256 42b4263c874c358aa11c5af379d3d9a058ac9078b67e5a8dabbc8a6a0c17127c
+# stdout serverplay-a2-plugin.txt sha256 0bd9ce29a8afd00a59568b0f312cb925957d282cd945c979fcad08f6f324bfd1 (65 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-serverplay-claude-20261025-174552 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -riconBenchPluginStart=1 -log-scr-checksum
+RUNNER 21838A880831ABE3 LIB 6CF69822C87D2EA2
+LIMITS seconds=240 watchdogSeconds=270 settle=15 maxChildren=3 readAuthOnly=False yesTotal=1
+PLUGIN menu="Plugins" item="RICON: Play"
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2237"
+PID 23820 started 17:45:53
+WATCHDOG pid=15692 limitMs=270000
+MAIN_WINDOW t=12 title="World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.e..."
+SEEN REGISTERED t=14
+SEEN OPEN_ONLY t=14
+SEEN WAIT_PLUGIN t=15
+  ROUNDTRIP no Play Game Options
+  SNAPSHOT try=1 menus not opened
+  ROUNDTRIP no Play Game Options
+  SNAPSHOT try=2 menus not opened
+BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+INVOKE "Server localhost" from=Off result=TOGGLED try=1
+STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off
+PLUGIN_ITEM t=51 result=READY
+PLUGIN_INVOKE_STARTED t=51
+PLUGIN_INVOKE_DONE t=51 result=COMPLETED afterMs=585
+UNKNOWN_WINDOW t=51 pid=23820 title="Arma Reforger Workbench" (read only)
+STOP reason=DIALOG_UNKNOWN_WINDOW phase=OBSERVE result=SETTING_MAY_REMAIN_ON t=52 yesPresses=0
+TEARDOWN pid=23820 action=KILL_ROOT
+PROC_END pid=23820 name=root alive=False
+PLUGIN_INVOKE_CLEANUP DONE COMPLETED
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0b-serverplay-claude-20261025-174552/console.log
+scriptErrors=0
+17:45:59.027    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+17:45:59.027    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+17:45:59.027    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+17:45:59.027    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+17:45:59.027    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+17:45:59.028    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+17:45:59.028    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+17:45:59.029    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+17:45:59.029    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+17:46:01.452    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 124aa0bd
+17:46:01.452    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+17:46:01.452    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+17:46:01.452    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 350473c2
+17:46:01.453    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+17:46:01.453    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+17:46:01.453    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+17:46:01.453    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+17:46:01.453    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+17:46:05.094  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+17:46:05.783  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+17:46:05.784  SCRIPT       : [RICON_WBMODE] registered=1
+17:46:05.785  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+17:46:05.786  SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLUGIN limitMs=120000
+17:46:45.030 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SIGNAL_ACCEPTED
+17:46:45.056 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SEEN
+17:46:45.057 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_PLAY_REQUESTED
+17:46:45.058 SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000
+LOGSHA 42B4263C874C358AA11C5AF379D3D9A058AC9078B67E5A8DABBC8A6A0C17127C size 887558
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2241"
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-174552-raw.jsonl (local only)

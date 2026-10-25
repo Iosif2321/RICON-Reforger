@@ -291,10 +291,23 @@ $f = FakeDlg "Arma Reforger Workbench" "" "OK" "startup"
 Case "startup window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 3) ""
 Case "startup window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 3) "Arma Reforger Workbench"
 Case "startup window late stops" (UnknownWindowStartup ([uint32]$f.p.Id) $false 31) "Arma Reforger Workbench"
+# the server Play window (run 174552): let through only in Play, and its read reports the button that stops the run
+Case "play window in play passes" (UnknownWindowStartup ([uint32]$f.p.Id) $true 60 $true) ""
+Case "play window outside play stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 60 $false) "Arma Reforger Workbench"
+$pr = PlayWindowRead ([RiconWin]::FindByTitle([uint32]$f.p.Id, "Arma Reforger Workbench"))
+Case "play window read buttons" @($pr.buttons, ($pr.lines -join ",")) @("1", 'ControlType.Button "OK",ControlType.Text "OK"')
+Case "play window read size" ($pr.size -match '^[1-9][0-9]*x[1-9][0-9]*$') $true
+Done $f
+$f = FakeDlg "Arma Reforger Workbench" "Starting" "" "playnobtn"
+$pr = PlayWindowRead ([RiconWin]::FindByTitle([uint32]$f.p.Id, "Arma Reforger Workbench"))
+Case "play window no button" @($pr.buttons, ($pr.lines -join ",")) @("0", 'ControlType.Text "Starting"')
+$sig1 = $pr.sig
+Case "play window same sig on reread" (PlayWindowRead ([RiconWin]::FindByTitle([uint32]$f.p.Id, "Arma Reforger Workbench"))).sig $sig1
 Done $f
 $f = FakeDlg "MainWindow" "" "OK" "mainwindow"
 Case "MainWindow window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 8) ""
 Case "MainWindow window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 8) "MainWindow"
+Case "MainWindow not a play title" (UnknownWindowStartup ([uint32]$f.p.Id) $true 60 $true) "MainWindow"
 Done $f
 $f = FakeDlg "World Editor - Plain" "" "OK" "editor"
 Case "known editor window" (UnknownWindow ([uint32]$f.p.Id) $true) ""

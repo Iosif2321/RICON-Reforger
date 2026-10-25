@@ -17,7 +17,9 @@
 #      new ArmaReforger* processes, their UDP endpoints/TCP listeners as address class and port, their windows; one
 #      guarded "Yes" in all (YesGuardSites), only on the exact vanilla :1101 prompt of the Workbench PID and only after
 #      PLUGIN_SEEN and before OBSERVATION_END/EDIT_* (SitesAllowed); any prompt before that, a prompt in another
-#      process, an unknown window, too many processes, a launcher refusal or SCRIPT (E) stops the run.
+#      process, an unknown window, too many processes, a launcher refusal or SCRIPT (E) stops the run. The own Qt window
+#      "Arma Reforger Workbench" (visible right after PLUGIN_PLAY_REQUESTED in run 174552) is passive from PLUGIN_SEEN
+#      until EDIT_STABLE while it has no button: read (size, element names) when first seen and on every change.
 #   5. After the launcher's inspect=EDIT_STABLE: strict S2 must be B except Server localhost=On; Invoke it back from On
 #      and the final strict snapshot must equal B (RESTORE_OK), else RESTORE_INCOMPLETE is reported.
 #   6. Teardown in finally: descendants only through their held handles, the root through its Process object.
@@ -100,6 +102,7 @@ $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name
 
 $tracked = @{}; $netSeen = @{}; $newCount = 0
 $script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:invokeJob = $null
+$script:playWin = @{}   # Play title -> last PlayWindowRead sig
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
@@ -172,8 +175,27 @@ function Tick {
 	}
 	foreach ($id in $live) {
 		if ($id -eq $wbPid) {
-			$u = UnknownWindowStartup $wbPid $script:mainFound $t
+			$inPlay = $script:played -and $text -match '\[RICON_LIVEB\] inspect=PLUGIN_SEEN' -and $text -notmatch $mEditStable
+			$u = UnknownWindowStartup $wbPid $script:mainFound $t $inPlay
 			if ($u) { "UNKNOWN_WINDOW t=$t pid=$id title=`"$u`" (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
+			if ($inPlay) {
+				foreach ($pt in $script:PlayTitles) {
+					$ph = [RiconWin]::FindByTitle($wbPid, $pt)
+					if ($ph -eq [IntPtr]::Zero) {
+						if ($script:playWin.ContainsKey($pt)) { "PLAY_WINDOW_GONE t=$t title=`"$pt`"" | Write-Host; $script:playWin.Remove($pt) }
+						continue
+					}
+					# a read error is a window going away; it is read again on the next Tick
+					try { $pr = PlayWindowRead $ph } catch { "PLAY_WINDOW t=$t title=`"$pt`" READ_ERROR $($_.Exception.GetType().Name)" | Write-Host; continue }
+					if (-not $script:playWin.ContainsKey($pt) -or $script:playWin[$pt] -cne $pr.sig) {
+						"PLAY_WINDOW t=$t title=`"$pt`" handle=$ph size=$($pr.size) elements=$($pr.count) buttons=$($pr.buttons) (read only)" | Write-Host
+						foreach ($l in $pr.lines) { "  PW $l" | Write-Host }
+						Raw @{ t = $t; kind = "PLAY_WINDOW"; title = $pt; size = $pr.size; elements = $pr.count; buttons = $pr.buttons }
+						$script:playWin[$pt] = $pr.sig
+					}
+					if ($pr.buttons -gt 0) { return "DIALOG_PLAY_WINDOW_BUTTONS" }
+				}
+			}
 			continue
 		}
 		if ([RiconWin]::FindByTitle($id, $script:AuthTitle) -ne [IntPtr]::Zero) { "PROMPT_IN_CHILD pid=$id (read only)" | Write-Host; return "DIALOG_PROMPT_IN_CHILD" }

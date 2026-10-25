@@ -291,16 +291,33 @@ function StartupWindowAllowed([string]$title, [bool]$mainFound, [double]$elapsed
 	return ($script:StartupTitles -ccontains $title -and -not $mainFound -and $elapsed -le 30)
 }
 
+# Server Play (run 174552): about 1 s after the launcher's PLUGIN_PLAY_REQUESTED the own Workbench showed its Qt window
+# "Arma Reforger Workbench" visible (the title Qt gives an untitled window; before, seen visible only at startup). In a
+# plugin-start run the caller lets it through ($inPlay) only from PLUGIN_SEEN until EDIT_STABLE and only in the
+# Workbench PID, and reads it with PlayWindowRead: size and element names, no pattern call; a button stops the run.
+$script:PlayTitles = @("Arma Reforger Workbench")
+
 # Like UnknownWindow for the Workbench PID, but every visible titled window is checked and the startup title is let
-# through only under StartupWindowAllowed.
-function UnknownWindowStartup([uint32]$id, [bool]$mainFound, [double]$elapsed) {
+# through only under StartupWindowAllowed, the Play titles only while $inPlay.
+function UnknownWindowStartup([uint32]$id, [bool]$mainFound, [double]$elapsed, [bool]$inPlay = $false) {
 	foreach ($w in @([RiconWin]::List($id))) {
 		if (-not $w.StartsWith("V|")) { continue }
 		$title = ($w -split "\|", 3)[2]
 		if ($title -eq "" -or (WindowKnown $title) -or (StartupWindowAllowed $title $mainFound $elapsed)) { continue }
+		if ($inPlay -and $script:PlayTitles -ccontains $title) { continue }
 		return $title
 	}
 	return ""
+}
+# Read only: @{ size; count; buttons; lines; sig } of one window; sig changes when the size or the first 20 elements do.
+function PlayWindowRead([IntPtr]$h) {
+	$el = [System.Windows.Automation.AutomationElement]::FromHandle($h)
+	$r = $el.Current.BoundingRectangle
+	$all = @($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition))
+	$lines = @($all | Select-Object -First 20 | ForEach-Object { $_.Current.ControlType.ProgrammaticName + " `"" + (Short $_.Current.Name) + "`"" })
+	$buttons = @($all | Where-Object { $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button }).Count
+	$size = "$([int]$r.Width)x$([int]$r.Height)"
+	return @{ size = $size; count = $all.Count; buttons = $buttons; lines = $lines; sig = $size + "|" + ($lines -join "|") }
 }
 
 # First visible window of a tracked PID whose title is not known; "" when none. For a child PID even the
