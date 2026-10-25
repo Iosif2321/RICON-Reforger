@@ -30,13 +30,28 @@ restart=EDIT_STABLE (the same edit world held for >= 5 s, codex #4597), restart=
 restart=SECOND_PLAY_ENTERED (no REFUSED); cycle 2 may carry cycle=2 (same game object) or
 cycle=1 (game object recreated), recorded as cycleField; a cycle 1 that reached DONE did not exercise the cleanup
 (ENDPOINT_RESTART_NOT_EXERCISED, not a pass).
+B0b diagnostics (codex #4624/#4626, claude #4628; option "net"): the launcher's "[RICON_WBMODE] registered=1" exactly
+once and before the first "state=PLAY_REQUESTED" (no registered=0); the play-mode observer's "[RICON_WBMODE] event=START
+mode=<esc> world=<esc> fromCamera=0|1" once per cycle and "[RICON_WBMODE] event=END" alternating with them, START first,
+END count = cycles - 1 or cycles (the runner stops the process inside the last Play); one "[RICON_NET] cycle=N rplMode=N
+rplName=<esc> listenPresent=0|1" per cycle, the k-th line belonging to the k-th cycle with that cycle's START cycle and
+rplMode, and a non-empty rplName. Mode, world and rplName are decoded strictly (live_text_codec_claude.py) and reported;
+rplName is the engine's EnumToString, recorded, not checked against a table. Without "net" none of these lines may occur
+(B0a logs have none); with the gate off they never may. [RICON_RPLMODE] (ScriptEditor self-check) never belongs here.
 Verdicts: ENDPOINT_GATE_OFF_CLEAN / ENDPOINT_CYCLE_COMPLETE / ENDPOINT_CYCLE_ABORTED / ENDPOINT_RESTART_COMPLETE /
 ENDPOINT_RESTART_NOT_EXERCISED / LOG_INVALID.
-Usage: python -I live-endpoint-log-check-claude.py <console.log> off|on|restart"""
+Usage: python -I live-endpoint-log-check-claude.py <console.log> off|on|restart [net]"""
 import hashlib
+import importlib.util
 import json
+import os
 import re
 import sys
+
+_spec = importlib.util.spec_from_file_location(
+    "live_text_codec_claude", os.path.join(os.path.dirname(os.path.abspath(__file__)), "live_text_codec_claude.py"))
+codec = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(codec)
 
 LINE = re.compile(r"\[RICON_LIVE\] seq=(\d+) t=(-?\d+) side=(\w+) kind=(\w+) player=(-?\d+) device=(-?\d+) "
                   r"tr=(-?\d+) value=(-?\d+) text=(\S*)$")
@@ -48,6 +63,69 @@ ALLOWED = {"ENDPOINT_START", "ENDPOINT_BINDING", "ENDPOINT_SAMPLE", "ENDPOINT_DO
            "RADIO_GONE"}
 MEMBERS = re.compile(r"NONE|UNKNOWN|\d+(\|\d+)*")
 READY_TAIL = 5
+NET = re.compile(r"\[RICON_NET\] cycle=(-?\d+) rplMode=(-?\d+) rplName=(\S*) listenPresent=([01])")
+WB_START = re.compile(r"\[RICON_WBMODE\] event=START mode=(\S*) world=(\S*) fromCamera=([01])")
+DIAG = re.compile(r"\[RICON_(NET|WBMODE|RPLMODE)\]")
+
+
+def decoded(text, what, errors):
+    try:
+        return codec.unescape(text)
+    except ValueError as exc:
+        errors.append(f"{what} not decodable: {exc}")
+        return None
+
+
+def check_net(lines, rows, errors):
+    """B0b diagnostic lines against the already checked cycle rows; adds wbMode / rplName / listenPresent to them."""
+    diag = [l[DIAG.search(l).start():].rstrip() for l in lines if DIAG.search(l)]
+    if any(l.startswith("[RICON_RPLMODE]") for l in diag):
+        errors.append("[RICON_RPLMODE] self-check lines in an endpoint log")
+    reg = [i for i, l in enumerate(lines) if "[RICON_WBMODE] registered=" in l]
+    reg_ok = [i for i in reg if lines[i].rstrip().endswith("[RICON_WBMODE] registered=1")]
+    play = [i for i, l in enumerate(lines) if "[RICON_LIVEB] state=PLAY_REQUESTED" in l]
+    if len(reg) != 1 or len(reg_ok) != 1:
+        errors.append(f"[RICON_WBMODE] registered lines {len(reg)}, registered=1 lines {len(reg_ok)}; expected one registered=1")
+    elif not play or reg_ok[0] > play[0]:
+        errors.append("[RICON_WBMODE] registered=1 is not before the first state=PLAY_REQUESTED")
+    events = []
+    for l in diag:
+        if not l.startswith("[RICON_WBMODE] event="):
+            continue
+        m = WB_START.fullmatch(l)
+        if m:
+            events.append(("START", m))
+        elif l == "[RICON_WBMODE] event=END":
+            events.append(("END", None))
+        else:
+            errors.append(f"unparsed {l[:80]}")
+    kinds = [k for k, _ in events]
+    starts = [m for k, m in events if k == "START"]
+    alternating = all(k == ("START" if i % 2 == 0 else "END") for i, k in enumerate(kinds))
+    if not alternating or len(starts) != len(rows) or kinds.count("END") not in (len(rows) - 1, len(rows)):
+        errors.append(f"[RICON_WBMODE] events {kinds} for {len(rows)} cycles")
+    nets = []
+    for l in diag:
+        if l.startswith("[RICON_NET]"):
+            m = NET.fullmatch(l)
+            if m:
+                nets.append(m)
+            else:
+                errors.append(f"unparsed {l[:80]}")
+    if len(nets) != len(rows):
+        errors.append(f"{len(nets)} [RICON_NET] lines for {len(rows)} cycles")
+    for k, row in enumerate(rows):
+        if k < len(starts):
+            m = starts[k]
+            row["wbMode"] = {"mode": decoded(m.group(1), "WBMODE mode", errors),
+                             "world": decoded(m.group(2), "WBMODE world", errors), "fromCamera": m.group(3)}
+        if k < len(nets):
+            m = nets[k]
+            name = decoded(m.group(3), "rplName", errors)
+            if m.group(1) != row.get("cycleField") or m.group(2) != row["role"].get("rplMode") or not name:
+                errors.append(f"cycle {k + 1}: [RICON_NET] cycle={m.group(1)} rplMode={m.group(2)} rplName={m.group(3)!r} "
+                              f"!= START cycle={row.get('cycleField')} rplMode={row['role'].get('rplMode')}")
+            row["net"] = {"rplMode": m.group(2), "rplName": name, "listenPresent": m.group(4)}
 
 
 def fields(text):
@@ -219,7 +297,7 @@ def check_cycle(ordinal, events, dump, errors, allowed_cycles=None):
     return row
 
 
-def main(path, mode):
+def main(path, mode, net=False):
     raw = open(path, "rb").read()
     lines = raw.decode("utf-8", errors="replace").splitlines()
     errors = []
@@ -238,6 +316,9 @@ def main(path, mode):
             errors.append("no launcher watch line with isGameMode=1: Play not shown")
         if live:
             errors.append(f"{len(live)} [RICON_LIVE] lines with the gate off")
+        diag = [l for l in lines if DIAG.search(l)]
+        if diag:
+            errors.append(f"{len(diag)} [RICON_NET]/[RICON_WBMODE]/[RICON_RPLMODE] lines with the gate off")
         verdict = "ENDPOINT_GATE_OFF_CLEAN"
     else:
         # split into cycles: stream events from ENDPOINT_START to the end record, then dump BEGIN ... END
@@ -304,8 +385,12 @@ def main(path, mode):
                 errors.append(f"restart: cycle 2 ended {second['end']} {second['reason']}")
             else:
                 verdict = "ENDPOINT_RESTART_COMPLETE"
+        if net:
+            check_net(lines, rows, errors)
+        elif any(DIAG.search(l) for l in lines):
+            errors.append("B0b diagnostic lines present without the net option")
     overall = "LOG_INVALID" if errors else verdict
-    print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "mode": mode, "errors": errors,
+    print(json.dumps({"logSha256": hashlib.sha256(raw).hexdigest(), "mode": mode, "net": net, "errors": errors,
                       "overall": overall, "liveLines": len(live), "endpointOnly": endpoint_only, "cycles": rows},
                      ensure_ascii=False, indent=1))
     print("LIVE_ENDPOINT_LOG_CHECK_" + ("PASS" if not errors else "FAIL"))
@@ -313,7 +398,8 @@ def main(path, mode):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[2] not in ("off", "on", "restart"):
-        print("usage: live-endpoint-log-check-claude.py <console.log> off|on|restart")
+    if len(sys.argv) not in (3, 4) or sys.argv[2] not in ("off", "on", "restart") \
+            or (len(sys.argv) == 4 and (sys.argv[3] != "net" or sys.argv[2] == "off")):
+        print("usage: live-endpoint-log-check-claude.py <console.log> off|on|restart [net]  (net not with off)")
         sys.exit(2)
-    sys.exit(main(sys.argv[1], sys.argv[2]))
+    sys.exit(main(sys.argv[1], sys.argv[2], len(sys.argv) == 4))

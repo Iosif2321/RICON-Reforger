@@ -3,6 +3,8 @@ Synthetic logs in the journal format of RICON_LiveEndpointProbe: launcher lines,
 BINDING when the binding changes, SAMPLE with the bench PlayerState and members, RADIO_STATE of the reader, DONE or
 ABORTED, the cycle's dump). The default cycle has no local player on samples 1-2, a controller without a character on 3
 and the AN/PRC-68 player from 4 on. The values are test values for the parser.
+B0b "net" cases (claude #4628): the launcher's [RICON_WBMODE] registered=1, the play-mode observer's event=START/END and
+one [RICON_NET] line per cycle; the mode string is written in the RICON_LiveText %XX form.
 Usage: python -I live-endpoint-log-check-controls-claude.py <repo> <outdir>"""
 import json
 import subprocess
@@ -82,18 +84,47 @@ def render(rows, seq0=0, drop=0, skip_dump=False):
     return body
 
 
-def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0, skip_dump=False, restart_marks=None):
+MODE_ESC = "Server%20localhost"
+WORLD_ESC = "worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent"
+
+
+def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0, skip_dump=False, restart_marks=None,
+          net=None):
+    """net: None (B0a log) or a dict of B0b options: registered ("1", "0" or None), registered_after_play, ends (the
+    [RICON_WBMODE] event=END count), starts (event=START count, default one per cycle), nets (per-cycle text after
+    "[RICON_NET] " or None to drop it), mode (escaped mode)."""
     cycles = cycles if cycles is not None else [{}]
-    body = [f"11:59:59.000 SCRIPT : {l}" for l in LAUNCH] if launcher else []
+    launch = list(LAUNCH)
+    if net is not None and net.get("registered", "1") is not None:
+        reg = "[RICON_WBMODE] registered=" + net.get("registered", "1")
+        launch.insert(2 if net.get("registered_after_play") else 1, reg)
+    body = [f"11:59:59.000 SCRIPT : {l}" for l in launch] if launcher else []
     # the launcher's restart lines go between the cycles (codex 15efc1a)
     marks = ["EDIT_REQUESTED", "EDIT_STABLE checks=51", "SECOND_PLAY_REQUESTED", "SECOND_PLAY_ENTERED"] if restart_marks is None and len(cycles) == 2 else (restart_marks or [])
     seq = 0
+    n = len(cycles)
+    starts = net.get("starts", n) if net is not None else 0
+    ends = net.get("ends", n - 1) if net is not None else 0
     for i, b in enumerate(cycles):
-        rows = cycle(b.get("ordinal", i + 1), b)
-        body += render(rows, seq if seq_continue else 0, drop, skip_dump)
+        ordinal = b.get("ordinal", i + 1)
+        rows = cycle(ordinal, b)
+        if net is not None and i < starts:
+            body.append(f"12:00:00.000 WORKBENCH : [RICON_WBMODE] event=START mode={net.get('mode', MODE_ESC)} "
+                        f"world={WORLD_ESC} fromCamera=0")
+        rendered = render(rows, seq if seq_continue else 0, drop, skip_dump)
+        if net is not None:
+            nets = net.get("nets", [f"cycle={c.get('ordinal', k + 1)} rplMode=1 rplName=Client listenPresent=0"
+                                    for k, c in enumerate(cycles)])
+            if i < len(nets) and nets[i] is not None:
+                rendered.insert(1, f"12:00:00.000 SCRIPT : [RICON_NET] {nets[i]}")
+        body += rendered
+        if net is not None and i < ends:
+            body.append("12:00:31.000 WORKBENCH : [RICON_WBMODE] event=END")
         if i == 0:
             body += [f"12:00:31.000 SCRIPT : [RICON_LIVEB] restart={m}" for m in marks]
         seq += len(rows)
+    if net is not None and starts > n:
+        body.append(f"12:00:40.000 WORKBENCH : [RICON_WBMODE] event=START mode={MODE_ESC} world={WORLD_ESC} fromCamera=0")
     body += list(extra_lines)
     return "\n".join(body) + "\n"
 
@@ -101,6 +132,13 @@ def build(cycles=None, launcher=True, extra_lines=(), seq_continue=False, drop=0
 OFF = ["off"]
 ON = ["on"]
 RE = ["restart"]
+ONN = ["on", "net"]
+REN = ["restart", "net"]
+
+
+def decoded_mode(report):
+    c = report.get("cycles") or [{}]
+    return (c[0].get("wbMode") or {}).get("mode") == "Server localhost" and (c[0].get("net") or {}).get("rplName") == "Client"
 cases = [
     ("off_clean", build(cycles=[]), OFF, 0, "ENDPOINT_GATE_OFF_CLEAN"),
     ("off_with_live_line", build(cycles=[{"samples": 3}]), OFF, 1, "LOG_INVALID"),
@@ -155,9 +193,35 @@ cases = [
     ("restart_no_marks", build(cycles=[{"samples": 8}, {}], restart_marks=[]), RE, 1, "LOG_INVALID"),
     ("restart_refused_mark", build(cycles=[{"samples": 8}, {}], restart_marks=["EDIT_REQUESTED", "REFUSED"]), RE, 1,
      "LOG_INVALID"),
+    # B0b net option (claude #4628)
+    ("net_on_ok", build(net={}), ONN, 0, "ENDPOINT_CYCLE_COMPLETE", decoded_mode),
+    ("net_on_end_seen", build(net={"ends": 1}), ONN, 0, "ENDPOINT_CYCLE_COMPLETE"),
+    ("net_restart_ok", build(cycles=[{"samples": 8}, {"ordinal": 1}], net={}), REN, 0, "ENDPOINT_RESTART_COMPLETE"),
+    ("net_restart_two_ends", build(cycles=[{"samples": 8}, {}], net={"ends": 2}), REN, 0, "ENDPOINT_RESTART_COMPLETE"),
+    ("net_restart_no_end_between", build(cycles=[{"samples": 8}, {}], net={"ends": 0}), REN, 1, "LOG_INVALID"),
+    ("net_no_registered", build(net={"registered": None}), ONN, 1, "LOG_INVALID"),
+    ("net_registered_zero", build(net={"registered": "0"}), ONN, 1, "LOG_INVALID"),
+    ("net_registered_after_play", build(net={"registered_after_play": True}), ONN, 1, "LOG_INVALID"),
+    ("net_line_missing", build(net={"nets": [None]}), ONN, 1, "LOG_INVALID"),
+    ("net_rplmode_mismatch", build(net={"nets": ["cycle=1 rplMode=2 rplName=Listen listenPresent=1"]}), ONN, 1, "LOG_INVALID"),
+    ("net_cycle_mismatch", build(net={"nets": ["cycle=2 rplMode=1 rplName=Client listenPresent=0"]}), ONN, 1, "LOG_INVALID"),
+    ("net_empty_name", build(net={"nets": ["cycle=1 rplMode=1 rplName= listenPresent=0"]}), ONN, 1, "LOG_INVALID"),
+    ("net_listen_not_bit", build(net={"nets": ["cycle=1 rplMode=1 rplName=Client listenPresent=yes"]}), ONN, 1, "LOG_INVALID"),
+    ("net_address_leak", build(net={"nets": ["cycle=1 rplMode=1 rplName=Client listenPresent=1 addr=10.0.0.5"]}), ONN, 1,
+     "LOG_INVALID"),
+    ("net_mode_refused_escape", build(net={"mode": "Server%ZZlocalhost"}), ONN, 1, "LOG_INVALID"),
+    ("net_extra_start", build(net={"starts": 2}), ONN, 1, "LOG_INVALID"),
+    ("net_no_start", build(net={"starts": 0}), ONN, 1, "LOG_INVALID"),
+    ("net_rplmode_selfcheck_line", build(net={}, extra_lines=["12:00:41.000 SCRIPT : [RICON_RPLMODE] checks=4 passed=4"]),
+     ONN, 1, "LOG_INVALID"),
+    ("plain_on_with_net_lines", build(net={}), ON, 1, "LOG_INVALID"),
+    ("net_on_b0a_log", build(), ONN, 1, "LOG_INVALID"),
+    ("off_with_wbmode_line", build(cycles=[], extra_lines=["12:00:00.000 WORKBENCH : [RICON_WBMODE] event=END"]), OFF, 1,
+     "LOG_INVALID"),
+    ("usage_off_net", build(cycles=[]), ["off", "net"], 2, "NO_REPORT"),
 ]
 passed = 0
-for name, text_, args, rc_expected, overall_expected, *role_expected in cases:
+for name, text_, args, rc_expected, overall_expected, *extra in cases:
     path = f"{out}/{name}.log"
     open(path, "w", encoding="utf-8").write(text_)
     run = subprocess.run([sys.executable, "-X", "utf8", "-I", checker, path, *args], capture_output=True, text=True,
@@ -167,7 +231,9 @@ for name, text_, args, rc_expected, overall_expected, *role_expected in cases:
     except ValueError:
         report = {"overall": "NO_REPORT", "errors": [run.stderr[-200:]], "cycles": []}
     roles = [c.get("localRole") for c in report.get("cycles", [])]
-    ok = run.returncode == rc_expected and report["overall"] == overall_expected         and (not role_expected or roles[-1:] == role_expected)
+    check = extra[0] if extra else None
+    ok = run.returncode == rc_expected and report["overall"] == overall_expected \
+        and (check is None or (check(report) if callable(check) else roles[-1:] == [check]))
     passed += ok
     print(f"{'PASS' if ok else 'FAIL'} {name}: rc={run.returncode} overall={report['overall']} role={roles} "
           f"errors={report['errors'][:2]}")

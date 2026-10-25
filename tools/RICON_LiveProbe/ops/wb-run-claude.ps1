@@ -39,7 +39,8 @@ $logsRoot = "$myGames\ArmaReforgerWorkbench\logs"
 $regKey = "HKCU\Software\Bohemia Interactive"
 $profileDir = "$myGames\ArmaReforgerWorkbench\profile"
 $secondMarker = '\[RICON_LIVEB\] restart=SECOND_PLAY_REQUESTED'
-$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|SCRIPT\s*\(E\)'
+# launcher refusals, the B0b mode-observer check (codex #4626) and script errors end the run at once
+$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)'
 
 # --- argument checks ---
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
