@@ -252,3 +252,49 @@ function UnknownWindow([uint32]$id, [bool]$isWorkbench) {
 	}
 	return ""
 }
+
+# --- menu reading (wb-menu-read-claude.ps1) ---
+$U = [System.Windows.Automation.AutomationElement]
+$CT = [System.Windows.Automation.ControlType]
+$ECP = [System.Windows.Automation.ExpandCollapsePattern]
+function Patterns($el) { (@($el.GetSupportedPatterns() | ForEach-Object { $_.ProgrammaticName -replace 'PatternIdentifiers\.Pattern$', '' }) -join "+") }
+function Short([string]$n) { $n = $n -replace "`r|`n", " "; if ($n.Length -gt 80) { $n.Substring(0, 80) + "..." } else { $n } }
+function Children($el) { @($el.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)) }
+function OfType($el, $type) {
+	$c = New-Object System.Windows.Automation.PropertyCondition($U::ControlTypeProperty, $type)
+	@($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, $c))
+}
+# Items of an opened menu: popups are separate top-level windows of the own PID in Qt, so read both the element's
+# own descendants and every own top-level window other than the main one. Nested items: name and state only.
+function OpenedItems($el, [uint32]$ownPid, [IntPtr]$mainHandle) {
+	$names = New-Object System.Collections.Generic.List[string]
+	foreach ($i in (OfType $el $CT::MenuItem)) { $names.Add((Short $i.Current.Name)) }
+	$root = [System.Windows.Automation.AutomationElement]::RootElement
+	$c = New-Object System.Windows.Automation.PropertyCondition($U::ProcessIdProperty, [int]$ownPid)
+	foreach ($w in @($root.FindAll([System.Windows.Automation.TreeScope]::Children, $c))) {
+		if ($w.Current.NativeWindowHandle -eq $mainHandle.ToInt32()) { continue }
+		foreach ($i in (OfType $w $CT::MenuItem)) {
+			$state = ""
+			try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
+			$names.Add((Short $i.Current.Name) + $state)
+		}
+	}
+	return , $names.ToArray()
+}
+# Opens $el only through ExpandCollapse, prints its items to the host and closes it. Returns ONE bool: $false only when
+# the element stays expanded or Collapse throws (the caller stops). All text goes through Write-Host: in the first
+# OpenWorld read (ricon-b0b-menu-claude-20261025-113705) pipeline output here became part of the return value, so
+# the lines were lost and a failed Collapse could not be seen.
+function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle) {
+	try { $p = $el.GetCurrentPattern($ECP::Pattern) } catch { "  $label NO_EXPAND_COLLAPSE (not opened)" | Write-Host; return $true }
+	try { $p.Expand() } catch { "  $label EXPAND_ERROR $($_.Exception.GetType().Name)" | Write-Host; return $true }
+	Start-Sleep -Milliseconds 700
+	$items = OpenedItems $el $ownPid $mainHandle
+	"  $label OPENED items=$($items.Count)" | Write-Host
+	foreach ($n in @($items | Select-Object -First 40)) { "    ITEM `"$n`"" | Write-Host }
+	try { $p.Collapse() } catch { "  $label COLLAPSE_ERROR $($_.Exception.GetType().Name)" | Write-Host; return $false }
+	Start-Sleep -Milliseconds 400
+	$state = $p.Current.ExpandCollapseState
+	"  $label CLOSED state=$state" | Write-Host
+	return ($state -ne [System.Windows.Automation.ExpandCollapseState]::Expanded)
+}

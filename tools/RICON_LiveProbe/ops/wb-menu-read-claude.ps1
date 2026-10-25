@@ -54,47 +54,7 @@ function SettingsSnap($label) {
 	$prof = @(Get-ChildItem $profileDir -Recurse -File -Force | Sort-Object FullName | ForEach-Object { (Get-FileHash $_.FullName -Algorithm SHA256).Hash + "  " + $_.Name })
 	return @{ reg = @(Get-Content $out); prof = $prof; file = $out }
 }
-$U = [System.Windows.Automation.AutomationElement]
-$CT = [System.Windows.Automation.ControlType]
-$ECP = [System.Windows.Automation.ExpandCollapsePattern]
-function Patterns($el) { (@($el.GetSupportedPatterns() | ForEach-Object { $_.ProgrammaticName -replace 'PatternIdentifiers\.Pattern$', '' }) -join "+") }
-function Short([string]$n) { $n = $n -replace "`r|`n", " "; if ($n.Length -gt 80) { $n.Substring(0, 80) + "..." } else { $n } }
-function Children($el) { @($el.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)) }
-function OfType($el, $type) {
-	$c = New-Object System.Windows.Automation.PropertyCondition($U::ControlTypeProperty, $type)
-	@($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, $c))
-}
-# Items of an opened menu: popups are separate top-level windows of the own PID in Qt, so read both the element's
-# own descendants and every visible own window other than the main one.
-function OpenedItems($el, [uint32]$wbPid, $mainHandle) {
-	$names = New-Object System.Collections.Generic.List[string]
-	foreach ($i in (OfType $el $CT::MenuItem)) { $names.Add((Short $i.Current.Name)) }
-	$root = [System.Windows.Automation.AutomationElement]::RootElement
-	$c = New-Object System.Windows.Automation.PropertyCondition($U::ProcessIdProperty, [int]$wbPid)
-	foreach ($w in @($root.FindAll([System.Windows.Automation.TreeScope]::Children, $c))) {
-		if ($w.Current.NativeWindowHandle -eq $mainHandle.ToInt32()) { continue }
-		foreach ($i in (OfType $w $CT::MenuItem)) {
-			$state = ""
-			try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
-			$names.Add((Short $i.Current.Name) + $state)
-		}
-	}
-	return , $names.ToArray()
-}
-function ExpandRead($el, $label, [uint32]$wbPid, $mainHandle) {
-	try { $p = $el.GetCurrentPattern($ECP::Pattern) } catch { "  $label NO_EXPAND_COLLAPSE (not opened)"; return $true }
-	try { $p.Expand() } catch { "  $label EXPAND_ERROR $($_.Exception.GetType().Name)"; return $true }
-	Start-Sleep -Milliseconds 700
-	$items = OpenedItems $el $wbPid $mainHandle
-	"  $label OPENED items=$($items.Count)"
-	$items | Select-Object -First 40 | ForEach-Object { "    ITEM `"$_`"" }
-	try { $p.Collapse() } catch { "  $label COLLAPSE_ERROR $($_.Exception.GetType().Name)"; return $false }
-	Start-Sleep -Milliseconds 400
-	$state = $p.Current.ExpandCollapseState
-	"  $label CLOSED state=$state"
-	return ($state -ne [System.Windows.Automation.ExpandCollapseState]::Expanded)
-}
-
+# UI Automation helpers (Patterns, Short, Children, OfType, OpenedItems, ExpandRead) live in wb-run-lib-claude.ps1
 $setBefore = SettingsSnap "before"
 "SETTINGS_BEFORE regLines=$($setBefore.reg.Count) profileFiles=$($setBefore.prof.Count)"
 $started = Get-Date

@@ -198,4 +198,36 @@ Case "startup check passes editor" (UnknownWindowStartup ([uint32]$f.p.Id) $fals
 Case "editor title in child" (UnknownWindow ([uint32]$f.p.Id) $false) "World Editor - Plain"
 Done $f
 
+# ExpandRead on a WPF stand-in menu (ExpandCollapse provider of WPF MenuItem): one bool back, items on the host
+$mk = Join-Path $WorkDir "ricon-fakemenu-claude.ps1"
+@'
+Add-Type -AssemblyName PresentationFramework
+$w = New-Object System.Windows.Window
+$w.Title = "World Editor - Fake"; $w.Width = 300; $w.Height = 120; $w.Left = -3000; $w.Top = -3000
+$w.ShowActivated = $false; $w.ShowInTaskbar = $false; $w.WindowStartupLocation = "Manual"
+$menu = New-Object System.Windows.Controls.Menu
+$game = New-Object System.Windows.Controls.MenuItem; $game.Header = "Game"
+foreach ($h in @("Play Fake", "Server Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; [void]$game.Items.Add($i) }
+[void]$menu.Items.Add($game)
+$w.Content = $menu
+$t = New-Object System.Windows.Threading.DispatcherTimer; $t.Interval = [TimeSpan]::FromSeconds(25); $t.Add_Tick({ $w.Close() }.GetNewClosure()); $t.Start()
+[void]$w.ShowDialog()
+'@ | Set-Content -Path $mk -Encoding ASCII
+$mp = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-File", "`"$mk`"")
+for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$mp.Id, "World Editor - Fake") -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
+Start-Sleep -Milliseconds 500
+$mh = [RiconWin]::FindByTitle([uint32]$mp.Id, "World Editor - Fake")
+$gameItem = @(OfType ($U::FromHandle($mh)) $CT::MenuItem | Where-Object { $_.Current.Name -eq "Game" })
+Case "fake menu has Game" $gameItem.Count 1
+if ($gameItem.Count -eq 1) {
+	$printed = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh 6>&1 | ForEach-Object { [string]$_ })
+	$ret = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh 6>$null)
+	Case "expandread returns one bool" (@($ret | ForEach-Object { $_.GetType().Name + ":" + $_ })) @("Boolean:True")
+	Case "expandread prints items" (@($printed | Where-Object { $_ -match 'ITEM "(Play Fake|Server Fake)' }).Count) 2
+	Case "expandread closed again" (@($printed | Where-Object { $_ -match 'CLOSED state=Collapsed' }).Count) 1
+	Case "expandread state after" ($gameItem[0].GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState.ToString()) "Collapsed"
+}
+if (-not $mp.HasExited) { $mp.Kill() }
+Remove-Item $mk -Force
+
 "PASS $($script:pass)/$($script:total)"
