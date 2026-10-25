@@ -70,6 +70,11 @@ class RICON_LiveEndpointProbe
 		int rplMode = RplSession.Mode();
 		text = text + ",rplMode=" + rplMode.ToString();
 		Note("ENDPOINT_START", -1, text);
+		// Отдельный префикс сохраняет схему B0a; адрес из API в журнал не попадает.
+		string modeName = typename.EnumToString(RplMode, rplMode);
+		string listenAddress = RplSession.TryGetListenAddress();
+		PrintFormat("[RICON_NET] cycle=%1 rplMode=%2 rplName=%3 listenPresent=%4", cycle, rplMode,
+			RICON_LiveText.Esc(modeName), Bit(!listenAddress.IsEmpty()));
 		return true;
 	}
 

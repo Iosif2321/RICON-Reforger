@@ -43,6 +43,13 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] state=NO_API");
 			return;
 		}
+		if (RICON_LiveEndpointProbe.IsRequested())
+		{
+			WorkbenchPlugin modeObserver = editor.GetPlugin(RICON_LivePlayModeObserverPlugin);
+			PrintFormat("[RICON_WBMODE] registered=%1", modeObserver != null);
+			if (!modeObserver)
+				return;
+		}
 		vector point;
 		if (!ChoosePoint(api, point))
 			return;
