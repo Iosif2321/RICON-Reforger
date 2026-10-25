@@ -215,7 +215,7 @@ $menu = New-Object System.Windows.Controls.Menu
 $game = New-Object System.Windows.Controls.MenuItem; $game.Header = "Game"
 foreach ($h in @("Play Fake", "Server Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; [void]$game.Items.Add($i) }
 $opt = New-Object System.Windows.Controls.MenuItem; $opt.Header = "Play Game Options"
-foreach ($h in @("Inner Server Fake", "Inner Peer Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; [void]$opt.Items.Add($i) }
+foreach ($h in @("Inner Server Fake", "Inner Peer Fake")) { $i = New-Object System.Windows.Controls.MenuItem; $i.Header = $h; $i.IsCheckable = $true; $i.IsChecked = ($h -eq "Inner Peer Fake"); [void]$opt.Items.Add($i) }
 [void]$game.Items.Add($opt)
 [void]$menu.Items.Add($game)
 $w.Content = $menu
@@ -240,6 +240,8 @@ if ($gameItem.Count -eq 1) {
 	$ret2 = @(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh "Play Game Options" 6>$null)
 	Case "child returns one bool" (@($ret2 | ForEach-Object { $_.GetType().Name + ":" + $_ })) @("Boolean:True")
 	Case "child items printed" (@($printed2 | Where-Object { $_ -match 'ITEM "\[(el|win[^]]*)\] Inner (Server|Peer) Fake' }).Count -ge 2) $true
+	Case "child toggle state read" (@($printed2 | Where-Object { $_ -match 'Inner Peer Fake enabled=True.* toggle=On' }).Count -ge 1) $true
+	Case "child toggle off read" (@($printed2 | Where-Object { $_ -match 'Inner Server Fake enabled=True.* toggle=Off' }).Count -ge 1) $true
 	Case "child closed then parent closed" (@($printed2 | Where-Object { $_ -match 'CLOSED state=Collapsed' }).Count) 2
 	Case "child missing reported" (@(ExpandRead $gameItem[0] "MENU[0]" ([uint32]$mp.Id) $mh "No Such Item" 6>&1 | ForEach-Object { [string]$_ } | Where-Object { $_ -match 'CHILD_NOT_FOUND' }).Count) 1
 	Case "parent state after child run" ($gameItem[0].GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState.ToString()) "Collapsed"

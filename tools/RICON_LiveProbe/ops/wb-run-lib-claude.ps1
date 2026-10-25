@@ -264,26 +264,27 @@ function OfType($el, $type) {
 	$c = New-Object System.Windows.Automation.PropertyCondition($U::ControlTypeProperty, $type)
 	@($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, $c))
 }
+# Read-only state of one menu item (codex #4663): enabled, ExpandCollapse state, current Toggle and SelectionItem state when
+# those patterns exist. Only .Current properties are read; no pattern method is called.
+function ItemInfo($i) {
+	$s = " enabled=" + $i.Current.IsEnabled
+	try { $s += " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
+	try { $s += " toggle=" + $i.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Current.ToggleState } catch {}
+	try { $s += " selected=" + $i.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected } catch {}
+	return $s
+}
 # Items of an opened menu: popups are separate top-level windows of the own PID in Qt, so read both the element's
 # own descendants ([el]) and every own top-level window other than the main one ([win], with the window title, codex
 # review of run 114055: the other editor window's menu bar showed up there). Nested items: name and state only.
 function OpenedItems($el, [uint32]$ownPid, [IntPtr]$mainHandle) {
 	$names = New-Object System.Collections.Generic.List[string]
-	foreach ($i in (OfType $el $CT::MenuItem)) {
-		$state = ""
-		try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
-		$names.Add("[el] " + (Short $i.Current.Name) + $state)
-	}
+	foreach ($i in (OfType $el $CT::MenuItem)) { $names.Add("[el] " + (Short $i.Current.Name) + (ItemInfo $i)) }
 	$root = [System.Windows.Automation.AutomationElement]::RootElement
 	$c = New-Object System.Windows.Automation.PropertyCondition($U::ProcessIdProperty, [int]$ownPid)
 	foreach ($w in @($root.FindAll([System.Windows.Automation.TreeScope]::Children, $c))) {
 		if ($w.Current.NativeWindowHandle -eq $mainHandle.ToInt32()) { continue }
 		$src = "[win `"" + (Short $w.Current.Name) + "`"] "
-		foreach ($i in (OfType $w $CT::MenuItem)) {
-			$state = ""
-			try { $state = " state=" + $i.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch {}
-			$names.Add($src + (Short $i.Current.Name) + $state)
-		}
+		foreach ($i in (OfType $w $CT::MenuItem)) { $names.Add($src + (Short $i.Current.Name) + (ItemInfo $i)) }
 	}
 	return , $names.ToArray()
 }
