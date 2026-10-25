@@ -18,6 +18,10 @@
 #   5. After the launcher's inspect=EDIT_STABLE: strict S2 must be B except Server localhost=On; Invoke it back from On
 #      and the final strict snapshot must equal B (RESTORE_OK), else RESTORE_INCOMPLETE is reported.
 #   6. Teardown in finally: descendants only through their held handles, the root through its Process object.
+# -ReadAuthOnly (codex #4804, after run 154043 met a Script Authorization window before Play): the same launch, but a
+# prompt of the own PID before Play is only read (its UIA names, never a pattern call) and stops the run with
+# AUTH_PROMPT_READ; without a prompt the run stops after WAIT_FLAG and one settle as READ_AUTH_NO_PROMPT. In this mode
+# the menus are never opened, nothing is toggled and no flag is created.
 # Repo-facing stdout carries address classes, ports, PIDs, switch names and hashes; raw addresses and command lines go to
 # the raw JSONL in -OutDir, outside the repository. Never writes the registry or profile.
 param([Parameter(Mandatory = $true)][string]$Tag,
@@ -25,6 +29,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Seconds = 240,
       [int]$Settle = 15,
       [int]$MaxChildren = 3,
+      [switch]$ReadAuthOnly,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -63,7 +68,7 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 	"-riconEndpointProbe=1", "-riconBenchStartFlag=1", "-log-scr-checksum")
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren"
+"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly"
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if (Test-Path $flagPath) { "FLAG_STALE (start flag exists before launch; not removed by this run)"; exit 3 }
@@ -143,7 +148,18 @@ function Tick {
 	if ($script:played) {
 		$y = YesGuard $wbPid $t $false $false
 		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
-	} elseif ([RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { "AUTH_PROMPT before Play (read only)" | Write-Host; return "DIALOG_AUTH_PROMPT_BEFORE_PLAY" }
+	} elseif (($ah = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)) -ne [IntPtr]::Zero) {
+		"AUTH_PROMPT before Play (read only) t=$t handle=$ah" | Write-Host
+		if (-not $ReadAuthOnly) { return "DIALOG_AUTH_PROMPT_BEFORE_PLAY" }
+		# names only, at most 3 reads 1 s apart until a button shows (the window may still be filling)
+		for ($r = 1; $r -le 3; $r++) {
+			Start-Sleep -Seconds 1
+			"AUTH_READ try=$r t=$([int]((Get-Date) - $started).TotalSeconds)" | Write-Host
+			try { $all = DialogElements $ah } catch { "  UIA_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" | Write-Host; break }
+			if (@($all | Where-Object { $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button }).Count -gt 0) { break }
+		}
+		return "AUTH_PROMPT_READ"
+	}
 	foreach ($id in $live) {
 		if ($id -eq $wbPid) {
 			$u = UnknownWindowStartup $wbPid $script:mainFound $t
@@ -208,6 +224,7 @@ try {
 		$tSettle = [math]::Min($Settle, [int]($deadline - (Get-Date)).TotalSeconds)
 		for ($k = 0; $k -lt $tSettle -and -not $reason; $k++) { Start-Sleep -Seconds 1; $reason = Tick }
 	}
+	if (-not $reason -and $ReadAuthOnly) { $reason = "READ_AUTH_NO_PROMPT" }
 	if (-not $reason) {
 		$phase = "SWITCH_ON"
 		$base = StrictSnapshot $script:main $wbPid $null $required
