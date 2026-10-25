@@ -287,10 +287,12 @@ function OpenedItems($el, [uint32]$ownPid, [IntPtr]$mainHandle) {
 	}
 	return , $names.ToArray()
 }
-# Opens $el only through ExpandCollapse, prints its items to the host and closes it. Returns ONE bool: $false only when
-# the element stays expanded or Collapse throws (the caller stops). All text goes through Write-Host: in the first
+# Opens $el only through ExpandCollapse, prints its items to the host and closes it. Returns ONE bool: $false when the
+# state after Collapse is not exactly Collapsed or Collapse throws (the caller stops). All text goes through Write-Host: in the first
 # OpenWorld read (ricon-b0b-menu-claude-20261025-113705) pipeline output here became part of the return value, so
 # the lines were lost and a failed Collapse could not be seen.
+# Closed means exactly Collapsed (codex #4662): PartiallyExpanded or LeafNode after Collapse() is not a closed menu.
+function ClosedOk($state) { return ([string]$state -ceq "Collapsed") }
 # Child menu item with exactly this name, first among the element's descendants, then in the own popup windows.
 function FindMenuChild($el, [string]$name, [uint32]$ownPid, [IntPtr]$mainHandle) {
 	foreach ($i in (OfType $el $CT::MenuItem)) { if ($i.Current.Name -ceq $name) { return $i } }
@@ -325,5 +327,5 @@ function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle, [
 	Start-Sleep -Milliseconds 400
 	$state = $p.Current.ExpandCollapseState
 	"  $label CLOSED state=$state" | Write-Host
-	return ($childOk -and $state -ne [System.Windows.Automation.ExpandCollapseState]::Expanded)
+	return ($childOk -and (ClosedOk $state))
 }

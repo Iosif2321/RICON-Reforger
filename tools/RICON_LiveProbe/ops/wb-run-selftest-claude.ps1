@@ -198,6 +198,12 @@ Case "startup check passes editor" (UnknownWindowStartup ([uint32]$f.p.Id) $fals
 Case "editor title in child" (UnknownWindow ([uint32]$f.p.Id) $false) "World Editor - Plain"
 Done $f
 
+Case "closed collapsed" (ClosedOk ([System.Windows.Automation.ExpandCollapseState]::Collapsed)) $true
+Case "closed partially" (ClosedOk ([System.Windows.Automation.ExpandCollapseState]::PartiallyExpanded)) $false
+Case "closed expanded" (ClosedOk ([System.Windows.Automation.ExpandCollapseState]::Expanded)) $false
+Case "closed leaf" (ClosedOk ([System.Windows.Automation.ExpandCollapseState]::LeafNode)) $false
+Case "closed null" (ClosedOk $null) $false
+
 # ExpandRead on a WPF stand-in menu (ExpandCollapse provider of WPF MenuItem): one bool back, items on the host
 $mk = Join-Path $WorkDir "ricon-fakemenu-claude.ps1"
 @'
