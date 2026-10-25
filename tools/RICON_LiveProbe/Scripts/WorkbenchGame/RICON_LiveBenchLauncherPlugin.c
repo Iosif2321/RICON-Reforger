@@ -45,6 +45,13 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		string benchMode;
 		System.GetCLIParam("riconBenchMode", benchMode);
+		string startFlagValue;
+		bool startFlag = System.GetCLIParam("riconBenchStartFlag", startFlagValue);
+		if (startFlag && (startFlagValue != "1" || benchMode != "inspect" || !RICON_LiveEndpointProbe.IsRequested()))
+		{
+			Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_REQUIRES_INSPECT_PROBE");
+			return;
+		}
 		if (RICON_LiveEndpointProbe.IsRequested())
 		{
 			WorkbenchPlugin modeObserver = editor.GetPlugin(RICON_LivePlayModeObserverPlugin);
@@ -59,7 +66,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			if (RICON_LiveEndpointProbe.IsRequested())
 			{
 				m_Api = api;
-				thread ReturnFromInspectedPlay(editor);
+				thread ReturnFromInspectedPlay(editor, startFlag);
 			}
 			return;
 		}
@@ -122,8 +129,10 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 	}
 
 	//! B0b: Play запускает оператор через меню; после наблюдения возвращаемся в edit для восстановления настройки.
-	protected void ReturnFromInspectedPlay(WorldEditor editor)
+	protected void ReturnFromInspectedPlay(WorldEditor editor, bool startFlag)
 	{
+		if (startFlag && !StartFromFlag(editor))
+			return;
 		Print("[RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000");
 		int waitSteps;
 		while (!m_Api.IsGameMode() && waitSteps < 1200)
@@ -156,6 +165,36 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] inspect=EDIT_STABLE checks=51");
 		else
 			Print("[RICON_LIVEB] inspect=REFUSED reason=EDIT_NOT_REACHED");
+	}
+
+	//! Единственный оператор создаёт отсутствующий сигнал только после проверки настройки сервера.
+	protected bool StartFromFlag(WorldEditor editor)
+	{
+		string flag = "$RICON_LiveProbe:ops/RICON_B0b_start.flag";
+		if (!FileIO.FileExists("$logs:console.log") || FileIO.FileExists(flag))
+		{
+			Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_PATH_OR_STALE");
+			return false;
+		}
+		Print("[RICON_LIVEB] inspect=WAIT_FLAG limitMs=120000");
+		for (int i = 0; i < 1200; i++)
+		{
+			if (m_Api.IsGameMode())
+			{
+				Print("[RICON_LIVEB] inspect=REFUSED reason=PLAY_BEFORE_FLAG");
+				return false;
+			}
+			if (FileIO.FileExists(flag))
+			{
+				Print("[RICON_LIVEB] inspect=FLAG_SEEN");
+				editor.SwitchToGameMode(false, false);
+				Print("[RICON_LIVEB] inspect=FLAG_PLAY_REQUESTED");
+				return true;
+			}
+			Sleep(100);
+		}
+		Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_NOT_SEEN");
+		return false;
 	}
 
 	//! Тест жизненного цикла: прерываем активное наблюдение, затем запускаем новый Play, не сохраняя мир.
