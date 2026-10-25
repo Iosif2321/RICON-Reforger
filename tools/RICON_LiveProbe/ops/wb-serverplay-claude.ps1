@@ -19,7 +19,7 @@
 #      PLUGIN_SEEN and before OBSERVATION_END/EDIT_* (SitesAllowed); any prompt before that, a prompt in another
 #      process, an unknown window, too many processes, a launcher refusal or SCRIPT (E) stops the run. The own Qt window
 #      "Arma Reforger Workbench" (visible right after PLUGIN_PLAY_REQUESTED in run 174552) is passive from PLUGIN_SEEN
-#      until EDIT_STABLE while it has no button: read (size, element names) when first seen and on every change.
+#      until EDIT_STABLE (codex #4870): never any input; class, size and element names are read once per new handle.
 #   5. After the launcher's inspect=EDIT_STABLE: strict S2 must be B except Server localhost=On; Invoke it back from On
 #      and the final strict snapshot must equal B (RESTORE_OK), else RESTORE_INCOMPLETE is reported.
 #   6. Teardown in finally: descendants only through their held handles, the root through its Process object.
@@ -102,7 +102,7 @@ $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name
 
 $tracked = @{}; $netSeen = @{}; $newCount = 0
 $script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:invokeJob = $null
-$script:playWin = @{}   # Play title -> last PlayWindowRead sig
+$script:playWin = @{}   # Play title -> visible handle already read once
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
@@ -179,21 +179,23 @@ function Tick {
 			$u = UnknownWindowStartup $wbPid $script:mainFound $t $inPlay
 			if ($u) { "UNKNOWN_WINDOW t=$t pid=$id title=`"$u`" (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
 			if ($inPlay) {
+				# passive: no input ever; one diagnostic read per new visible handle (codex #4870), not one per Tick
 				foreach ($pt in $script:PlayTitles) {
 					$ph = [RiconWin]::FindByTitle($wbPid, $pt)
 					if ($ph -eq [IntPtr]::Zero) {
-						if ($script:playWin.ContainsKey($pt)) { "PLAY_WINDOW_GONE t=$t title=`"$pt`"" | Write-Host; $script:playWin.Remove($pt) }
+						if ($script:playWin.ContainsKey($pt)) { "PLAY_WINDOW_HIDDEN t=$t title=`"$pt`" (no visible window with it)" | Write-Host; $script:playWin.Remove($pt) }
 						continue
 					}
-					# a read error is a window going away; it is read again on the next Tick
-					try { $pr = PlayWindowRead $ph } catch { "PLAY_WINDOW t=$t title=`"$pt`" READ_ERROR $($_.Exception.GetType().Name)" | Write-Host; continue }
-					if (-not $script:playWin.ContainsKey($pt) -or $script:playWin[$pt] -cne $pr.sig) {
-						"PLAY_WINDOW t=$t title=`"$pt`" handle=$ph size=$($pr.size) elements=$($pr.count) buttons=$($pr.buttons) (read only)" | Write-Host
+					if ($script:playWin.ContainsKey($pt) -and $script:playWin[$pt] -eq $ph) { continue }
+					$script:playWin[$pt] = $ph
+					$cls = @([RiconWin]::List($wbPid) | Where-Object { $_.StartsWith("V|") -and ($_ -split "\|", 3)[2] -ceq $pt } | ForEach-Object { ($_ -split "\|", 3)[1] }) -join ","
+					"PLAY_WINDOW t=$t title=`"$pt`" handle=$ph class=$cls (passive, read once)" | Write-Host
+					try {
+						$pr = PlayWindowRead $ph
+						"  PW size=$($pr.size) elements=$($pr.count) buttons=$($pr.buttons)" | Write-Host
 						foreach ($l in $pr.lines) { "  PW $l" | Write-Host }
-						Raw @{ t = $t; kind = "PLAY_WINDOW"; title = $pt; size = $pr.size; elements = $pr.count; buttons = $pr.buttons }
-						$script:playWin[$pt] = $pr.sig
-					}
-					if ($pr.buttons -gt 0) { return "DIALOG_PLAY_WINDOW_BUTTONS" }
+						Raw @{ t = $t; kind = "PLAY_WINDOW"; title = $pt; cls = $cls; size = $pr.size; elements = $pr.count; buttons = $pr.buttons }
+					} catch { "  PW READ_ERROR $($_.Exception.GetType().Name)" | Write-Host }
 				}
 			}
 			continue

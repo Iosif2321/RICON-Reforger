@@ -294,7 +294,7 @@ function StartupWindowAllowed([string]$title, [bool]$mainFound, [double]$elapsed
 # Server Play (run 174552): about 1 s after the launcher's PLUGIN_PLAY_REQUESTED the own Workbench showed its Qt window
 # "Arma Reforger Workbench" visible (the title Qt gives an untitled window; before, seen visible only at startup). In a
 # plugin-start run the caller lets it through ($inPlay) only from PLUGIN_SEEN until EDIT_STABLE and only in the
-# Workbench PID, and reads it with PlayWindowRead: size and element names, no pattern call; a button stops the run.
+# Workbench PID; it never gets input and is read once per new handle with PlayWindowRead (codex #4870).
 $script:PlayTitles = @("Arma Reforger Workbench")
 
 # Like UnknownWindow for the Workbench PID, but every visible titled window is checked and the startup title is let
@@ -309,15 +309,14 @@ function UnknownWindowStartup([uint32]$id, [bool]$mainFound, [double]$elapsed, [
 	}
 	return ""
 }
-# Read only: @{ size; count; buttons; lines; sig } of one window; sig changes when the size or the first 20 elements do.
+# Read only, no pattern call: @{ size; count; buttons; lines } of one window, lines = its first 20 elements.
 function PlayWindowRead([IntPtr]$h) {
 	$el = [System.Windows.Automation.AutomationElement]::FromHandle($h)
 	$r = $el.Current.BoundingRectangle
 	$all = @($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition))
 	$lines = @($all | Select-Object -First 20 | ForEach-Object { $_.Current.ControlType.ProgrammaticName + " `"" + (Short $_.Current.Name) + "`"" })
 	$buttons = @($all | Where-Object { $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button }).Count
-	$size = "$([int]$r.Width)x$([int]$r.Height)"
-	return @{ size = $size; count = $all.Count; buttons = $buttons; lines = $lines; sig = $size + "|" + ($lines -join "|") }
+	return @{ size = "$([int]$r.Width)x$([int]$r.Height)"; count = $all.Count; buttons = $buttons; lines = $lines }
 }
 
 # First visible window of a tracked PID whose title is not known; "" when none. For a child PID even the
