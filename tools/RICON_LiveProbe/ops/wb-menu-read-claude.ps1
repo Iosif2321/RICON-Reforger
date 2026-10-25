@@ -7,11 +7,15 @@
 # Never Invoke, Toggle, SelectionItem, Value, keyboard or mouse. The Script Authorization prompt, any unknown window, a
 # Collapse that fails or the deadline stops the process (no press). A separate watchdog process kills the own Workbench
 # after -Seconds + 30 s even if a UI Automation call hangs. Settings are snapshotted before and after.
+# -OpenWorld (codex #4650): the editor shows no "World Editor - ..." window without a world, so the launcher plugin opens
+# the fixed Plain world in edit mode (-riconBenchMode=inspect: OPEN_ONLY, no entity, no Play). The UI is read only after
+# the launcher's "state=OPEN_ONLY" line; PLAY_REQUESTED, ENDPOINT_START or a [RICON_WBMODE] event in the log stops the run.
 param([Parameter(Mandatory = $true)][string]$Tag,
       [Parameter(Mandatory = $true)][string]$OutDir,
       [int]$Seconds = 120,
       [int]$Settle = 15,
       [switch]$Expand,
+      [switch]$OpenWorld,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -31,9 +35,15 @@ if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=WorldEditor",
 	"-logLevel", "verbose", "-logsDir", $logsDir, "-noFocus", "-maxFPS", "30")
+$world = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent"
+if ($OpenWorld) { $argList += @("-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect", "-log-scr-checksum") }
+$log = "$myGames\ArmaReforgerWorkbench\logs\$logsDir\console.log"
+$openPattern = '\[RICON_LIVEB\] state=OPEN_ONLY'
+$playPattern = '\[RICON_LIVEB\] state=PLAY_REQUESTED|kind=ENDPOINT_START|\[RICON_WBMODE\] event=|\[RICON_LIVEB\] state=(BENCH_CREATED|ENDPOINT_ONLY)'
+function LogText { if (Test-Path $log) { return (Get-Content $log -Raw) } else { return "" } }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds settle=$Settle expand=$Expand"
+"LIMITS seconds=$Seconds settle=$Settle expand=$Expand openWorld=$OpenWorld"
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
@@ -101,6 +111,7 @@ function Blocked {
 	$proc.Refresh()
 	if ($proc.HasExited) { return "WORKBENCH_EXITED" }
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
+	if ($OpenWorld -and (LogText) -match $playPattern) { "PLAY_OR_BENCH_MARKER in log (open-only run)" | Write-Host; return "PLAY_SEEN" }
 	if ([RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { "AUTH_PROMPT seen (read only, not pressed)" | Write-Host; return "DIALOG_AUTH_PROMPT" }
 	$u = UnknownWindowStartup $wbPid $script:mainFound ((Get-Date) - $started).TotalSeconds
 	if ($u) { "UNKNOWN_WINDOW title=`"$u`" mainFound=$($script:mainFound) (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
@@ -129,9 +140,18 @@ try {
 	if ($main -ne [IntPtr]::Zero) {
 		"MAIN_WINDOW t=$([int]((Get-Date) - $started).TotalSeconds) title=`"$(Short $mainTitle)`""
 		@([RiconWin]::List($wbPid)) | Where-Object { $_.StartsWith("V|") } | ForEach-Object { "  OWN_WINDOW $(Short $_)" }
+		if ($OpenWorld) {
+			# the UI is read only once the launcher reported the open edit world
+			while (-not ((LogText) -match $openPattern)) {
+				$b = Blocked
+				if ($b) { break }
+				Start-Sleep -Seconds 1
+			}
+			if (-not $b) { "OPEN_ONLY seen t=$([int]((Get-Date) - $started).TotalSeconds)" }
+		}
 		$left = ($deadline - (Get-Date)).TotalSeconds
-		Start-Sleep -Seconds ([math]::Max(0, [math]::Min($Settle, [int]$left)))
-		$b = Blocked
+		if (-not $b) { Start-Sleep -Seconds ([math]::Max(0, [math]::Min($Settle, [int]$left))) }
+		if (-not $b) { $b = Blocked }
 		if ($b) { $reason = $b }
 		else {
 			$el = $U::FromHandle($main)
@@ -189,9 +209,12 @@ $watchdog.Refresh()
 if (-not $watchdog.HasExited) { try { $watchdog.Kill() } catch {} }
 "WATCHDOG_END exited=$($watchdog.HasExited)"
 "others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
-$log = "$myGames\ArmaReforgerWorkbench\logs\$logsDir\console.log"
 if (Test-Path $log) {
 	"scriptErrors=" + @(Select-String -Path $log -Pattern "SCRIPT\s*\(E\)").Count
+	if ($OpenWorld) {
+		"openOnlyLines=" + @(Select-String -Path $log -Pattern $openPattern).Count + " playOrBenchLines=" + @(Select-String -Path $log -Pattern $playPattern).Count
+		Select-String -Path $log -Pattern "\[RICON_LIVEB\]|RICON_Live[A-Za-z]*\.c' CRC" | Select-Object -First 30 | ForEach-Object { $_.Line }
+	}
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }
 $setAfter = SettingsSnap "after"
