@@ -395,7 +395,10 @@ function SnapshotProblem($map, [string[]]$baseKeys, [string[]]$required) {
 # Toggles exactly one item of the open Options element, only if it is found once and its state, read right now in this
 # fresh menu, is exactly $expected (codex #4677). Returns TOGGLED, STALE (state differs), NO_ITEM, AMBIGUOUS, NO_PATTERN,
 # READ_ERROR or TOGGLE_ERROR; only TOGGLED means Toggle() was called.
-function ToggleExpected($opt, [string]$name, [string]$expected) {
+# $method (claude #4684 option A): "Toggle" calls TogglePattern.Toggle(); "Invoke" calls InvokePattern.Invoke() of the same
+# item (a menu click; the first live roundtrip showed Toggle() leaves a Qt menu action unchanged). The state check before
+# the action is identical for both.
+function ToggleExpected($opt, [string]$name, [string]$expected, [string]$method = "Toggle") {
 	$hits = @(OfType $opt $CT::MenuItem | Where-Object { $_.Current.Name -ceq $name })
 	if ($hits.Count -eq 0) { return "NO_ITEM" }
 	if ($hits.Count -gt 1) { return "AMBIGUOUS" }
@@ -403,6 +406,13 @@ function ToggleExpected($opt, [string]$name, [string]$expected) {
 	if (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$tp)) { return "NO_PATTERN" }
 	try { $now = [string]$tp.Current.ToggleState } catch { return "READ_ERROR" }
 	if ($now -cne $expected) { return "STALE" }
+	if ($method -ceq "Invoke") {
+		$ip = $null
+		if (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { return "NO_PATTERN" }
+		try { $ip.Invoke() } catch { return "TOGGLE_ERROR" }
+		return "TOGGLED"
+	}
+	if ($method -cne "Toggle") { return "BAD_METHOD" }
 	try { $tp.Toggle() } catch { return "TOGGLE_ERROR" }
 	return "TOGGLED"
 }
@@ -417,7 +427,7 @@ function ToggleDiff($a, $b) {
 }
 function MapText($m) { (@($m.Keys | ForEach-Object { "$_=$($m[$_])" }) -join " | ") }
 # $mustBeOff (codex #4674): every listed item must read exactly Off in the baseline, else nothing is toggled.
-function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [string[]]$mustBeOff, [int]$maxRestore = 3) {
+function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [string[]]$mustBeOff, [int]$maxRestore = 3, [string]$method = "Toggle") {
 	$script:roundTripToggles = 0
 	$required = @($target) + @($mustBeOff | Where-Object { $_ })
 	$baseKeys = $null
@@ -447,9 +457,9 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 		for ($try = 1; $try -le 2; $try++) {
 			$h = OpenOptions $mainHandle $ownPid
 			if ($null -eq $h) { return $false }
-			$res = ToggleExpected $h.opt $name $expected
+			$res = ToggleExpected $h.opt $name $expected $method
 			if ($res -ceq "TOGGLED") { $script:roundTripToggles++ }
-			"  ROUNDTRIP TOGGLE `"$name`" from=$expected result=$res try=$try count=$($script:roundTripToggles)" | Write-Host
+			"  ROUNDTRIP $($method.ToUpper()) `"$name`" from=$expected result=$res try=$try count=$($script:roundTripToggles)" | Write-Host
 			Start-Sleep -Milliseconds 700
 			$closed = CloseOptions $h $mainHandle
 			if ($res -ceq "TOGGLED") { return $closed }

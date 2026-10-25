@@ -310,6 +310,18 @@ $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server loc
 Case "roundtrip independent result" $rt "TOGGLED_ON|RESTORE_OK"
 Case "roundtrip independent toggles" $script:roundTripToggles 2
 DoneOpts $fo
+$fo = FakeOptions $true $false "inv"
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 3 "Invoke" 6>$null
+Case "roundtrip invoke exclusive result" $rt "TOGGLED_ON|RESTORE_OK"
+Case "roundtrip invoke exclusive actions" $script:roundTripToggles 3
+DoneOpts $fo
+$fo = FakeOptions $false $false "invstale"
+$h = OpenOptions $fo.h ([uint32]$fo.p.Id)
+Case "invoke expected stale" (ToggleExpected $h.opt "Server localhost" "On" "Invoke") "STALE"
+Case "invoke bad method" (ToggleExpected $h.opt "Server localhost" "Off" "Click") "BAD_METHOD"
+Case "invoke stale left state" ((ReadToggles $h.opt).map["Server localhost"]) "Off"
+$null = CloseOptions $h $fo.h
+DoneOpts $fo
 $fo = FakeOptions $false $true "on"
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip baseline on refused" $rt "BASELINE_NOT_OFF"
