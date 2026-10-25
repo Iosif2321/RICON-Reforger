@@ -1,0 +1,120 @@
+# claude, TOOL_ONLY: self-test of wb-run-lib-claude.ps1 without Workbench. Pure helpers plus the guarded "Yes" on an
+# off-screen WPF stand-in (wb-run-fakedlg-claude.ps1) in its own process. Prints one line per case and PASS n/m.
+param([string]$WorkDir = $env:TEMP)
+. (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
+$script:pass = 0; $script:total = 0
+function Case($name, $got, $want) {
+	$script:total++
+	$ok = ($got -join "|") -ceq ($want -join "|")
+	if ($ok) { $script:pass++ }
+	"{0} {1} got=`"{2}`" want=`"{3}`"" -f $(if ($ok) { "PASS" } else { "FAIL" }), $name, ($got -join "|"), ($want -join "|")
+}
+
+# parse and ASCII checks of every ops script (Windows PowerShell 5.1 misreads non-ASCII in BOM-less files)
+foreach ($f in @(Get-ChildItem $PSScriptRoot -Filter *.ps1)) {
+	$tok = $null; $err = $null
+	[void][System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tok, [ref]$err)
+	Case "parse $($f.Name)" @($err).Count 0
+	Case "ascii $($f.Name)" @([IO.File]::ReadAllBytes($f.FullName) | Where-Object { $_ -gt 127 }).Count 0
+}
+
+Case "addr any4" (AddrClass "0.0.0.0") "ANY"
+Case "addr any6" (AddrClass "::") "ANY"
+Case "addr loop4" (AddrClass "127.0.0.1") "LOOPBACK"
+Case "addr loop6" (AddrClass "::1") "LOOPBACK"
+Case "addr 10" (AddrClass "10.1.2.3") "PRIVATE_V4"
+Case "addr 172.16" (AddrClass "172.16.0.9") "PRIVATE_V4"
+Case "addr 172.32" (AddrClass "172.32.0.9") "OTHER"
+Case "addr 192.168" (AddrClass "192.168.50.7") "PRIVATE_V4"
+Case "addr apipa" (AddrClass "169.254.3.4") "LINKLOCAL_V4"
+Case "addr fe80" (AddrClass "fe80::1") "LINKLOCAL_V6"
+Case "addr fd" (AddrClass "fd12:3456::1") "PRIVATE_V6"
+Case "addr public" (AddrClass "8.8.8.8") "OTHER"
+
+Case "flags typical" (FlagNames '"C:\x\a.exe" -gproj "C:\p q\a.gproj" -client 192.168.1.5 -riconEndpointProbe=1 -logsDir x -client') @("-gproj", "-client", "-riconEndpointProbe", "-logsDir")
+Case "flags quoted dash" (FlagNames 'a.exe -profile "C:\a -b\c" -x') @("-profile", "-x")
+Case "flags none" (FlagNames "") @()
+Case "flags negative number" (FlagNames "a.exe -maxFPS -1") @("-maxFPS")
+
+$d0 = Get-Date "2026-10-25 10:00:00"
+$procs = @(
+	[pscustomobject]@{ ProcessId = 100; ParentProcessId = 4; CreationDate = $d0 },
+	[pscustomobject]@{ ProcessId = 101; ParentProcessId = 100; CreationDate = $d0.AddSeconds(5) },
+	[pscustomobject]@{ ProcessId = 102; ParentProcessId = 101; CreationDate = $d0.AddSeconds(6) },
+	[pscustomobject]@{ ProcessId = 200; ParentProcessId = 4; CreationDate = $d0 },
+	[pscustomobject]@{ ProcessId = 300; ParentProcessId = 301; CreationDate = $d0 },
+	[pscustomobject]@{ ProcessId = 301; ParentProcessId = 100; CreationDate = $d0.AddSeconds(9) })
+Case "descendants" (@(Descendants $procs 100) | Sort-Object) @(100, 101, 102, 301)
+Case "descendants missing root" (@(Descendants $procs 999)).Count 0
+
+$msg = $script:ExpectedMessage
+$four = @("Yes", "Yes to All", "No", "No to All")
+Case "verdict exact" (PromptVerdict @($msg) $four) "EXACT"
+Case "verdict other text" (PromptVerdict @($msg.Replace("1101", "1102")) $four) "UNEXPECTED"
+Case "verdict extra text" (PromptVerdict @($msg, "more") $four) "UNEXPECTED"
+Case "verdict three buttons" (PromptVerdict @($msg) @("Yes", "No", "No to All")) "UNEXPECTED"
+Case "verdict lowercase yes" (PromptVerdict @($msg) @("yes", "Yes to All", "No", "No to All")) "UNEXPECTED"
+Case "verdict not ready" (PromptVerdict @($msg) @()) "NOT_READY"
+Case "limit plain" (YesLimit $false $false) 1
+Case "limit marker without restart" (YesLimit $false $true) 1
+Case "limit restart before marker" (YesLimit $true $false) 1
+Case "limit restart after marker" (YesLimit $true $true) 2
+Case "known auth" (WindowKnown "Script Authorization Required") $true
+Case "known editor" (WindowKnown "World Editor - Plain") $true
+Case "known lowercase" (WindowKnown "world editor - Plain") $false
+Case "known save prompt" (WindowKnown "World needs to be saved") $false
+
+# UI Automation cases on stand-in windows in a separate process
+function FakeDlg($title, $message, $buttons, $tag) {
+	$click = Join-Path $WorkDir "ricon-fakedlg-$tag.txt"
+	if (Test-Path $click) { Remove-Item $click -Force }
+	$p = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass",
+		"-File", "`"$(Join-Path $PSScriptRoot 'wb-run-fakedlg-claude.ps1')`"", "-Title", "`"$title`"", "-Message", "`"$message`"",
+		"-Buttons", "`"$buttons`"", "-ClickFile", "`"$click`"", "-Seconds", "25")
+	for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$p.Id, $title) -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
+	Start-Sleep -Milliseconds 500
+	return @{ p = $p; click = $click }
+}
+function Clicks($f) { Start-Sleep -Milliseconds 800; if (Test-Path $f.click) { return , @(Get-Content $f.click) } else { return , @() } }
+function Done($f) { if (-not $f.p.HasExited) { Stop-Process -Id $f.p.Id -Force -ErrorAction SilentlyContinue } }
+$btns = "Yes,Yes to All,No,No to All"
+
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null
+$f = FakeDlg $script:AuthTitle $msg $btns "exact"
+Case "uia exact pressed" (YesGuard ([uint32]$f.p.Id) 1 $false $false 6>$null) "PRESSED"
+Case "uia exact clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "second"
+$script:yesAt = (Get-Date).AddSeconds(-10)
+Case "uia second dialog refused" (YesGuard ([uint32]$f.p.Id) 2 $false $false 6>$null) "LIMIT_REACHED"
+Case "uia second dialog no click" (Clicks $f).Count 0
+Case "uia restart before marker refused" (YesGuard ([uint32]$f.p.Id) 3 $true $false 6>$null) "LIMIT_REACHED"
+Case "uia restart after marker pressed" (YesGuard ([uint32]$f.p.Id) 4 $true $true 6>$null) "PRESSED"
+Case "uia restart clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "third"
+$script:yesAt = (Get-Date).AddSeconds(-10)
+Case "uia third refused" (YesGuard ([uint32]$f.p.Id) 5 $true $true 6>$null) "LIMIT_REACHED"
+Case "uia third no click" (Clicks $f).Count 0
+Done $f
+
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null
+$f = FakeDlg $script:AuthTitle $msg.Replace("LoadContainer", "SaveContainer") $btns "text"
+Case "uia wrong text refused" (YesGuard ([uint32]$f.p.Id) 6 $false $false 6>$null) "UNEXPECTED_DIALOG"
+Case "uia wrong text no click" (Clicks $f).Count 0
+Case "uia wrong text presses" $script:yesPressed 0
+Done $f
+$f = FakeDlg $script:AuthTitle $msg "Yes,No" "buttons"
+Case "uia two buttons refused" (YesGuard ([uint32]$f.p.Id) 7 $false $false 6>$null) "UNEXPECTED_DIALOG"
+Case "uia two buttons no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg "Background Server" "" "OK" "child"
+Case "unknown child window" (UnknownWindow ([uint32]$f.p.Id) $false) "Background Server"
+Case "unknown child auth title" (UnknownWindow ([uint32]$f.p.Id) $true) "Background Server"
+Done $f
+$f = FakeDlg "World Editor - Plain" "" "OK" "editor"
+Case "known editor window" (UnknownWindow ([uint32]$f.p.Id) $true) ""
+Case "editor title in child" (UnknownWindow ([uint32]$f.p.Id) $false) "World Editor - Plain"
+Done $f
+
+"PASS $($script:pass)/$($script:total)"
