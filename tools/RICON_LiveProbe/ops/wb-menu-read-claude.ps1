@@ -123,7 +123,7 @@ try {
 		if ($b) { $reason = $b }
 		elseif ($Roundtrip) {
 			$before = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
-			$rt = RoundTrip $main $wbPid "Server localhost" { Blocked }
+			$rt = RoundTrip $main $wbPid "Server localhost" { Blocked } @("Server localhost + PeerTool")
 			$after = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
 			"ROUNDTRIP_RESULT $rt toggles=$($script:roundTripToggles) otherProcessesBefore=$before after=$after"
 			$reason = "ROUNDTRIP_DONE"

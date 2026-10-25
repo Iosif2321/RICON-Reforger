@@ -250,10 +250,11 @@ if (-not $mp.HasExited) { $mp.Kill() }
 Remove-Item $mk -Force
 
 # RoundTrip on a WPF stand-in Options menu (codex #4668): exclusive pair Viewport/Server, PeerTool independent
-function FakeOptions($exclusive, $serverOn, $tag) {
+function FakeOptions($exclusive, $serverOn, $tag, $peerOn = $false) {
 	$mk = Join-Path $WorkDir "ricon-fakeopts-$tag.ps1"
 	$ex = if ($exclusive) { '$true' } else { '$false' }
 	$so = if ($serverOn) { '$true' } else { '$false' }
+	$po = if ($peerOn) { '$true' } else { '$false' }
 	@"
 Add-Type -AssemblyName PresentationFramework
 `$w = New-Object System.Windows.Window
@@ -264,7 +265,7 @@ Add-Type -AssemblyName PresentationFramework
 `$opt = New-Object System.Windows.Controls.MenuItem; `$opt.Header = "Play Game Options"
 `$vp = New-Object System.Windows.Controls.MenuItem; `$vp.Header = "Play inside Viewport"; `$vp.IsCheckable = `$true; `$vp.IsChecked = -not $so
 `$sv = New-Object System.Windows.Controls.MenuItem; `$sv.Header = "Server localhost"; `$sv.IsCheckable = `$true; `$sv.IsChecked = $so
-`$pt = New-Object System.Windows.Controls.MenuItem; `$pt.Header = "Server localhost + PeerTool"; `$pt.IsCheckable = `$true
+`$pt = New-Object System.Windows.Controls.MenuItem; `$pt.Header = "Server localhost + PeerTool"; `$pt.IsCheckable = `$true; `$pt.IsChecked = $po
 if ($ex) { `$sv.Add_Checked({ `$vp.IsChecked = `$false }.GetNewClosure()); `$vp.Add_Checked({ `$sv.IsChecked = `$false }.GetNewClosure()) }
 foreach (`$i in @(`$vp, `$sv, `$pt)) { [void]`$opt.Items.Add(`$i) }
 [void]`$game.Items.Add(`$opt); [void]`$menu.Items.Add(`$game)
@@ -283,24 +284,29 @@ $a = [ordered]@{ "x" = "On"; "y" = "Off" }; $b2 = [ordered]@{ "x" = "Off"; "y" =
 Case "toggle diff" (ToggleDiff $a $b2) @("x", "z")
 Case "toggle diff equal" (ToggleDiff $a $a).Count 0
 $fo = FakeOptions $true $false "excl"
-$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip exclusive result" $rt "TOGGLED_ON|RESTORE_OK"
 Case "roundtrip exclusive toggles" $script:roundTripToggles 3
 $h = OpenOptions $fo.h ([uint32]$fo.p.Id); $m = ReadToggles $h.opt; $null = CloseOptions $h $fo.h
 Case "roundtrip exclusive final" (MapText $m) "Play inside Viewport=On | Server localhost=Off | Server localhost + PeerTool=Off"
 DoneOpts $fo
 $fo = FakeOptions $false $false "indep"
-$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip independent result" $rt "TOGGLED_ON|RESTORE_OK"
 Case "roundtrip independent toggles" $script:roundTripToggles 2
 DoneOpts $fo
 $fo = FakeOptions $false $true "on"
-$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } 6>$null
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip baseline on refused" $rt "BASELINE_NOT_OFF"
 Case "roundtrip baseline on no toggle" $script:roundTripToggles 0
 DoneOpts $fo
+$fo = FakeOptions $false $false "peeron" $true
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
+Case "roundtrip peertool on refused" $rt "BASELINE_NOT_OFF"
+Case "roundtrip peertool on no toggle" $script:roundTripToggles 0
+DoneOpts $fo
 $fo = FakeOptions $false $false "blocked"
-$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "DEADLINE" } 6>$null
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "DEADLINE" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip blocked before first toggle" $rt "TOGGLE_FAILED"
 Case "roundtrip blocked no toggle" $script:roundTripToggles 0
 DoneOpts $fo

@@ -391,7 +391,8 @@ function ToggleDiff($a, $b) {
 	return , $names.ToArray()
 }
 function MapText($m) { (@($m.Keys | ForEach-Object { "$_=$($m[$_])" }) -join " | ") }
-function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [int]$maxRestore = 3) {
+# $mustBeOff (codex #4674): every listed item must read exactly Off in the baseline, else nothing is toggled.
+function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [string[]]$mustBeOff, [int]$maxRestore = 3) {
 	$script:roundTripToggles = 0
 	$snap = {
 		$h = OpenOptions $mainHandle $ownPid
@@ -416,7 +417,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	$base = & $snap
 	if ($null -eq $base) { return "BASELINE_READ_FAILED" }
 	"  ROUNDTRIP BASELINE $(MapText $base)" | Write-Host
-	if (-not $base.Contains($target) -or $base[$target] -cne "Off") { return "BASELINE_NOT_OFF" }
+	foreach ($n in @($target) + @($mustBeOff | Where-Object { $_ })) { if (-not $base.Contains($n) -or $base[$n] -cne "Off") { "  ROUNDTRIP baseline `"$n`" is not Off" | Write-Host; return "BASELINE_NOT_OFF" } }
 	if (-not (& $flip $target)) { $s = & $snap; if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }; return "TOGGLE_FAILED" }
 	$s1 = & $snap
 	if ($null -eq $s1) { return "STATE1_READ_FAILED" }
