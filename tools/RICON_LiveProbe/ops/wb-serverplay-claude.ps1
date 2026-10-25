@@ -289,13 +289,18 @@ try {
 	}
 	if (-not $reason) {
 		$phase = "RESTORE"
-		# first menu contact since the Invoke (codex #4850): the worker should be done and Plugins closed by Qt itself
+		# first menu contact since the Invoke (codex #4850): only once the worker is done, since a pending Invoke may block
+		# the next UIA call on that menu (codex #4860); then Plugins should have been closed by Qt itself
 		$j = $script:invokeJob
-		$pm = FindTopMenu $script:main $pluginMenu
-		$pms = try { [string]$pm.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch { "UNREAD" }
-		"PLUGINS_MENU state=$pms invokeDone=$($j.done) invokeResult=`"$($j.result)`""
+		$null = PollAsyncInvoke $j
+		"PLUGIN_INVOKE_AT_EDIT done=$($j.done) result=`"$($j.result)`""
 		if (-not $j.done) { $reason = "PLUGIN_INVOKE_PENDING" }
-		elseif (-not (ClosedOk $pms)) {
+		else {
+			$pm = FindTopMenu $script:main $pluginMenu
+			$pms = try { [string]$pm.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch { "UNREAD" }
+			"PLUGINS_MENU state=$pms"
+		}
+		if (-not $reason -and -not (ClosedOk $pms)) {
 			try { $pm.GetCurrentPattern($ECP::Pattern).Collapse() } catch {}
 			Start-Sleep -Milliseconds 400
 			$pms = try { [string](FindTopMenu $script:main $pluginMenu).GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState } catch { "UNREAD" }
