@@ -96,6 +96,25 @@ Case "open held with CIM CreationDate" ([bool]$h) $true
 if ($h) { $h.Dispose() }
 Case "open held no such pid" ([bool](OpenHeld ([uint32]4294967000) $self.StartTime)) $false
 
+# watchdog (codex #4639): kills a stand-in target after the limit; a wrong start time leaves it alone
+$target = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-Command", "Start-Sleep -Seconds 40") -PassThru -WindowStyle Hidden
+$null = $target.Handle
+$wd = StartWatchdog $target 2000
+Start-Sleep -Seconds 6
+$target.Refresh()
+Case "watchdog kills after limit" $target.HasExited $true
+$wd.Refresh(); Case "watchdog ends itself" $wd.HasExited $true
+$target2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-Command", "Start-Sleep -Seconds 40") -PassThru -WindowStyle Hidden
+$null = $target2.Handle
+$fake = [pscustomobject]@{ Id = $target2.Id; StartTime = $target2.StartTime.AddSeconds(-5) }
+$ticks = $fake.StartTime.Ticks
+$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($fake.Id)); if ([math]::Abs(`$p.StartTime.Ticks - $ticks) -lt 10) { if (-not `$p.WaitForExit(1000)) { `$p.Kill() } }"
+$wd2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))) -PassThru -WindowStyle Hidden
+Start-Sleep -Seconds 5
+$target2.Refresh()
+Case "watchdog start mismatch spares target" $target2.HasExited $false
+if (-not $target2.HasExited) { $target2.Kill() }
+
 # UI Automation cases on stand-in windows in a separate process
 function FakeDlg($title, $message, $buttons, $tag) {
 	$click = Join-Path $WorkDir "ricon-fakedlg-$tag.txt"

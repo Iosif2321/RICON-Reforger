@@ -1,10 +1,12 @@
 # claude, TOOL_ONLY: read the World Editor menu bar and toolbar names of one own Workbench process (B0b step 1: where
 # "Server localhost" lives, claude #4623/#4627, codex #4625/#4629). Only after START -> codex ACK; END after the run.
-# No world, no launcher plugin, no Play. UI Automation only: names, control types and supported patterns. With -Expand,
-# each top-level menu item and each toolbar item whose name contains "Play" is opened ONLY through
-# ExpandCollapsePattern.Expand, its direct item names are read and it is closed with Collapse; submenus are not opened.
-# Never Invoke, Toggle, SelectionItem, Value, keyboard or mouse. Any window other than the main editor window, or a
-# Collapse that fails, stops the process. The own PID is stopped at the end; settings are snapshotted before and after.
+# No world, no launcher plugin, no Play. UI Automation only: names, control types and supported patterns. All top-level
+# menu names are printed; with -Expand only a top-level menu named exactly Game or Play and toolbar items whose name
+# contains "Play" are opened (codex #4639: File/Edit/... would list resource history), ONLY through
+# ExpandCollapsePattern.Expand; their direct item names are read and they are closed with Collapse; submenus stay shut.
+# Never Invoke, Toggle, SelectionItem, Value, keyboard or mouse. The Script Authorization prompt, any unknown window, a
+# Collapse that fails or the deadline stops the process (no press). A separate watchdog process kills the own Workbench
+# after -Seconds + 30 s even if a UI Automation call hangs. Settings are snapshotted before and after.
 param([Parameter(Mandatory = $true)][string]$Tag,
       [Parameter(Mandatory = $true)][string]$OutDir,
       [int]$Seconds = 120,
@@ -86,17 +88,29 @@ function ExpandRead($el, $label, [uint32]$wbPid, $mainHandle) {
 $setBefore = SettingsSnap "before"
 "SETTINGS_BEFORE regLines=$($setBefore.reg.Count) profileFiles=$($setBefore.prof.Count)"
 $started = Get-Date
+$deadline = $started.AddSeconds($Seconds)
 $proc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
 $null = $proc.Handle
 $wbPid = [uint32]$proc.Id
 "PID $wbPid started $($started.ToString('HH:mm:ss'))"
+$watchdog = StartWatchdog $proc (($Seconds + 30) * 1000)
+"WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
 $reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""
+# "" when the UI may be read now, else the stop reason: prompt, unknown window, exited process or deadline
+function Blocked {
+	$proc.Refresh()
+	if ($proc.HasExited) { return "WORKBENCH_EXITED" }
+	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
+	if ([RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { "AUTH_PROMPT seen (read only, not pressed)" | Write-Host; return "DIALOG_AUTH_PROMPT" }
+	$u = UnknownWindow $wbPid $true
+	if ($u) { "UNKNOWN_WINDOW title=`"$u`" (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
+	return ""
+}
 try {
-	# wait for the main editor window, then let the UI settle; any unknown window stops the run
-	while (((Get-Date) - $started).TotalSeconds -lt $Seconds) {
-		$proc.Refresh(); if ($proc.HasExited) { $reason = "WORKBENCH_EXITED"; break }
-		$unknown = UnknownWindow $wbPid $true
-		if ($unknown) { "UNKNOWN_WINDOW title=`"$unknown`" (read only)"; $reason = "DIALOG_UNKNOWN_WINDOW"; break }
+	# wait for the main editor window, then let the UI settle; a prompt or an unknown window stops the run
+	while ($true) {
+		$b = Blocked
+		if ($b) { $reason = $b; break }
 		foreach ($w in @([RiconWin]::List($wbPid))) {
 			$parts = $w -split "\|", 3
 			if ($parts[0] -eq "V" -and ($parts[2] -ceq "World Editor" -or $parts[2].StartsWith("World Editor - ", [StringComparison]::Ordinal))) { $mainTitle = $parts[2] }
@@ -107,9 +121,10 @@ try {
 	if ($main -ne [IntPtr]::Zero) {
 		"MAIN_WINDOW t=$([int]((Get-Date) - $started).TotalSeconds) title=`"$(Short $mainTitle)`""
 		@([RiconWin]::List($wbPid)) | Where-Object { $_.StartsWith("V|") } | ForEach-Object { "  OWN_WINDOW $(Short $_)" }
-		Start-Sleep -Seconds $Settle
-		$unknown = UnknownWindow $wbPid $true
-		if ($unknown) { "UNKNOWN_WINDOW title=`"$unknown`" (read only)"; $reason = "DIALOG_UNKNOWN_WINDOW" }
+		$left = ($deadline - (Get-Date)).TotalSeconds
+		Start-Sleep -Seconds ([math]::Max(0, [math]::Min($Settle, [int]$left)))
+		$b = Blocked
+		if ($b) { $reason = $b }
 		else {
 			$el = $U::FromHandle($main)
 			$bars = OfType $el $CT::MenuBar
@@ -119,12 +134,16 @@ try {
 				foreach ($item in (Children $bar)) {
 					$label = "MENU[$k] `"$(Short $item.Current.Name)`""
 					"$label type=$($item.Current.ControlType.ProgrammaticName) patterns=$(Patterns $item)"
-					if ($Expand -and -not (ExpandRead $item $label $wbPid $main)) { $reason = "COLLAPSE_FAILED"; break }
+					if ($Expand -and $item.Current.Name -match '^(?i)(game|play)$') {
+						$b = Blocked
+						if ($b) { $reason = $b; break }
+						if (-not (ExpandRead $item $label $wbPid $main)) { $reason = "COLLAPSE_FAILED"; break }
+					}
 					$k++
 				}
-				if ($reason -eq "COLLAPSE_FAILED") { break }
+				if ($reason -ne "TIMEOUT") { break }
 			}
-			if ($reason -ne "COLLAPSE_FAILED") {
+			if ($reason -eq "TIMEOUT") {
 				$bars = OfType $el $CT::ToolBar
 				"TOOLBARS count=$($bars.Count)"
 				$k = 0
@@ -134,15 +153,19 @@ try {
 						if (-not $name) { continue }
 						$label = "TOOL[$k] `"$(Short $name)`""
 						"$label type=$($item.Current.ControlType.ProgrammaticName) patterns=$(Patterns $item)"
-						if ($Expand -and $name -match '(?i)play' -and -not (ExpandRead $item $label $wbPid $main)) { $reason = "COLLAPSE_FAILED"; break }
+						if ($Expand -and $name -match '(?i)play') {
+							$b = Blocked
+							if ($b) { $reason = $b; break }
+							if (-not (ExpandRead $item $label $wbPid $main)) { $reason = "COLLAPSE_FAILED"; break }
+						}
 						$k++
 					}
-					if ($reason -eq "COLLAPSE_FAILED") { break }
+					if ($reason -ne "TIMEOUT") { break }
 				}
 			}
 			if ($reason -eq "TIMEOUT") { $reason = "READ_DONE" }
-			$unknown = UnknownWindow $wbPid $true
-			if ($unknown) { "UNKNOWN_WINDOW_AFTER title=`"$unknown`" (read only)" }
+			$b = Blocked
+			if ($b) { "BLOCKED_AFTER_READ $b" }
 		}
 	}
 } catch { $reason = "RUNNER_ERROR"; "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
@@ -154,6 +177,9 @@ if (-not $proc.HasExited) { try { $proc.Kill() } catch { "KILL_ERROR $($_.Except
 Start-Sleep -Seconds 3
 $proc.Refresh()
 if ($proc.HasExited) { "OWN_PID_GONE" } else { "OWN_PID_STILL_RUNNING" }
+$watchdog.Refresh()
+if (-not $watchdog.HasExited) { try { $watchdog.Kill() } catch {} }
+"WATCHDOG_END exited=$($watchdog.HasExited)"
 "others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
 $log = "$myGames\ArmaReforgerWorkbench\logs\$logsDir\console.log"
 if (Test-Path $log) {

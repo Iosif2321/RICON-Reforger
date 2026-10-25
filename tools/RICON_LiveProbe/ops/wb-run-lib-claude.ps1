@@ -107,6 +107,17 @@ function OpenHeld([uint32]$id, $created) {
 	return $null
 }
 
+# Separate watchdog process (codex #4639): holds its own handle on the target, checks that it is the same process (start
+# within 1 us) and kills it only if it is still running after $ms. Guards against a hung UI Automation call in the caller.
+function StartWatchdog([System.Diagnostics.Process]$target, [int]$ms) {
+	$ticks = $target.StartTime.Ticks
+	$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($target.Id)); if ([math]::Abs(`$p.StartTime.Ticks - $ticks) -lt 10) { if (-not `$p.WaitForExit($ms)) { `$p.Kill() } }"
+	$enc = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
+	$w = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", $enc) -PassThru -WindowStyle Hidden
+	$null = $w.Handle
+	return $w
+}
+
 # One decision for a tracked non-root process. $e: descendant, recordedCreated, launch, held (bool), heldExited (bool),
 # heldStart (DateTime or $null).
 function TeardownDecision($e) {
