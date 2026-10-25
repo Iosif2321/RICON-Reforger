@@ -491,8 +491,9 @@ $fp = Join-Path $WorkDir "ricon-selftest-start.flag"
 Remove-Item $fp -Force -ErrorAction SilentlyContinue
 $f1 = NewStartFlag $fp
 Case "flag normal" @($f1.made, $f1.error, (Test-Path $fp)) @("True", "", "True")
+Set-Content -Path $fp -Value "existing" -NoNewline
 $f2 = NewStartFlag $fp
-Case "flag exists open fails" @($f2.made, $f2.error) @("True", "OPEN_IOException")
+Case "flag exists open fails, not ours" @($f2.made, $f2.error, (Get-Content $fp -Raw)) @("False", "OPEN_IOException", "existing")
 Remove-Item $fp -Force
 $f3 = NewStartFlag $fp { param($s) throw [IO.IOException]::new("mock close") }
 Case "flag close fails still made" @($f3.made, $f3.error, (Test-Path $fp)) @("True", "CLOSE_IOException", "True")

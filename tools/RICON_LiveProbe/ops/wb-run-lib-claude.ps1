@@ -631,14 +631,14 @@ function CleanupAsyncInvoke($job, [int]$ms) {
 function InnerName($x) { if ($x -is [Management.Automation.MethodInvocationException] -and $x.InnerException) { $x = $x.InnerException }; return $x.GetType().Name }
 
 # Creates the A2 start flag with CreateNew; @{ made; error }. made is true as soon as Open succeeded (the launcher may
-# already see the file), and after a failed Open it is whether the file exists, so the caller removes it and never treats
-# the attempt as "before Play" (codex #4746). $close is replaceable only for the self-test.
+# already see the file, so the caller never treats the attempt as "before Play", codex #4746) and only then: a file that
+# already existed is not ours and is never removed (codex #4751). $close is replaceable only for the self-test.
 function NewStartFlag([string]$path, [scriptblock]$close = { param($s) $s.Close() }) {
 	$fs = $null; $made = $false; $err = ""
 	try {
 		$fs = [IO.File]::Open($path, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
 		$made = $true
-	} catch { $err = "OPEN_" + (InnerName $_.Exception); $made = Test-Path $path }
+	} catch { $err = "OPEN_" + (InnerName $_.Exception) }
 	finally {
 		if ($fs) { try { & $close $fs } catch { $err = "CLOSE_" + (InnerName $_.Exception); try { $fs.Dispose() } catch {} } }
 	}
