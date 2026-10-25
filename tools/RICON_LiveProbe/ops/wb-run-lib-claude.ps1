@@ -416,6 +416,9 @@ function ToggleExpected($opt, [string]$name, [string]$expected, [string]$method 
 	try { $tp.Toggle() } catch { return "TOGGLE_ERROR" }
 	return "TOGGLED"
 }
+# Pure (codex #4686): PIDs present now but not in the baseline set (both: arrays of PIDs).
+function NewPids($baseline, $now) { return , @(@($now) | Where-Object { @($baseline) -notcontains $_ }) }
+
 # Pure: names whose state differs between two maps (a missing name counts as different).
 function ToggleDiff($a, $b) {
 	$names = New-Object System.Collections.Generic.List[string]
@@ -429,6 +432,7 @@ function MapText($m) { (@($m.Keys | ForEach-Object { "$_=$($m[$_])" }) -join " |
 # $mustBeOff (codex #4674): every listed item must read exactly Off in the baseline, else nothing is toggled.
 function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scriptblock]$blocked, [string[]]$mustBeOff, [int]$maxRestore = 3, [string]$method = "Toggle") {
 	$script:roundTripToggles = 0
+	$script:rtBlockedAfter = ""
 	$required = @($target) + @($mustBeOff | Where-Object { $_ })
 	$baseKeys = $null
 	# a snapshot is returned only when complete and definite; otherwise $null and no further toggle follows. A failed
@@ -462,7 +466,13 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 			"  ROUNDTRIP $($method.ToUpper()) `"$name`" from=$expected result=$res try=$try count=$($script:roundTripToggles)" | Write-Host
 			Start-Sleep -Milliseconds 700
 			$closed = CloseOptions $h $mainHandle
-			if ($res -ceq "TOGGLED") { return $closed }
+			if ($res -ceq "TOGGLED") {
+				# after every action (codex #4686): a prompt, an unknown window, a Play marker or a new process ends the
+				# experiment at once, without a further read or toggle
+				$after = & $blocked
+				if ($after) { $script:rtBlockedAfter = $after; "  ROUNDTRIP blocked after action: $after" | Write-Host; return $false }
+				return $closed
+			}
 			if ($res -notin @("NO_ITEM", "NO_PATTERN", "READ_ERROR") -or -not $closed) { return $false }
 		}
 		return $false
@@ -473,6 +483,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	"  ROUNDTRIP BASELINE $(MapText $base)" | Write-Host
 	foreach ($n in @($target) + @($mustBeOff | Where-Object { $_ })) { if (-not $base.Contains($n) -or $base[$n] -cne "Off") { "  ROUNDTRIP baseline `"$n`" is not Off" | Write-Host; return "BASELINE_NOT_OFF" } }
 	if (-not (& $flip $target $base[$target])) {
+		if ($script:rtBlockedAfter) { return "STOPPED_AFTER_ACTION|$($script:rtBlockedAfter)" }
 		# the first toggle was not confirmed; read once more to report, never toggle again from here
 		$s = & $snap
 		if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }
@@ -486,7 +497,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	$phase = if ($s1[$target] -ceq "On") { "TOGGLED_ON" } else { "TOGGLE_NO_EFFECT" }
 	$cur = $s1
 	if ($cur[$target] -cne $base[$target]) {
-		if (-not (& $flip $target $cur[$target])) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		if (-not (& $flip $target $cur[$target])) { if ($script:rtBlockedAfter) { return "$phase|STOPPED_AFTER_ACTION|$($script:rtBlockedAfter)" }; return "$phase|RESTORE_TOGGLE_FAILED" }
 		$cur = & $snap
 		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }
 		"  ROUNDTRIP STATE2 $(MapText $cur) diff=$((ToggleDiff $base $cur) -join ',')" | Write-Host
@@ -495,7 +506,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	foreach ($n in $d) {
 		if ($n -ceq $target -or $cur[$n] -ceq $base[$n]) { continue }
 		if ($extra -ge $maxRestore) { break }
-		if (-not (& $flip $n $cur[$n])) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		if (-not (& $flip $n $cur[$n])) { if ($script:rtBlockedAfter) { return "$phase|STOPPED_AFTER_ACTION|$($script:rtBlockedAfter)" }; return "$phase|RESTORE_TOGGLE_FAILED" }
 		$extra++
 		$cur = & $snap
 		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }

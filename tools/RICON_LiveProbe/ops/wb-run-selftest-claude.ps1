@@ -322,6 +322,16 @@ Case "invoke bad method" (ToggleExpected $h.opt "Server localhost" "Off" "Click"
 Case "invoke stale left state" ((ReadToggles $h.opt).map["Server localhost"]) "Off"
 $null = CloseOptions $h $fo.h
 DoneOpts $fo
+Case "new pids none" (NewPids @(10, 11) @(11, 10)).Count 0
+Case "new pids one" (NewPids @(10) @(10, 12)) @(12)
+Case "new pids empty baseline" (NewPids @() @(5)) @(5)
+# a stop signal right after the first action: no read, no second action
+$fo = FakeOptions $false $false "after"
+$script:afterCalls = 0
+$rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { $script:afterCalls++; if ($script:afterCalls -ge 2) { "NEW_PROCESS" } else { "" } } @("Server localhost + PeerTool") 3 "Invoke" 6>$null
+Case "roundtrip stop after action" $rt "STOPPED_AFTER_ACTION|NEW_PROCESS"
+Case "roundtrip stop after action count" $script:roundTripToggles 1
+DoneOpts $fo
 $fo = FakeOptions $false $true "on"
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip baseline on refused" $rt "BASELINE_NOT_OFF"

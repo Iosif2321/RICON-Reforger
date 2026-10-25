@@ -75,7 +75,7 @@ $wbPid = [uint32]$proc.Id
 "PID $wbPid started $($started.ToString('HH:mm:ss'))"
 $watchdog = StartWatchdog $proc (($Seconds + 30) * 1000)
 "WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
-$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""; $script:mainFound = $false; $nextList = 5
+$reason = "TIMEOUT"; $main = [IntPtr]::Zero; $mainTitle = ""; $script:mainFound = $false; $script:procBaseline = $null; $nextList = 5
 # "" when the UI may be read now, else the stop reason: prompt, unknown window, exited process or deadline
 function Blocked {
 	$proc.Refresh()
@@ -83,6 +83,14 @@ function Blocked {
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
 	if ($OpenWorld -and (LogText) -match $playPattern) { "PLAY_OR_BENCH_MARKER in log (open-only run)" | Write-Host; return "PLAY_SEEN" }
 	if ([RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { "AUTH_PROMPT seen (read only, not pressed)" | Write-Host; return "DIALOG_AUTH_PROMPT" }
+	if ($null -ne $script:procBaseline) {
+		# roundtrip only (codex #4686): a child of the own Workbench or another Reforger/Workbench process that was not there
+		# when the roundtrip began is a diagnostic stop
+		$nowPids = @(@(Get-CimInstance Win32_Process -Filter "ParentProcessId=$wbPid" -Property ProcessId | ForEach-Object { [uint32]$_.ProcessId }) +
+			@(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid } | ForEach-Object { [uint32]$_.Id }))
+		$fresh = NewPids $script:procBaseline $nowPids
+		if ($fresh.Count -gt 0) { "NEW_PROCESS pids=$($fresh -join ',')" | Write-Host; return "NEW_PROCESS" }
+	}
 	$u = UnknownWindowStartup $wbPid $script:mainFound ((Get-Date) - $started).TotalSeconds
 	if ($u) { "UNKNOWN_WINDOW title=`"$u`" mainFound=$($script:mainFound) (read only)" | Write-Host; return "DIALOG_UNKNOWN_WINDOW" }
 	return ""
@@ -124,6 +132,10 @@ try {
 		if (-not $b) { $b = Blocked }
 		if ($b) { $reason = $b }
 		elseif ($Roundtrip) {
+			$kids = @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$wbPid" -Property ProcessId, Name)
+			$script:procBaseline = @(@($kids | ForEach-Object { [uint32]$_.ProcessId }) +
+				@(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid } | ForEach-Object { [uint32]$_.Id }))
+			"PROC_BASELINE children=$($kids.Count) names=`"$((@($kids | ForEach-Object { $_.Name }) | Sort-Object -Unique) -join ',')`" pids=$($script:procBaseline.Count)"
 			$before = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
 			$rt = RoundTrip $main $wbPid "Server localhost" { Blocked } @("Server localhost + PeerTool") 3 $RoundtripMethod
 			$after = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' -and $_.Id -ne $wbPid }).Count
