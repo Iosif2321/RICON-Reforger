@@ -27,6 +27,15 @@
 # prompt of the own PID before Play is only read (its UIA names, never a pattern call) and stops the run with
 # AUTH_PROMPT_READ; without a prompt the run stops after WAIT_PLUGIN and one settle as READ_AUTH_NO_PROMPT. In this mode
 # the menus are never opened, nothing is toggled and the plugin command is not invoked.
+# -Client (B0c, codex #4906; the owner allowed the client window on 2026-10-25, agora #4901): the host also gets
+# -riconEndpointSamples=120 and -forceUpdate. Once the log shows PLAY_ENTERED and [RICON_NET] Listen and the Workbench
+# PID has UDP :2001, the runner starts one Diag game client of its own (own Process handle and watchdog, cwd = the
+# repository root): the same gproj, -client <the one local IPv4 of SelectHostAddress>, a new empty profile and logs
+# directory under -OutDir, -riconEndpointProbe=1. Its windows are read once per handle and title and never get input
+# (ClientWindowStep); a Script Authorization window there, or any child process of it, stops the run. A client that
+# exits, writes no console.log within 60 s or logs SCRIPT (E), a lost dependency or a probe config refusal is killed and
+# recorded, and the host still returns to edit and restores the setting. The client is stopped as planned once the
+# host logs OBSERVATION_END, before the host leaves Play. Teardown stops the client before Workbench.
 # Repo-facing stdout carries address classes, ports, PIDs, switch names and hashes; raw addresses and command lines go to
 # the raw JSONL in -OutDir, outside the repository. Never writes the registry or profile.
 param([Parameter(Mandatory = $true)][string]$Tag,
@@ -35,6 +44,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Settle = 15,
       [int]$MaxChildren = 3,
       [switch]$ReadAuthOnly,
+      [switch]$Client,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -55,17 +65,26 @@ $mRegistered = '\[RICON_WBMODE\] registered=1'
 $mOpenOnly = '\[RICON_LIVEB\] state=OPEN_ONLY saved=0 isGameMode=0'
 $mWaitPlugin = '\[RICON_LIVEB\] inspect=WAIT_PLUGIN'
 $mEditStable = '\[RICON_LIVEB\] inspect=EDIT_STABLE'
-$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED|PLAY_REQUESTED|BENCH_CREATED|ENDPOINT_ONLY)|inspect=REFUSED|restart=)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added'
+$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED|PLAY_REQUESTED|BENCH_CREATED|ENDPOINT_ONLY)|inspect=REFUSED|restart=)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added|\[RICON_PROBE\] config=REFUSED'
 $earlyPlay = 'kind=ENDPOINT_START|\[RICON_WBMODE\] event=|\[RICON_LIVEB\] inspect=(PLAY_ENTERED|PLUGIN_SEEN|PLUGIN_PLAY_REQUESTED)'
 # the launcher's own command (codex #4850): exactly this name directly in the World Editor's Plugins menu
 $pluginMenu = "Plugins"
 $pluginItem = "RICON: Play"
+# B0c client (codex #4906)
+$clientExe = "$steam\Arma Reforger\ArmaReforgerSteamDiag.exe"
+# game and Tools addons plus the repository's addons and tools (codex #4908); -addons is not set, as for the host
+$clientAddons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons,$repo\addons,$repo\tools"
+$mPlayEntered = '\[RICON_LIVEB\] inspect=PLAY_ENTERED'
+$mListen = '\[RICON_NET\] cycle=\d+ rplMode=2 rplName=Listen listenPresent=1'
+$clientFail = 'SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added|\[RICON_PROBE\] config=REFUSED'
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
 $OutDir = (Resolve-Path $OutDir).Path
 if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_INSIDE_REPO"; exit 2 }
 if ($Seconds -lt 60 -or $Seconds -gt 600 -or $MaxChildren -lt 0) { "BAD_LIMITS"; exit 2 }
+if ($Client -and $Seconds -lt 300) { "BAD_LIMITS (-Client needs -Seconds 300 or more)"; exit 2 }
+if ($Client -and $ReadAuthOnly) { "BAD_MODES (-ReadAuthOnly never reaches Play)"; exit 2 }
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $log = "$logsRoot\$logsDir\console.log"
 $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
@@ -73,13 +92,31 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 	"-logLevel", "verbose", "-logsDir", $logsDir, "-noFocus", "-maxFPS", "30",
 	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect",
 	"-riconEndpointProbe=1", "-riconBenchPluginStart=1", "-log-scr-checksum")
+if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
 "LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=1"
 "PLUGIN menu=`"$pluginMenu`" item=`"$pluginItem`""
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
+if ($Client) {
+	if (-not (Test-Path $clientExe)) { "CLIENT_EXE_MISSING"; exit 3 }
+	$ha = LocalHostAddress
+	"CLIENT exe=ArmaReforgerSteamDiag.exe ver=$((Get-Item $clientExe).VersionInfo.FileVersion) hostAddress=$($ha.result) candidates=$($ha.count) class=$(if ($ha.address) { AddrClass $ha.address } else { '-' })"
+	if ($ha.result -ne "OK") { "HOST_ADDRESS_$($ha.result) (no client is started)"; exit 3 }
+	$ppName = "$logsDir-peer1-profile"; $clName = "$logsDir-peer1-logs"
+	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"", "-window", "-screenWidth", "960", "-screenHeight", "540",
+		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
+		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-riconEndpointProbe=1")
+	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
+}
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
+if ($Client) {
+	# both directories new and empty, outside the repository (-OutDir is checked above)
+	$pp = NewPeerProfile $OutDir $ppName
+	$cl = NewPeerProfile $OutDir $clName
+	if (-not $pp.ok -or -not $cl.ok) { "CLIENT_DIRS profile=$($pp.why) logs=$($cl.why)"; exit 3 }
+}
 
 $srcFiles = Get-ChildItem "$repo\tools\RICON_LiveProbe" -Recurse -Include *.c, *.gproj | Sort-Object FullName
 function SrcSnap { $srcFiles | ForEach-Object { (Get-FileHash $_.FullName -Algorithm SHA256).Hash + "  " + $_.FullName.Substring($repo.Length + 1) } }
@@ -103,6 +140,62 @@ $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name
 $tracked = @{}; $netSeen = @{}; $newCount = 0
 $script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:invokeJob = $null
 $script:playWin = @{}   # Play title -> visible handle already read once
+# B0c client: NOT_STARTED -> RUNNING -> EXITED | KILLED_<why>; started at most once
+$script:clientProc = $null; $script:clientPid = [uint32]0; $script:clientState = "NOT_STARTED"; $script:clientSeen = @{}
+$script:clientAt = $null; $script:clientLog = ""; $script:clientDog = $null
+
+function StopClient([string]$why) {
+	try { $script:clientProc.Refresh(); if (-not $script:clientProc.HasExited) { $script:clientProc.Kill() } } catch { "  CLIENT_KILL_ERROR $($_.Exception.GetType().Name)" | Write-Host }
+	$script:clientState = "KILLED_$why"
+	"CLIENT_KILLED why=$why" | Write-Host
+}
+# One client step inside Tick; "" or the stop reason. A failing client is only killed: the host goes on to edit and restore.
+function ClientTick([int]$t, [string]$text, $procs) {
+	if ($script:clientState -eq "NOT_STARTED") {
+		$udp = @($netSeen.Keys | Where-Object { $_ -like "$wbPid|UDP|*|2001" }).Count -gt 0
+		if (-not ($script:played -and $udp -and $text -match $mPlayEntered -and $text -match $mListen)) { return "" }
+		$script:clientState = "RUNNING"
+		$script:clientProc = Start-Process -FilePath $clientExe -ArgumentList $clientArgs -PassThru -WorkingDirectory $repo
+		$null = $script:clientProc.Handle
+		$script:clientPid = [uint32]$script:clientProc.Id
+		$script:clientAt = Get-Date
+		$script:clientDog = StartWatchdog $script:clientProc ([int][math]::Max(1000, ($deadline - (Get-Date)).TotalMilliseconds + 20000))
+		"CLIENT_STARTED t=$t pid=$($script:clientPid) watchdog=$($script:clientDog.Id)" | Write-Host
+		Raw @{ t = $t; kind = "CLIENT_STARTED"; pid = $script:clientPid; address = $ha.address; args = ($clientArgs -join " ") }
+		return ""
+	}
+	if ($script:clientState -ne "RUNNING") { return "" }
+	$script:clientProc.Refresh()
+	if ($script:clientProc.HasExited) {
+		$script:clientState = "EXITED"
+		"CLIENT_EXITED t=$t code=$($script:clientProc.ExitCode) afterS=$([int]((Get-Date) - $script:clientAt).TotalSeconds)" | Write-Host
+		return ""
+	}
+	# planned end before the host leaves Play: its EDIT_REQUESTED ends the session, and a client "disconnected" dialog
+	# must not stop the run before the setting is restored; checked before the client's windows are read
+	if ($text -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED)') { StopClient "HOST_OBSERVATION_END"; return "" }
+	$kids = @(Descendants $procs $script:clientPid | Where-Object { $_ -ne $script:clientPid })
+	if ($kids.Count -gt 0) {
+		$names = @($procs | Where-Object { $kids -contains [uint32]$_.ProcessId } | ForEach-Object { $_.Name }) -join ","
+		"CHILD_OF_CLIENT t=$t pids=$($kids -join ',') names=$names (read only)" | Write-Host
+		return "CHILD_OF_CLIENT"
+	}
+	$w = ClientWindowStep $script:clientPid $script:clientSeen $t
+	if ($w) { return "DIALOG_$w" }
+	if (-not $script:clientLog) {
+		$f = @(Get-ChildItem $cl.path, $pp.path -Recurse -Filter console.log -File -ErrorAction SilentlyContinue | Select-Object -First 1)
+		if ($f.Count -gt 0) {
+			$script:clientLog = $f[0].FullName
+			"CLIENT_LOG t=$t under=$(if ($f[0].FullName.StartsWith($cl.path)) { 'logsDir' } else { 'profile' })" | Write-Host
+		} elseif (((Get-Date) - $script:clientAt).TotalSeconds -gt 60) { "CLIENT_NO_LOG t=$t" | Write-Host; StopClient "NO_LOG"; return "" }
+	}
+	if ($script:clientLog) {
+		# as LogText: Get-Content shares the file with the writing game
+		$ct = Get-Content $script:clientLog -Raw -ErrorAction SilentlyContinue
+		if ($ct -match $clientFail) { "CLIENT_LOG_FAILURE t=$t" | Write-Host; StopClient "LOG_FAILURE" }
+	}
+	return ""
+}
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
@@ -173,7 +266,12 @@ function Tick {
 		}
 		return "AUTH_PROMPT_READ"
 	}
+	if ($Client) {
+		$c = ClientTick $t $text $procs
+		if ($c) { return $c }
+	}
 	foreach ($id in $live) {
+		if ($Client -and $id -eq $script:clientPid) { continue }   # the own client: ClientTick reads its windows
 		if ($id -eq $wbPid) {
 			$inPlay = $script:played -and $text -match '\[RICON_LIVEB\] inspect=PLUGIN_SEEN' -and $text -notmatch $mEditStable
 			$u = UnknownWindowStartup $wbPid $script:mainFound $t $inPlay
@@ -287,7 +385,7 @@ try {
 		$phase = "PLAY"
 		# every check before Invoke (one exact plain command, menu left open only when READY); a refusal invoked nothing
 		$prep = PrepareMenuCommand $script:main $pluginMenu $pluginItem
-		"PLUGIN_ITEM t=$([int]((Get-Date) - $started).TotalSeconds) result=$($prep.result)"
+		"PLUGIN_ITEM t=$([int]((Get-Date) - $started).TotalSeconds) result=$($prep.result) opens=$($prep.opens)"
 		if ($prep.result -ne "READY") {
 			foreach ($n in @($prep.names)) { "  PLUGINS_ITEM `"$n`"" }
 			$reason = "PLUGIN_ITEM_$($prep.result)"
@@ -357,10 +455,15 @@ try {
 finally {
 	$elapsed = [int]((Get-Date) - $started).TotalSeconds
 	if ($script:switchedOn -and $result -notin @("RESTORE_OK", "ALREADY_BASELINE", "PUT_BACK_OK")) { $result = "SETTING_MAY_REMAIN_ON" }
-	"STOP reason=$reason phase=$phase result=$result t=$elapsed yesPresses=$($script:yesPressed)"
+	"STOP reason=$reason phase=$phase result=$result t=$elapsed yesPresses=$($script:yesPressed)$(if ($Client) { " client=$($script:clientState)" })"
+	# the own client first (codex #4906), through the handle Start-Process returned
+	if ($script:clientProc) {
+		$script:clientProc.Refresh()
+		if (-not $script:clientProc.HasExited) { "TEARDOWN pid=$($script:clientPid) action=KILL_CLIENT"; try { $script:clientProc.Kill() } catch { "  KILL_ERROR pid=$($script:clientPid) $($_.Exception.GetType().Name)" } }
+	}
 	$entries = @()
 	foreach ($id in @($tracked.Keys)) {
-		if ($id -eq $wbPid) { continue }
+		if ($id -eq $wbPid -or ($script:clientProc -and $id -eq $script:clientPid)) { continue }
 		$h = $tracked[$id].held
 		$entries += @{ pid = $id; descendant = $tracked[$id].descendant; recordedCreated = $tracked[$id].created; launch = $started;
 			held = [bool]$h; heldExited = $(if ($h) { $h.HasExited } else { $false }); heldStart = $(if ($h) { try { $h.StartTime } catch { $null } } else { $null }) }
@@ -376,8 +479,13 @@ finally {
 	Start-Sleep -Seconds 3
 	$wbProc.Refresh()
 	"PROC_END pid=$wbPid name=root alive=$(-not $wbProc.HasExited)"
+	if ($script:clientProc) {
+		$script:clientProc.Refresh()
+		"PROC_END pid=$($script:clientPid) name=client alive=$(-not $script:clientProc.HasExited) exitCode=$(if ($script:clientProc.HasExited) { $script:clientProc.ExitCode })"
+		if ($script:clientDog) { $script:clientDog.Refresh(); if (-not $script:clientDog.HasExited) { try { $script:clientDog.Kill() } catch {} }; "CLIENT_WATCHDOG_END exited=$($script:clientDog.HasExited)" }
+	}
 	foreach ($id in @($tracked.Keys)) {
-		if ($id -eq $wbPid) { continue }
+		if ($id -eq $wbPid -or ($script:clientProc -and $id -eq $script:clientPid)) { continue }
 		$h = $tracked[$id].held
 		$alive = if ($h) { [string](-not $h.HasExited) } else { "UNVERIFIED_NO_HANDLE" }
 		"PROC_END pid=$id name=$($tracked[$id].name) descendant=$($tracked[$id].descendant) held=$([bool]$h) alive=$alive"
@@ -395,6 +503,17 @@ if (Test-Path $log) {
 	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|SCRIPT\s*\(E\)" | Select-Object -First 400 | ForEach-Object { $_.Line }
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }
+if ($Client) {
+	# the client's own log (outside the repository); only tagged lines come out, as for the host
+	if (-not $script:clientLog) { $f = @(Get-ChildItem $cl.path, $pp.path -Recurse -Filter console.log -File -ErrorAction SilentlyContinue | Select-Object -First 1); if ($f.Count -gt 0) { $script:clientLog = $f[0].FullName } }
+	"client=$($script:clientState) log=$(if ($script:clientLog) { 'found' } else { 'none' }) profileFiles=$(@(Get-ChildItem $pp.path -Recurse -File -Force -ErrorAction SilentlyContinue).Count) logFiles=$(@(Get-ChildItem $cl.path -Recurse -File -Force -ErrorAction SilentlyContinue).Count)"
+	if ($script:clientLog) {
+		$clines = Get-Content $script:clientLog
+		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count
+		$clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_NET\]|SCRIPT\s*\(E\)" | Select-Object -First 300 | ForEach-Object { "C " + $_.Line }
+		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length
+	}
+}
 foreach ($d in @(Get-ChildItem $logsRoot -Directory | Where-Object { $logDirsBefore -notcontains $_.Name -and $_.Name -ne $logsDir })) {
 	$files = @(Get-ChildItem $d.FullName -File)
 	"OTHER_LOG_DIR $($d.Name) files=$($files.Count) bytes=$(($files | Measure-Object Length -Sum).Sum)"

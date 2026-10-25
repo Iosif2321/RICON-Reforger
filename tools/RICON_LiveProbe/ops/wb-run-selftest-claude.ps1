@@ -315,7 +315,25 @@ Done $f
 $f = FakeDlg "Arma Reforger Workbench" "Starting" "" "playnobtn"
 $pr = PlayWindowRead ([RiconWin]::FindByTitle([uint32]$f.p.Id, "Arma Reforger Workbench"))
 Case "play window no button" @($pr.buttons, ($pr.lines -join ",")) @("0", 'ControlType.Text "Starting"')
+# B0c client windows (claude #4904, codex #4908): read once per handle and title, passive also with buttons, stop on a prompt
+$cseen = @{}
+Case "client plain window passes" (ClientWindowStep ([uint32]$f.p.Id) $cseen 1 6>$null) ""
+Case "client window recorded" $cseen.Count 1
+Case "client same window not reread" (ClientWindowStep ([uint32]$f.p.Id) $cseen 2 6>&1 | Where-Object { "$_" -like "CLIENT_WINDOW*" }).Count 0
 Done $f
+$f = FakeDlg "Arma Reforger" "Failed to load" "OK" "clienterr"
+Case "client dialog passive" (ClientWindowStep ([uint32]$f.p.Id) @{} 3 6>$null) ""
+Case "client dialog no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "clientauth"
+Case "client prompt stops" (ClientWindowStep ([uint32]$f.p.Id) @{} 4 6>$null) "PROMPT_IN_CLIENT"
+Case "client prompt no click" (Clicks $f).Count 0
+Done $f
+$pp = NewPeerProfile $WorkDir ("ricon-peer-selftest-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
+Case "peer profile new" @($pp.ok, (Test-Path $pp.path), @(Get-ChildItem $pp.path -Force).Count) @("True", "True", "0")
+Set-Content -Path (Join-Path $pp.path "x.txt") -Value "x"
+Case "peer profile not empty refused" (NewPeerProfile (Split-Path $pp.path) (Split-Path $pp.path -Leaf)).why "PROFILE_NOT_EMPTY"
+Remove-Item $pp.path -Recurse -Force
 $f = FakeDlg "MainWindow" "" "OK" "mainwindow"
 Case "MainWindow window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 8) ""
 Case "MainWindow window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 8) "MainWindow"
@@ -590,6 +608,8 @@ $hidePopups
 `$plugins = New-Object System.Windows.Controls.MenuItem; `$plugins.Header = "Plugins"
 foreach (`$n in @("RICON: Play", "RICON: Other")) { `$pi = New-Object System.Windows.Controls.MenuItem; `$pi.Header = `$n; [void]`$plugins.Items.Add(`$pi) }
 [void]`$menu.Items.Add(`$plugins)
+`$empty = New-Object System.Windows.Controls.MenuItem; `$empty.Header = "Empty"; [void]`$empty.Items.Add((New-Object System.Windows.Controls.Separator))
+[void]`$menu.Items.Add(`$empty)
 `$w.Content = `$menu
 `$t = New-Object System.Windows.Threading.DispatcherTimer; `$t.Interval = [TimeSpan]::FromSeconds(40); `$t.Add_Tick({ `$w.Close() }.GetNewClosure()); `$t.Start()
 [void]`$w.ShowDialog()
@@ -624,9 +644,9 @@ $gs = try { [string]$gm.GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseS
 "INFO game menu before plugins: $gs"
 if (-not (ClosedOk $gs)) { try { $gm.GetCurrentPattern($ECP::Pattern).Collapse() } catch {}; Start-Sleep -Milliseconds 400 }
 Case "game closed before plugins" (ClosedOk (FindTopMenu $ah "Game").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
-$prepP = PrepareMenuCommand $ah "Plugins" "RICON: Missing"
-Case "plugins missing item refused" $prepP.result "NO_ITEM"
-Case "plugins missing item lists names" (@($prepP.names) -join ",") "RICON: Play,RICON: Other"
+$prepM = PrepareMenuCommand $ah "Plugins" "RICON: Missing"
+Case "plugins missing item refused" $prepM.result "NO_ITEM"
+Case "plugins missing item lists names" (@($prepM.names) -join ",") "RICON: Play,RICON: Other"
 Case "plugins closed after refusal" (ClosedOk (FindTopMenu $ah "Plugins").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
 $prepP = PrepareMenuCommand $ah "Plugins" "RICON: Play"
 Case "plugins item ready" $prepP.result "READY"
@@ -637,6 +657,11 @@ Case "plugins invoke completed" $jobP.result "COMPLETED"
 Start-Sleep -Milliseconds 500
 Case "plugins closed after invoke" (ClosedOk (FindTopMenu $ah "Plugins").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
 Case "plugins cleanup done" (CleanupAsyncInvoke $jobP 1000) "DONE COMPLETED"
+# a menu that never shows an item is opened at most 3 times, then refused with nothing invoked and the menu closed
+$prepE = PrepareMenuCommand $ah "Empty" "RICON: Play"
+Case "empty menu reopened then refused" @($prepE.result, $prepE.opens, @($prepE.names).Count) @("NO_ITEM", "3", "0")
+Case "empty menu closed" (ClosedOk (FindTopMenu $ah "Empty").GetCurrentPattern($ECP::Pattern).Current.ExpandCollapseState) $true
+"INFO plugins opens: missing=$($prepM.opens) ready=$($prepP.opens) (more than 1 = the stand-in showed no item at first)"
 if (-not $ap.HasExited) { $ap.Kill() }
 Remove-Item $mk -Force -ErrorAction SilentlyContinue
 

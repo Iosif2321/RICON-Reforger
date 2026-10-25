@@ -26,6 +26,18 @@ public static class RiconWin {
 		}, IntPtr.Zero);
 		return r.ToArray();
 	}
+	// handles of the visible top-level windows of the process (B0c client windows are read once per handle)
+	public static IntPtr[] Visible(uint target) {
+		var r = new List<IntPtr>();
+		EnumWindows((h, l) => {
+			uint pid; GetWindowThreadProcessId(h, out pid);
+			if (pid == target && IsWindowVisible(h)) r.Add(h);
+			return true;
+		}, IntPtr.Zero);
+		return r.ToArray();
+	}
+	public static string TitleOf(IntPtr h) { var t = new StringBuilder(256); GetWindowText(h, t, 256); return t.ToString(); }
+	public static string ClassOf(IntPtr h) { var c = new StringBuilder(256); GetClassName(h, c, 256); return c.ToString(); }
 	public static IntPtr FindByTitle(uint target, string title) {
 		IntPtr found = IntPtr.Zero;
 		EnumWindows((h, l) => {
@@ -335,6 +347,33 @@ function PlayWindowRead([IntPtr]$h) {
 	$lines = @($all | Select-Object -First 20 | ForEach-Object { $_.Current.ControlType.ProgrammaticName + " `"" + (Short $_.Current.Name) + "`"" })
 	$buttons = @($all | Where-Object { $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button }).Count
 	return @{ size = "$([int]$r.Width)x$([int]$r.Height)"; count = $all.Count; buttons = $buttons; lines = $lines }
+}
+
+# B0c client process (claude #4904 point 6, codex #4908): its window titles are not known beforehand, so every new
+# visible window (handle + title) is read once (class, size, element names; no pattern call) and never gets input. A
+# Script Authorization window there stops the run after the read (a "Yes" is pressed only in the Workbench PID); buttons
+# alone do not stop it (they prove no error, as with the Workbench popup in B0b). "" or the stop reason.
+function ClientWindowStep([uint32]$id, [hashtable]$seen, [int]$t) {
+	foreach ($h in @([RiconWin]::Visible($id))) {
+		$title = [RiconWin]::TitleOf($h)
+		$key = "$h|$title"
+		if ($seen.ContainsKey($key)) { continue }
+		$seen[$key] = $true
+		"CLIENT_WINDOW t=$t pid=$id handle=$h class=$([RiconWin]::ClassOf($h)) title=`"$(Short $title)`" (passive, read once)" | Write-Host
+		try { $pr = PlayWindowRead $h } catch { "  CW READ_ERROR $($_.Exception.GetType().Name)" | Write-Host; if ($title -ceq $script:AuthTitle) { return "PROMPT_IN_CLIENT" }; continue }
+		"  CW size=$($pr.size) elements=$($pr.count) buttons=$($pr.buttons)" | Write-Host
+		foreach ($l in $pr.lines) { "  CW $l" | Write-Host }
+		if ($title -ceq $script:AuthTitle) { return "PROMPT_IN_CLIENT" }
+	}
+	return ""
+}
+# A new, empty profile directory for the client under $root (outside the repository); a non-empty one is refused.
+function NewPeerProfile([string]$root, [string]$name) {
+	$p = Join-Path $root $name
+	if (Test-Path $p) {
+		if (@(Get-ChildItem $p -Force).Count -gt 0) { return @{ ok = $false; why = "PROFILE_NOT_EMPTY"; path = $p } }
+	} else { $null = New-Item -ItemType Directory -Path $p }
+	return @{ ok = $true; why = ""; path = $p }
 }
 
 # First visible window of a tracked PID whose title is not known; "" when none. For a child PID even the
@@ -677,11 +716,23 @@ function InvokeMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 function PrepareMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 	$top = FindTopMenu $mainHandle $menu
 	if ($null -eq $top) { return @{ result = "NO_MENU" } }
-	try { $top.GetCurrentPattern($ECP::Pattern).Expand() } catch { return @{ result = "NO_MENU" } }
-	$hits = @()
-	for ($k = 0; $k -lt 15 -and $hits.Count -eq 0; $k++) {
-		Start-Sleep -Milliseconds 200
-		$hits = @(OfType $top $CT::MenuItem | Where-Object { $_.Current.Name -ceq $item })
+	# A menu that shows no item at all did not open (the WPF stand-in's Plugins did so in 2 of 4 full self-test runs, as
+	# the real Play Game Options does after a world load): close it and open it again, at most 3 opens. A menu with items
+	# but without the target is NO_ITEM at once. Nothing is invoked here either way.
+	$hits = @(); $opens = 0
+	for ($open = 1; $open -le 3; $open++) {
+		$opens = $open
+		try { $top.GetCurrentPattern($ECP::Pattern).Expand() } catch { return @{ result = "NO_MENU"; opens = $opens } }
+		$any = 0
+		for ($k = 0; $k -lt 15 -and $hits.Count -eq 0; $k++) {
+			Start-Sleep -Milliseconds 200
+			$items = @(OfType $top $CT::MenuItem)
+			$any = $items.Count
+			$hits = @($items | Where-Object { $_.Current.Name -ceq $item })
+		}
+		if ($any -gt 0) { break }
+		try { $p = $top.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
+		Start-Sleep -Milliseconds 400
 	}
 	$why = ""
 	$x = $null; $ip = $null
@@ -694,9 +745,9 @@ function PrepareMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 		# names only, for the stop line: the first read of a menu (Plugins, codex #4850) must show what was there instead
 		$names = @(OfType $top $CT::MenuItem | ForEach-Object { Short $_.Current.Name } | Select-Object -First 40)
 		try { $p = $top.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
-		return @{ result = $why; names = $names }
+		return @{ result = $why; names = $names; opens = $opens }
 	}
-	return @{ result = "READY"; ip = $ip; top = $top }
+	return @{ result = "READY"; ip = $ip; top = $top; opens = $opens }
 }
 function StartAsyncInvoke($ip) {
 	$ps = [powershell]::Create()
