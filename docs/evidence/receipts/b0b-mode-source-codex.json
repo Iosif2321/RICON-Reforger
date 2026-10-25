@@ -1,6 +1,6 @@
 {
   "level": "SOURCE_AND_NATIVE_ENUM_SELFTEST",
-  "review": "BASE_ACCEPTED_4636_INSPECT_ACCEPTED_4653_RETURN_PENDING",
+  "review": "BASE_ACCEPTED_4636_INSPECT_ACCEPTED_4653_RETURN_SOURCE_ACCEPTED_4705",
   "worldStarted": false,
   "serverStarted": false,
   "menuActionInvoked": false,
