@@ -220,11 +220,12 @@ function YesGuard([uint32]$wbPid, [int]$t, [bool]$restartRun, [bool]$secondPlayM
 	return "PRESSED"
 }
 
-# Menu reader only (codex #4647): the exact startup title of the own Workbench is passive while the editor window has not
-# appeared yet and at most 30 s have passed; it is never opened or pressed. Not part of WindowKnown.
-$script:StartupTitle = "Arma Reforger Workbench"
+# Menu reader only (codex #4647, #4656): two exact startup titles of the own Workbench (both seen at t=2..11 s in earlier
+# runs) are passive while the editor window has not appeared yet and at most 30 s have passed; they are never opened
+# or pressed. Not part of WindowKnown; once the editor is found or 30 s passed, they stop the run like any other title.
+$script:StartupTitles = @("Arma Reforger Workbench", "MainWindow")
 function StartupWindowAllowed([string]$title, [bool]$mainFound, [double]$elapsed) {
-	return ($title -ceq $script:StartupTitle -and -not $mainFound -and $elapsed -le 30)
+	return ($script:StartupTitles -ccontains $title -and -not $mainFound -and $elapsed -le 30)
 }
 
 # Like UnknownWindow for the Workbench PID, but every visible titled window is checked and the startup title is let

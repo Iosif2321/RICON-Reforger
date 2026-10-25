@@ -74,6 +74,12 @@ Case "startup after main" (StartupWindowAllowed "Arma Reforger Workbench" $true 
 Case "startup after 30 s" (StartupWindowAllowed "Arma Reforger Workbench" $false 30.5) $false
 Case "startup at 30 s" (StartupWindowAllowed "Arma Reforger Workbench" $false 30) $true
 Case "startup not globally known" (WindowKnown "Arma Reforger Workbench") $false
+Case "startup MainWindow early" (StartupWindowAllowed "MainWindow" $false 8) $true
+Case "startup mainwindow lowercase" (StartupWindowAllowed "mainwindow" $false 8) $false
+Case "startup MainWindow suffix" (StartupWindowAllowed "MainWindow 2" $false 8) $false
+Case "startup MainWindow after main" (StartupWindowAllowed "MainWindow" $true 8) $false
+Case "startup MainWindow after 30 s" (StartupWindowAllowed "MainWindow" $false 31) $false
+Case "MainWindow not globally known" (WindowKnown "MainWindow") $false
 
 # teardown ownership (codex #4631): pure decisions, no process is killed here
 $launch = Get-Date "2026-10-25 10:00:00"
@@ -181,6 +187,10 @@ $f = FakeDlg "Arma Reforger Workbench" "" "OK" "startup"
 Case "startup window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 3) ""
 Case "startup window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 3) "Arma Reforger Workbench"
 Case "startup window late stops" (UnknownWindowStartup ([uint32]$f.p.Id) $false 31) "Arma Reforger Workbench"
+Done $f
+$f = FakeDlg "MainWindow" "" "OK" "mainwindow"
+Case "MainWindow window early passes" (UnknownWindowStartup ([uint32]$f.p.Id) $false 8) ""
+Case "MainWindow window after main stops" (UnknownWindowStartup ([uint32]$f.p.Id) $true 8) "MainWindow"
 Done $f
 $f = FakeDlg "World Editor - Plain" "" "OK" "editor"
 Case "known editor window" (UnknownWindow ([uint32]$f.p.Id) $true) ""
