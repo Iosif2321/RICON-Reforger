@@ -48,6 +48,7 @@ import os
 import re
 import sys
 
+sys.dont_write_bytecode = True  # no __pycache__ next to the receipts
 _spec = importlib.util.spec_from_file_location(
     "live_text_codec_claude", os.path.join(os.path.dirname(os.path.abspath(__file__)), "live_text_codec_claude.py"))
 codec = importlib.util.module_from_spec(_spec)
