@@ -24,8 +24,8 @@
 # the menus are never opened, nothing is toggled and no flag is created.
 # -LauncherYes (codex #4813, only with the owner's answer to agora #4815): YesGuardSites instead of the plain guard. Before
 # Play at most one "Yes" each on the exact prompts of the launcher's FileIO.FileExists sites :174 and :187; after Play
-# (flag created and the launcher's FLAG_SEEN in the log) at most one on the vanilla :1101 prompt; 3 in all. Any other
-# prompt, or a second window of a pressed site, stops the run.
+# (flag created, the launcher's FLAG_SEEN in the log, no OBSERVATION_END/EDIT_* yet; SitesAllowed) at most one on the
+# vanilla :1101 prompt; 3 in all. Any other prompt, or a second window of a pressed site, stops the run.
 # Repo-facing stdout carries address classes, ports, PIDs, switch names and hashes; raw addresses and command lines go to
 # the raw JSONL in -OutDir, outside the repository. Never writes the registry or profile.
 param([Parameter(Mandatory = $true)][string]$Tag,
@@ -152,8 +152,7 @@ function Tick {
 	if ($text -match $failPattern) { return "LOG_FAILURE" }
 	if (-not $script:played -and $text -match $earlyPlay) { return "PLAY_BEFORE_REQUEST" }
 	if ($LauncherYes) {
-		$allowed = if (-not $script:played) { @("LAUNCHER_174", "LAUNCHER_187") } elseif ($text -match '\[RICON_LIVEB\] inspect=FLAG_SEEN') { @("ARSENAL_1101") } else { @() }
-		$y = YesGuardSites $wbPid $t $allowed 3
+		$y = YesGuardSites $wbPid $t (SitesAllowed $script:played $text) 3
 		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
 	} elseif ($script:played) {
 		$y = YesGuard $wbPid $t $false $false

@@ -174,9 +174,10 @@ function WindowKnown([string]$title) {
 
 # --- UI Automation (read; Invoke only through YesGuard) ---
 
-function DialogElements($h) {
+function DialogElements($h, [bool]$quiet = $false) {
 	$el = [System.Windows.Automation.AutomationElement]::FromHandle($h)
 	$all = @($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition))
+	if ($quiet) { return , $all }
 	"  elements=$($all.Count)" | Write-Host
 	$i = 0
 	foreach ($e in $all) {
@@ -236,26 +237,41 @@ function PromptSite([string[]]$texts, [string[]]$captions) {
 	foreach ($k in $script:SiteMessages.Keys) { if ($texts[0] -ceq $script:SiteMessages[$k]) { return $k } }
 	return "UNEXPECTED"
 }
+# Sites that may get a "Yes" in the current phase of a -LauncherYes run (codex #4817, #4819): the launcher's two sites
+# only before Play; the vanilla one only after the flag (played) once the launcher logged FLAG_SEEN (printed right
+# before its SwitchToGameMode, :189) and before the observation ended or edit mode was requested.
+function SitesAllowed([bool]$played, [string]$logText) {
+	if (-not $played) { return , @("LAUNCHER_174", "LAUNCHER_187") }
+	if ($logText -notmatch '\[RICON_LIVEB\] inspect=FLAG_SEEN') { return , @() }
+	if ($logText -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED|EDIT_STABLE)') { return , @() }
+	return , @("ARSENAL_1101")
+}
+# site -> @{ h = window handle; at = press time }
 $script:sitePressed = @{}
-# Like YesGuard, but by site: at most one "Yes" per site of $allowed and process, at most $total in all. A new window
-# of a site already pressed is SITE_REPEAT, a known site outside $allowed is SITE_NOT_ALLOWED; both stop the run.
+# Like YesGuard, but by site: at most one "Yes" per site of $allowed and process, at most $total in all. The site is
+# read from the text first (a new prompt may reuse a closed window's handle, codex #4819); the closing grace of 6 s
+# covers only the same site on the handle it was pressed on. A new window of a pressed site is SITE_REPEAT, a known
+# site outside $allowed is SITE_NOT_ALLOWED; both stop the run.
 function YesGuardSites([uint32]$wbPid, [int]$t, [string[]]$allowed, [int]$total = 3) {
 	$h = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)
 	if ($h -eq [IntPtr]::Zero) { return "NONE" }
-	if ($script:yesHandles -contains $h) {
-		if (((Get-Date) - $script:yesAt).TotalSeconds -lt 6) { return "CLOSING" }
-		"DIALOG_AFTER_PRESS t=$t handle=$h same handle, read only" | Write-Host
-		try { $null = DialogElements $h } catch { "  UIA_ERROR $($_.Exception.Message)" | Write-Host }
-		return "PRESS_NO_EFFECT"
+	$prev = $null
+	foreach ($k in @($script:sitePressed.Keys)) { if ($script:sitePressed[$k].h -eq $h) { $prev = $k } }
+	$grace = $prev -and ((Get-Date) - $script:sitePressed[$prev].at).TotalSeconds -lt 6
+	if (-not $grace) { "DIALOG t=$t title=`"$($script:AuthTitle)`" handle=$h presses=$($script:yesPressed) total=$total allowed=`"$($allowed -join ',')`"" | Write-Host }
+	try { $all = DialogElements $h $grace } catch {
+		if ($grace) { return "CLOSING" }
+		"  UIA_ERROR $($_.Exception.Message)" | Write-Host; return "UIA_ERROR"
 	}
-	"DIALOG t=$t title=`"$($script:AuthTitle)`" handle=$h presses=$($script:yesPressed) total=$total allowed=`"$($allowed -join ',')`"" | Write-Host
-	try { $all = DialogElements $h } catch { "  UIA_ERROR $($_.Exception.Message)" | Write-Host; return "UIA_ERROR" }
 	$btn = [System.Windows.Automation.ControlType]::Button
 	$captions = @($all | Where-Object { $_.Current.ControlType -eq $btn } | ForEach-Object { $_.Current.Name })
 	$texts = @($all | Where-Object { $_.Current.ControlType -ne $btn } | ForEach-Object { $_.Current.Name -replace "`r|`n", " " } |
 		Where-Object { $_ -ne "" -and $captions -cnotcontains $_ })
 	$site = PromptSite $texts $captions
+	if ($grace -and ($site -eq "NOT_READY" -or $site -ceq $prev)) { return "CLOSING" }
+	if ($grace) { "DIALOG t=$t handle=$h reused after site $prev" | Write-Host; $null = DialogElements $h }
 	"YES_GUARD site=$site buttons=`"$(@($captions | Sort-Object) -join ',')`"" | Write-Host
+	if ($prev -and $site -ceq $prev) { "DIALOG_AFTER_PRESS t=$t handle=$h site=$site same handle, read only" | Write-Host; return "PRESS_NO_EFFECT" }
 	if ($site -eq "NOT_READY") { return "NOT_READY" }
 	if ($site -eq "UNEXPECTED") { return "UNEXPECTED_DIALOG" }
 	if ($script:sitePressed.ContainsKey($site)) { return "SITE_REPEAT" }
@@ -263,7 +279,7 @@ function YesGuardSites([uint32]$wbPid, [int]$t, [string[]]$allowed, [int]$total 
 	if ($script:yesPressed -ge $total) { return "LIMIT_REACHED" }
 	$yes = @($all | Where-Object { $_.Current.ControlType -eq $btn -and $_.Current.Name -ceq "Yes" })
 	try { $ip = $yes[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern) } catch { return "NO_INVOKE" }
-	$script:yesPressed++; $script:yesHandles += $h; $script:yesAt = Get-Date; $script:sitePressed[$site] = $h
+	$script:yesPressed++; $script:yesHandles += $h; $script:yesAt = Get-Date; $script:sitePressed[$site] = @{ h = $h; at = $script:yesAt }
 	try { $ip.Invoke() } catch { "  INVOKE_ERROR $($_.Exception.Message)" | Write-Host; return "INVOKE_ERROR" }
 	"YES_GUARD pressed button=`"Yes`" site=$site count=$($script:yesPressed) t=$t at=$($script:yesAt.ToString('HH:mm:ss.fff'))" | Write-Host
 	return "PRESSED"

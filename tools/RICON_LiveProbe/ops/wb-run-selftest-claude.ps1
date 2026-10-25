@@ -68,6 +68,15 @@ Case "site other script" (PromptSite @($m174.Replace("RICON_LiveBenchLauncherPlu
 Case "site extra text" (PromptSite @($m174, "more") $four) "UNEXPECTED"
 Case "site three buttons" (PromptSite @($m174) @("Yes", "No", "No to All")) "UNEXPECTED"
 Case "site not ready" (PromptSite @($m174) @()) "NOT_READY"
+# phase of a -LauncherYes run (codex #4817, #4819)
+$lSeen = "[RICON_LIVEB] inspect=WAIT_FLAG`n[RICON_LIVEB] inspect=FLAG_SEEN`n"
+Case "allowed before play" (SitesAllowed $false "") @("LAUNCHER_174", "LAUNCHER_187")
+Case "allowed before play, seen in log" (SitesAllowed $false $lSeen) @("LAUNCHER_174", "LAUNCHER_187")
+Case "allowed played, no FLAG_SEEN" (SitesAllowed $true "[RICON_LIVEB] inspect=WAIT_FLAG`n") @()
+Case "allowed played, FLAG_SEEN" (SitesAllowed $true $lSeen) @("ARSENAL_1101")
+Case "allowed after OBSERVATION_END" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=OBSERVATION_END samples=3`n")) @()
+Case "allowed after EDIT_REQUESTED" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_REQUESTED`n")) @()
+Case "allowed after EDIT_STABLE" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_STABLE checks=51`n")) @()
 Case "limit plain" (YesLimit $false $false) 1
 Case "limit marker without restart" (YesLimit $false $true) 1
 Case "limit restart before marker" (YesLimit $true $false) 1
@@ -234,6 +243,22 @@ $f = FakeDlg $script:AuthTitle $m174 $btns "snone"
 Case "sites none allowed refused" (YesGuardSites ([uint32]$f.p.Id) 9 @() 3 6>$null) "SITE_NOT_ALLOWED"
 Case "sites none allowed no click" (Clicks $f).Count 0
 Case "sites none allowed presses" $script:yesPressed 0
+Done $f
+# a handle reused by a prompt of another site (codex #4819), simulated by recording 174 as pressed on this window
+$f = FakeDlg $script:AuthTitle $m187 $btns "sreuse"
+$hw = [RiconWin]::FindByTitle([uint32]$f.p.Id, $script:AuthTitle)
+$script:yesPressed = 1; $script:sitePressed = @{ "LAUNCHER_174" = @{ h = $hw; at = Get-Date } }
+Case "sites reused handle other site pressed" (YesGuardSites ([uint32]$f.p.Id) 10 $pre 3 6>$null) "PRESSED"
+Case "sites reused handle clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $m174 $btns "sgrace"
+$hw = [RiconWin]::FindByTitle([uint32]$f.p.Id, $script:AuthTitle)
+$script:yesPressed = 1; $script:sitePressed = @{ "LAUNCHER_174" = @{ h = $hw; at = Get-Date } }
+Case "sites same site same handle in grace" (YesGuardSites ([uint32]$f.p.Id) 11 $pre 3 6>$null) "CLOSING"
+$script:sitePressed["LAUNCHER_174"].at = (Get-Date).AddSeconds(-10)
+Case "sites same site same handle after grace" (YesGuardSites ([uint32]$f.p.Id) 12 $pre 3 6>$null) "PRESS_NO_EFFECT"
+Case "sites same handle no click" (Clicks $f).Count 0
+Case "sites same handle presses" $script:yesPressed 1
 Done $f
 $script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
 $f = FakeDlg "Background Server" "" "OK" "child"
