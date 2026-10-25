@@ -66,6 +66,29 @@ Case "known save prompt" (WindowKnown "World needs to be saved") $false
 Case "known bare editor" (WindowKnown "World Editor") $true
 Case "known bare editor suffix" (WindowKnown "World Editor 2") $false
 
+# teardown ownership (codex #4631): pure decisions, no process is killed here
+$launch = Get-Date "2026-10-25 10:00:00"
+function Ent($o) { $e = @{ pid = 101; descendant = $true; recordedCreated = $launch.AddSeconds(5); launch = $launch; held = $true; heldExited = $false; heldStart = $launch.AddSeconds(5) }; foreach ($k in $o.Keys) { $e[$k] = $o[$k] }; $e }
+Case "teardown own child" (TeardownDecision (Ent @{})) "KILL_CHILD"
+Case "teardown pid reused, other start" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(40) })) "SKIP_REUSED"
+Case "teardown no start time" (TeardownDecision (Ent @{ heldStart = $null })) "SKIP_REUSED"
+Case "teardown no handle" (TeardownDecision (Ent @{ held = $false; heldStart = $null })) "SKIP_NO_HANDLE"
+Case "teardown child exited" (TeardownDecision (Ent @{ heldExited = $true })) "SKIP_EXITED"
+Case "teardown not descendant" (TeardownDecision (Ent @{ descendant = $false })) "SKIP_NOT_DESCENDANT"
+Case "teardown older than launch" (TeardownDecision (Ent @{ recordedCreated = $launch.AddSeconds(-30); heldStart = $launch.AddSeconds(-30) })) "SKIP_BEFORE_LAUNCH"
+$plan = TeardownPlan 100 $false @()
+Case "plan empty tracked keeps root" (@($plan | ForEach-Object { "$($_.pid):$($_.action)" })) @("100:KILL_ROOT")
+$plan = TeardownPlan 100 $true @()
+Case "plan root exited" (@($plan | ForEach-Object { "$($_.pid):$($_.action)" })) @("100:ROOT_EXITED")
+$plan = TeardownPlan 100 $false @((Ent @{ pid = 102 }), (Ent @{ pid = 103; heldStart = $launch.AddSeconds(60) }))
+Case "plan children first, root last" (@($plan | ForEach-Object { "$($_.pid):$($_.action)" })) @("102:KILL_CHILD", "103:SKIP_REUSED", "100:KILL_ROOT")
+$self = Get-Process -Id $PID
+$h = OpenHeld ([uint32]$PID) $self.StartTime
+Case "open held own process" ([bool]$h) $true
+if ($h) { $h.Dispose() }
+Case "open held start mismatch" ([bool](OpenHeld ([uint32]$PID) $self.StartTime.AddSeconds(-10))) $false
+Case "open held no such pid" ([bool](OpenHeld ([uint32]4294967000) $self.StartTime)) $false
+
 # UI Automation cases on stand-in windows in a separate process
 function FakeDlg($title, $message, $buttons, $tag) {
 	$click = Join-Path $WorkDir "ricon-fakedlg-$tag.txt"

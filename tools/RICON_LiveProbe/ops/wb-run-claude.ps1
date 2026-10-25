@@ -9,7 +9,8 @@
 #
 # Stops on: -StopPattern seen -StopCount times (+2 s), launcher failure or SCRIPT (E), an unknown window (after the arm
 # marker), a prompt in a non-Workbench PID, more than -MaxChildren new processes, the Workbench PID exiting, or -Seconds.
-# Teardown stops only processes this run created (Workbench PID and its descendants that started after launch).
+# Teardown (codex #4631) runs in finally: the root through the Process object Start-Process returned, a descendant only
+# through the handle opened when it was first seen (StartTime = CIM CreationDate), never by a PID looked up again.
 # Never writes the registry or profile; never sends input other than the guarded UIA Invoke of "Yes".
 param([Parameter(Mandatory = $true)][string]$Tag,
       [Parameter(Mandatory = $true)][string]$OutDir,
@@ -92,18 +93,18 @@ foreach ($p in @(Get-CimInstance Win32_Process -Property ProcessId)) { $baseline
 $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name })
 
 # --- launch ---
-$started = Get-Date
-$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
-$null = $wbProc.Handle
-$wbPid = [uint32]$wbProc.Id
-"PID $wbPid started $($started.ToString('HH:mm:ss'))"
-Raw @{ t = 0; kind = "START"; pid = $wbPid; logsDir = $logsDir }
-
-$tracked = @{}      # pid -> @{ name; ppid; created; flags; descendant }
+$tracked = @{}      # pid -> @{ name; ppid; created; descendant; held = Process with an open handle or $null; gone }
 $netSeen = @{}      # key -> first t
 $reason = "TIMEOUT"; $armed = $false; $stopSeenAt = $null; $newCount = 0
-# any runner error ends the loop with RUNNER_ERROR and still reaches the teardown below
-try { while ($true) {
+$started = Get-Date
+$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden
+$wbPid = [uint32]$wbProc.Id
+# everything after a successful Start-Process: any runner error ends with RUNNER_ERROR and the finally block still runs
+try {
+	$null = $wbProc.Handle
+	"PID $wbPid started $($started.ToString('HH:mm:ss'))"
+	Raw @{ t = 0; kind = "START"; pid = $wbPid; logsDir = $logsDir }
+	while ($true) {
 	$t = [int]((Get-Date) - $started).TotalSeconds
 	if ($t -ge $Seconds) { break }
 	$wbProc.Refresh()
@@ -121,10 +122,11 @@ try { while ($true) {
 		$now[$id] = $true
 		if (-not $tracked.ContainsKey($id)) {
 			$flags = FlagNames $p.CommandLine
-			$tracked[$id] = @{ name = $p.Name; ppid = [uint32]$p.ParentProcessId; created = $p.CreationDate; descendant = $isDesc }
+			$held = if ($isDesc -and $id -ne $wbPid) { OpenHeld $id $p.CreationDate } else { $null }
+			$tracked[$id] = @{ name = $p.Name; ppid = [uint32]$p.ParentProcessId; created = $p.CreationDate; descendant = $isDesc; held = $held }
 			if ($id -ne $wbPid) { $newCount++ }
 			$cmdSha = if ($p.CommandLine) { [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($p.CommandLine))).Replace("-", "").Substring(0, 16) } else { "NONE" }
-			"PROC_NEW t=$t pid=$id ppid=$($p.ParentProcessId) name=$($p.Name) descendant=$isDesc cmdSha=$cmdSha flags=`"$($flags -join ' ')`""
+			"PROC_NEW t=$t pid=$id ppid=$($p.ParentProcessId) name=$($p.Name) descendant=$isDesc held=$([bool]$held) cmdSha=$cmdSha flags=`"$($flags -join ' ')`""
 			Raw @{ t = $t; kind = "PROC_NEW"; pid = $id; ppid = [uint32]$p.ParentProcessId; name = $p.Name; descendant = $isDesc; cmd = $p.CommandLine }
 		}
 	}
@@ -173,20 +175,39 @@ try { while ($true) {
 		break
 	}
 	Start-Sleep -Milliseconds 1000
-} } catch { $reason = "RUNNER_ERROR"; "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
-
-# --- teardown: only processes this run created ---
-$elapsed = [int]((Get-Date) - $started).TotalSeconds
-"STOP reason=$reason t=$elapsed yesPresses=$($script:yesPressed)"
-$own = @($tracked.Keys | Where-Object { $_ -eq $wbPid -or ($tracked[$_].descendant -and $tracked[$_].created -ge $started.AddSeconds(-1)) })
-foreach ($id in $own) { if (Get-Process -Id $id -ErrorAction SilentlyContinue) { Stop-Process -Id $id -Force -Confirm:$false -ErrorAction SilentlyContinue } }
-Start-Sleep -Seconds 3
-foreach ($id in @($tracked.Keys)) {
-	$alive = [bool](Get-Process -Id $id -ErrorAction SilentlyContinue)
-	$mine = $own -contains $id
-	"PROC_END pid=$id name=$($tracked[$id].name) descendant=$($tracked[$id].descendant) ownedByRun=$mine alive=$alive"
+	}
+} catch { $reason = "RUNNER_ERROR"; "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
+finally {
+	# --- teardown: only processes this run created, each through its own held handle ---
+	$elapsed = [int]((Get-Date) - $started).TotalSeconds
+	"STOP reason=$reason t=$elapsed yesPresses=$($script:yesPressed)"
+	$entries = @()
+	foreach ($id in @($tracked.Keys)) {
+		if ($id -eq $wbPid) { continue }
+		$h = $tracked[$id].held
+		$entries += @{ pid = $id; descendant = $tracked[$id].descendant; recordedCreated = $tracked[$id].created; launch = $started;
+			held = [bool]$h; heldExited = $(if ($h) { $h.HasExited } else { $false }); heldStart = $(if ($h) { try { $h.StartTime } catch { $null } } else { $null }) }
+	}
+	$wbProc.Refresh()
+	$plan = TeardownPlan $wbPid $wbProc.HasExited $entries
+	foreach ($step in $plan) {
+		"TEARDOWN pid=$($step.pid) action=$($step.action)"
+		try {
+			if ($step.action -eq "KILL_CHILD") { $tracked[[uint32]$step.pid].held.Kill() }
+			if ($step.action -eq "KILL_ROOT") { $wbProc.Kill() }
+		} catch { "  KILL_ERROR pid=$($step.pid) $($_.Exception.GetType().Name)" }
+	}
+	Start-Sleep -Seconds 3
+	$wbProc.Refresh()
+	"PROC_END pid=$wbPid name=root alive=$(-not $wbProc.HasExited)"
+	foreach ($id in @($tracked.Keys)) {
+		if ($id -eq $wbPid) { continue }
+		$h = $tracked[$id].held
+		$alive = if ($h) { [string](-not $h.HasExited) } else { "UNVERIFIED_NO_HANDLE" }
+		"PROC_END pid=$id name=$($tracked[$id].name) descendant=$($tracked[$id].descendant) held=$([bool]$h) alive=$alive"
+	}
+	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason }
 }
-Raw @{ t = $elapsed; kind = "STOP"; reason = $reason }
 
 # --- logs ---
 "log=$logsDir/console.log"

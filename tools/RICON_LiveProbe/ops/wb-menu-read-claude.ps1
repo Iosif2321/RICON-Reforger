@@ -148,9 +148,12 @@ try {
 } catch { $reason = "RUNNER_ERROR"; "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
 
 "STOP reason=$reason t=$([int]((Get-Date) - $started).TotalSeconds)"
-if (Get-Process -Id $wbPid -ErrorAction SilentlyContinue) { Stop-Process -Id $wbPid -Force -Confirm:$false -ErrorAction SilentlyContinue }
+# the own process is stopped through the Process object whose handle is held since launch (codex #4631), not by PID
+$proc.Refresh()
+if (-not $proc.HasExited) { try { $proc.Kill() } catch { "KILL_ERROR $($_.Exception.GetType().Name)" } }
 Start-Sleep -Seconds 3
-if (Get-Process -Id $wbPid -ErrorAction SilentlyContinue) { "OWN_PID_STILL_RUNNING" } else { "OWN_PID_GONE" }
+$proc.Refresh()
+if ($proc.HasExited) { "OWN_PID_GONE" } else { "OWN_PID_STILL_RUNNING" }
 "others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
 $log = "$myGames\ArmaReforgerWorkbench\logs\$logsDir\console.log"
 if (Test-Path $log) {

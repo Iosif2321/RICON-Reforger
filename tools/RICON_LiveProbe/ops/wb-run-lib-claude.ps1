@@ -90,6 +90,40 @@ function Descendants($procs, [uint32]$root) {
 	return @($set)
 }
 
+# --- teardown ownership (codex #4631) ---
+# A child is stopped only through a Process object whose handle was opened when the child was first seen and whose
+# StartTime then matched the CIM CreationDate: while that handle is open Windows cannot hand the PID to another process,
+# and Kill() acts on the handle, not on a PID looked up again. No handle means the child is never stopped.
+function OpenHeld([uint32]$id, $created) {
+	try {
+		$p = [System.Diagnostics.Process]::GetProcessById([int]$id)
+		$null = $p.Handle
+		if ($created -and [math]::Abs(($p.StartTime - $created).TotalSeconds) -le 0.5) { return $p }
+		$p.Dispose()
+	} catch {}
+	return $null
+}
+
+# One decision for a tracked non-root process. $e: descendant, recordedCreated, launch, held (bool), heldExited (bool),
+# heldStart (DateTime or $null).
+function TeardownDecision($e) {
+	if (-not $e.descendant) { return "SKIP_NOT_DESCENDANT" }
+	if ($e.recordedCreated -lt $e.launch.AddSeconds(-1)) { return "SKIP_BEFORE_LAUNCH" }
+	if (-not $e.held) { return "SKIP_NO_HANDLE" }
+	if ($e.heldExited) { return "SKIP_EXITED" }
+	if ($null -eq $e.heldStart -or [math]::Abs(($e.heldStart - $e.recordedCreated).TotalSeconds) -gt 0.5) { return "SKIP_REUSED" }
+	return "KILL_CHILD"
+}
+
+# Children first, the root last; the root is in the plan whatever $entries holds (an empty $tracked after a failed first
+# poll still stops it through the Process object Start-Process returned).
+function TeardownPlan([uint32]$rootPid, [bool]$rootExited, $entries) {
+	$plan = @()
+	foreach ($e in @($entries)) { $plan += [pscustomobject]@{ pid = $e.pid; action = (TeardownDecision $e) } }
+	$plan += [pscustomobject]@{ pid = $rootPid; action = $(if ($rootExited) { "ROOT_EXITED" } else { "KILL_ROOT" }) }
+	return , $plan
+}
+
 # Exact checks for the vanilla prompt (SCR_ArsenalManagerComponent.c:1101), unchanged from the B0a runner.
 $script:ExpectedSite = "Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101"
 $script:ExpectedMethod = "BaseContainerTools.LoadContainer"
