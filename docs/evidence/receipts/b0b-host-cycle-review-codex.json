@@ -1,0 +1,31 @@
+{
+  "run": "ricon-b0b-serverplay-claude-20261025-175912",
+  "logSha256": "ea359c6abc1e53513a87187b8929a1905f1018246d138325181edd902ba026c2",
+  "result": "HOST_CYCLE_CONFIRMED",
+  "streamEvents": 35,
+  "samples": 30,
+  "streamEqualsDump": true,
+  "dropped": 0,
+  "rplMode": 2,
+  "rplName": "Listen",
+  "workbenchMode": "Server localhost",
+  "playerId": 1,
+  "members": [
+    1
+  ],
+  "bindingRevision": 1,
+  "localRadioValues": [
+    32000,
+    48000
+  ],
+  "firstElapsedMs": 1005,
+  "lastElapsedMs": 30113,
+  "editStableAfterSeconds": 5.81,
+  "engineReportedBind": {
+    "addressClass": "ANY",
+    "port": 2001
+  },
+  "limits": "Проверен журнал одного хоста. UDP ОС, UI-откат и завершение процессов проверяются по квитанции оператора отдельно. Второго клиента, принятого соединения и слышимости нет.",
+  "replayRequirements": "Нужен исходный внешний console.log указанного запуска.",
+  "checkerSha256": "670c8a0c39d962bdacfd16ca8e45a18e58faab757c736ae07389f9f9f80eb295"
+}
