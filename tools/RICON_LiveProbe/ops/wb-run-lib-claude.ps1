@@ -349,8 +349,14 @@ function OpenOptions([IntPtr]$mainHandle, [uint32]$ownPid) {
 	$opt = FindMenuChild $game "Play Game Options" $ownPid $mainHandle
 	if ($null -eq $opt) { "  ROUNDTRIP no Play Game Options" | Write-Host; $null = CloseOptions @{ game = $game; opt = $null } $mainHandle; return $null }
 	try { $opt.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Options expand error" | Write-Host; return $null }
-	Start-Sleep -Milliseconds 600
-	return @{ game = $game; opt = $opt }
+	# the submenu items can appear late after a quick re-open (self-test: NO_ITEM on the second open): wait up to 3 s
+	for ($k = 0; $k -lt 15; $k++) {
+		Start-Sleep -Milliseconds 200
+		if (@(OfType $opt $CT::MenuItem).Count -gt 0) { return @{ game = $game; opt = $opt } }
+	}
+	"  ROUNDTRIP Options opened without items" | Write-Host
+	$null = CloseOptions @{ game = $game; opt = $opt } $mainHandle
+	return $null
 }
 # Collapses Options then Game when still open; true only if a fresh Game element reads exactly Collapsed.
 function CloseOptions($h, [IntPtr]$mainHandle) {
@@ -386,15 +392,19 @@ function SnapshotProblem($map, [string[]]$baseKeys, [string[]]$required) {
 	if ($null -ne $baseKeys -and (@($map.Keys) -join "|") -cne (@($baseKeys) -join "|")) { return "KEYS_CHANGED" }
 	return ""
 }
-function ToggleItem($opt, [string]$name) {
-	foreach ($i in (OfType $opt $CT::MenuItem)) {
-		if ($i.Current.Name -ceq $name) {
-			$tp = $null
-			if (-not $i.TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$tp)) { return $false }
-			try { $tp.Toggle(); return $true } catch { return $false }
-		}
-	}
-	return $false
+# Toggles exactly one item of the open Options element, only if it is found once and its state, read right now in this
+# fresh menu, is exactly $expected (codex #4677). Returns TOGGLED, STALE (state differs), NO_ITEM, AMBIGUOUS, NO_PATTERN,
+# READ_ERROR or TOGGLE_ERROR; only TOGGLED means Toggle() was called.
+function ToggleExpected($opt, [string]$name, [string]$expected) {
+	$hits = @(OfType $opt $CT::MenuItem | Where-Object { $_.Current.Name -ceq $name })
+	if ($hits.Count -eq 0) { return "NO_ITEM" }
+	if ($hits.Count -gt 1) { return "AMBIGUOUS" }
+	$tp = $null
+	if (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$tp)) { return "NO_PATTERN" }
+	try { $now = [string]$tp.Current.ToggleState } catch { return "READ_ERROR" }
+	if ($now -cne $expected) { return "STALE" }
+	try { $tp.Toggle() } catch { return "TOGGLE_ERROR" }
+	return "TOGGLED"
 }
 # Pure: names whose state differs between two maps (a missing name counts as different).
 function ToggleDiff($a, $b) {
@@ -411,36 +421,48 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	$script:roundTripToggles = 0
 	$required = @($target) + @($mustBeOff | Where-Object { $_ })
 	$baseKeys = $null
-	# a snapshot is returned only when complete and definite; otherwise $null and no further toggle follows
+	# a snapshot is returned only when complete and definite; otherwise $null and no further toggle follows. A failed
+	# read toggles nothing, so it is retried up to 3 times (self-test: rare UI timing misses on a quick re-open).
 	$snap = {
-		$h = OpenOptions $mainHandle $ownPid
-		if ($null -eq $h) { return $null }
-		$r = ReadToggles $h.opt
-		if (-not (CloseOptions $h $mainHandle)) { "  ROUNDTRIP menus not Collapsed after read" | Write-Host; return $null }
-		if ($r.bad) { "  ROUNDTRIP snapshot unusable: $($r.bad)" | Write-Host; return $null }
-		$why = SnapshotProblem $r.map $baseKeys $required
-		if ($why) { "  ROUNDTRIP snapshot unusable: $why" | Write-Host; return $null }
-		return $r.map
+		for ($try = 1; $try -le 3; $try++) {
+			$h = OpenOptions $mainHandle $ownPid
+			if ($null -ne $h) {
+				$r = ReadToggles $h.opt
+				$closed = CloseOptions $h $mainHandle
+				$why = if (-not $closed) { "menus not Collapsed after read" } elseif ($r.bad) { $r.bad } else { SnapshotProblem $r.map $baseKeys $required }
+				if (-not $why) { return $r.map }
+				"  ROUNDTRIP snapshot try=$try unusable: $why" | Write-Host
+				if (-not $closed) { return $null }
+			} else { "  ROUNDTRIP snapshot try=$($try) menus not opened" | Write-Host }
+			Start-Sleep -Milliseconds 500
+		}
+		return $null
 	}
+	# one toggle from a known state: $expected is the item's state in the last complete snapshot
 	$flip = {
-		param([string]$name)
+		param([string]$name, [string]$expected)
 		$b = & $blocked
 		if ($b) { "  ROUNDTRIP blocked before toggle: $b" | Write-Host; return $false }
-		$h = OpenOptions $mainHandle $ownPid
-		if ($null -eq $h) { return $false }
-		$ok = ToggleItem $h.opt $name
-		$script:roundTripToggles++
-		"  ROUNDTRIP TOGGLE `"$name`" invoked=$ok count=$($script:roundTripToggles)" | Write-Host
-		Start-Sleep -Milliseconds 700
-		$closed = CloseOptions $h $mainHandle
-		return ($ok -and $closed)
+		# a second attempt only when Toggle() was certainly not called (item or pattern not found, state unreadable)
+		for ($try = 1; $try -le 2; $try++) {
+			$h = OpenOptions $mainHandle $ownPid
+			if ($null -eq $h) { return $false }
+			$res = ToggleExpected $h.opt $name $expected
+			if ($res -ceq "TOGGLED") { $script:roundTripToggles++ }
+			"  ROUNDTRIP TOGGLE `"$name`" from=$expected result=$res try=$try count=$($script:roundTripToggles)" | Write-Host
+			Start-Sleep -Milliseconds 700
+			$closed = CloseOptions $h $mainHandle
+			if ($res -ceq "TOGGLED") { return $closed }
+			if ($res -notin @("NO_ITEM", "NO_PATTERN", "READ_ERROR") -or -not $closed) { return $false }
+		}
+		return $false
 	}
 	$base = & $snap
 	if ($null -eq $base) { return "BASELINE_READ_FAILED" }
 	$baseKeys = @($base.Keys)
 	"  ROUNDTRIP BASELINE $(MapText $base)" | Write-Host
 	foreach ($n in @($target) + @($mustBeOff | Where-Object { $_ })) { if (-not $base.Contains($n) -or $base[$n] -cne "Off") { "  ROUNDTRIP baseline `"$n`" is not Off" | Write-Host; return "BASELINE_NOT_OFF" } }
-	if (-not (& $flip $target)) {
+	if (-not (& $flip $target $base[$target])) {
 		# the first toggle was not confirmed; read once more to report, never toggle again from here
 		$s = & $snap
 		if ($s) { "  ROUNDTRIP AFTER_FAILED_TOGGLE $(MapText $s) diff=$((ToggleDiff $base $s) -join ',')" | Write-Host }
@@ -454,7 +476,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	$phase = if ($s1[$target] -ceq "On") { "TOGGLED_ON" } else { "TOGGLE_NO_EFFECT" }
 	$cur = $s1
 	if ($cur[$target] -cne $base[$target]) {
-		if (-not (& $flip $target)) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		if (-not (& $flip $target $cur[$target])) { return "$phase|RESTORE_TOGGLE_FAILED" }
 		$cur = & $snap
 		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }
 		"  ROUNDTRIP STATE2 $(MapText $cur) diff=$((ToggleDiff $base $cur) -join ',')" | Write-Host
@@ -463,7 +485,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 	foreach ($n in $d) {
 		if ($n -ceq $target -or $cur[$n] -ceq $base[$n]) { continue }
 		if ($extra -ge $maxRestore) { break }
-		if (-not (& $flip $n)) { return "$phase|RESTORE_TOGGLE_FAILED" }
+		if (-not (& $flip $n $cur[$n])) { return "$phase|RESTORE_TOGGLE_FAILED" }
 		$extra++
 		$cur = & $snap
 		if ($null -eq $cur) { return "$phase|RESTORE_READ_FAILED" }

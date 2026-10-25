@@ -288,6 +288,8 @@ Case "snapshot complete" (SnapshotProblem $good $null $req) ""
 Case "snapshot same keys later" (SnapshotProblem $good @("Play inside Viewport", "Server localhost", "Server localhost + PeerTool") $req) ""
 $noTarget = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost + PeerTool" = "Off" }
 Case "snapshot missing target" (SnapshotProblem $noTarget $null $req) 'MISSING "Server localhost"'
+$noOther = [ordered]@{ "Server localhost" = "Off"; "Server localhost + PeerTool" = "Off" }
+Case "snapshot missing other" (SnapshotProblem $noOther @("Play inside Viewport", "Server localhost", "Server localhost + PeerTool") $req) "KEYS_CHANGED"
 $indet = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "Indeterminate"; "Server localhost + PeerTool" = "Off" }
 Case "snapshot indeterminate" (SnapshotProblem $indet $null $req) 'STATE_NOT_ON_OFF "Server localhost"=Indeterminate'
 $extra = [ordered]@{ "Play inside Viewport" = "On"; "Server localhost" = "On"; "Server localhost + PeerTool" = "Off"; "New" = "Off" }
@@ -317,6 +319,20 @@ $fo = FakeOptions $false $false "peeron" $true
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "" } @("Server localhost + PeerTool") 6>$null
 Case "roundtrip peertool on refused" $rt "BASELINE_NOT_OFF"
 Case "roundtrip peertool on no toggle" $script:roundTripToggles 0
+DoneOpts $fo
+# expected state right before the toggle (codex #4677): a stale expectation never toggles
+$fo = FakeOptions $false $false "stale"
+$h = OpenOptions $fo.h ([uint32]$fo.p.Id)
+Case "toggle expected stale" (ToggleExpected $h.opt "Server localhost" "On") "STALE"
+Case "toggle expected no item" (ToggleExpected $h.opt "Server localhost 2" "Off") "NO_ITEM"
+$m = (ReadToggles $h.opt).map
+Case "toggle stale left state" $m["Server localhost"] "Off"
+Case "toggle expected ok" (ToggleExpected $h.opt "Server localhost" "Off") "TOGGLED"
+Start-Sleep -Milliseconds 300
+$m = (ReadToggles $h.opt).map
+Case "toggle expected changed state" $m["Server localhost"] "On"
+Case "toggle back expected ok" (ToggleExpected $h.opt "Server localhost" "On") "TOGGLED"
+$null = CloseOptions $h $fo.h
 DoneOpts $fo
 $fo = FakeOptions $false $false "blocked"
 $rt = RoundTrip $fo.h ([uint32]$fo.p.Id) "Server localhost" { "DEADLINE" } @("Server localhost + PeerTool") 6>$null
