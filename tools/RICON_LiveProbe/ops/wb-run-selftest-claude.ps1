@@ -113,7 +113,7 @@ $target2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile"
 $null = $target2.Handle
 $fake = [pscustomobject]@{ Id = $target2.Id; StartTime = $target2.StartTime.AddSeconds(-5) }
 $ticks = $fake.StartTime.ToUniversalTime().Ticks
-$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($fake.Id)); if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit(1000)) { `$p.Kill() } }"
+$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($fake.Id)); `$null = `$p.Handle; if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit(1000)) { `$p.Kill() } }"
 $wd2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))) -PassThru -WindowStyle Hidden
 Start-Sleep -Seconds 5
 $target2.Refresh()

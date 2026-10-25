@@ -113,7 +113,8 @@ function OpenHeld([uint32]$id, $created) {
 # FILETIME: equal UTC ticks) and kills it only if it is still running after $ms. Guards against a hung UI Automation call in the caller.
 function StartWatchdog([System.Diagnostics.Process]$target, [int]$ms) {
 	$ticks = $target.StartTime.ToUniversalTime().Ticks
-	$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($target.Id)); if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit($ms)) { `$p.Kill() } }"
+	# the handle is opened before the start-time check and reused by WaitForExit/Kill (codex #4642)
+	$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($target.Id)); `$null = `$p.Handle; if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit($ms)) { `$p.Kill() } }"
 	$enc = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
 	$w = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", $enc) -PassThru -WindowStyle Hidden
 	$null = $w.Handle
