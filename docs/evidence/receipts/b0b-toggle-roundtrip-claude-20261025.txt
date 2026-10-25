@@ -1,0 +1,130 @@
+# claude, B0b step 1b: one-toggle roundtrip of Game > Play Game Options > Server localhost in the own World Editor, no Play
+# (agora #4668-#4691; codex chose the UI roundtrip in #4668 and option A, Invoke, in #4686). Runner
+# tools/RICON_LiveProbe/ops/wb-menu-read-claude.ps1 -Roundtrip + wb-run-lib-claude.ps1 RoundTrip (hashes printed in each
+# run). START -> codex ACK -> run -> END for each run; one own Workbench with the Plain world opened in edit mode by the
+# launcher (-riconBenchMode=inspect: OPEN_ONLY saved=0 isGameMode=0, no entity, no Play, no Save).
+# Rules of the roundtrip: both Server localhost and Server localhost + PeerTool must read exactly Off in the baseline; every
+# snapshot opens Game > Play Game Options afresh, reads every Toggle-capable item and must close both menus to exactly
+# Collapsed; a snapshot is used only when complete (each state On or Off, same names in the same order as the baseline);
+# before each action the item's state is re-read in the fresh menu and must equal the last complete snapshot; only the
+# target and the items that the first action changed are ever acted on; after each action the Script Authorization prompt,
+# an unknown window, a Play/bench marker in the log, the deadline or a new process (child of the own Workbench or another
+# Reforger/Workbench process missing from the PID snapshot taken when the roundtrip began) stops the experiment at once.
+# A watchdog process kills the own Workbench at Seconds + 30 s; the own process is stopped through its held handle.
+# Restoring is best effort if the run is cut between the first action and the restore; that did not happen here.
+#
+# Results: run 1 (TogglePattern.Toggle) changed nothing; run 2 (InvokePattern.Invoke) switched Server localhost Off -> On and
+# back On -> Off; no other of the ten items changed (D = {Server localhost}: not an exclusive pair with Play inside
+# Viewport); the toggle itself started no process; Play did not start; registry branch and profile files equal before and
+# after both runs (counts and hashes only). Not shown: whether the On state is written to the registry when the process is
+# killed while On, and what Play does in this mode.
+# Level: UI_OBSERVED for the toggle and its restore in the own Workbench; nothing about the server mode itself.
+
+--- ricon-b0b-toggle-claude-20261025-122839
+# menu-read 0BF31649 / lib B40EE05B (737fe06); -OpenWorld -Roundtrip (method Toggle); TogglePattern.Toggle() called once on 'Server localhost' after the fresh Off check; the full re-read showed no change: TOGGLE_NO_EFFECT|RESTORE_OK
+# stdout b0b-toggle-run1.txt sha256 66cda7088ec7400043d43ce152c0599598be75f983dc6557904e1ca488be9627 (49 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-toggle-claude-20261025-122839 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER 0BF31649554262EC LIB B40EE05B0BDEC90E
+LIMITS seconds=180 settle=15 expand=False openWorld=True subMenu="" roundtrip=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 10360 started 12:28:39
+WATCHDOG pid=33172 limitMs=210000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=10 title="World Editor - Unnamed empty world"
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - Unnamed empty world
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=12
+  ROUNDTRIP BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+  ROUNDTRIP TOGGLE "Server localhost" from=Off result=TOGGLED try=1 count=1
+  ROUNDTRIP STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off diff=
+  ROUNDTRIP FINAL Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off diffFromBaseline= toggles=1
+ROUNDTRIP_RESULT TOGGLE_NO_EFFECT|RESTORE_OK toggles=1 otherProcessesBefore=0 after=0
+STOP reason=ROUNDTRIP_DONE t=33
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+12:28:44.859    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+12:28:44.860    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+12:28:44.860    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+12:28:46.446    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+12:28:46.446    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+12:28:46.446    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+12:28:46.446    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+12:28:46.447    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+12:28:46.447    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+12:28:46.447    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+12:28:46.447    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+12:28:46.447    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+12:28:49.665  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+12:28:50.156  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+12:28:50.156  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA C018F608C356870943C37ECD081ABA1AFE3AC4155619BEAD5CFA8C15302A08BF size 870683
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+
+--- ricon-b0b-toggle-claude-20261025-124042
+# menu-read 81685F0A / lib 25AFF18C (fd3f89f); -OpenWorld -Roundtrip -RoundtripMethod Invoke; InvokePattern.Invoke() of 'Server localhost' Off -> On, re-read, Invoke On -> Off, re-read = baseline: TOGGLED_ON|RESTORE_OK, 2 actions
+# stdout b0b-toggle-run2.txt sha256 ec6edf81757ea84dc2ff68f5340299227d7624d2a160b7b44899e0a33131db7d (52 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-toggle-claude-20261025-124042 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -log-scr-checksum
+RUNNER 81685F0AA2E12480 LIB 25AFF18C185F6DA0
+LIMITS seconds=180 settle=15 expand=False openWorld=True subMenu="" roundtrip=True method=Invoke
+SETTINGS_BEFORE regLines=3855 profileFiles=5
+PID 34588 started 12:40:42
+WATCHDOG pid=21984 limitMs=210000
+OWN_WINDOWS t=5 visible=1
+  WINDOW V|Qt683QWindowIcon|Arma Reforger Workbench
+MAIN_WINDOW t=9 title="World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.e..."
+  OWN_WINDOW V|Qt683QWindowIcon|World Editor - ArmaReforger/worlds/Tests/TestFramework/Autote...
+  OWN_WINDOW V|Qt683QWindowIcon|Enfusion Workbench - RICON live probe (TOOL_ONLY, not for Wor...
+OPEN_ONLY seen t=10
+PROC_BASELINE children=0 names="" pids=0
+  ROUNDTRIP BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+  ROUNDTRIP INVOKE "Server localhost" from=Off result=TOGGLED try=1 count=1
+  ROUNDTRIP STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off diff=Server localhost
+  ROUNDTRIP INVOKE "Server localhost" from=On result=TOGGLED try=1 count=2
+  ROUNDTRIP STATE2 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off diff=
+  ROUNDTRIP FINAL Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off diffFromBaseline= toggles=2
+ROUNDTRIP_RESULT TOGGLED_ON|RESTORE_OK toggles=2 otherProcessesBefore=0 after=0
+STOP reason=ROUNDTRIP_DONE t=35
+OWN_PID_GONE
+WATCHDOG_END exited=True
+others=0
+scriptErrors=0
+openOnlyLines=1 playOrBenchLines=0
+12:40:46.959    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+12:40:46.960    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+12:40:46.961    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+12:40:46.961    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 8809c6d5
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+12:40:48.479    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+12:40:51.660  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+12:40:52.205  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+12:40:52.206  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA 4D3F22E7CF208715944498FFA0A1B40AC54A8C49A059B06D68720BC258425F54 size 870677
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
