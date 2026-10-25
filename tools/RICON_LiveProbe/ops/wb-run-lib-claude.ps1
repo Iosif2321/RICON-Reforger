@@ -94,9 +94,11 @@ function Descendants($procs, [uint32]$root) {
 # A child is stopped only through a Process object whose handle was opened when the child was first seen and whose
 # StartTime then matched the CIM CreationDate: while that handle is open Windows cannot hand the PID to another process,
 # and Kill() acts on the handle, not on a PID looked up again. No handle means the child is never stopped.
-# Same start = under 10 ticks apart: CIM CreationDate carries microseconds, and on this PC 263 accessible processes
-# differed from Process.StartTime by at most 9 ticks (codex #4637 asked for an exact compare instead of 0.5 s).
-function SameStart($a, $b) { return ($null -ne $a -and $null -ne $b -and [math]::Abs(($a - $b).Ticks) -lt 10) }
+# Same start = equal UTC ticks after truncation to the microsecond (codex #4640): CIM CreationDate is the start
+# FILETIME truncated to microseconds (on this PC 263 accessible processes lay 0..9 ticks below Process.StartTime), so
+# truncating both and comparing Int64 exactly is the precise relation; no tolerance, no double arithmetic.
+function UsTicks([datetime]$d) { $t = $d.ToUniversalTime().Ticks; return $t - ($t % 10) }
+function SameStart($a, $b) { return ($null -ne $a -and $null -ne $b -and (UsTicks $a) -eq (UsTicks $b)) }
 function OpenHeld([uint32]$id, $created) {
 	try {
 		$p = [System.Diagnostics.Process]::GetProcessById([int]$id)
@@ -108,10 +110,10 @@ function OpenHeld([uint32]$id, $created) {
 }
 
 # Separate watchdog process (codex #4639): holds its own handle on the target, checks that it is the same process (start
-# within 1 us) and kills it only if it is still running after $ms. Guards against a hung UI Automation call in the caller.
+# FILETIME: equal UTC ticks) and kills it only if it is still running after $ms. Guards against a hung UI Automation call in the caller.
 function StartWatchdog([System.Diagnostics.Process]$target, [int]$ms) {
-	$ticks = $target.StartTime.Ticks
-	$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($target.Id)); if ([math]::Abs(`$p.StartTime.Ticks - $ticks) -lt 10) { if (-not `$p.WaitForExit($ms)) { `$p.Kill() } }"
+	$ticks = $target.StartTime.ToUniversalTime().Ticks
+	$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($target.Id)); if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit($ms)) { `$p.Kill() } }"
 	$enc = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
 	$w = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", $enc) -PassThru -WindowStyle Hidden
 	$null = $w.Handle

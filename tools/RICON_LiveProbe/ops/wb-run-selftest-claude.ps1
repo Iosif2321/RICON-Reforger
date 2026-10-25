@@ -74,6 +74,11 @@ Case "teardown pid reused, other start" (TeardownDecision (Ent @{ heldStart = $l
 Case "teardown no start time" (TeardownDecision (Ent @{ heldStart = $null })) "SKIP_REUSED"
 Case "teardown start 1 ms apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddMilliseconds(1) })) "SKIP_REUSED"
 Case "teardown start 9 ticks apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddTicks(9) })) "KILL_CHILD"
+Case "teardown start 10 ticks apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddTicks(10) })) "SKIP_REUSED"
+Case "teardown start 1 tick before" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddTicks(-1) })) "SKIP_REUSED"
+Case "teardown start 100 ms apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddMilliseconds(100) })) "SKIP_REUSED"
+Case "same start large ticks exact" (SameStart ([datetime]::new(638900000000000009)) ([datetime]::new(638900000000000000))) $true
+Case "same start large ticks next us" (SameStart ([datetime]::new(638900000000000010)) ([datetime]::new(638900000000000009))) $false
 Case "teardown no handle" (TeardownDecision (Ent @{ held = $false; heldStart = $null })) "SKIP_NO_HANDLE"
 Case "teardown child exited" (TeardownDecision (Ent @{ heldExited = $true })) "SKIP_EXITED"
 Case "teardown not descendant" (TeardownDecision (Ent @{ descendant = $false })) "SKIP_NOT_DESCENDANT"
@@ -107,8 +112,8 @@ $wd.Refresh(); Case "watchdog ends itself" $wd.HasExited $true
 $target2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-Command", "Start-Sleep -Seconds 40") -PassThru -WindowStyle Hidden
 $null = $target2.Handle
 $fake = [pscustomobject]@{ Id = $target2.Id; StartTime = $target2.StartTime.AddSeconds(-5) }
-$ticks = $fake.StartTime.Ticks
-$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($fake.Id)); if ([math]::Abs(`$p.StartTime.Ticks - $ticks) -lt 10) { if (-not `$p.WaitForExit(1000)) { `$p.Kill() } }"
+$ticks = $fake.StartTime.ToUniversalTime().Ticks
+$cmd = "`$p = [System.Diagnostics.Process]::GetProcessById($($fake.Id)); if (`$p.StartTime.ToUniversalTime().Ticks -eq $ticks) { if (-not `$p.WaitForExit(1000)) { `$p.Kill() } }"
 $wd2 = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-NonInteractive", "-EncodedCommand", [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))) -PassThru -WindowStyle Hidden
 Start-Sleep -Seconds 5
 $target2.Refresh()
