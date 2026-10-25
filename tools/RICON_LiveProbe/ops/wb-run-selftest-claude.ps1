@@ -72,6 +72,8 @@ function Ent($o) { $e = @{ pid = 101; descendant = $true; recordedCreated = $lau
 Case "teardown own child" (TeardownDecision (Ent @{})) "KILL_CHILD"
 Case "teardown pid reused, other start" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(40) })) "SKIP_REUSED"
 Case "teardown no start time" (TeardownDecision (Ent @{ heldStart = $null })) "SKIP_REUSED"
+Case "teardown start 1 ms apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddMilliseconds(1) })) "SKIP_REUSED"
+Case "teardown start 9 ticks apart" (TeardownDecision (Ent @{ heldStart = $launch.AddSeconds(5).AddTicks(9) })) "KILL_CHILD"
 Case "teardown no handle" (TeardownDecision (Ent @{ held = $false; heldStart = $null })) "SKIP_NO_HANDLE"
 Case "teardown child exited" (TeardownDecision (Ent @{ heldExited = $true })) "SKIP_EXITED"
 Case "teardown not descendant" (TeardownDecision (Ent @{ descendant = $false })) "SKIP_NOT_DESCENDANT"
@@ -87,6 +89,11 @@ $h = OpenHeld ([uint32]$PID) $self.StartTime
 Case "open held own process" ([bool]$h) $true
 if ($h) { $h.Dispose() }
 Case "open held start mismatch" ([bool](OpenHeld ([uint32]$PID) $self.StartTime.AddSeconds(-10))) $false
+Case "open held start 1 ms off" ([bool](OpenHeld ([uint32]$PID) $self.StartTime.AddMilliseconds(-1))) $false
+$cimSelf = (Get-CimInstance Win32_Process -Filter "ProcessId=$PID" -Property CreationDate).CreationDate
+$h = OpenHeld ([uint32]$PID) $cimSelf
+Case "open held with CIM CreationDate" ([bool]$h) $true
+if ($h) { $h.Dispose() }
 Case "open held no such pid" ([bool](OpenHeld ([uint32]4294967000) $self.StartTime)) $false
 
 # UI Automation cases on stand-in windows in a separate process

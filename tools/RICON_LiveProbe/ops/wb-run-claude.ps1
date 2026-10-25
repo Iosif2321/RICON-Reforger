@@ -10,7 +10,7 @@
 # Stops on: -StopPattern seen -StopCount times (+2 s), launcher failure or SCRIPT (E), an unknown window (after the arm
 # marker), a prompt in a non-Workbench PID, more than -MaxChildren new processes, the Workbench PID exiting, or -Seconds.
 # Teardown (codex #4631) runs in finally: the root through the Process object Start-Process returned, a descendant only
-# through the handle opened when it was first seen (StartTime = CIM CreationDate), never by a PID looked up again.
+# through the handle opened when it was first seen (StartTime = CIM CreationDate within 1 us), never by a PID looked up again.
 # Never writes the registry or profile; never sends input other than the guarded UIA Invoke of "Yes".
 param([Parameter(Mandatory = $true)][string]$Tag,
       [Parameter(Mandatory = $true)][string]$OutDir,

@@ -94,11 +94,14 @@ function Descendants($procs, [uint32]$root) {
 # A child is stopped only through a Process object whose handle was opened when the child was first seen and whose
 # StartTime then matched the CIM CreationDate: while that handle is open Windows cannot hand the PID to another process,
 # and Kill() acts on the handle, not on a PID looked up again. No handle means the child is never stopped.
+# Same start = under 10 ticks apart: CIM CreationDate carries microseconds, and on this PC 263 accessible processes
+# differed from Process.StartTime by at most 9 ticks (codex #4637 asked for an exact compare instead of 0.5 s).
+function SameStart($a, $b) { return ($null -ne $a -and $null -ne $b -and [math]::Abs(($a - $b).Ticks) -lt 10) }
 function OpenHeld([uint32]$id, $created) {
 	try {
 		$p = [System.Diagnostics.Process]::GetProcessById([int]$id)
 		$null = $p.Handle
-		if ($created -and [math]::Abs(($p.StartTime - $created).TotalSeconds) -le 0.5) { return $p }
+		if (SameStart $p.StartTime $created) { return $p }
 		$p.Dispose()
 	} catch {}
 	return $null
@@ -111,7 +114,7 @@ function TeardownDecision($e) {
 	if ($e.recordedCreated -lt $e.launch.AddSeconds(-1)) { return "SKIP_BEFORE_LAUNCH" }
 	if (-not $e.held) { return "SKIP_NO_HANDLE" }
 	if ($e.heldExited) { return "SKIP_EXITED" }
-	if ($null -eq $e.heldStart -or [math]::Abs(($e.heldStart - $e.recordedCreated).TotalSeconds) -gt 0.5) { return "SKIP_REUSED" }
+	if (-not (SameStart $e.heldStart $e.recordedCreated)) { return "SKIP_REUSED" }
 	return "KILL_CHILD"
 }
 
