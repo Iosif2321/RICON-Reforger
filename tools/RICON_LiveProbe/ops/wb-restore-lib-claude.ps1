@@ -16,7 +16,9 @@ function RestoreOff([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scri
 	if ($first[$target] -cne "On") { return "TARGET_UNKNOWN" }
 	$b = & $blocked
 	if ($b) { return "BLOCKED_$b" }
-	$h = OpenOptions $mainHandle $ownPid
+	# not opened means nothing was acted on, so up to 3 attempts (self-test under load: OPTIONS_NOT_OPENED once)
+	$h = $null
+	for ($try = 1; $try -le 3 -and $null -eq $h; $try++) { $h = OpenOptions $mainHandle $ownPid; if ($null -eq $h) { Start-Sleep -Milliseconds 700 } }
 	if ($null -eq $h) { return "OPTIONS_NOT_OPENED" }
 	$res = ToggleExpected $h.opt $target "On" "Invoke"
 	if ($res -ceq "TOGGLED") { $script:restoreActions++ }

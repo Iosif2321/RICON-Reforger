@@ -205,10 +205,16 @@ Case "closed expanded" (ClosedOk ([System.Windows.Automation.ExpandCollapseState
 Case "closed leaf" (ClosedOk ([System.Windows.Automation.ExpandCollapseState]::LeafNode)) $false
 Case "closed null" (ClosedOk $null) $false
 
+# The stand-in windows are off-screen, but WPF keeps a menu popup inside the visible screen, so the submenus flashed in
+# the owner's top-left corner (2026-10-25). Every menu stand-in makes its submenu popups fully transparent (the popups
+# have AllowsTransparency=True); UIA still sees and drives the items.
+$hidePopups = '[System.Windows.EventManager]::RegisterClassHandler([System.Windows.Controls.MenuItem], [System.Windows.Controls.MenuItem]::SubmenuOpenedEvent, [System.Windows.RoutedEventHandler]{ param($s, $e) if ($e.OriginalSource -ne $s) { return }; $pp = $s.Template.FindName("PART_Popup", $s); if ($pp -and $pp.Child) { $pp.Child.Opacity = 0 } })'
+
 # ExpandRead on a WPF stand-in menu (ExpandCollapse provider of WPF MenuItem): one bool back, items on the host
 $mk = Join-Path $WorkDir "ricon-fakemenu-claude.ps1"
-@'
+(@'
 Add-Type -AssemblyName PresentationFramework
+#HIDE_POPUPS
 $w = New-Object System.Windows.Window
 $w.Title = "World Editor - Fake"; $w.Width = 300; $w.Height = 120; $w.Left = -3000; $w.Top = -3000
 $w.ShowActivated = $false; $w.ShowInTaskbar = $false; $w.WindowStartupLocation = "Manual"
@@ -222,7 +228,7 @@ foreach ($h in @("Inner Server Fake", "Inner Peer Fake")) { $i = New-Object Syst
 $w.Content = $menu
 $t = New-Object System.Windows.Threading.DispatcherTimer; $t.Interval = [TimeSpan]::FromSeconds(25); $t.Add_Tick({ $w.Close() }.GetNewClosure()); $t.Start()
 [void]$w.ShowDialog()
-'@ | Set-Content -Path $mk -Encoding ASCII
+'@).Replace("#HIDE_POPUPS", $hidePopups) | Set-Content -Path $mk -Encoding ASCII
 $mp = Start-Process -FilePath "powershell.exe" -PassThru -WindowStyle Hidden -ArgumentList @("-NoProfile", "-STA", "-ExecutionPolicy", "Bypass", "-File", "`"$mk`"")
 for ($i = 0; $i -lt 60 -and [RiconWin]::FindByTitle([uint32]$mp.Id, "World Editor - Fake") -eq [IntPtr]::Zero; $i++) { Start-Sleep -Milliseconds 250 }
 Start-Sleep -Milliseconds 500
@@ -258,6 +264,7 @@ function FakeOptions($exclusive, $serverOn, $tag, $peerOn = $false) {
 	$po = if ($peerOn) { '$true' } else { '$false' }
 	@"
 Add-Type -AssemblyName PresentationFramework
+$hidePopups
 `$w = New-Object System.Windows.Window
 `$w.Title = "World Editor - Fake $tag"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
 `$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
@@ -389,6 +396,7 @@ $clickFile = Join-Path $WorkDir "ricon-fakeplay-click.txt"
 if (Test-Path $clickFile) { Remove-Item $clickFile -Force }
 @"
 Add-Type -AssemblyName PresentationFramework
+$hidePopups
 `$w = New-Object System.Windows.Window
 `$w.Title = "World Editor - Fake play"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
 `$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
@@ -433,6 +441,7 @@ $mk = Join-Path $WorkDir "ricon-fakeasync-claude.ps1"
 $msgA = $script:ExpectedMessage
 @"
 Add-Type -AssemblyName PresentationFramework
+$hidePopups
 `$w = New-Object System.Windows.Window
 `$w.Title = "World Editor - Fake async"; `$w.Width = 300; `$w.Height = 120; `$w.Left = -3000; `$w.Top = -3000
 `$w.ShowActivated = `$false; `$w.ShowInTaskbar = `$false; `$w.WindowStartupLocation = "Manual"
@@ -476,5 +485,19 @@ Case "async cleanup done" (CleanupAsyncInvoke $jobA 1000) "DONE COMPLETED"
 Case "async cleanup none" (CleanupAsyncInvoke $null 1000) "NONE"
 if (-not $ap.HasExited) { $ap.Kill() }
 Remove-Item $mk -Force -ErrorAction SilentlyContinue
+
+# A2 start flag (codex #4746): made from a successful Open on, also when Close fails; Open on an existing file fails
+$fp = Join-Path $WorkDir "ricon-selftest-start.flag"
+Remove-Item $fp -Force -ErrorAction SilentlyContinue
+$f1 = NewStartFlag $fp
+Case "flag normal" @($f1.made, $f1.error, (Test-Path $fp)) @("True", "", "True")
+$f2 = NewStartFlag $fp
+Case "flag exists open fails" @($f2.made, $f2.error) @("True", "OPEN_IOException")
+Remove-Item $fp -Force
+$f3 = NewStartFlag $fp { param($s) throw [IO.IOException]::new("mock close") }
+Case "flag close fails still made" @($f3.made, $f3.error, (Test-Path $fp)) @("True", "CLOSE_IOException", "True")
+Remove-Item $fp -Force
+$f4 = NewStartFlag (Join-Path $WorkDir "no-such-dir\x.flag")
+Case "flag open fails nothing made" @($f4.made, $f4.error) @("False", "OPEN_DirectoryNotFoundException")
 
 "PASS $($script:pass)/$($script:total)"

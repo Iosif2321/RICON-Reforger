@@ -1,13 +1,16 @@
-# claude, TOOL_ONLY: B0b step 2 - one Play of the own World Editor in the "Server localhost" mode, started from the UI.
-# Only after START -> codex ACK; END after the run. Plan: agora #4691-#4698 (codex chose Game > Play Game in #4693 and
-# the launcher's inspect wait/return in #4694/#4697).
+# claude, TOOL_ONLY: B0b step 2 - one Play of the own World Editor in the "Server localhost" mode, switched on in the UI
+# and started by the launcher after the operator's flag. Only after START -> codex ACK; END after the run. Plan: agora
+# #4691-#4698 (launcher inspect wait/return #4694/#4697), A2 start flag #4731-#4742.
 #   1. Workbench with the Plain world in edit mode (-riconBenchMode=inspect) and the endpoint probe gate
 #      (-riconEndpointProbe=1); wait for the editor window, "[RICON_WBMODE] registered=1", OPEN_ONLY isGameMode=0 and
-#      the launcher's inspect=WAIT_PLAY.
+#      the launcher's inspect=WAIT_FLAG.
 #   2. Strict snapshot B of Game > Play Game Options (both server items Off); InvokePattern of "Server localhost" after
 #      the fresh Off check; strict S1 must differ from B by exactly Server localhost=On (else put back and stop).
-#   3. Invoke of the plain command Game > Play Game (found once; no Toggle, no ExpandCollapse), in a separate runspace
-#      (codex #4717/#4719): the synchronous UIA call blocked run 125954 for ~125 s; observation now goes on meanwhile.
+#   3. Play is started by the launcher, not through the UI (A2, codex #4731-#4736): the UIA Invoke of Game > Play Game
+#      blocked runs 125954/131244, and in 131244 the Script Authorization window of the own PID could not be read while
+#      that call was pending. After S1 and a Tick the runner creates the start flag (CreateNew) inside the repository,
+#      $RICON_LiveProbe:ops/RICON_B0b_start.flag; the launcher (-riconBenchStartFlag=1) sees it and calls
+#      SwitchToGameMode once. The flag must not exist before launch and is deleted in finally.
 #   4. Observation once per second (as wb-run-claude.ps1): the Workbench PID and its descendants (held handles), other
 #      new ArmaReforger* processes, their UDP endpoints/TCP listeners as address class and port, their windows; the
 #      vanilla Script Authorization prompt gets at most one guarded "Yes", only on the Workbench PID; a prompt in another
@@ -40,10 +43,11 @@ $required = @("Server localhost", "Server localhost + PeerTool")
 # launcher markers (codex #4697)
 $mRegistered = '\[RICON_WBMODE\] registered=1'
 $mOpenOnly = '\[RICON_LIVEB\] state=OPEN_ONLY saved=0 isGameMode=0'
-$mWaitPlay = '\[RICON_LIVEB\] inspect=WAIT_PLAY'
+$mWaitFlag = '\[RICON_LIVEB\] inspect=WAIT_FLAG'
 $mEditStable = '\[RICON_LIVEB\] inspect=EDIT_STABLE'
 $failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED|PLAY_REQUESTED|BENCH_CREATED|ENDPOINT_ONLY)|inspect=REFUSED|restart=)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)'
-$earlyPlay = 'kind=ENDPOINT_START|\[RICON_WBMODE\] event=|\[RICON_LIVEB\] inspect=PLAY_ENTERED'
+$earlyPlay = 'kind=ENDPOINT_START|\[RICON_WBMODE\] event=|\[RICON_LIVEB\] inspect=(PLAY_ENTERED|FLAG_SEEN|FLAG_PLAY_REQUESTED)'
+$flagPath = "$repo\tools\RICON_LiveProbe\ops\RICON_B0b_start.flag"
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
@@ -56,12 +60,14 @@ $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
 $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=WorldEditor",
 	"-logLevel", "verbose", "-logsDir", $logsDir, "-noFocus", "-maxFPS", "30",
 	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect",
-	"-riconEndpointProbe=1", "-log-scr-checksum")
+	"-riconEndpointProbe=1", "-riconBenchStartFlag=1", "-log-scr-checksum")
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
 "LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren"
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
+if (Test-Path $flagPath) { "FLAG_STALE (start flag exists before launch; not removed by this run)"; exit 3 }
+"FLAG path=tools/RICON_LiveProbe/ops/RICON_B0b_start.flag absent=True"
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
 
 $srcFiles = Get-ChildItem "$repo\tools\RICON_LiveProbe" -Recurse -Include *.c, *.gproj | Sort-Object FullName
@@ -84,7 +90,7 @@ foreach ($p in @(Get-CimInstance Win32_Process -Property ProcessId)) { $baseline
 $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name })
 
 $tracked = @{}; $netSeen = @{}; $newCount = 0
-$script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:playJob = $null
+$script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:flagMade = $false
 $phase = "START"; $reason = ""; $result = "NOT_REACHED"; $base = $null; $main = [IntPtr]::Zero
 $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
@@ -94,11 +100,6 @@ $wbPid = [uint32]$wbProc.Id
 # One observation step; "" or the stop reason. Before Play nothing may start and no prompt may show.
 function Tick {
 	$t = [int]((Get-Date) - $started).TotalSeconds
-	if ($script:playJob -and -not $script:playJob.done -and (PollAsyncInvoke $script:playJob)) {
-		"PLAY_INVOKE_DONE t=$t afterMs=$([int]((Get-Date) - $script:playJob.started).TotalMilliseconds) result=$($script:playJob.result)" | Write-Host
-		Raw @{ t = $t; kind = "PLAY_INVOKE_DONE"; result = $script:playJob.result }
-		try { $p = $script:playTop.GetCurrentPattern($ECP::Pattern); if (-not (ClosedOk $p.Current.ExpandCollapseState)) { $p.Collapse() } } catch {}
-	}
 	$wbProc.Refresh()
 	if ($wbProc.HasExited) { return "WORKBENCH_EXITED" }
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
@@ -178,9 +179,10 @@ function WaitFor([string]$pattern, [string]$label) {
 function FlipTarget([string]$expected) {
 	$b = Tick
 	if ($b) { return $b }
-	for ($try = 1; $try -le 2; $try++) {
+	for ($try = 1; $try -le 3; $try++) {
 		$h = OpenOptions $script:main $wbPid
-		if ($null -eq $h) { return "OPTIONS_NOT_OPENED" }
+		# not opened: nothing was acted on, so another attempt is safe
+		if ($null -eq $h) { "OPTIONS_NOT_OPENED try=$($try)" | Write-Host; Start-Sleep -Milliseconds 700; continue }
 		$res = ToggleExpected $h.opt $target $expected "Invoke"
 		"INVOKE `"$target`" from=$expected result=$res try=$try" | Write-Host
 		Start-Sleep -Milliseconds 700
@@ -198,7 +200,7 @@ try {
 	"WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
 	Raw @{ t = 0; kind = "START"; pid = $wbPid; logsDir = $logsDir }
 	$phase = "OPEN"
-	foreach ($step in @(@("MAIN", "MAIN_WINDOW"), @($mRegistered, "REGISTERED"), @($mOpenOnly, "OPEN_ONLY"), @($mWaitPlay, "WAIT_PLAY"))) {
+	foreach ($step in @(@("MAIN", "MAIN_WINDOW"), @($mRegistered, "REGISTERED"), @($mOpenOnly, "OPEN_ONLY"), @($mWaitFlag, "WAIT_FLAG"))) {
 		$reason = WaitFor $step[0] $step[1]
 		if ($reason) { break }
 	}
@@ -232,16 +234,14 @@ try {
 	if (-not $reason) { $reason = Tick }
 	if (-not $reason) {
 		$phase = "PLAY"
-		$prep = PrepareMenuCommand $script:main "Game" "Play Game"
-		if ($prep.result -cne "READY") { $reason = "PLAY_$($prep.result)"; "PLAY_PREPARE result=$($prep.result) (not attempted)" }
-		else {
-			# codex #4703/#4717: the attempt counts from the worker start: no pre-Play put-back, no second Play
-			$script:played = $true
-			$script:playTop = $prep.top
-			$script:playJob = StartAsyncInvoke $prep.ip
-			"PLAY_INVOKE_STARTED t=$([int]((Get-Date) - $started).TotalSeconds) (worker runspace)"
-			Raw @{ kind = "PLAY_INVOKE_STARTED" }
-		}
+		# the attempt counts from the flag: the launcher may switch to Play at once; no pre-Play put-back, no second flag,
+		# also when the creation failed half-way (codex #4746)
+		$script:played = $true
+		$fl = NewStartFlag $flagPath
+		$script:flagMade = $fl.made
+		"FLAG_CREATED t=$([int]((Get-Date) - $started).TotalSeconds) made=$($fl.made) error=`"$($fl.error)`""
+		Raw @{ kind = "FLAG_CREATED"; made = $fl.made; error = $fl.error }
+		if ($fl.error) { $reason = "FLAG_CREATE_FAILED" }
 	}
 	# a stop after switching On but before Play: put the target back from On in the same process, then re-read
 	if ($reason -and $script:switchedOn -and -not $script:played) {
@@ -253,11 +253,6 @@ try {
 	if (-not $reason) {
 		$phase = "OBSERVE"
 		$reason = WaitFor $mEditStable "EDIT_STABLE"
-	}
-	if (-not $reason) {
-		# the menus are touched again only after the Play worker has returned (at most 10 s more after EDIT_STABLE)
-		for ($k = 0; $k -lt 10 -and $script:playJob -and -not $script:playJob.done -and -not $reason; $k++) { Start-Sleep -Seconds 1; $reason = Tick }
-		if (-not $reason -and $script:playJob -and -not $script:playJob.done) { $reason = "PLAY_INVOKE_STILL_RUNNING" }
 	}
 	if (-not $reason) {
 		$phase = "RESTORE"
@@ -286,6 +281,8 @@ finally {
 	$elapsed = [int]((Get-Date) - $started).TotalSeconds
 	if ($script:switchedOn -and $result -notin @("RESTORE_OK", "ALREADY_BASELINE", "PUT_BACK_OK")) { $result = "SETTING_MAY_REMAIN_ON" }
 	"STOP reason=$reason phase=$phase result=$result t=$elapsed yesPresses=$($script:yesPressed)"
+	if ($script:flagMade -and (Test-Path $flagPath)) { try { Remove-Item $flagPath -Force; "FLAG_REMOVED" } catch { "FLAG_REMOVE_FAILED $($_.Exception.GetType().Name)" } }
+	elseif ($script:flagMade) { "FLAG_ALREADY_GONE" }
 	$entries = @()
 	foreach ($id in @($tracked.Keys)) {
 		if ($id -eq $wbPid) { continue }
@@ -310,8 +307,6 @@ finally {
 		$alive = if ($h) { [string](-not $h.HasExited) } else { "UNVERIFIED_NO_HANDLE" }
 		"PROC_END pid=$id name=$($tracked[$id].name) descendant=$($tracked[$id].descendant) held=$([bool]$h) alive=$alive"
 	}
-	# the worker only after the own Workbench is gone (its blocked UIA call then fails or returns); never a blocking Stop
-	"PLAY_WORKER " + (CleanupAsyncInvoke $script:playJob 10000)
 	if ($watchdog) { $watchdog.Refresh(); if (-not $watchdog.HasExited) { try { $watchdog.Kill() } catch {} }; "WATCHDOG_END exited=$($watchdog.HasExited)" }
 	"others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
 	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason; result = $result }

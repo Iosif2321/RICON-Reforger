@@ -310,7 +310,9 @@ function FindMenuChild($el, [string]$name, [uint32]$ownPid, [IntPtr]$mainHandle)
 function ExpandRead($el, [string]$label, [uint32]$ownPid, [IntPtr]$mainHandle, [string]$childName = "") {
 	try { $p = $el.GetCurrentPattern($ECP::Pattern) } catch { "  $label NO_EXPAND_COLLAPSE (not opened)" | Write-Host; return $true }
 	try { $p.Expand() } catch { "  $label EXPAND_ERROR $($_.Exception.GetType().Name)" | Write-Host; return $true }
+	# the element's own items can appear late (read 131708: Game showed only the other window's 8 items after 700 ms)
 	Start-Sleep -Milliseconds 700
+	for ($k = 0; $k -lt 12 -and @(OfType $el $CT::MenuItem).Count -eq 0; $k++) { Start-Sleep -Milliseconds 200 }
 	$items = OpenedItems $el $ownPid $mainHandle
 	"  $label OPENED items=$($items.Count)" | Write-Host
 	foreach ($n in @($items | Select-Object -First 40)) { "    ITEM `"$n`"" | Write-Host }
@@ -349,8 +351,9 @@ function OpenOptions([IntPtr]$mainHandle, [uint32]$ownPid) {
 	$opt = FindMenuChild $game "Play Game Options" $ownPid $mainHandle
 	if ($null -eq $opt) { "  ROUNDTRIP no Play Game Options" | Write-Host; $null = CloseOptions @{ game = $game; opt = $null } $mainHandle; return $null }
 	try { $opt.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Options expand error" | Write-Host; return $null }
-	# the submenu items can appear late after a quick re-open (self-test: NO_ITEM on the second open): wait up to 3 s
-	for ($k = 0; $k -lt 15; $k++) {
+	# the submenu items can appear late after a quick re-open (self-test: NO_ITEM on the second open; under load even
+	# a 3 s wait missed once): wait up to 6 s
+	for ($k = 0; $k -lt 30; $k++) {
 		Start-Sleep -Milliseconds 200
 		if (@(OfType $opt $CT::MenuItem).Count -gt 0) { return @{ game = $game; opt = $opt } }
 	}
@@ -458,9 +461,10 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 		$b = & $blocked
 		if ($b) { "  ROUNDTRIP blocked before toggle: $b" | Write-Host; return $false }
 		# a second attempt only when Toggle() was certainly not called (item or pattern not found, state unreadable)
-		for ($try = 1; $try -le 2; $try++) {
+		for ($try = 1; $try -le 3; $try++) {
 			$h = OpenOptions $mainHandle $ownPid
-			if ($null -eq $h) { return $false }
+			# not opened: nothing was acted on, so another attempt is safe
+			if ($null -eq $h) { "  ROUNDTRIP open for action try=$($try) failed" | Write-Host; Start-Sleep -Milliseconds 700; continue }
 			$res = ToggleExpected $h.opt $name $expected $method
 			if ($res -ceq "TOGGLED") { $script:roundTripToggles++ }
 			"  ROUNDTRIP $($method.ToUpper()) `"$name`" from=$expected result=$res try=$try count=$($script:roundTripToggles)" | Write-Host
@@ -474,6 +478,7 @@ function RoundTrip([IntPtr]$mainHandle, [uint32]$ownPid, [string]$target, [scrip
 				return $closed
 			}
 			if ($res -notin @("NO_ITEM", "NO_PATTERN", "READ_ERROR") -or -not $closed) { return $false }
+			Start-Sleep -Milliseconds 500
 		}
 		return $false
 	}
@@ -620,6 +625,24 @@ function CleanupAsyncInvoke($job, [int]$ms) {
 	if ($job.done) { return "DONE " + $job.result }
 	try { [void]$job.ps.BeginStop($null, $null) } catch {}
 	return "WORKER_LEFT"
+}
+
+# a .NET exception from a method call reaches PowerShell wrapped in MethodInvocationException; name the inner one
+function InnerName($x) { if ($x -is [Management.Automation.MethodInvocationException] -and $x.InnerException) { $x = $x.InnerException }; return $x.GetType().Name }
+
+# Creates the A2 start flag with CreateNew; @{ made; error }. made is true as soon as Open succeeded (the launcher may
+# already see the file), and after a failed Open it is whether the file exists, so the caller removes it and never treats
+# the attempt as "before Play" (codex #4746). $close is replaceable only for the self-test.
+function NewStartFlag([string]$path, [scriptblock]$close = { param($s) $s.Close() }) {
+	$fs = $null; $made = $false; $err = ""
+	try {
+		$fs = [IO.File]::Open($path, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
+		$made = $true
+	} catch { $err = "OPEN_" + (InnerName $_.Exception); $made = Test-Path $path }
+	finally {
+		if ($fs) { try { & $close $fs } catch { $err = "CLOSE_" + (InnerName $_.Exception); try { $fs.Dispose() } catch {} } }
+	}
+	return @{ made = $made; error = $err }
 }
 
 # Pure: the only allowed difference after switching the target On is exactly {target}; "" when so, else the reason.
