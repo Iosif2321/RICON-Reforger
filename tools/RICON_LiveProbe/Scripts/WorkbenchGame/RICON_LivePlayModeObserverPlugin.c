@@ -34,7 +34,9 @@ class RICON_LivePlayModeObserverPlugin : WorldEditorPlugin
 			PrintFormat("[RICON_RPLMODE] value=%1 name=%2 match=%3", modes[i], RICON_LiveText.Esc(name), matches);
 		}
 		PrintFormat("[RICON_RPLMODE] checks=4 passed=%1", passed);
-		if (passed == 4)
+		int signalPassed = RICON_LiveBenchLauncherPlugin.CheckPluginSignal();
+		PrintFormat("[RICON_PLUGIN_SIGNAL] checks=4 passed=%1", signalPassed);
+		if (passed == 4 && signalPassed == 4)
 		{
 			Print("[RICON_RPLMODE] done: PASS");
 			Workbench.Exit(0);

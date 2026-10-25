@@ -8,9 +8,57 @@
 //! это значение) и одна RadioManagerEntity (-riconBenchRadioManager=1), обе по имени класса и тоже только в памяти.
 //! Завершение процесса — внешним таймаутом (журнал стенда потоковый).
 //! Запуск — только после START → ACK → run → END на шине и source review codex (#4091).
-[WorkbenchPluginAttribute(name: "RICON: стенд раций в Play", description: "Открыть мир, добавить стенд в памяти, Play", wbModules: {"WorldEditor"})]
+[WorkbenchPluginAttribute(name: "RICON: Play", description: "Начать Play в подготовленном стенде", wbModules: {"WorldEditor"})]
 class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 {
+	protected static bool s_PluginArmed;
+	protected static bool s_PluginRequested;
+
+	//! UI-команда только передаёт сигнал; переход выполняет уже ожидающий поток после возврата Run.
+	override void Run()
+	{
+		WorldEditor editor = Workbench.GetModule(WorldEditor);
+		WorldEditorAPI api;
+		if (editor)
+			api = editor.GetApi();
+		bool edit = api && api.GetWorld() && !api.IsGameMode() && api.GetWorld().IsEditMode();
+		if (!TryPluginSignal(edit))
+		{
+			Print("[RICON_LIVEB] inspect=REFUSED reason=PLUGIN_NOT_ARMED_OR_NOT_EDIT");
+			return;
+		}
+		Print("[RICON_LIVEB] inspect=PLUGIN_SIGNAL_ACCEPTED");
+	}
+
+	protected static bool TryPluginSignal(bool edit)
+	{
+		if (!s_PluginArmed || s_PluginRequested || !edit)
+			return false;
+		s_PluginArmed = false;
+		s_PluginRequested = true;
+		return true;
+	}
+
+	//! Чистая проверка допуска и однократности, вызывается только тестовым CLI-плагином без мира.
+	static int CheckPluginSignal()
+	{
+		if (s_PluginArmed || s_PluginRequested)
+			return 0;
+		int passed;
+		if (!TryPluginSignal(true) && !s_PluginRequested)
+			passed++;
+		s_PluginArmed = true;
+		if (!TryPluginSignal(false) && s_PluginArmed && !s_PluginRequested)
+			passed++;
+		if (TryPluginSignal(true) && !s_PluginArmed && s_PluginRequested)
+			passed++;
+		if (!TryPluginSignal(true) && s_PluginRequested)
+			passed++;
+		s_PluginArmed = false;
+		s_PluginRequested = false;
+		return passed;
+	}
+
 	override void RunCommandline()
 	{
 		WorldEditor editor = Workbench.GetModule(WorldEditor);
@@ -45,11 +93,11 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		}
 		string benchMode;
 		System.GetCLIParam("riconBenchMode", benchMode);
-		string startFlagValue;
-		bool startFlag = System.GetCLIParam("riconBenchStartFlag", startFlagValue);
-		if (startFlag && (startFlagValue != "1" || benchMode != "inspect" || !RICON_LiveEndpointProbe.IsRequested()))
+		string pluginValue;
+		bool pluginStart = System.GetCLIParam("riconBenchPluginStart", pluginValue);
+		if (pluginStart && (pluginValue != "1" || benchMode != "inspect" || !RICON_LiveEndpointProbe.IsRequested()))
 		{
-			Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_REQUIRES_INSPECT_PROBE");
+			Print("[RICON_LIVEB] inspect=REFUSED reason=PLUGIN_REQUIRES_INSPECT_PROBE");
 			return;
 		}
 		if (RICON_LiveEndpointProbe.IsRequested())
@@ -66,7 +114,7 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			if (RICON_LiveEndpointProbe.IsRequested())
 			{
 				m_Api = api;
-				thread ReturnFromInspectedPlay(editor, startFlag);
+				thread ReturnFromInspectedPlay(editor, pluginStart);
 			}
 			return;
 		}
@@ -129,9 +177,9 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 	}
 
 	//! B0b: Play запускает оператор через меню; после наблюдения возвращаемся в edit для восстановления настройки.
-	protected void ReturnFromInspectedPlay(WorldEditor editor, bool startFlag)
+	protected void ReturnFromInspectedPlay(WorldEditor editor, bool pluginStart)
 	{
-		if (startFlag && !StartFromFlag(editor))
+		if (pluginStart && !StartFromPlugin(editor))
 			return;
 		Print("[RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000");
 		int waitSteps;
@@ -167,33 +215,37 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 			Print("[RICON_LIVEB] inspect=REFUSED reason=EDIT_NOT_REACHED");
 	}
 
-	//! Единственный оператор создаёт отсутствующий сигнал только после проверки настройки сервера.
-	protected bool StartFromFlag(WorldEditor editor)
+	//! Ожидание команды не обращается к FileIO: после Sleep его разрешение повторно запрашивалось в 172649.
+	protected bool StartFromPlugin(WorldEditor editor)
 	{
-		string flag = "$RICON_LiveProbe:ops/RICON_B0b_start.flag";
-		if (!FileIO.FileExists("$logs:console.log") || FileIO.FileExists(flag))
+		if (s_PluginArmed || s_PluginRequested)
 		{
-			Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_PATH_OR_STALE");
+			Print("[RICON_LIVEB] inspect=REFUSED reason=PLUGIN_ALREADY_ARMED");
 			return false;
 		}
-		Print("[RICON_LIVEB] inspect=WAIT_FLAG limitMs=120000");
+		s_PluginArmed = true;
+		Print("[RICON_LIVEB] inspect=WAIT_PLUGIN limitMs=120000");
 		for (int i = 0; i < 1200; i++)
 		{
 			if (m_Api.IsGameMode())
 			{
-				Print("[RICON_LIVEB] inspect=REFUSED reason=PLAY_BEFORE_FLAG");
+				s_PluginArmed = false;
+				s_PluginRequested = false;
+				Print("[RICON_LIVEB] inspect=REFUSED reason=PLAY_BEFORE_PLUGIN");
 				return false;
 			}
-			if (FileIO.FileExists(flag))
+			if (s_PluginRequested)
 			{
-				Print("[RICON_LIVEB] inspect=FLAG_SEEN");
+				s_PluginRequested = false;
+				Print("[RICON_LIVEB] inspect=PLUGIN_SEEN");
 				editor.SwitchToGameMode(false, false);
-				Print("[RICON_LIVEB] inspect=FLAG_PLAY_REQUESTED");
+				Print("[RICON_LIVEB] inspect=PLUGIN_PLAY_REQUESTED");
 				return true;
 			}
 			Sleep(100);
 		}
-		Print("[RICON_LIVEB] inspect=REFUSED reason=FLAG_NOT_SEEN");
+		s_PluginArmed = false;
+		Print("[RICON_LIVEB] inspect=REFUSED reason=PLUGIN_NOT_SEEN");
 		return false;
 	}
 
