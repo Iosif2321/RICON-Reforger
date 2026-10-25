@@ -162,6 +162,57 @@ function TeardownDecision($e) {
 	return "KILL_CHILD"
 }
 
+# B0c (codex #4917): the client is a second root the runner owns. Its descendants come from the CIM snapshot plus a row
+# for the root built from the runner's own Process object, so a root that already exited keeps its chain; a process
+# created after the root exited is not taken as its child even if it names the root's (reused) PID as parent.
+function OwnedDescendants($procs, [uint32]$rootPid, [datetime]$rootStart, $rootExit = $null) {
+	$rows = @(foreach ($p in @($procs)) {
+		$id = [uint32]$p.ProcessId
+		if ($id -eq $rootPid) { continue }
+		$pp = [uint32]$p.ParentProcessId
+		if ($pp -eq $rootPid -and $null -ne $rootExit -and $p.CreationDate -and $p.CreationDate -gt $rootExit) { $pp = [uint32]0 }
+		[pscustomobject]@{ ProcessId = $id; ParentProcessId = $pp; CreationDate = $p.CreationDate }
+	})
+	$rows += [pscustomobject]@{ ProcessId = $rootPid; ParentProcessId = [uint32]0; CreationDate = $rootStart }
+	return @(Descendants $rows $rootPid | Where-Object { $_ -ne $rootPid })
+}
+# Stop request and confirmation kept apart (codex #4917): $p is the runner's own Process (or a stand-in with Refresh,
+# HasExited, Kill, WaitForExit). @{ requested; exited; error }; exited only when the process is seen gone afterwards.
+function StopOwned($p, [int]$waitMs = 5000) {
+	$err = ""
+	try { $p.Refresh(); if ($p.HasExited) { return @{ requested = $false; exited = $true; error = "" } } } catch { $err = "REFRESH" }
+	# the innermost exception names the cause (Process.Kill: one MethodInvocationException layer; a script stand-in: more)
+	try { $p.Kill() } catch { $x = $_.Exception; while ($x.InnerException) { $x = $x.InnerException }; $err = "KILL_" + $x.GetType().Name }
+	try { $null = $p.WaitForExit($waitMs) } catch {}
+	$gone = $false
+	try { $p.Refresh(); $gone = [bool]$p.HasExited } catch {}
+	return @{ requested = $true; exited = $gone; error = $err }
+}
+# B0c start condition (codex #4922): only inside the current Play - PLAY_ENTERED and the Listen line logged and no
+# OBSERVATION_END/EDIT_REQUESTED/EDIT_STABLE yet - and with UDP :2001 of the Workbench PID in the CURRENT endpoint
+# snapshot $eps (not the accumulated one: the log and that list keep old lines after the host left Play). "" = ready,
+# else the first condition that fails; OBSERVATION_OVER means the client must not start any more.
+function ClientStartBlock([bool]$played, [string]$text, $eps, [uint32]$wbPid) {
+	if (-not $played) { return "NOT_PLAYED" }
+	if ($text -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED|EDIT_STABLE)') { return "OBSERVATION_OVER" }
+	if ($text -notmatch '\[RICON_LIVEB\] inspect=PLAY_ENTERED') { return "NO_PLAY_ENTERED" }
+	if ($text -notmatch '\[RICON_NET\] cycle=\d+ rplMode=2 rplName=Listen listenPresent=1') { return "NO_LISTEN" }
+	if (@($eps | Where-Object { $_.proto -ceq "UDP" -and [uint32]$_.pid -eq $wbPid -and [int]$_.port -eq 2001 }).Count -eq 0) { return "NO_UDP_2001" }
+	return ""
+}
+# The address chosen before the run must still be the one chosen right before the client starts; the client's
+# arguments already carry it, so a change is never patched in silently (codex #4922). "" or the reason.
+function ClientAddressRecheck($pre, $now) {
+	if ($now.result -ne "OK") { return "ADDRESS_" + $now.result }
+	if ([string]$now.address -cne [string]$pre.address) { return "ADDRESS_CHANGED" }
+	return ""
+}
+# Replaces every non-empty secret (the client's host address, the scratchpad path) by <masked> (codex #4918).
+function MaskText([string]$s, [string[]]$secrets) {
+	foreach ($x in @($secrets)) { if ($x) { $s = $s.Replace($x, "<masked>") } }
+	return $s
+}
+
 # Children first, the root last; the root is in the plan whatever $entries holds (an empty $tracked after a failed first
 # poll still stops it through the Process object Start-Process returned).
 function TeardownPlan([uint32]$rootPid, [bool]$rootExited, $entries) {
@@ -340,11 +391,12 @@ function UnknownWindowStartup([uint32]$id, [bool]$mainFound, [double]$elapsed, [
 	return ""
 }
 # Read only, no pattern call: @{ size; count; buttons; lines } of one window, lines = its first 20 elements.
-function PlayWindowRead([IntPtr]$h) {
+function PlayWindowRead([IntPtr]$h, [string[]]$secrets = @()) {
 	$el = [System.Windows.Automation.AutomationElement]::FromHandle($h)
 	$r = $el.Current.BoundingRectangle
 	$all = @($el.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition))
-	$lines = @($all | Select-Object -First 20 | ForEach-Object { $_.Current.ControlType.ProgrammaticName + " `"" + (Short $_.Current.Name) + "`"" })
+	# masked before Short, so a cut cannot leave part of a secret
+	$lines = @($all | Select-Object -First 20 | ForEach-Object { $_.Current.ControlType.ProgrammaticName + " `"" + (Short (MaskText $_.Current.Name $secrets)) + "`"" })
 	$buttons = @($all | Where-Object { $_.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button }).Count
 	return @{ size = "$([int]$r.Width)x$([int]$r.Height)"; count = $all.Count; buttons = $buttons; lines = $lines }
 }
@@ -353,14 +405,14 @@ function PlayWindowRead([IntPtr]$h) {
 # visible window (handle + title) is read once (class, size, element names; no pattern call) and never gets input. A
 # Script Authorization window there stops the run after the read (a "Yes" is pressed only in the Workbench PID); buttons
 # alone do not stop it (they prove no error, as with the Workbench popup in B0b). "" or the stop reason.
-function ClientWindowStep([uint32]$id, [hashtable]$seen, [int]$t) {
+function ClientWindowStep([uint32]$id, [hashtable]$seen, [int]$t, [string[]]$secrets = @()) {
 	foreach ($h in @([RiconWin]::Visible($id))) {
 		$title = [RiconWin]::TitleOf($h)
 		$key = "$h|$title"
 		if ($seen.ContainsKey($key)) { continue }
 		$seen[$key] = $true
-		"CLIENT_WINDOW t=$t pid=$id handle=$h class=$([RiconWin]::ClassOf($h)) title=`"$(Short $title)`" (passive, read once)" | Write-Host
-		try { $pr = PlayWindowRead $h } catch { "  CW READ_ERROR $($_.Exception.GetType().Name)" | Write-Host; if ($title -ceq $script:AuthTitle) { return "PROMPT_IN_CLIENT" }; continue }
+		"CLIENT_WINDOW t=$t pid=$id handle=$h class=$([RiconWin]::ClassOf($h)) title=`"$(Short (MaskText $title $secrets))`" (passive, read once)" | Write-Host
+		try { $pr = PlayWindowRead $h $secrets } catch { "  CW READ_ERROR $($_.Exception.GetType().Name)" | Write-Host; if ($title -ceq $script:AuthTitle) { return "PROMPT_IN_CLIENT" }; continue }
 		"  CW size=$($pr.size) elements=$($pr.count) buttons=$($pr.buttons)" | Write-Host
 		foreach ($l in $pr.lines) { "  CW $l" | Write-Host }
 		if ($title -ceq $script:AuthTitle) { return "PROMPT_IN_CLIENT" }
@@ -483,8 +535,10 @@ function OpenOptions([IntPtr]$mainHandle, [uint32]$ownPid) {
 	$game = FindTopMenu $mainHandle "Game"
 	if ($null -eq $game) { "  ROUNDTRIP no Game menu" | Write-Host; return $null }
 	try { $game.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Game expand error" | Write-Host; return $null }
-	Start-Sleep -Milliseconds 600
-	$opt = FindMenuChild $game "Play Game Options" $ownPid $mainHandle
+	# the submenu entry can appear late (runs 174552/175912 and the stand-ins under load missed it after a fixed 600 ms):
+	# look for it up to 3 s; only reading, nothing is invoked here
+	$opt = $null
+	for ($k = 0; $k -lt 15 -and $null -eq $opt; $k++) { Start-Sleep -Milliseconds 200; $opt = FindMenuChild $game "Play Game Options" $ownPid $mainHandle }
 	if ($null -eq $opt) { "  ROUNDTRIP no Play Game Options" | Write-Host; $null = CloseOptions @{ game = $game; opt = $null } $mainHandle; return $null }
 	try { $opt.GetCurrentPattern($ECP::Pattern).Expand() } catch { "  ROUNDTRIP Options expand error" | Write-Host; return $null }
 	# the submenu items can appear late after a quick re-open (self-test: NO_ITEM on the second open; under load even

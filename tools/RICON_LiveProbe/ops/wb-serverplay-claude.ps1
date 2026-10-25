@@ -28,13 +28,15 @@
 # AUTH_PROMPT_READ; without a prompt the run stops after WAIT_PLUGIN and one settle as READ_AUTH_NO_PROMPT. In this mode
 # the menus are never opened, nothing is toggled and the plugin command is not invoked.
 # -Client (B0c, codex #4906; the owner allowed the client window on 2026-10-25, agora #4901): the host also gets
-# -riconEndpointSamples=120 and -forceUpdate. Once the log shows PLAY_ENTERED and [RICON_NET] Listen and the Workbench
-# PID has UDP :2001, the runner starts one Diag game client of its own (own Process handle and watchdog, cwd = the
+# -riconEndpointSamples=120 and -forceUpdate. Once the log shows PLAY_ENTERED and [RICON_NET] Listen, no observation end
+# yet, the Workbench PID has UDP :2001 in the current endpoint snapshot and the host address chosen before the run is
+# still the one chosen (ClientStartBlock, ClientAddressRecheck; codex #4922), the runner starts one Diag game client (own Process handle and watchdog, cwd = the
 # repository root): the same gproj, -client <the one local IPv4 of SelectHostAddress>, a new empty profile and logs
 # directory under -OutDir, -riconEndpointProbe=1. Its windows are read once per handle and title and never get input
-# (ClientWindowStep); a Script Authorization window there, or any child process of it, stops the run. A client that
-# exits, writes no console.log within 60 s or logs SCRIPT (E), a lost dependency or a probe config refusal is killed and
-# recorded, and the host still returns to edit and restores the setting. The client is stopped as planned once the
+# (ClientWindowStep); a Script Authorization window there (never answered) or any child process of it stops the client
+# part: the client, then its children through held handles. So does a client that writes no console.log within 60 s
+# or logs SCRIPT (E), a lost dependency or a probe config refusal; a client that exits is recorded. In all these cases
+# the host still returns to edit and restores the setting (plan B0c, 3f2ce83). The client is stopped as planned once the
 # host logs OBSERVATION_END, before the host leaves Play. Teardown stops the client before Workbench.
 # Repo-facing stdout carries address classes, ports, PIDs, switch names and hashes; raw addresses and command lines go to
 # the raw JSONL in -OutDir, outside the repository. Never writes the registry or profile.
@@ -74,8 +76,6 @@ $pluginItem = "RICON: Play"
 $clientExe = "$steam\Arma Reforger\ArmaReforgerSteamDiag.exe"
 # game and Tools addons plus the repository's addons and tools (codex #4908); -addons is not set, as for the host
 $clientAddons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons,$repo\addons,$repo\tools"
-$mPlayEntered = '\[RICON_LIVEB\] inspect=PLAY_ENTERED'
-$mListen = '\[RICON_NET\] cycle=\d+ rplMode=2 rplName=Listen listenPresent=1'
 $clientFail = 'SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added|\[RICON_PROBE\] config=REFUSED'
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
@@ -99,6 +99,9 @@ if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 "PLUGIN menu=`"$pluginMenu`" item=`"$pluginItem`""
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
+# the client's host address and the scratchpad path, masked in every repo-facing line (codex #4918); set once here and
+# by the -Client preflight below, never reset later (codex #4935)
+$script:secrets = @()
 if ($Client) {
 	if (-not (Test-Path $clientExe)) { "CLIENT_EXE_MISSING"; exit 3 }
 	$ha = LocalHostAddress
@@ -107,8 +110,9 @@ if ($Client) {
 	$ppName = "$logsDir-peer1-profile"; $clName = "$logsDir-peer1-logs"
 	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"", "-window", "-screenWidth", "960", "-screenHeight", "540",
 		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
-		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-riconEndpointProbe=1")
+		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-logLevel", "verbose", "-log-scr-checksum", "-riconEndpointProbe=1")
 	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
+	$script:secrets = @($ha.address, $OutDir)
 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
 if ($Client) {
@@ -140,59 +144,101 @@ $logDirsBefore = @(Get-ChildItem $logsRoot -Directory | ForEach-Object { $_.Name
 $tracked = @{}; $netSeen = @{}; $newCount = 0
 $script:mainFound = $false; $script:played = $false; $script:switchedOn = $false; $script:invokeJob = $null
 $script:playWin = @{}   # Play title -> visible handle already read once
-# B0c client: NOT_STARTED -> RUNNING -> EXITED | KILLED_<why>; started at most once
+# B0c client: NOT_STARTED -> RUNNING -> EXITED | STOPPED_<why> | STOP_FAILED_<why>; started at most once
 $script:clientProc = $null; $script:clientPid = [uint32]0; $script:clientState = "NOT_STARTED"; $script:clientSeen = @{}
-$script:clientAt = $null; $script:clientLog = ""; $script:clientDog = $null
+$script:clientAt = $null; $script:clientStart = $null; $script:clientLog = ""; $script:clientDog = $null
 
+# A stop is requested, then confirmed or not (codex #4917); only a confirmed exit counts as stopped.
 function StopClient([string]$why) {
-	try { $script:clientProc.Refresh(); if (-not $script:clientProc.HasExited) { $script:clientProc.Kill() } } catch { "  CLIENT_KILL_ERROR $($_.Exception.GetType().Name)" | Write-Host }
-	$script:clientState = "KILLED_$why"
-	"CLIENT_KILLED why=$why" | Write-Host
+	$r = StopOwned $script:clientProc 5000
+	$script:clientState = if ($r.exited) { "STOPPED_$why" } else { "STOP_FAILED_$why" }
+	"CLIENT_STOP why=$why requested=$($r.requested) exited=$($r.exited) error=`"$($r.error)`"" | Write-Host
 }
-# One client step inside Tick; "" or the stop reason. A failing client is only killed: the host goes on to edit and restore.
-function ClientTick([int]$t, [string]$text, $procs) {
+# The client part only (plan B0c in LIVE-peer-local-plan-codex.md, 3f2ce83): the client root, then its children through
+# their held handles; the host goes on to edit and restores the setting. Done once.
+function StopClientPart([string]$why) {
+	if ($script:clientState -eq "RUNNING") { StopClient $why }
+	foreach ($k in @($tracked.Keys | Where-Object { $tracked[$_].client })) {
+		$h = $tracked[$k].held
+		if (-not $h) { "CLIENT_CHILD_STOP pid=$k skipped=NO_HANDLE" | Write-Host; continue }
+		$r = StopOwned $h 3000
+		"CLIENT_CHILD_STOP pid=$k requested=$($r.requested) exited=$($r.exited) error=`"$($r.error)`"" | Write-Host
+	}
+}
+# Children of the own client root, also after the root exited (codex #4917): each gets a held handle at first sight,
+# so teardown can stop it through that handle like a Workbench descendant. Returns the PIDs unrolled; the caller
+# collects them with @() (codex #4930: "return , $kids" made an empty list one element there).
+function ClientChildren([int]$t, $procs) {
+	if (-not $script:clientProc) { return }
+	$exitAt = $null
+	try { $script:clientProc.Refresh(); if ($script:clientProc.HasExited) { $exitAt = $script:clientProc.ExitTime } } catch {}
+	$kids = @(OwnedDescendants $procs $script:clientPid $script:clientStart $exitAt)
+	foreach ($k in $kids) {
+		$row = @($procs | Where-Object { [uint32]$_.ProcessId -eq $k })[0]
+		if (-not $tracked.ContainsKey($k)) {
+			$tracked[$k] = @{ name = $row.Name; ppid = [uint32]$row.ParentProcessId; created = $row.CreationDate; descendant = $true; held = (OpenHeld $k $row.CreationDate); client = $true }
+			Raw @{ t = $t; kind = "CLIENT_CHILD"; pid = $k; ppid = [uint32]$row.ParentProcessId; name = $row.Name; cmd = $row.CommandLine }
+		} elseif (-not $tracked[$k].held) {
+			# seen first by the general scan as a new game process without a handle
+			$tracked[$k].held = OpenHeld $k $row.CreationDate; $tracked[$k].descendant = $true; $tracked[$k].client = $true
+		}
+	}
+	return $kids
+}
+# One client step inside Tick; "" or the stop reason. A failing client is only stopped: the host goes on to edit and restore.
+function ClientTick([int]$t, [string]$text, $procs, $eps) {
 	if ($script:clientState -eq "NOT_STARTED") {
-		$udp = @($netSeen.Keys | Where-Object { $_ -like "$wbPid|UDP|*|2001" }).Count -gt 0
-		if (-not ($script:played -and $udp -and $text -match $mPlayEntered -and $text -match $mListen)) { return "" }
+		$why = ClientStartBlock $script:played $text $eps $wbPid
+		if ($why -eq "OBSERVATION_OVER") { $script:clientState = "NOT_STARTED_OBSERVATION_OVER"; "CLIENT_NOT_STARTED t=$t reason=OBSERVATION_OVER" | Write-Host; return "" }
+		if ($why) { return "" }
+		# the address once more, right before the start; the host goes on either way
+		$why = ClientAddressRecheck $ha (LocalHostAddress)
+		if ($why) { $script:clientState = "NOT_STARTED_$why"; "CLIENT_NOT_STARTED t=$t reason=$why" | Write-Host; return "" }
 		$script:clientState = "RUNNING"
 		$script:clientProc = Start-Process -FilePath $clientExe -ArgumentList $clientArgs -PassThru -WorkingDirectory $repo
 		$null = $script:clientProc.Handle
 		$script:clientPid = [uint32]$script:clientProc.Id
+		$script:clientStart = $script:clientProc.StartTime
 		$script:clientAt = Get-Date
 		$script:clientDog = StartWatchdog $script:clientProc ([int][math]::Max(1000, ($deadline - (Get-Date)).TotalMilliseconds + 20000))
 		"CLIENT_STARTED t=$t pid=$($script:clientPid) watchdog=$($script:clientDog.Id)" | Write-Host
 		Raw @{ t = $t; kind = "CLIENT_STARTED"; pid = $script:clientPid; address = $ha.address; args = ($clientArgs -join " ") }
 		return ""
 	}
+	if (-not $script:clientProc) { return "" }   # NOT_STARTED_<why>: no client root, nothing to watch
+	$kids = @(ClientChildren $t $procs)
+	$fresh = @($kids | Where-Object { -not $tracked[$_].reported })
+	if ($fresh.Count -gt 0) {
+		foreach ($k in $fresh) { $tracked[$k].reported = $true }
+		$names = @($procs | Where-Object { $fresh -contains [uint32]$_.ProcessId } | ForEach-Object { $_.Name }) -join ","
+		"CHILD_OF_CLIENT t=$t pids=$($fresh -join ',') names=$names (read only; the client part is stopped)" | Write-Host
+		StopClientPart "CHILD_OF_CLIENT"
+		if ($script:clientState -notlike "STOP*") { $script:clientState = "STOPPED_CHILD_OF_CLIENT" }
+		return ""
+	}
 	if ($script:clientState -ne "RUNNING") { return "" }
-	$script:clientProc.Refresh()
 	if ($script:clientProc.HasExited) {
 		$script:clientState = "EXITED"
 		"CLIENT_EXITED t=$t code=$($script:clientProc.ExitCode) afterS=$([int]((Get-Date) - $script:clientAt).TotalSeconds)" | Write-Host
 		return ""
 	}
-	# planned end before the host leaves Play: its EDIT_REQUESTED ends the session, and a client "disconnected" dialog
-	# must not stop the run before the setting is restored; checked before the client's windows are read
-	if ($text -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED)') { StopClient "HOST_OBSERVATION_END"; return "" }
-	$kids = @(Descendants $procs $script:clientPid | Where-Object { $_ -ne $script:clientPid })
-	if ($kids.Count -gt 0) {
-		$names = @($procs | Where-Object { $kids -contains [uint32]$_.ProcessId } | ForEach-Object { $_.Name }) -join ","
-		"CHILD_OF_CLIENT t=$t pids=$($kids -join ',') names=$names (read only)" | Write-Host
-		return "CHILD_OF_CLIENT"
-	}
-	$w = ClientWindowStep $script:clientPid $script:clientSeen $t
-	if ($w) { return "DIALOG_$w" }
+	# planned end before the host leaves Play; not a guarantee that the client goes before the session ends (codex #4912),
+	# only that it is stopped before Workbench. Checked before the client's windows are read.
+	if ($text -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED)') { StopClientPart "HOST_OBSERVATION_END"; return "" }
+	$w = ClientWindowStep $script:clientPid $script:clientSeen $t $script:secrets
+	# a permission prompt in the client is never answered; the client part stops, the host restores
+	if ($w) { "CLIENT_DIALOG t=$t kind=$w (read only)" | Write-Host; StopClientPart $w; return "" }
 	if (-not $script:clientLog) {
 		$f = @(Get-ChildItem $cl.path, $pp.path -Recurse -Filter console.log -File -ErrorAction SilentlyContinue | Select-Object -First 1)
 		if ($f.Count -gt 0) {
 			$script:clientLog = $f[0].FullName
 			"CLIENT_LOG t=$t under=$(if ($f[0].FullName.StartsWith($cl.path)) { 'logsDir' } else { 'profile' })" | Write-Host
-		} elseif (((Get-Date) - $script:clientAt).TotalSeconds -gt 60) { "CLIENT_NO_LOG t=$t" | Write-Host; StopClient "NO_LOG"; return "" }
+		} elseif (((Get-Date) - $script:clientAt).TotalSeconds -gt 60) { "CLIENT_NO_LOG t=$t" | Write-Host; StopClientPart "NO_LOG"; return "" }
 	}
 	if ($script:clientLog) {
 		# as LogText: Get-Content shares the file with the writing game
 		$ct = Get-Content $script:clientLog -Raw -ErrorAction SilentlyContinue
-		if ($ct -match $clientFail) { "CLIENT_LOG_FAILURE t=$t" | Write-Host; StopClient "LOG_FAILURE" }
+		if ($ct -match $clientFail) { "CLIENT_LOG_FAILURE t=$t" | Write-Host; StopClientPart "LOG_FAILURE" }
 	}
 	return ""
 }
@@ -267,11 +313,12 @@ function Tick {
 		return "AUTH_PROMPT_READ"
 	}
 	if ($Client) {
-		$c = ClientTick $t $text $procs
+		$c = ClientTick $t $text $procs $eps
 		if ($c) { return $c }
 	}
 	foreach ($id in $live) {
-		if ($Client -and $id -eq $script:clientPid) { continue }   # the own client: ClientTick reads its windows
+		# the own client and its children: ClientTick reads the client's windows and stops the client part for a child
+		if ($Client -and ($id -eq $script:clientPid -or ($tracked.ContainsKey($id) -and $tracked[$id].client))) { continue }
 		if ($id -eq $wbPid) {
 			$inPlay = $script:played -and $text -match '\[RICON_LIVEB\] inspect=PLUGIN_SEEN' -and $text -notmatch $mEditStable
 			$u = UnknownWindowStartup $wbPid $script:mainFound $t $inPlay
@@ -458,8 +505,8 @@ finally {
 	"STOP reason=$reason phase=$phase result=$result t=$elapsed yesPresses=$($script:yesPressed)$(if ($Client) { " client=$($script:clientState)" })"
 	# the own client first (codex #4906), through the handle Start-Process returned
 	if ($script:clientProc) {
-		$script:clientProc.Refresh()
-		if (-not $script:clientProc.HasExited) { "TEARDOWN pid=$($script:clientPid) action=KILL_CLIENT"; try { $script:clientProc.Kill() } catch { "  KILL_ERROR pid=$($script:clientPid) $($_.Exception.GetType().Name)" } }
+		$cs = StopOwned $script:clientProc 5000
+		"TEARDOWN pid=$($script:clientPid) action=$(if ($cs.requested) { 'KILL_CLIENT' } else { 'CLIENT_EXITED' }) exited=$($cs.exited) error=`"$($cs.error)`""
 	}
 	$entries = @()
 	foreach ($id in @($tracked.Keys)) {
@@ -481,8 +528,16 @@ finally {
 	"PROC_END pid=$wbPid name=root alive=$(-not $wbProc.HasExited)"
 	if ($script:clientProc) {
 		$script:clientProc.Refresh()
-		"PROC_END pid=$($script:clientPid) name=client alive=$(-not $script:clientProc.HasExited) exitCode=$(if ($script:clientProc.HasExited) { $script:clientProc.ExitCode })"
-		if ($script:clientDog) { $script:clientDog.Refresh(); if (-not $script:clientDog.HasExited) { try { $script:clientDog.Kill() } catch {} }; "CLIENT_WATCHDOG_END exited=$($script:clientDog.HasExited)" }
+		$clientGone = $script:clientProc.HasExited
+		"PROC_END pid=$($script:clientPid) name=client alive=$(-not $clientGone) exitCode=$(if ($clientGone) { $script:clientProc.ExitCode })"
+		# the client's watchdog stays while the client is not confirmed gone (codex #4917)
+		if ($script:clientDog) {
+			if ($clientGone) { $script:clientDog.Refresh(); if (-not $script:clientDog.HasExited) { try { $script:clientDog.Kill() } catch {} }; "CLIENT_WATCHDOG_END exited=$($script:clientDog.HasExited)" }
+			else { "CLIENT_WATCHDOG_LEFT pid=$($script:clientDog.Id) (client still alive)" }
+		}
+		$leftKids = @($tracked.Keys | Where-Object { $tracked[$_].client -and $tracked[$_].held -and -not $tracked[$_].held.HasExited })
+		$noHandle = @($tracked.Keys | Where-Object { $tracked[$_].client -and -not $tracked[$_].held })
+		"CLEANUP client=$(if ($clientGone -and $leftKids.Count -eq 0 -and $noHandle.Count -eq 0) { 'OK' } else { 'FAILED' }) clientAlive=$(-not $clientGone) clientChildrenAlive=$($leftKids.Count) clientChildrenUnverified=$($noHandle.Count)"
 	}
 	foreach ($id in @($tracked.Keys)) {
 		if ($id -eq $wbPid -or ($script:clientProc -and $id -eq $script:clientPid)) { continue }
@@ -500,7 +555,7 @@ finally {
 if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
-	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|SCRIPT\s*\(E\)" | Select-Object -First 400 | ForEach-Object { $_.Line }
+	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)" | Select-Object -First 400 | ForEach-Object { MaskText $_.Line $script:secrets }
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }
 if ($Client) {
@@ -510,7 +565,7 @@ if ($Client) {
 	if ($script:clientLog) {
 		$clines = Get-Content $script:clientLog
 		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count
-		$clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_NET\]|SCRIPT\s*\(E\)" | Select-Object -First 300 | ForEach-Object { "C " + $_.Line }
+		$clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)" | Select-Object -First 300 | ForEach-Object { "C " + (MaskText $_.Line $script:secrets) }
 		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length
 	}
 }

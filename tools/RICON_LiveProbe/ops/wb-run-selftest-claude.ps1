@@ -42,6 +42,21 @@ Case "host addr not private" (SelectHostAddress @((A "100.70.1.2" 19)) @(19)).re
 $two = SelectHostAddress @($lan, (A "10.1.1.5" 21)) @(20, 21)
 Case "host addr two dhcp" @($two.result, $two.count) @("AMBIGUOUS", "2")
 Case "host addr empty" (SelectHostAddress @() @()).result "NONE"
+Case "host addr recheck same" (ClientAddressRecheck $r (SelectHostAddress $set @(19, 20))) ""
+Case "host addr recheck changed" (ClientAddressRecheck $r @{ result = "OK"; address = "192.168.1.21" }) "ADDRESS_CHANGED"
+Case "host addr recheck ambiguous" (ClientAddressRecheck $r $two) "ADDRESS_AMBIGUOUS"
+# B0c client start (codex #4922): only in the current Play, with UDP 2001 of the host in the current snapshot
+$lp = "[RICON_LIVEB] inspect=PLAY_ENTERED`n[RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1`n"
+$ep = @(@{ proto = "UDP"; addr = "0.0.0.0"; port = 2001; pid = [uint32]500 })
+Case "client start ready" (ClientStartBlock $true $lp $ep 500) ""
+Case "client start not played" (ClientStartBlock $false $lp $ep 500) "NOT_PLAYED"
+Case "client start no play entered" (ClientStartBlock $true "[RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1`n" $ep 500) "NO_PLAY_ENTERED"
+Case "client start no listen" (ClientStartBlock $true "[RICON_LIVEB] inspect=PLAY_ENTERED`n" $ep 500) "NO_LISTEN"
+Case "client start after observation" (ClientStartBlock $true ($lp + "[RICON_LIVEB] inspect=OBSERVATION_END samples=120`n") $ep 500) "OBSERVATION_OVER"
+Case "client start after edit stable" (ClientStartBlock $true ($lp + "[RICON_LIVEB] inspect=EDIT_STABLE checks=51`n") $ep 500) "OBSERVATION_OVER"
+Case "client start no udp now" (ClientStartBlock $true $lp @() 500) "NO_UDP_2001"
+Case "client start udp other pid" (ClientStartBlock $true $lp $ep 501) "NO_UDP_2001"
+Case "client start tcp only" (ClientStartBlock $true $lp @(@{ proto = "TCP_LISTEN"; addr = "0.0.0.0"; port = 2001; pid = [uint32]500 }) 500) "NO_UDP_2001"
 Case "addr fe80" (AddrClass "fe80::1") "LINKLOCAL_V6"
 Case "addr fd" (AddrClass "fd12:3456::1") "PRIVATE_V6"
 Case "addr public" (AddrClass "8.8.8.8") "OTHER"
@@ -329,6 +344,41 @@ $f = FakeDlg $script:AuthTitle $msg $btns "clientauth"
 Case "client prompt stops" (ClientWindowStep ([uint32]$f.p.Id) @{} 4 6>$null) "PROMPT_IN_CLIENT"
 Case "client prompt no click" (Clicks $f).Count 0
 Done $f
+# secrets are masked in the window lines, also past the 80-character cut (codex #4918)
+$sec = "10.99.88.77"
+$f = FakeDlg ("Arma Reforger " + $sec) ("x" * 75 + " " + $sec) "" "clientmask"
+$out = @(ClientWindowStep ([uint32]$f.p.Id) @{} 5 @($sec) 6>&1 | ForEach-Object { "$_" })
+Case "client window lines masked" (@($out | Where-Object { $_ -like "*10.99*" -or $_ -like "*88.77*" }).Count) 0
+Case "client window mask shown" (@($out | Where-Object { $_ -like "*<masked>*" }).Count -ge 1) $true
+Done $f
+Case "mask text" (MaskText "a 10.1.2.3 b C:\tmp\x" @("10.1.2.3", "C:\tmp")) "a <masked> b <masked>\x"
+Case "mask text no secrets" (MaskText "abc" @()) "abc"
+# the client as a second owned root (codex #4917): its chain survives the root's exit, a reused PID does not join it
+$t0 = Get-Date "2026-10-25T19:00:00"
+function PRow($id, $pp, $s) { [pscustomobject]@{ ProcessId = $id; ParentProcessId = $pp; CreationDate = $t0.AddSeconds($s) } }
+$tree = @((PRow 100 4 0), (PRow 101 100 5), (PRow 102 101 6), (PRow 200 4 1))
+Case "owned kids root alive" (@(OwnedDescendants $tree 100 $t0) | Sort-Object) @("101", "102")
+Case "owned kids root gone" (@(OwnedDescendants @((PRow 101 100 5), (PRow 102 101 6)) 100 $t0 $t0.AddSeconds(10)) | Sort-Object) @("101", "102")
+Case "owned kids reused pid" @(OwnedDescendants @((PRow 101 100 5), (PRow 103 100 20)) 100 $t0 $t0.AddSeconds(10)) @("101")
+Case "owned kids before root" @(OwnedDescendants @((PRow 104 100 -5)) 100 $t0).Count 0
+# stop request versus confirmed exit, with stand-ins (codex #4917)
+function Stub([bool]$exited, [bool]$killThrows) {
+	$o = [pscustomobject]@{ gone = $exited; throws = $killThrows; kills = 0 }
+	$o | Add-Member -MemberType ScriptProperty -Name HasExited -Value { $this.gone }
+	$o | Add-Member -MemberType ScriptMethod -Name Refresh -Value { }
+	$o | Add-Member -MemberType ScriptMethod -Name Kill -Value { $this.kills++; if ($this.throws) { throw [ComponentModel.Win32Exception]::new(5) }; $this.gone = $true }
+	$o | Add-Member -MemberType ScriptMethod -Name WaitForExit -Value { param($ms) $this.gone }
+	return $o
+}
+$s1 = Stub $false $true
+$r = StopOwned $s1 10
+Case "stop kill throws not confirmed" @($r.requested, $r.exited, $r.error, $s1.kills) @("True", "False", "KILL_Win32Exception", "1")
+$s2 = Stub $false $false
+$r = StopOwned $s2 10
+Case "stop kill confirmed" @($r.requested, $r.exited, $r.error) @("True", "True", "")
+$s3 = Stub $true $false
+$r = StopOwned $s3 10
+Case "stop already gone" @($r.requested, $r.exited, $s3.kills) @("False", "True", "0")
 $pp = NewPeerProfile $WorkDir ("ricon-peer-selftest-" + [Guid]::NewGuid().ToString("N").Substring(0, 8))
 Case "peer profile new" @($pp.ok, (Test-Path $pp.path), @(Get-ChildItem $pp.path -Force).Count) @("True", "True", "0")
 Set-Content -Path (Join-Path $pp.path "x.txt") -Value "x"
@@ -470,7 +520,10 @@ Case "roundtrip invoke exclusive result" $rt "TOGGLED_ON|RESTORE_OK"
 Case "roundtrip invoke exclusive actions" $script:roundTripToggles 3
 DoneOpts $fo
 $fo = FakeOptions $false $false "invstale"
-$h = OpenOptions $fo.h ([uint32]$fo.p.Id)
+# up to 3 opens, as StrictSnapshot does: a fresh stand-in once missed "Play Game Options" on the first open (run on
+# a82c788 + #4917 fixes), as the real editor does after a world load
+$h = $null
+for ($try = 1; $try -le 3 -and $null -eq $h; $try++) { $h = OpenOptions $fo.h ([uint32]$fo.p.Id) 6>$null; if ($null -eq $h) { Start-Sleep -Milliseconds 500 } }
 Case "invoke expected stale" (ToggleExpected $h.opt "Server localhost" "On" "Invoke") "STALE"
 Case "invoke bad method" (ToggleExpected $h.opt "Server localhost" "Off" "Click") "BAD_METHOD"
 Case "invoke stale left state" ((ReadToggles $h.opt).map["Server localhost"]) "Off"
@@ -664,5 +717,48 @@ Case "empty menu closed" (ClosedOk (FindTopMenu $ah "Empty").GetCurrentPattern($
 "INFO plugins opens: missing=$($prepM.opens) ready=$($prepP.opens) (more than 1 = the stand-in showed no item at first)"
 if (-not $ap.HasExited) { $ap.Kill() }
 Remove-Item $mk -Force -ErrorAction SilentlyContinue
+
+# The runner's own ClientTick (from its AST, codex #4922, #4926), without processes or UI: a refused start stays
+# refused on the next Ticks, starts nothing and looks for no client children. Last block: it stubs Start-Process and
+# LocalHostAddress for the rest of this script.
+$spAst = [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot "wb-serverplay-claude.ps1"), [ref]$null, [ref]$null)
+foreach ($d in $spAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -in @("StopClient", "StopClientPart", "ClientChildren", "ClientTick") }, $false)) { . ([scriptblock]::Create($d.Extent.Text)) }
+# the masking list in the runner's real order of assignments (codex #4935): empty first, then the -Client preflight, never reset
+$asg = @($spAst.FindAll({ param($n) $n -is [System.Management.Automation.Language.AssignmentStatementAst] -and $n.Left.Extent.Text -eq '$script:secrets' }, $true) |
+	Sort-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Right.Extent.Text })
+Case "secrets assignments in order" ($asg -join " ; ") '@() ; @($ha.address, $OutDir)'
+$ha = @{ address = "192.168.1.20" }; $OutDir = "C:\scratch\x"
+. ([scriptblock]::Create('$script:secrets = ' + $asg[-1]))
+Case "secrets mask after the last assignment" (MaskText "to 192.168.1.20 in C:\scratch\x\log" $script:secrets) "to <masked> in <masked>\log"
+$script:startCalls = 0; $script:addrCalls = 0; $script:addrNext = @{ result = "OK"; address = "192.168.1.20" }
+function Start-Process { $script:startCalls++; throw "no process in the self-test" }
+function LocalHostAddress { $script:addrCalls++; return $script:addrNext }
+$wbPid = [uint32]500; $ha = @{ result = "OK"; address = "192.168.1.20" }; $tracked = @{}; $script:secrets = @()
+$script:played = $true; $script:clientProc = $null; $script:clientPid = [uint32]0; $script:clientStart = $null
+$over = $lp + "[RICON_LIVEB] inspect=OBSERVATION_END samples=120`n"
+$script:clientState = "NOT_STARTED"
+Case "tick refused after observation" @((ClientTick 90 $over @() $ep 6>$null), $script:clientState, $script:startCalls, $script:addrCalls) @("", "NOT_STARTED_OBSERVATION_OVER", "0", "0")
+Case "tick after refusal stays idle" @((ClientTick 91 $over @() $ep 6>$null), $script:clientState, $script:startCalls, $tracked.Count) @("", "NOT_STARTED_OBSERVATION_OVER", "0", "0")
+$script:clientState = "NOT_STARTED"; $script:addrNext = @{ result = "OK"; address = "192.168.1.21" }
+Case "tick refused on changed address" @((ClientTick 60 $lp @() $ep 6>$null), $script:clientState, $script:startCalls, $script:addrCalls) @("", "NOT_STARTED_ADDRESS_CHANGED", "0", "1")
+Case "tick after address refusal stays idle" @((ClientTick 61 $lp @() $ep 6>$null), $script:clientState, $script:startCalls, $script:addrCalls) @("", "NOT_STARTED_ADDRESS_CHANGED", "0", "1")
+$script:clientState = "NOT_STARTED"
+Case "tick waits without udp" @((ClientTick 50 $lp @() @() 6>$null), $script:clientState, $script:startCalls) @("", "NOT_STARTED", "0")
+# a live client root (stand-in, a PID no process has) without and with one child (codex #4930: the empty child list
+# came back as one element and stopped a healthy client)
+function Raw($o) { }
+Case "children without client" @(ClientChildren 1 @()).Count 0
+$cdir = Join-Path $WorkDir ("ricon-client-selftest-" + [Guid]::NewGuid().ToString("N").Substring(0, 8)); $null = New-Item -ItemType Directory -Path $cdir
+$cl = @{ path = $cdir }; $pp = @{ path = $cdir }; $script:clientSeen = @{}; $script:clientLog = ""; $script:clientDog = $null
+$script:clientProc = Stub $false $false; $script:clientPid = [uint32]4000000001; $script:clientStart = $t0; $script:clientAt = Get-Date
+$script:clientState = "RUNNING"; $tracked = @{}
+$alone = @((PRow 4000000001 4 0))
+Case "tick live client no children" @((ClientTick 70 $lp $alone $ep 6>$null), $script:clientState, $script:clientProc.kills, $tracked.Count) @("", "RUNNING", "0", "0")
+Case "children of live client none" @(ClientChildren 71 $alone).Count 0
+$withKid = @((PRow 4000000001 4 0), (PRow 4000000002 4000000001 5))
+Case "tick live client one child" @((ClientTick 72 $lp $withKid $ep 6>$null), $script:clientState, $script:clientProc.kills, $tracked.Count, [bool]$tracked[[uint32]4000000002].client) @("", "STOPPED_CHILD_OF_CLIENT", "1", "1", "True")
+Case "tick child reported once" @((ClientTick 73 $lp $withKid $ep 6>&1 | Where-Object { "$_" -like "CHILD_OF_CLIENT*" }).Count, $script:clientProc.kills) @("0", "1")
+Remove-Item $cdir -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item function:Start-Process, function:LocalHostAddress, function:Raw -ErrorAction SilentlyContinue
 
 "PASS $($script:pass)/$($script:total)"
