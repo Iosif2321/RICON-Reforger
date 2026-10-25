@@ -662,3 +662,75 @@ SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="Arm
   PLAYMODE_TERMS_IN_DIFF=0
 SOURCES_STABLE
 RAW <scratchpad>\ricon-b0b-serverplay-claude-20261025-154043-raw.jsonl (local only)
+
+# ======================================================================================================================
+# Read of the pre-Play Script Authorization window (agora #4804-#4811): START #4810 / ACK #4809 / END #4811.
+# Runner 07e5897 (wb-serverplay 0F5C02B1 / lib 4033FFBD) with -ReadAuthOnly: same A2 launch; the prompt is read through
+# UIA names only, never a pattern call; menus, toggles and the flag are not reached in this mode.
+# Observed: at t=10 a window of the own PID titled "Script Authorization Required"; its text element read
+#   "Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:174' to access potentially dangerous method
+#   'FileIO.FileExists'?" with the buttons Yes, Yes to All, No, No to All; nothing was pressed (yesPresses=0).
+#   The log again ends with OPEN_ONLY and has no WAIT_FLAG. Registry SHA B0146B67389ADF02 before and after, diff 0.
+# Result: the cause of 154043 is confirmed by the window text. FileIO.FileExists in a WorkbenchGame plugin is a
+#   "potentially dangerous method" and needs script authorization at its call site, so the A2 file signal cannot run
+#   without a new kind of Yes. The agreed rule allows one Yes, and only on the vanilla :1101 prompt, so this prompt was
+#   not pressed.
+
+--- ricon-b0b-authread-claude-20261025-154527
+# read only (wb-serverplay 0F5C02B1 -ReadAuthOnly / lib 4033FFBD): STOP AUTH_PROMPT_READ phase=OPEN result=NOT_REACHED; console.log sha256 da368b9070cb58d70ad61cb79f2f9f0a45e502f294fca3aad5ea309ab2339aed
+# stdout authread-a2.txt sha256 f1d7e10ab8e40787960facd956f0862ceeabe46a9995d0908fd44ec14b7b3756 (55 lines, UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0b-authread-claude-20261025-154527 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -riconBenchStartFlag=1 -log-scr-checksum
+RUNNER 0F5C02B155B7DEDF LIB 4033FFBD0FDD2FA7
+LIMITS seconds=60 watchdogSeconds=90 settle=15 maxChildren=3 readAuthOnly=True
+FLAG path=tools/RICON_LiveProbe/ops/RICON_B0b_start.flag absent=True
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2221"
+PID 22120 started 15:45:28
+WATCHDOG pid=7092 limitMs=90000
+MAIN_WINDOW t=10 title="World Editor - Unnamed empty world"
+AUTH_PROMPT before Play (read only) t=10 handle=395514
+AUTH_READ try=1 t=12
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c:174' to access potentially dangerous method 'FileIO.FileExists'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+STOP reason=AUTH_PROMPT_READ phase=OPEN result=NOT_REACHED t=12 yesPresses=0
+TEARDOWN pid=22120 action=KILL_ROOT
+PROC_END pid=22120 name=root alive=False
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0b-authread-claude-20261025-154527/console.log
+scriptErrors=0
+15:45:33.167    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+15:45:33.167    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: e655d126
+15:45:33.167    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+15:45:33.167    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+15:45:33.167    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+15:45:33.168    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+15:45:33.168    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+15:45:33.170    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+15:45:33.170    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 994f8367
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 792e74b9
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+15:45:35.116    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+15:45:37.878  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+15:45:38.389  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+15:45:38.389  SCRIPT       : [RICON_WBMODE] registered=1
+15:45:38.389  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+LOGSHA DA368B9070CB58D70AD61CB79F2F9F0A45E502F294FCA3AAD5EA309AB2339AED size 869230
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2225"
+  REGSHA before=B0146B67389ADF02 after=B0146B67389ADF02
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW <scratchpad>\ricon-b0b-authread-claude-20261025-154527-raw.jsonl (local only)
