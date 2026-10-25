@@ -400,10 +400,13 @@ $snapP = StrictSnapshot $ph ([uint32]$pp.Id) $null @("Server localhost", "Server
 Case "strict snapshot fake" (MapText $snapP) "Server localhost=Off | Server localhost + PeerTool=Off"
 Case "invoke command options refused" (InvokeMenuCommand $ph "Game" "Play Game Options") "NOT_A_COMMAND"
 Case "invoke command toggle refused" (InvokeMenuCommand $ph "Game" "Script Debug Mode") "NOT_A_COMMAND"
+Case "invoke refused not attempted" $script:menuCommandAttempted $false
 Case "invoke command missing" (InvokeMenuCommand $ph "Game" "Stop Game") "NO_ITEM"
+Case "invoke missing not attempted" $script:menuCommandAttempted $false
 Case "invoke command no menu" (InvokeMenuCommand $ph "Run" "Play Game") "NO_MENU"
 Case "invoke refused cases no click" (Test-Path $clickFile) $false
 Case "invoke command play" (InvokeMenuCommand $ph "Game" "Play Game") "INVOKED"
+Case "invoke play attempted" $script:menuCommandAttempted $true
 Start-Sleep -Milliseconds 500
 Case "invoke command clicked once" (@(Get-Content $clickFile -ErrorAction SilentlyContinue)) @("Play Game")
 if (-not $pp.HasExited) { $pp.Kill() }

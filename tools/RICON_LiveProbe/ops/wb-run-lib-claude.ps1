@@ -539,7 +539,10 @@ function StrictSnapshot([IntPtr]$mainHandle, [uint32]$ownPid, $baseKeys, [string
 # Invokes one command of a top-level menu: the child must be found exactly once by exact name among the open menu's
 # items and must be a plain command (InvokePattern, no TogglePattern, no ExpandCollapse). Returns INVOKED, NO_MENU,
 # NO_ITEM, AMBIGUOUS, NOT_A_COMMAND, NO_INVOKE, INVOKE_ERROR or NOT_CLOSED (the menu stayed open after Invoke).
+# $script:menuCommandAttempted (codex #4703) turns true right before Invoke() is called and stays so: whatever the result,
+# the caller must then treat the command as possibly executed.
 function InvokeMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
+	$script:menuCommandAttempted = $false
 	$top = FindTopMenu $mainHandle $menu
 	if ($null -eq $top) { return "NO_MENU" }
 	try { $top.GetCurrentPattern($ECP::Pattern).Expand() } catch { return "NO_MENU" }
@@ -556,6 +559,7 @@ function InvokeMenuCommand([IntPtr]$mainHandle, [string]$menu, [string]$item) {
 		$hits[0].TryGetCurrentPattern($ECP::Pattern, [ref]$x)) { & $close; return "NOT_A_COMMAND" }
 	$ip = $null
 	if (-not $hits[0].TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$ip)) { & $close; return "NO_INVOKE" }
+	$script:menuCommandAttempted = $true
 	try { $ip.Invoke() } catch { & $close; return "INVOKE_ERROR" }
 	Start-Sleep -Milliseconds 700
 	& $close

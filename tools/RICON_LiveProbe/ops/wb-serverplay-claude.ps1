@@ -223,12 +223,16 @@ try {
 			} else { $script:switchedOn = $true }
 		}
 	}
+	if (-not $reason) { $reason = Tick }
 	if (-not $reason) {
 		$phase = "PLAY"
+		$script:menuCommandAttempted = $false
 		$r = InvokeMenuCommand $script:main "Game" "Play Game"
-		"PLAY_INVOKE result=$r t=$([int]((Get-Date) - $started).TotalSeconds)"
-		Raw @{ kind = "PLAY_INVOKE"; result = $r }
-		if ($r -cne "INVOKED") { $reason = "PLAY_$r" } else { $script:played = $true }
+		# codex #4703: once Invoke() was attempted, Play may have started whatever $r says: no pre-Play put-back, no retry
+		$script:played = [bool]$script:menuCommandAttempted
+		"PLAY_INVOKE result=$r attempted=$($script:played) t=$([int]((Get-Date) - $started).TotalSeconds)"
+		Raw @{ kind = "PLAY_INVOKE"; result = $r; attempted = $script:played }
+		if ($r -cne "INVOKED") { $reason = "PLAY_$r" }
 	}
 	# a stop after switching On but before Play: put the target back from On in the same process, then re-read
 	if ($reason -and $script:switchedOn -and -not $script:played) {
