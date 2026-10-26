@@ -1,0 +1,79 @@
+{
+  "level": "INSTALLED_SOURCE_READ",
+  "worldStarted": false,
+  "clientStarted": false,
+  "vendorCodeCopied": false,
+  "reads": [
+    {
+      "run": "ricon-wbreader-codex-b0e-base-spawn-20261026-183022",
+      "source": "Game/Respawn/Logic/SCR_SpawnLogic.c",
+      "startLine": 525,
+      "endLine": 539,
+      "logSha256": "b964dce721186de970e310838f78972c3ef239d40a578d3677532766968db948",
+      "printedLines": 15,
+      "scriptErrors": 0,
+      "steamStatsFailure": true,
+      "resourceLeaks": true
+    },
+    {
+      "run": "ricon-wbreader-codex-b0e-auto-spawn-20261026-183043",
+      "source": "Game/Respawn/Logic/SCR_AutoSpawnLogic.c",
+      "startLine": 31,
+      "endLine": 45,
+      "logSha256": "8bccebec38d93c541a40cdbe057b90dd23c9ab5a44e1185943d5fb3ae86a8955",
+      "printedLines": 15,
+      "scriptErrors": 0,
+      "steamStatsFailure": true,
+      "resourceLeaks": true
+    },
+    {
+      "run": "ricon-wbreader-codex-b0e-auto46-20261026-183209",
+      "source": "Game/Respawn/Logic/SCR_AutoSpawnLogic.c",
+      "startLine": 46,
+      "endLine": 60,
+      "logSha256": "a17f6fee382fcacb388d799489fe3750ccfa49f4a2679784cfcb254236d2f3e4",
+      "printedLines": 15,
+      "scriptErrors": 0,
+      "steamStatsFailure": true,
+      "resourceLeaks": true
+    },
+    {
+      "run": "ricon-wbreader-codex-b0e-auto61-20261026-183320",
+      "source": "Game/Respawn/Logic/SCR_AutoSpawnLogic.c",
+      "startLine": 61,
+      "endLine": 75,
+      "logSha256": "d86c9ca86381c3bf96fc0240ee46321201df7e57b4c6b371ac6394f4dc6b38e3",
+      "printedLines": 15,
+      "scriptErrors": 0,
+      "steamStatsFailure": true,
+      "resourceLeaks": true
+    },
+    {
+      "run": "ricon-wbreader-codex-b0e-auto-request-20261026-183342",
+      "source": "Game/Respawn/Logic/SCR_AutoSpawnLogic.c",
+      "startLine": 76,
+      "endLine": 90,
+      "logSha256": "df853e3a074b4325ebbf485a4c8d1923e2cee851e0896c1a93ad009f793df564",
+      "printedLines": 15,
+      "scriptErrors": 0,
+      "steamStatsFailure": true,
+      "resourceLeaks": true
+    }
+  ],
+  "resourceReads": [
+    {
+      "run": "ricon-wbreader-codex-b0e-auto-prefabs-20261026-183706",
+      "result": "MATCHED",
+      "logSha256": "5c9bcf152a25d84b55b2e7460a13e572d62b5186c657781a0419d850ea7526fa",
+      "scriptErrors": 0,
+      "printedLines": 14
+    },
+    {
+      "run": "ricon-wbreader-codex-b0e-plain-override-20261026-183807",
+      "result": "INCOMPLETE_CANNOT_OPEN",
+      "logSha256": "bca94c3a8d4a6e7bf9fe7ccc0939ccf20927ac06ac27e9073049e7c9a7e1645b",
+      "scriptErrors": 1,
+      "printedLines": 0
+    }
+  ]
+}
