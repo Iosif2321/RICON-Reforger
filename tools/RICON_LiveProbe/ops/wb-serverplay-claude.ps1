@@ -32,7 +32,8 @@
 # yet, the Workbench PID has UDP :2001 in the current endpoint snapshot and the host address chosen before the run is
 # still the one chosen (ClientStartBlock, ClientAddressRecheck; codex #4922), the runner starts one Diag game client (own Process handle and watchdog, cwd = the
 # repository root): the same gproj, -client <the one local IPv4 of SelectHostAddress>, a new empty profile and logs
-# directory under -OutDir, -riconEndpointProbe=1. Its windows are read once per handle and title and never get input
+# directory under -OutDir, -riconEndpointProbe=1, -username RICON_B0c_peer1 (after the duplicate identity kick of run
+# 202016, codex #4953; the summary prints only counts of that name and of "same identity" lines). Its windows are read once per handle and title and never get input
 # (ClientWindowStep); a Script Authorization window there (never answered) or any child process of it stops the client
 # part: the client, then its children through held handles. So does a client that writes no console.log within 60 s
 # or logs SCRIPT (E), a lost dependency or a probe config refusal; a client that exits is recorded. In all these cases
@@ -77,6 +78,10 @@ $clientExe = "$steam\Arma Reforger\ArmaReforgerSteamDiag.exe"
 # game and Tools addons plus the repository's addons and tools (codex #4908); -addons is not set, as for the host
 $clientAddons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons,$repo\addons,$repo\tools"
 $clientFail = 'SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added|\[RICON_PROBE\] config=REFUSED'
+# run 202016: with -noBackend the host matched the client to the host player by the same Steam name and dropped it
+# (kickCode 0x00060002). The SDK's -username (Page_CLI, Platform Service, ENF_DEVELOPER = diag executables) overrides
+# that name for local test clients (codex #4953); only the client gets it, the host and its identity check stay as they are
+$clientUser = "RICON_B0c_peer1"
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
@@ -109,7 +114,7 @@ if ($Client) {
 	if ($ha.result -ne "OK") { "HOST_ADDRESS_$($ha.result) (no client is started)"; exit 3 }
 	$ppName = "$logsDir-peer1-profile"; $clName = "$logsDir-peer1-logs"
 	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"", "-window", "-screenWidth", "960", "-screenHeight", "540",
-		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
+		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-username", $clientUser, "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
 		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-logLevel", "verbose", "-log-scr-checksum", "-riconEndpointProbe=1")
 	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
 	$script:secrets = @($ha.address, $OutDir)
@@ -556,6 +561,8 @@ if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)" | Select-Object -First 400 | ForEach-Object { MaskText $_.Line $script:secrets }
+	# counts only: the host player's lines carry the owner's profile name
+	if ($Client) { "IDENTITY host sameIdentity=" + @($lines | Select-String -SimpleMatch "same identity").Count + " peerName=" + @($lines | Select-String -SimpleMatch $clientUser).Count }
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }
 if ($Client) {
@@ -564,7 +571,7 @@ if ($Client) {
 	"client=$($script:clientState) log=$(if ($script:clientLog) { 'found' } else { 'none' }) profileFiles=$(@(Get-ChildItem $pp.path -Recurse -File -Force -ErrorAction SilentlyContinue).Count) logFiles=$(@(Get-ChildItem $cl.path -Recurse -File -Force -ErrorAction SilentlyContinue).Count)"
 	if ($script:clientLog) {
 		$clines = Get-Content $script:clientLog
-		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count
+		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count + " clientPeerName=" + @($clines | Select-String -SimpleMatch $clientUser).Count
 		$clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)" | Select-Object -First 300 | ForEach-Object { "C " + (MaskText $_.Line $script:secrets) }
 		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length
 	}
