@@ -27,6 +27,10 @@ with tempfile.TemporaryDirectory(prefix="ricon-b0d-check-") as folder:
         path.write_text(fixture(mode), encoding="utf-8")
         _, rows, report = check_log(path, mode, 1, "abcdef01")
         assert len(rows) == 1 and report["events"] == 5
+    empty = fixture().replace("players=2,members=1|2", "players=0,members=NONE").replace("connected=1", "connected=0")
+    path.write_text(empty, encoding="utf-8")
+    _, rows, report = check_log(path, 1, 1, "abcdef01")
+    assert rows[0]["members"] == set() and report["connectedMismatch"] == []
     path.write_text(fixture().replace("connected=1", "connected=0"), encoding="utf-8")
     _, _, report = check_log(path, 1, 1, "abcdef01")
     assert report["connectedMismatch"] == [dict(sample=1, players=["1", "2"])]
@@ -58,4 +62,4 @@ with tempfile.TemporaryDirectory(prefix="ricon-b0d-check-") as folder:
         pass
     else:
         raise AssertionError("Не обнаружено расхождение stream/dump")
-print("B0d checker: 2 корректных журнала, диагностика переходного расхождения и 12 повреждений проверены.")
+print("B0d checker: 3 корректных журнала, включая пустой список игроков, диагностика переходного расхождения и 12 повреждений проверены.")

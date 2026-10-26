@@ -52,7 +52,7 @@ def check_log(path, mode, limit, crc):
             assert f["spawnLogicClass"] == ("NONE" if f["spawnLogic"] == "0" else "UNKNOWN")
         else:
             assert f["spawnLogicClass"] not in ("", "NONE", "UNKNOWN")
-        members = set(f["members"].split("|"))
+        members = set() if f["members"] == "NONE" else set(f["members"].split("|"))
         assert len(members) == int(f["players"])
         states = {}
         for offset, player in enumerate(("1", "2"), 1):
