@@ -788,6 +788,14 @@ Case "runner peer line matching only" ("14:45:06.977    NETWORK   (D): ### Match
 Case "runner peer line inside other text" ("14:45:07.000 SCRIPT       : echo NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n" -match $peerJoined) $false
 Case "runner peer line without time stamp" ("NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n" -match $peerJoined) $false
 Remove-Variable Client
+# tagged log lines in stdout (before B0d): room for the stream and the dump of 1024 events per side, a cut is printed
+$a = @($spAst.FindAll({ param($x) $x -is [System.Management.Automation.Language.AssignmentStatementAst] -and $x.Left.Extent.Text -eq '$taggedCap' }, $true))
+Case "runner assigns taggedCap once" $a.Count 1
+. ([scriptblock]::Create($a[0].Extent.Text))
+Case "runner taggedCap fits two dumps of 1024" ($taggedCap -ge 2 * 1024 + 100) $true
+$firsts = @($spAst.FindAll({ param($x) $x -is [System.Management.Automation.Language.CommandAst] -and $x.GetCommandName() -eq "Select-Object" -and $x.Extent.Text -match '-First' }, $true) | ForEach-Object { ($_.Extent.Text -split '-First\s+', 2)[1].Split(' ')[0] })
+Case "runner tagged excerpts use taggedCap" (@($firsts | Where-Object { $_ -eq '$taggedCap' }).Count) 2
+Case "runner tagged cuts reported" (@($spAst.FindAll({ param($x) $x -is [System.Management.Automation.Language.StringConstantExpressionAst] -or $x -is [System.Management.Automation.Language.ExpandableStringExpressionAst] }, $true) | Where-Object { $_.Value -match '^(C )?TAGGED_TRUNCATED shown=' }).Count) 2
 $script:startCalls = 0; $script:addrCalls = 0; $script:addrNext = @{ result = "OK"; address = "192.168.1.20" }
 function Start-Process { $script:startCalls++; throw "no process in the self-test" }
 function LocalHostAddress { $script:addrCalls++; return $script:addrNext }
