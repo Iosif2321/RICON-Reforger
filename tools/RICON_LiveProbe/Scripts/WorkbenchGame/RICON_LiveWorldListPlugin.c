@@ -134,6 +134,8 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 		}
 	}
 
+	static const int MAX_OVERRIDE_NAMES = 16;  //!< имён полей в строке overrides (codex #5070)
+
 	//! Поля появления контейнера компонента: m_bEnableRespawn (readOk, значение или UNKNOWN, задано ли здесь) и объект
 	//! m_SpawnLogic (есть ли, класс, задан ли здесь). overrides — только имена полей, заданных именно в этом контейнере:
 	//! так видно, что меняет мир, без угадывания прочих имён. Только getter-ы BaseContainer.
@@ -155,20 +157,29 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			logicClass = logic.GetClassName();
 		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 container=1 enableReadOk=%5 enable=%6 enableSetDirect=%7 logic=%8 logicSetDirect=%9",
 			w, entity, component, scope, readOk, value, node.IsVariableSetDirectly("m_bEnableRespawn"), logicClass, node.IsVariableSetDirectly("m_SpawnLogic"));
+		// codex #5070: не более MAX_OVERRIDE_NAMES имён и MAX_VALUE_CHARS символов, остальное — числом more
 		string overrides;
+		int listed = 0;
+		int more = 0;
 		int n = node.GetNumVars();
 		for (int v = 0; v < n; v++)
 		{
 			string name = node.GetVarName(v);
 			if (!node.IsVariableSetDirectly(name))
 				continue;
-			if (!overrides.IsEmpty())
+			if (listed >= MAX_OVERRIDE_NAMES || overrides.Length() + name.Length() + 1 > MAX_VALUE_CHARS)
+			{
+				more++;
+				continue;
+			}
+			if (listed > 0)
 				overrides += "|";
 			overrides += name;
+			listed++;
 		}
-		if (overrides.IsEmpty())
+		if (listed == 0)
 			overrides = "-";
-		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 vars=%5 overrides=%6", w, entity, component, scope, n, overrides);
+		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 vars=%5 overrides=%6 more=%7", w, entity, component, scope, n, overrides, more);
 	}
 
 	//! Строковые переменные сущности (GetDataVarType == STRING, тот же приём, что в RICON_AcpViewPlugin), не более MAX_STRING_VARS;
