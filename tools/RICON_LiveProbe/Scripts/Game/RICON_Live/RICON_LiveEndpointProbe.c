@@ -134,6 +134,41 @@ class RICON_LiveEndpointProbe
 		m_bBindingObserved = true;
 	}
 
+	//! Удалённому клиенту API обещает только собственный respawn-компонент.
+	static bool CanObserveRespawn(bool server, int localPlayerId, int playerId)
+	{
+		return server || (localPlayerId > 0 && localPlayerId == playerId);
+	}
+
+	//! shortcut: фиксированная пара стенда 1/2; расширить при переходе к многопользовательскому прибору.
+	protected void ObservePlayer(int playerId, int localPlayerId)
+	{
+		PlayerManager manager = GetGame().GetPlayerManager();
+		string text = "cycle=" + m_iCycle.ToString() + ",manager=" + Bit(manager != null);
+		if (!manager)
+		{
+			Note("ENDPOINT_PLAYER", playerId, text);
+			return;
+		}
+		PlayerController controller = manager.GetPlayerController(playerId);
+		IEntity controlled = manager.GetPlayerControlledEntity(playerId);
+		IEntity controllerEntity;
+		if (controller)
+			controllerEntity = controller.GetControlledEntity();
+		text = text + ",connected=" + Bit(manager.IsPlayerConnected(playerId));
+		text = text + ",pc=" + Bit(controller != null) + ",controlled=" + Bit(controlled != null);
+		text = text + ",pcControlled=" + Bit(controllerEntity != null);
+		// Два null не доказывают совпадение назначенной сущности.
+		text = text + ",sameEntity=" + Bit(controlled != null && controlled == controllerEntity);
+		bool respawnObservable = CanObserveRespawn(Replication.IsServer(), localPlayerId, playerId);
+		text = text + ",respawnObservable=" + Bit(respawnObservable);
+		string respawn = "UNKNOWN";
+		if (respawnObservable)
+			respawn = Bit(manager.GetPlayerRespawnComponent(playerId) != null);
+		text = text + ",respawn=" + respawn;
+		Note("ENDPOINT_PLAYER", playerId, text);
+	}
+
 	void Tick(BaseWorld world, float timeSlice)
 	{
 		if (!m_bRunning)
@@ -166,7 +201,36 @@ class RICON_LiveEndpointProbe
 		text = text + ",members=" + PlayerIds();
 		int rplMode = RplSession.Mode();
 		text = text + ",rplMode=" + rplMode.ToString();
+		BaseGameMode gameMode = GetGame().GetGameMode();
+		text = text + ",gameMode=" + Bit(gameMode != null);
+		string gameModeRespawn = "UNKNOWN";
+		SCR_RespawnSystemComponent respawnSystem;
+		if (gameMode)
+		{
+			gameModeRespawn = Bit(gameMode.FindComponent(RespawnSystemComponent) != null);
+			respawnSystem = SCR_RespawnSystemComponent.Cast(gameMode.FindComponent(SCR_RespawnSystemComponent));
+		}
+		text = text + ",gameModeRespawn=" + gameModeRespawn;
+		string respawnEnabled = "UNKNOWN";
+		string spawnLogic = "UNKNOWN";
+		string spawnLogicClass = "UNKNOWN";
+		if (respawnSystem)
+		{
+			respawnEnabled = Bit(respawnSystem.IsRespawnEnabled());
+			SCR_SpawnLogic logic = respawnSystem.GetSpawnLogic();
+			spawnLogic = Bit(logic != null);
+			spawnLogicClass = "NONE";
+			if (logic)
+				spawnLogicClass = logic.ClassName();
+		}
+		text = text + ",respawnEnabled=" + respawnEnabled + ",spawnLogic=" + spawnLogic;
+		text = text + ",spawnLogicClass=" + RICON_LiveText.Esc(spawnLogicClass);
+		text = text + ",spawnPoints=" + SCR_SpawnPoint.CountSpawnPoints().ToString();
+		text = text + ",factionManager=" + Bit(GetGame().GetFactionManager() != null);
+		text = text + ",loadoutManager=" + Bit(GetGame().GetLoadoutManager() != null);
 		Note("ENDPOINT_SAMPLE", playerId, text);
+		ObservePlayer(1, playerId);
+		ObservePlayer(2, playerId);
 		m_Radios.ReadEntity(playerId, controlled);
 		if (m_iSamples >= m_iSampleLimit)
 			Stop("LIMIT");

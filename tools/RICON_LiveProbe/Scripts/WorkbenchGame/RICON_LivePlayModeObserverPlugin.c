@@ -45,7 +45,15 @@ class RICON_LivePlayModeObserverPlugin : WorldEditorPlugin
 				samplePassed++;
 		}
 		PrintFormat("[RICON_PROBE_CONFIG] checks=8 passed=%1", samplePassed);
-		if (passed == 4 && signalPassed == 4 && samplePassed == 8)
+		int respawnPassed;
+		if (RICON_LiveEndpointProbe.CanObserveRespawn(true, 1, 2)) respawnPassed++;
+		if (RICON_LiveEndpointProbe.CanObserveRespawn(true, -1, 2)) respawnPassed++;
+		if (RICON_LiveEndpointProbe.CanObserveRespawn(false, 2, 2)) respawnPassed++;
+		if (!RICON_LiveEndpointProbe.CanObserveRespawn(false, 2, 1)) respawnPassed++;
+		if (!RICON_LiveEndpointProbe.CanObserveRespawn(false, -1, -1)) respawnPassed++;
+		if (!RICON_LiveEndpointProbe.CanObserveRespawn(false, 0, 0)) respawnPassed++;
+		PrintFormat("[RICON_RESPAWN_SCOPE] checks=6 passed=%1", respawnPassed);
+		if (passed == 4 && signalPassed == 4 && samplePassed == 8 && respawnPassed == 6)
 		{
 			Print("[RICON_RPLMODE] done: PASS");
 			Workbench.Exit(0);
