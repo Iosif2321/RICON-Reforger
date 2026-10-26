@@ -1,0 +1,98 @@
+{
+  "level": "WORKBENCH_EDITOR_READ",
+  "play": false,
+  "saveCalled": false,
+  "settingsCompared": false,
+  "worlds": {
+    "plain": {
+      "run": "ricon-b0e-worldlist-codex-20261026-193156",
+      "logSha256": "e9e3770e5a3e897cede72950f1116b1acba7bd5c6224c31c017f7b6ab7ffec95",
+      "scriptErrors": 0,
+      "configs": [
+        "w=1 entity=17 component=24 scope=world container=1 enableReadOk=1 enable=false enableSetDirect=1 logic=SCR_SpawnLogic logicSetDirect=1",
+        "w=1 entity=17 component=24 scope=ancestor container=1 enableReadOk=1 enable=true enableSetDirect=0 logic=SCR_AutoSpawnLogic logicSetDirect=1"
+      ],
+      "summary": "w=1 summary entities=21 nullSources=0 noInstance=0 noInstanceGameModeClass=0 distinctClasses=14 gameModes=1 isGameModeAfter=0",
+      "printedClassCounts": [
+        "w=1 class=GenericWorldEntity count=1",
+        "w=1 class=GenericTerrainEntity count=1",
+        "w=1 class=GenericWorldPPEffect count=8",
+        "w=1 class=GenericWorldFogEntity count=1",
+        "w=1 class=GenericWorldLightEntity count=1",
+        "w=1 class=SCR_CameraManager count=1",
+        "w=1 class=TimeAndWeatherManagerEntity count=1",
+        "w=1 class=GameEnvironmentProbeEntity count=1",
+        "w=1 class=SCR_MPDestructionManager count=1",
+        "w=1 class=SCR_AIWorld count=1",
+        "w=1 class=SCR_BaseGameMode count=1",
+        "w=1 class=SCR_FactionManager count=1",
+        "w=1 class=EditorCommentEntity count=1",
+        "w=1 class=SCR_LoadoutManager count=1"
+      ],
+      "worldListCRC": "68ee0a92",
+      "exitCode": 0,
+      "sourceStable": true,
+      "workbenchProcessesAfter": 0,
+      "engineDiagnostics": {
+        "steamStatsFailure": true,
+        "resourceLeaks": true
+      }
+    },
+    "mptest": {
+      "run": "ricon-b0e-mptest-codex-20261026-193423",
+      "logSha256": "a56d9802ef369cd60af8701631b9142c940d7e16f80cc663a79fe334c2c41bdb",
+      "scriptErrors": 0,
+      "configs": [
+        "w=1 entity=13 component=24 scope=world container=1 enableReadOk=1 enable=true enableSetDirect=0 logic=SCR_AutoSpawnLogic logicSetDirect=1",
+        "w=1 entity=13 component=24 scope=ancestor container=1 enableReadOk=1 enable=true enableSetDirect=0 logic=NONE logicSetDirect=0"
+      ],
+      "summary": "w=1 summary entities=25 nullSources=0 noInstance=0 noInstanceGameModeClass=0 distinctClasses=17 gameModes=1 isGameModeAfter=0",
+      "printedClassCounts": [
+        "w=1 class=GenericWorldEntity count=1",
+        "w=1 class=GenericTerrainEntity count=1",
+        "w=1 class=GenericWorldPPEffect count=8",
+        "w=1 class=SCR_DestructionManager count=1",
+        "w=1 class=GenericWorldFogEntity count=1",
+        "w=1 class=GenericWorldLightEntity count=1",
+        "w=1 class=SCR_BaseGameMode count=1",
+        "w=1 class=SCR_CameraManager count=1",
+        "w=1 class=SCR_FactionManager count=1",
+        "w=1 class=TimeAndWeatherManagerEntity count=1",
+        "w=1 class=RadioManagerEntity count=1",
+        "w=1 class=ScriptedChatEntity count=1",
+        "w=1 class=EnvironmentProbeEntity count=1",
+        "w=1 class=SCR_SpawnPoint count=2",
+        "w=1 class=SoundWorld count=1"
+      ],
+      "worldListCRC": "68ee0a92",
+      "exitCode": 0,
+      "sourceStable": true,
+      "workbenchProcessesAfter": 0,
+      "engineDiagnostics": {
+        "steamStatsFailure": true,
+        "resourceLeaks": true
+      }
+    }
+  },
+  "sourceManifest": {
+    "tools/RICON_LiveProbe/addon.gproj": "8b47f08ce19736da62a06f25b5af521c6e71828aa087fa63197ca2617acf0e90",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c": "b876294edd237c52b444eba4eb69bfae34b7b9b5a1199a91613e977a25dd6249",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c": "28864b6789cae34e0988284dbbbdccd17e0fb7cdbf58da871e44ee942eaaa39f",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveJournal.c": "2ff202a89bac221e21d48a3faed7be6e27e9c3bce0feee8c007784b3045544db",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveObserver.c": "5594c10cfddb4857d5e3b30f9d4087ae3772ca94253d98adcfcd173a7bcf6f9d",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c": "6e4c52d5aef91dc2dd8a5283bd5b5f5389037e4a50abba64ab481e655e035d3b",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c": "7323f6351365fb56f78dcd545266e6bc741e905be87fc11ea648abe51f308fc6",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveRadioReader.c": "b05e0a3ec5bfcd63b407e4990c6bf424bb8d7a7c4d371204df82469eaf54bf75",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveText.c": "6e373594d9578600a2e2a0b4340c2b8eb7fc804cd816d7ea580134e241351d7c",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c": "7c0800a70045486dd242524d46542dcb5b3401b6ddd4b10e1f2326c38392f09f",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c": "2a3d75a10decaee575805026959982d33311d523b01e291e5b69eb2bbd25c18b",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c": "861dab2acc6aeee610875ccb5fca1fe991fdfcee76d9f9962f38f37aa9996d58",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c": "65a13e42275b66e5a48997e9497e5b8bde921bf96680f0fb322dde8ff0bd4a9e",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c": "5cc8a1568737897d956f8b82ecb4e3a14c5b0c11b5163764021dc0d772a7319f",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c": "7e3927491c93594209ba1669504d9d167c1bfef0a90af313dcf5b997e989a9b7",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c": "27c5d87cc5682c44b7aa5565a8cbd181935b04950622d92de4cd84f21092fd3a",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c": "6025dabebb96af869451fa8641c120afc6c208d39a75808bf46d0f3d78d9693f",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c": "d1955a4340fa15f1d9aa35e0294e82e891d4eadbb74908b33558623f8f78e5fc",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c": "ce1dc27df80c14f4c748b964fb8456c75aacfcfbf148e560617105767ccb2964"
+  }
+}

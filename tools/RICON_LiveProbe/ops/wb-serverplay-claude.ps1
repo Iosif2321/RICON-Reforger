@@ -48,6 +48,9 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Seconds = 240,
       [int]$Settle = 15,
       [int]$MaxChildren = 3,
+      # B0e: только два уже проверенных штатных мира; прежний Plain остаётся значением по умолчанию.
+      [ValidateSet("{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent", "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")]
+      [string]$World = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
       [switch]$ReadAuthOnly,
       [switch]$Client,
       [switch]$DryRun)
@@ -62,7 +65,6 @@ $myGames = "$env:USERPROFILE\Documents\My Games"
 $logsRoot = "$myGames\ArmaReforgerWorkbench\logs"
 $regKey = "HKCU\Software\Bohemia Interactive"
 $profileDir = "$myGames\ArmaReforgerWorkbench\profile"
-$world = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent"
 $target = "Server localhost"
 $required = @("Server localhost", "Server localhost + PeerTool")
 # launcher markers (codex #4697)
