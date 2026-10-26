@@ -16,6 +16,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [Parameter(Mandatory = $true)][string]$OutDir,
       [int]$Seconds = 120,
       [string]$World = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
+      [ValidateSet("RICON_LiveBenchLauncherPlugin", "RICON_LiveWorldListPlugin")][string]$Plugin = "RICON_LiveBenchLauncherPlugin",
       [string]$BenchMode = "",
       [string]$Extra = "",
       [switch]$PressYesOnce,
@@ -41,7 +42,7 @@ $regKey = "HKCU\Software\Bohemia Interactive"
 $profileDir = "$myGames\ArmaReforgerWorkbench\profile"
 $secondMarker = '\[RICON_LIVEB\] restart=SECOND_PLAY_REQUESTED'
 # launcher refusals, the B0b mode-observer check (codex #4626) and script errors end the run at once
-$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added'
+$failPattern = '\[RICON_LIVEB\] (state=(NO_WORLD_ARGUMENT|NO_WORLD_EDITOR|NO_API|PLACEMENT_REFUSED|SETUP_REFUSED)|restart=REFUSED)|\[RICON_LIVEW\] (state=(NO_WORLD_EDITOR|NO_WORLD_ARGUMENT)|w=\d+ state=(NO_API|OPEN .* opened=0))|\[RICON_WBMODE\] registered=0|SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added'
 
 # --- argument checks ---
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
@@ -55,13 +56,15 @@ foreach ($e in @($Extra -split ',' | Where-Object { $_ -ne "" })) {
 }
 if ($BenchMode -and $BenchMode -notmatch '^[a-z]+$') { "BAD_BENCHMODE"; exit 2 }
 if ($RestartRun -and -not $PressYesOnce) { "RESTART_RUN_NEEDS_PRESS_YES_ONCE"; exit 2 }
+# the world list (B0d, codex #5061) only reads one world: no bench mode, no Play, no Yes
+if ($Plugin -eq "RICON_LiveWorldListPlugin" -and ($BenchMode -or $PressYesOnce -or $RestartRun)) { "WORLDLIST_READ_ONLY"; exit 2 }
 if ($StopCount -lt 1 -or $MaxChildren -lt 0 -or $Seconds -lt 10 -or $Seconds -gt 900) { "BAD_LIMITS"; exit 2 }
 
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $log = "$logsRoot\$logsDir\console.log"
 $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
 $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=WorldEditor",
-	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$World`"", "-logLevel", "verbose",
+	"-plugin=$Plugin", $(if ($Plugin -eq "RICON_LiveWorldListPlugin") { "-riconListWorld1=`"$World`"" } else { "-riconBenchWorld=`"$World`"" }), "-logLevel", "verbose",
 	"-log-scr-checksum", "-logsDir", $logsDir, "-forceUpdate", "-noFocus", "-maxFPS", "30")
 if ($BenchMode) { $argList += "-riconBenchMode=$BenchMode" }
 $argList += $extraArgs
@@ -215,7 +218,9 @@ finally {
 if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
-	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|SCRIPT\s*\(E\)" | Select-Object -First 300 | ForEach-Object { $_.Line }
+	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_LIVEW\]|SCRIPT\s*\(E\)")
+	$tagged | Select-Object -First 400 | ForEach-Object { $_.Line }
+	if ($tagged.Count -gt 400) { "TAGGED_TRUNCATED shown=400 total=$($tagged.Count)" }
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }
 foreach ($d in @(Get-ChildItem $logsRoot -Directory | Where-Object { $logDirsBefore -notcontains $_.Name -and $_.Name -ne $logsDir })) {
