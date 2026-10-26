@@ -1,0 +1,35 @@
+{
+  "run": "ricon-b0c-serverplay-claude-20261026-160416",
+  "result": "CONNECTION_CONFIRMED",
+  "host": {
+    "logSha256": "7d8515d788a7f12ba5ce87575377e9fa723d5581366a7f0aa1d8ce860c9e05fc",
+    "events": 125,
+    "samples": 120,
+    "rplMode": 2,
+    "playerId": 1,
+    "twoMemberTail": 112
+  },
+  "client": {
+    "logSha256": "69616027b7324d8fe2e6a8072b04ea01b8029d200ee6ab42fb7860f642783a59",
+    "events": 34,
+    "samples": 30,
+    "rplMode": 1,
+    "playerId": 2,
+    "twoMemberTail": 28,
+    "controlledEntity": false,
+    "vonEntries": 0,
+    "radioStateEvents": 0
+  },
+  "streamEqualsDump": true,
+  "dropped": 0,
+  "scriptErrors": 0,
+  "overlap": {
+    "seconds": 27.75,
+    "hostSamples": 28,
+    "clientSamples": 28
+  },
+  "editStableAfterSeconds": 5.828,
+  "limits": "Подтверждено соединение двух участников. У клиента controlled=0 и vonEntries=0; голос и A→B не проверены. UI-восстановление и завершение процессов сверяются по квитанции оператора отдельно.",
+  "replayRequirements": "Нужны исходный журнал хоста и переданный через --client-log исходный журнал клиента.",
+  "checkerSha256": "ff52be07c574d93b53732fc6b20765f3568aea57e7c60fcb9c7136cf0e425b1e"
+}
