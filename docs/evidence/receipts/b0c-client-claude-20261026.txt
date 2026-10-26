@@ -1,0 +1,208 @@
+# B0c retry - the separate Diag client with -username RICON_B0c_peer1 against the Workbench listen host (claude, operator)
+# Run ricon-b0c-serverplay-claude-20261026-144401. ACK agora #4962 (codex accepted the delta #4960-#4961) / START #4966 /
+# END #4969. Runner 4dcd5a3 (wb-serverplay 65C55586 / lib 340CE854), native part 3f2ce83 (codex) unchanged.
+# Addresses are masked as <ip>, the owner's profile name as <masked>, the scratchpad as <scratchpad>; the client's test name
+# RICON_B0c_peer1 is ours and stays readable.
+# Result: NOT PASSED, stopped by the runner's guard. The identity problem of 202016 is solved: the host matched
+#   UserName=RICON_B0c_peer1, found no other connected player of that name and created PlayerId=2 for the client (no
+#   "same identity" line, no kick). Right after that the host's main thread showed a second "Script Authorization Required"
+#   for the same vanilla site SCR_ArsenalManagerComponent.c:1101 (BaseContainerTools.LoadContainer) on a new handle: the
+#   site runs once per joining player. Only one Yes per run is allowed, so YesGuardSites returned SITE_REPEAT and the run
+#   stopped (DIALOG_SITE_REPEAT, t=63): the client, then Workbench, were stopped; the host log ends at "Creating player:
+#   PlayerId=2" because the modal window held the main thread. The setting restore did not run, but the registry and the
+#   profile are unchanged (REGSHA before = after, 0 diff lines). No window of the client got any input.
+# Note: the client signed in to the platform service as RICON_B0c_peer1, and the host's FindMatch used that name; the
+#   earlier "Connecting player" lines on both sides still carry the Steam profile name (masked here).
+# Hashes (sha256): runner stdout c09cbdf634ebc6b5976e37a7e1891935ccd5007bee7698872230338ccc3db9f7
+#   host console.log cc93c13206d701d61c241787ed40717af37725fc30d49a4e572f0a6b0362efea
+#   client console.log b9381c2aaa552101fb80e39157961f21358320c860db82eb69e91b9661a853c5
+
+--- runner stdout (128 lines; UTF-16 transcript re-encoded as UTF-8 here)
+ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons" -noBackend -wbModule=WorldEditor -logLevel verbose -logsDir ricon-b0c-serverplay-claude-20261026-144401 -noFocus -maxFPS 30 -plugin=RICON_LiveBenchLauncherPlugin -riconBenchWorld="{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent" -riconBenchMode=inspect -riconEndpointProbe=1 -riconBenchPluginStart=1 -log-scr-checksum -riconEndpointSamples=120 -forceUpdate
+RUNNER 65C55586CED1B943 LIB 340CE854275BCDB3
+LIMITS seconds=300 watchdogSeconds=330 settle=15 maxChildren=3 readAuthOnly=False yesTotal=1
+PLUGIN menu="Plugins" item="RICON: Play"
+CLIENT exe=ArmaReforgerSteamDiag.exe ver=1.8.0.13 hostAddress=OK candidates=1 class=PRIVATE_V4
+CLIENT_ARGS -gproj "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj" -addonsDir "C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools" -window -screenWidth 960 -screenHeight 540 -maxFPS 20 -noFocus -forceUpdate -noBackend -username RICON_B0c_peer1 -client <host PRIVATE_V4> -profile "<scratchpad>\ricon-b0c-serverplay-claude-20261026-144401-peer1-profile" -logsDir "<scratchpad>\ricon-b0c-serverplay-claude-20261026-144401-peer1-logs" -logLevel verbose -log-scr-checksum -riconEndpointProbe=1
+SETTINGS_BEFORE regLines=3855 profileFiles=5 reforgerDirs="ArmaReforgerWorkbench=2257"
+PID 24240 started 14:44:05
+WATCHDOG pid=22852 limitMs=330000
+MAIN_WINDOW t=9 title="World Editor - ArmaReforger/worlds/Tests/TestFramework/Autotest_GameMode_Plain.e..."
+SEEN REGISTERED t=10
+SEEN OPEN_ONLY t=11
+SEEN WAIT_PLUGIN t=12
+BASELINE Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=Off | Server localhost + PeerTool=Off
+INVOKE "Server localhost" from=Off result=TOGGLED try=1
+STATE1 Play inside Viewport=On | Play in Fullscreen=Off | Play from Camera Position=On | Use Game Camera Position at Return=On | Skip Disabled Layers=Off | Save Changes Before Playing=Off | Use Local Storage=Off | Use Online Storage=Off | Server localhost=On | Server localhost + PeerTool=Off
+PLUGIN_ITEM t=49 result=READY opens=1
+PLUGIN_INVOKE_STARTED t=49
+PLUGIN_INVOKE_DONE t=49 result=COMPLETED afterMs=996
+DIALOG t=49 title="Script Authorization Required" handle=5572838 presses=0 total=1 allowed="ARSENAL_1101"
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_GUARD site=ARSENAL_1101 buttons="No,No to All,Yes,Yes to All"
+YES_GUARD pressed button="Yes" site=ARSENAL_1101 count=1 t=49 at=14:44:55.613
+NET_NEW t=51 phase=OBSERVE pid=24240 proto=UDP class=ANY port=2001
+CLIENT_STARTED t=51 pid=23668 watchdog=24940
+PROC_NEW t=55 phase=OBSERVE pid=23668 ppid=23268 name=ArmaReforgerSteamDiag.exe descendant=False held=False cmdSha=024EF63DF56FA47F flags="-gproj -addonsDir -window -screenWidth -screenHeight -maxFPS -noFocus -forceUpdate -noBackend -username -client -profile -logsDir -logLevel -riconEndpointProbe"
+CLIENT_WINDOW t=55 pid=23668 handle=1771818 class=Arma Reforger title="Arma Reforger" (passive, read once)
+  CW size=976x579 elements=0 buttons=0
+CLIENT_LOG t=55 under=logsDir
+NET_NEW t=62 phase=OBSERVE pid=23668 proto=UDP class=ANY port=58715
+DIALOG t=62 title="Script Authorization Required" handle=1049844 presses=1 total=1 allowed="ARSENAL_1101"
+  elements=7
+  UIA 0 ControlType.Image name=""
+  UIA 1 ControlType.Text name="Allow script 'Scripts/Game/GameMode/Loadout/SCR_ArsenalManagerComponent.c:1101' to access potentially dangerous method 'BaseContainerTools.LoadContainer'?"
+  UIA 2 ControlType.Group name=""
+  UIA 3 ControlType.Button name="Yes"
+  UIA 4 ControlType.Button name="Yes to All"
+  UIA 5 ControlType.Button name="No"
+  UIA 6 ControlType.Button name="No to All"
+YES_GUARD site=ARSENAL_1101 buttons="No,No to All,Yes,Yes to All"
+STOP reason=DIALOG_SITE_REPEAT phase=OBSERVE result=SETTING_MAY_REMAIN_ON t=63 yesPresses=1 client=RUNNING
+TEARDOWN pid=23668 action=KILL_CLIENT exited=True error=""
+TEARDOWN pid=24240 action=KILL_ROOT
+PROC_END pid=24240 name=root alive=False
+PROC_END pid=23668 name=client alive=False exitCode=-1
+CLIENT_WATCHDOG_END exited=True
+CLEANUP client=OK clientAlive=False clientChildrenAlive=0 clientChildrenUnverified=0
+PLUGIN_INVOKE_CLEANUP DONE COMPLETED
+WATCHDOG_END exited=True
+others=0
+log=ricon-b0c-serverplay-claude-20261026-144401/console.log
+scriptErrors=0
+14:44:09.785    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+14:44:09.785    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: 0b2d7a64
+14:44:09.785    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+14:44:09.785    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+14:44:09.786    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+14:44:09.786    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+14:44:09.787    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+14:44:09.787    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+14:44:09.787    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveBenchLauncherPlugin.c' CRC: 55d0d566
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveJournalProbePlugin.c' CRC: ac4884db
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveObserverProbePlugin.c' CRC: eb49d2c0
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LivePlayModeObserverPlugin.c' CRC: 164460f7
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveRadioReaderProbePlugin.c' CRC: a46800ab
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveResourceProbePlugin.c' CRC: 8c802e29
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveStreamProbePlugin.c' CRC: 156e31c1
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveTextProbePlugin.c' CRC: 51c76174
+14:44:11.300    SCRIPT    (V): Script file: 'Scripts/WorkbenchGame/RICON_LiveWorldListPlugin.c' CRC: 2f47dfd3
+14:44:14.011  SCRIPT       : [RICON_LIVEB] state=WORLD_ARGUMENT via=System.GetCLIParam
+14:44:14.431  SCRIPT       : [RICON_LIVEB] state=OPEN world={3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent opened=1
+14:44:14.431  SCRIPT       : [RICON_WBMODE] registered=1
+14:44:14.431  SCRIPT       : [RICON_LIVEB] state=OPEN_ONLY saved=0 isGameMode=0
+14:44:14.431  SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLUGIN limitMs=120000
+14:44:54.597 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SIGNAL_ACCEPTED
+14:44:54.638 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_SEEN
+14:44:54.638 SCRIPT       : [RICON_LIVEB] inspect=PLUGIN_PLAY_REQUESTED
+14:44:54.639 SCRIPT       : [RICON_LIVEB] inspect=WAIT_PLAY limitMs=120000
+14:44:55.458 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=120,isServer=1,isClient=0,rplMode=2
+14:44:55.464 SCRIPT       : [RICON_NET] cycle=1 rplMode=2 rplName=Listen listenPresent=1
+14:44:56.368 SCRIPT       : [RICON_WBMODE] event=START mode=Server%20localhost world=$ArmaReforger:worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent fromCamera=1
+14:44:56.376 SCRIPT       : [RICON_LIVEB] inspect=PLAY_ENTERED
+14:44:57.347 SCRIPT       : [RICON_LIVE] seq=1 t=757 side=probe kind=ENDPOINT_BINDING player=1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=1,entityChanged=1,idChanged=1,pc=1,controlled=1,previousPlayerId=-1
+14:44:57.348 SCRIPT       : [RICON_LIVE] seq=2 t=757 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1003,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:44:57.349 SCRIPT       : [RICON_LIVE] seq=3 t=757 side=probe kind=RADIO_STATE player=1 device=-1 tr=0 value=32000 text=binding=LOCAL_ONLY,obs=0,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+14:44:57.349 SCRIPT       : [RICON_LIVE] seq=4 t=757 side=probe kind=RADIO_STATE player=1 device=-1 tr=1 value=48000 text=binding=LOCAL_ONLY,obs=1,slot=0,prefab={73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et,min=32000,max=68000,res=200,powered=1,muted=0
+14:44:58.350 SCRIPT       : [RICON_LIVE] seq=5 t=1762 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=2 text=cycle=1,elapsedMs=2009,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:44:59.352 SCRIPT       : [RICON_LIVE] seq=6 t=2764 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=3 text=cycle=1,elapsedMs=3011,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:00.388 SCRIPT       : [RICON_LIVE] seq=7 t=3797 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=4 text=cycle=1,elapsedMs=4044,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:01.396 SCRIPT       : [RICON_LIVE] seq=8 t=4806 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=5 text=cycle=1,elapsedMs=5052,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:02.402 SCRIPT       : [RICON_LIVE] seq=9 t=5814 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=6 text=cycle=1,elapsedMs=6060,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:03.405 SCRIPT       : [RICON_LIVE] seq=10 t=6817 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=7 text=cycle=1,elapsedMs=7063,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:04.408 SCRIPT       : [RICON_LIVE] seq=11 t=7819 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=8 text=cycle=1,elapsedMs=8065,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:05.413 SCRIPT       : [RICON_LIVE] seq=12 t=8825 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=9 text=cycle=1,elapsedMs=9071,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+14:45:06.416 SCRIPT       : [RICON_LIVE] seq=13 t=9828 side=probe kind=ENDPOINT_SAMPLE player=1 device=-1 tr=-1 value=10 text=cycle=1,elapsedMs=10075,bindingRevision=1,isServer=1,isClient=0,players=1,pc=1,playerId=1,vonController=1,vonEntries=2,controlled=1,controlledPrefab={26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et,entityVoN=1,gadgetManager=1,members=1,rplMode=2
+IDENTITY host sameIdentity=0 peerName=2
+LOGSHA CC93C13206D701D61C241787ED40717AF37725FC30D49A4E572F0A6B0362EFEA size 904761
+client=RUNNING log=found profileFiles=2 logFiles=3
+clientScriptErrors=0 clientDependencyErrors=0 clientPeerName=2
+C 14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+C 14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: 0b2d7a64
+C 14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+C 14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+C 14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+C 14:45:02.820  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+C 14:45:02.820  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+C 14:45:02.821  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+C 14:45:02.821  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+C 14:45:07.147 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=0,isClient=1,rplMode=1
+C 14:45:07.151 SCRIPT       : [RICON_NET] cycle=1 rplMode=1 rplName=Client listenPresent=1
+C 14:45:08.057 SCRIPT       : [RICON_LIVE] seq=1 t=890 side=probe kind=ENDPOINT_BINDING player=-1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=0,entityChanged=0,idChanged=0,pc=0,controlled=0,previousPlayerId=-1
+C 14:45:08.057 SCRIPT       : [RICON_LIVE] seq=2 t=890 side=probe kind=ENDPOINT_SAMPLE player=-1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1005,bindingRevision=1,isServer=0,isClient=1,players=1,pc=0,members=1,rplMode=1
+CLIENT_LOGSHA B9381C2AAA552101FB80E39157961F21358320C860DB82EB69E91B9661A853C5 size 836906
+SETTINGS_AFTER regLines=3855 regDiffLines=0 profileDiffLines=0 reforgerDirs="ArmaReforgerWorkbench=2261"
+  REGSHA before=65A1F15B75C0A85A after=65A1F15B75C0A85A
+  PROFILE_CHANGED_FILES=
+  SECURITY_TERMS_IN_DIFF=0
+  PLAYMODE_TERMS_IN_DIFF=0
+SOURCES_STABLE
+RAW <scratchpad>\ricon-b0c-serverplay-claude-20261026-144401-raw.jsonl (local only)
+
+--- host console.log, connection lines (masked)
+14:44:55.260 NETWORK      : Starting RPL server, listening on address <ip>:2001, fastValidation=false
+14:44:55.465 NETWORK      : Player connected: connectionID=2147483646
+14:44:55.465 NETWORK      : ### Connecting player: connectionID=2147483646, Name=<masked>
+14:44:55.465 NETWORK      : FindMatch
+14:44:55.465  NETWORK   (D): ### Matching UserName=<masked>, IdentityID=00000000-0000-0000-0000-000000000000
+14:44:55.465 NETWORK      : ### Creating player: PlayerId=1, Name=<masked>
+14:45:06.137 RPL          : ServerImpl event: authenticating (identity=0x00000000, address=<ip>:58715, slots=1/64)
+14:45:06.137 RPL          : ServerImpl event: connected (identity=0x00000000)
+14:45:06.144  NETWORK   (E): Trying to register connection of possibly unauthorized client.
+14:45:06.275   NETWORK   (V): RplConnection::Rpc_Validation_S received
+14:45:06.299   NETWORK   (V): RplConnection::Rpc_LoadWorldFromFilePath_O sent
+14:45:06.742   NETWORK   (V): RplConnection::Rpc_WorldLoaded_S received
+14:45:06.874   NETWORK   (V): RplConnection::Rpc_ValidationPassed_O sent
+14:45:06.882 NETWORK      : Player connected: connectionID=0
+14:45:06.882 NETWORK      : ### Connecting player: connectionID=0, Name=<masked>
+14:45:06.977   NETWORK      : FindMatch
+14:45:06.977    NETWORK   (D): ### Matching UserName=RICON_B0c_peer1, IdentityID=00000000-0000-0000-0000-000000000000
+14:45:06.978    NETWORK   (D): ### (0): UserName=<masked>, IdentityID=00000000-0000-0000-0000-000000000000, Connected=1
+14:45:06.978   NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1
+
+--- host console.log, last line (line 7353)
+14:45:06.978   NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1
+
+--- client console.log, connection lines (masked)
+14:44:59.010 ENGINE       : CLI Params: -gproj C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools\RICON_LiveProbe\addon.gproj -addonsDir C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger\addons,C:\Program Files (x86)\Steam\steamapps\common\Arma Reforger Tools\Workbench\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\addons,C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\RICON-Reforger\tools -window -screenWidth 960 -screenHeight 540 -maxFPS 20 -noFocus -forceUpdate -noBackend -username RICON_B0c_peer1 -client <ip> -profile <scratchpad> -logsDir <scratchpad> -logLevel verbose -log-scr-checksum -riconEndpointProbe 1
+14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointGame.c' CRC: 45b337e3
+14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveEndpointProbe.c' CRC: 0b2d7a64
+14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveJournal.c' CRC: 27be0fe1
+14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveObserver.c' CRC: b1c9b546
+14:45:02.819  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveProbeComponent.c' CRC: d647144c
+14:45:02.820  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioBenchComponent.c' CRC: f40f8d06
+14:45:02.820  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveRadioReader.c' CRC: 8ba0a75b
+14:45:02.821  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveText.c' CRC: d3500602
+14:45:02.821  SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveVONMenuAccess.c' CRC: dff4ab3a
+14:45:05.735 PLATFORM  (D): Event: User was signed in as RICON_B0c_peer1.
+14:45:06.038 NETWORK      : Starting multiplayer client using command line args.
+14:45:06.134 NETWORK      : Starting RPL client, number of addresses to try connecting to: 1
+14:45:06.134 NETWORK      :   <ip>:2001
+14:45:06.135 RPL       (D): Protocol checksum (native): 0x5A588A82AD594C24
+14:45:06.135 RPL       (D): Protocol checksum (script): 0xAFF4B8CCAE1E291C
+14:45:06.135 RPL          : Starting client
+14:45:06.136 RPL       (D): Endpoint <ip>:2001 state 0: send ConnectionRequest.
+14:45:06.137 RPL       (D): Endpoint <ip>:2001 state 0: recv Cookie, state ->1
+14:45:06.137 RPL       (D): Endpoint <ip>:2001 state 1: puzzle solved, iterations 1, state ->2
+14:45:06.137 RPL       (D): Endpoint <ip>:2001 state 2: send ConnectionRequest.
+14:45:06.137 RPL       (D): Endpoint <ip>:2001 state 2: recv Payload, state ->3
+14:45:06.235 RPL          : ClientImpl event: connected (identity=0x00000000)
+14:45:06.235 NETWORK   (V): RplSession::RplStartupEvent: Started
+14:45:06.261  NETWORK   (V): RplConnection::Rpc_Validation_S sent
+14:45:06.335  NETWORK   (V): RplConnection::Rpc_LoadWorldFromFilePath_O received guid=1C60D2EDA2B468B8 path=$ArmaReforger:worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent
+14:45:06.739 NETWORK   (V): RplConnection::Rpc_WorldLoaded_S sent
+14:45:06.940  NETWORK   (V): RplConnection::Rpc_ValidationPassed_O received
+14:45:06.941  NETWORK      : ### Creating player: PlayerId=1, Name=<masked>
+14:45:06.941  NETWORK      : ### Connecting player: connectionID=0, Name=<masked>
+14:45:07.147 SCRIPT       : [RICON_LIVE] seq=0 t=0 side=probe kind=ENDPOINT_START player=-1 device=-1 tr=-1 value=0 text=cycle=1,limit=30,isServer=0,isClient=1,rplMode=1
+14:45:07.151 SCRIPT       : [RICON_NET] cycle=1 rplMode=1 rplName=Client listenPresent=1
+14:45:08.057 SCRIPT       : [RICON_LIVE] seq=1 t=890 side=probe kind=ENDPOINT_BINDING player=-1 device=-1 tr=-1 value=1 text=cycle=1,revision=1,initial=1,pcChanged=0,entityChanged=0,idChanged=0,pc=0,controlled=0,previousPlayerId=-1
+14:45:08.057 SCRIPT       : [RICON_LIVE] seq=2 t=890 side=probe kind=ENDPOINT_SAMPLE player=-1 device=-1 tr=-1 value=1 text=cycle=1,elapsedMs=1005,bindingRevision=1,isServer=0,isClient=1,players=1,pc=0,members=1,rplMode=1
