@@ -5,8 +5,8 @@
 //! не меняет мир и не запускает автотесты. Документированные вызовы (Script API WorldEditorAPI, IEntitySource):
 //! GetEditorEntityCount, GetEditorEntity, SourceToEntity, GetNumSubScenes, IsGameMode; BaseContainer.GetClassName,
 //! GetName, GetAncestor; BaseResourceObject.GetResourceName.
-//! B0d (codex #5061): при -riconListDetail=1 у компонента RespawnSystem GameMode печатаются все поля в мире и у предка
-//! (GetNumVars, GetVarName, GetDataVarType, IsVariableSetDirectly, IsVariableSet, Get, GetObject), объекты — на уровень ниже.
+//! B0d (codex #5061, #5065): при -riconListDetail=1 у SCR_RespawnSystemComponent GameMode — m_bEnableRespawn и m_SpawnLogic
+//! в мире и у предка, плюс имена полей, заданных в самом контейнере (Get, GetObject, IsVariableSetDirectly, GetNumVars, GetVarName).
 //! Запуск — только после START → ACK → run → END на шине.
 [WorkbenchPluginAttribute(name: "RICON: состав миров (только чтение)", description: "Список сущностей и GameMode миров", wbModules: {"WorldEditor"})]
 class RICON_LiveWorldListPlugin : WorkbenchPlugin
@@ -125,98 +125,50 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			if (!component)
 				continue;
 			PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 class=%4", w, entity, k, component.GetClassName());
-			// B0d (codex #5061): override мира или подмена при запуске — поля появления в мире и у префаба-предка
-			if (component.GetClassName().Contains("RespawnSystem"))
+			// B0d (codex #5061, #5065): override мира или подмена при запуске — два поля появления в мире и у префаба-предка
+			if (component.GetClassName() == "SCR_RespawnSystemComponent")
 			{
-				PrintVars(w, entity, k, "world", component, 1);
-				PrintVars(w, entity, k, "ancestor", component.GetAncestor(), 1);
+				PrintRespawnConfig(w, entity, k, "world", component);
+				PrintRespawnConfig(w, entity, k, "ancestor", component.GetAncestor());
 			}
 		}
 	}
 
-	static const int MAX_SPAWN_VARS = 24;    //!< полей на контейнер компонента появления (B0d)
-
-	//! Все поля контейнера: тип, задано ли здесь (setDirect) или по цепочке предков (set), значение; у OBJECT — класс и,
-	//! при depth > 0, его собственные поля на уровень ниже. Только getter-ы BaseContainer.
-	protected void PrintVars(int w, int entity, int component, string scope, BaseContainer node, int depth)
+	//! Поля появления контейнера компонента: m_bEnableRespawn (readOk, значение или UNKNOWN, задано ли здесь) и объект
+	//! m_SpawnLogic (есть ли, класс, задан ли здесь). overrides — только имена полей, заданных именно в этом контейнере:
+	//! так видно, что меняет мир, без угадывания прочих имён. Только getter-ы BaseContainer.
+	protected void PrintRespawnConfig(int w, int entity, int component, string scope, BaseContainer node)
 	{
 		if (!node)
 		{
-			PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 container=NONE", w, entity, component, scope);
+			PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 container=0", w, entity, component, scope);
 			return;
 		}
+		bool enabled;
+		bool readOk = node.Get("m_bEnableRespawn", enabled);
+		string value = "UNKNOWN";
+		if (readOk)
+			value = enabled.ToString();
+		BaseContainer logic = node.GetObject("m_SpawnLogic");
+		string logicClass = "NONE";
+		if (logic)
+			logicClass = logic.GetClassName();
+		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 container=1 enableReadOk=%5 enable=%6 enableSetDirect=%7 logic=%8 logicSetDirect=%9",
+			w, entity, component, scope, readOk, value, node.IsVariableSetDirectly("m_bEnableRespawn"), logicClass, node.IsVariableSetDirectly("m_SpawnLogic"));
+		string overrides;
 		int n = node.GetNumVars();
-		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 class=%5 vars=%6", w, entity, component, scope, node.GetClassName(), n);
-		for (int v = 0; v < n && v < MAX_SPAWN_VARS; v++)
+		for (int v = 0; v < n; v++)
 		{
 			string name = node.GetVarName(v);
-			DataVarType type = node.GetDataVarType(v);
-			PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 var=%5 type=%6 setDirect=%7 set=%8 value=%9", w, entity, component, scope,
-				name, typename.EnumToString(DataVarType, type), node.IsVariableSetDirectly(name), node.IsVariableSet(name), VarValue(node, name, type));
-			if (type == DataVarType.OBJECT && depth > 0)
-				PrintVars(w, entity, component, scope + "." + name, node.GetObject(name), depth - 1);
+			if (!node.IsVariableSetDirectly(name))
+				continue;
+			if (!overrides.IsEmpty())
+				overrides += "|";
+			overrides += name;
 		}
-	}
-
-	//! Значение поля одной строкой: числа, флаги, строки и ресурсы как есть (переводы строк заменяются пробелом), OBJECT —
-	//! класс или null; иное — "-".
-	protected static string VarValue(BaseContainer node, string name, DataVarType type)
-	{
-		switch (type)
-		{
-			case DataVarType.BOOLEAN:
-			{
-				bool b;
-				if (node.Get(name, b))
-					return b.ToString();
-				break;
-			}
-			case DataVarType.INTEGER:
-			case DataVarType.FLAGS:
-			{
-				int i;
-				if (node.Get(name, i))
-					return i.ToString();
-				break;
-			}
-			case DataVarType.SCALAR:
-			{
-				// без явной точности: ToString(-1, 9) у значений около FLT_MAX переполнял стек VM
-				float f;
-				if (node.Get(name, f))
-					return f.ToString();
-				break;
-			}
-			case DataVarType.STRING:
-			{
-				string s;
-				if (node.Get(name, s))
-				{
-					s.Replace("\r", " ");
-					s.Replace("\n", " ");
-					if (s.Length() > MAX_VALUE_CHARS)
-						s = s.Substring(0, MAX_VALUE_CHARS);
-					return "\"" + s + "\"";
-				}
-				break;
-			}
-			case DataVarType.RESOURCE_NAME:
-			{
-				ResourceName r;
-				if (node.Get(name, r))
-					return r;
-				break;
-			}
-			case DataVarType.OBJECT:
-			{
-				BaseContainer child = node.GetObject(name);
-				if (child)
-					return "class=" + child.GetClassName();
-				return "null";
-			}
-		}
-		// ARRAY не раскрывается: GetObjectArray годится только для массивов объектов
-		return "-";
+		if (overrides.IsEmpty())
+			overrides = "-";
+		PrintFormat("[RICON_LIVEW] w=%1 entity=%2 component=%3 scope=%4 vars=%5 overrides=%6", w, entity, component, scope, n, overrides);
 	}
 
 	//! Строковые переменные сущности (GetDataVarType == STRING, тот же приём, что в RICON_AcpViewPlugin), не более MAX_STRING_VARS;
