@@ -1,0 +1,77 @@
+{
+  "result": "PLAYER_ASSIGNMENT_OBSERVED",
+  "host": {
+    "logSha256": "90709036622e55b8265fef1e56cccd7d8d1cb790e51e0a2f170a92dbaaeb9217",
+    "events": 365,
+    "samples": 120,
+    "connectedMismatch": [],
+    "commonSamples": 28,
+    "player1States": {
+      "{\"connected\": \"1\", \"controlled\": \"1\", \"cycle\": \"1\", \"manager\": \"1\", \"pc\": \"1\", \"pcControlled\": \"1\", \"respawn\": \"1\", \"respawnObservable\": \"1\", \"sameEntity\": \"1\"}": 28
+    },
+    "player2States": {
+      "{\"connected\": \"1\", \"controlled\": \"0\", \"cycle\": \"1\", \"manager\": \"1\", \"pc\": \"1\", \"pcControlled\": \"0\", \"respawn\": \"1\", \"respawnObservable\": \"1\", \"sameEntity\": \"0\"}": 28
+    },
+    "gameModeRespawn": {
+      "1": 28
+    },
+    "spawnPoints": {
+      "0": 28
+    },
+    "respawnEnabled": {
+      "0": 28
+    },
+    "spawnLogic": {
+      "1": 28
+    },
+    "spawnLogicClass": {
+      "SCR_SpawnLogic": 28
+    },
+    "factionManager": {
+      "1": 28
+    },
+    "loadoutManager": {
+      "1": 28
+    }
+  },
+  "client": {
+    "logSha256": "fce739af14d757e982ff5ad762033f2fc6ae3a8a8626ac39c5cfa1b25614b8cb",
+    "events": 94,
+    "samples": 30,
+    "connectedMismatch": [],
+    "commonSamples": 28,
+    "player1States": {
+      "{\"connected\": \"1\", \"controlled\": \"0\", \"cycle\": \"1\", \"manager\": \"1\", \"pc\": \"0\", \"pcControlled\": \"0\", \"respawn\": \"UNKNOWN\", \"respawnObservable\": \"0\", \"sameEntity\": \"0\"}": 28
+    },
+    "player2States": {
+      "{\"connected\": \"1\", \"controlled\": \"0\", \"cycle\": \"1\", \"manager\": \"1\", \"pc\": \"1\", \"pcControlled\": \"0\", \"respawn\": \"1\", \"respawnObservable\": \"1\", \"sameEntity\": \"0\"}": 28
+    },
+    "gameModeRespawn": {
+      "1": 28
+    },
+    "spawnPoints": {
+      "0": 28
+    },
+    "respawnEnabled": {
+      "0": 28
+    },
+    "spawnLogic": {
+      "1": 28
+    },
+    "spawnLogicClass": {
+      "SCR_SpawnLogic": 28
+    },
+    "factionManager": {
+      "1": 28
+    },
+    "loadoutManager": {
+      "1": 28
+    }
+  },
+  "probeCRC": "1966ee8a",
+  "streamEqualsDump": true,
+  "dropped": 0,
+  "overlapSeconds": 27.701,
+  "checkerSha256": "8de1fd5851baaae4b52a2c5f10c9ca97fd30ae6e3fed4c13a362ea4d870cd295",
+  "limits": "Наблюдаются доступные назначения. Наличие всех сущностей мира, звук, UI и очистка процессов этим checker не проверяются."
+}
