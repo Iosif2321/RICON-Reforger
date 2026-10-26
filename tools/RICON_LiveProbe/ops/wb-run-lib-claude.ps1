@@ -319,18 +319,22 @@ function PromptSite([string[]]$texts, [string[]]$captions) {
 # Sites that may get a "Yes" in the current phase of a plugin-start run (codex #4848, #4850): none before the plugin
 # command was invoked (played); after it only the vanilla one, once the launcher logged PLUGIN_SEEN (printed right
 # before its SwitchToGameMode) and before the observation ended or edit mode was requested (codex #4817, #4819).
-function SitesAllowed([bool]$played, [string]$logText) {
+# Each entry allows one press. B0c run 144401 showed the vanilla site once more for each joining player; the owner
+# allowed a second press on 2026-10-26: with $peerJoined (a regex for the host's own line about creating the test
+# client's player) and that line in the log, the site is listed twice.
+function SitesAllowed([bool]$played, [string]$logText, [string]$peerJoined = "") {
 	if (-not $played) { return , @() }
 	if ($logText -notmatch '\[RICON_LIVEB\] inspect=PLUGIN_SEEN') { return , @() }
 	if ($logText -match '\[RICON_LIVEB\] inspect=(OBSERVATION_END|EDIT_REQUESTED|EDIT_STABLE)') { return , @() }
+	if ($peerJoined -and $logText -match $peerJoined) { return , @("ARSENAL_1101", "ARSENAL_1101") }
 	return , @("ARSENAL_1101")
 }
-# site -> @{ h = window handle; at = press time }
+# site -> @{ h = window handle of the last press; at = its time; n = presses so far (missing = 1) }
 $script:sitePressed = @{}
-# Like YesGuard, but by site: at most one "Yes" per site of $allowed and process, at most $total in all. The site is
+# Like YesGuard, but by site: per site at most as many presses as $allowed lists it, at most $total in all. The site is
 # read from the text first (a new prompt may reuse a closed window's handle, codex #4819); the closing grace of 6 s
-# covers only the same site on the handle it was pressed on. A new window of a pressed site is SITE_REPEAT, a known
-# site outside $allowed is SITE_NOT_ALLOWED; both stop the run.
+# covers only the same site on the handle it was last pressed on. A new window of a site with no press left is
+# SITE_REPEAT, a known site outside $allowed is SITE_NOT_ALLOWED; both stop the run.
 function YesGuardSites([uint32]$wbPid, [int]$t, [string[]]$allowed, [int]$total = 3) {
 	$h = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)
 	if ($h -eq [IntPtr]::Zero) { return "NONE" }
@@ -353,14 +357,17 @@ function YesGuardSites([uint32]$wbPid, [int]$t, [string[]]$allowed, [int]$total 
 	if ($prev -and $site -ceq $prev) { "DIALOG_AFTER_PRESS t=$t handle=$h site=$site same handle, read only" | Write-Host; return "PRESS_NO_EFFECT" }
 	if ($site -eq "NOT_READY") { return "NOT_READY" }
 	if ($site -eq "UNEXPECTED") { return "UNEXPECTED_DIALOG" }
-	if ($script:sitePressed.ContainsKey($site)) { return "SITE_REPEAT" }
-	if ($allowed -cnotcontains $site) { return "SITE_NOT_ALLOWED" }
+	$quota = @($allowed | Where-Object { $_ -ceq $site }).Count
+	$done = 0
+	if ($script:sitePressed.ContainsKey($site)) { $done = [Math]::Max(1, [int]$script:sitePressed[$site].n) }
+	if ($done -gt 0 -and $done -ge $quota) { return "SITE_REPEAT" }
+	if ($quota -eq 0) { return "SITE_NOT_ALLOWED" }
 	if ($script:yesPressed -ge $total) { return "LIMIT_REACHED" }
 	$yes = @($all | Where-Object { $_.Current.ControlType -eq $btn -and $_.Current.Name -ceq "Yes" })
 	try { $ip = $yes[0].GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern) } catch { return "NO_INVOKE" }
-	$script:yesPressed++; $script:yesHandles += $h; $script:yesAt = Get-Date; $script:sitePressed[$site] = @{ h = $h; at = $script:yesAt }
+	$script:yesPressed++; $script:yesHandles += $h; $script:yesAt = Get-Date; $script:sitePressed[$site] = @{ h = $h; at = $script:yesAt; n = $done + 1 }
 	try { $ip.Invoke() } catch { "  INVOKE_ERROR $($_.Exception.Message)" | Write-Host; return "INVOKE_ERROR" }
-	"YES_GUARD pressed button=`"Yes`" site=$site count=$($script:yesPressed) t=$t at=$($script:yesAt.ToString('HH:mm:ss.fff'))" | Write-Host
+	"YES_GUARD pressed button=`"Yes`" site=$site siteCount=$($done + 1)/$quota count=$($script:yesPressed) t=$t at=$($script:yesAt.ToString('HH:mm:ss.fff'))" | Write-Host
 	return "PRESSED"
 }
 

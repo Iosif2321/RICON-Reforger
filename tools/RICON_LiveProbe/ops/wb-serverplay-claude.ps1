@@ -16,7 +16,9 @@
 #   4. Observation once per second (as wb-run-claude.ps1): the Workbench PID and its descendants (held handles), other
 #      new ArmaReforger* processes, their UDP endpoints/TCP listeners as address class and port, their windows; one
 #      guarded "Yes" in all (YesGuardSites), only on the exact vanilla :1101 prompt of the Workbench PID and only after
-#      PLUGIN_SEEN and before OBSERVATION_END/EDIT_* (SitesAllowed); any prompt before that, a prompt in another
+#      PLUGIN_SEEN and before OBSERVATION_END/EDIT_* (SitesAllowed); with -Client one more on a new window of the same
+#      prompt once the host logged creating PlayerId=2 for the test client (owner 2026-10-26, after run 144401);
+#      any prompt before that, a prompt in another
 #      process, an unknown window, too many processes, a launcher refusal or SCRIPT (E) stops the run. The own Qt window
 #      "Arma Reforger Workbench" (visible right after PLUGIN_PLAY_REQUESTED in run 174552) is passive from PLUGIN_SEEN
 #      until EDIT_STABLE (codex #4870): never any input; class, size and element names are read once per new handle.
@@ -79,9 +81,15 @@ $clientExe = "$steam\Arma Reforger\ArmaReforgerSteamDiag.exe"
 $clientAddons = "$steam\Arma Reforger\addons,$steam\Arma Reforger Tools\Workbench\addons,$repo\addons,$repo\tools"
 $clientFail = 'SCRIPT\s*\(E\)|\(E\): Addon \S+ dependency \S+ can.t be added|\[RICON_PROBE\] config=REFUSED'
 # run 202016: with -noBackend the host matched the client to the host player by the same Steam name and dropped it
-# (kickCode 0x00060002). The SDK's -username (Page_CLI, Platform Service, ENF_DEVELOPER = diag executables) overrides
-# that name for local test clients (codex #4953); only the client gets it, the host and its identity check stay as they are
+# (kickCode 0x00060002). The SDK's -username (Page_CLI, Platform Service; documented visibility ENF_DEVELOPER) overrides
+# that name for local test clients (codex #4953); only the client gets it, the host and its identity check stay as they
+# are. Run 144401 showed the Diag client applies it: "signed in as" this name, host FindMatch made PlayerId=2.
 $clientUser = "RICON_B0c_peer1"
+# run 144401: right after that line the host showed the vanilla :1101 prompt again (once per joining player). The owner
+# allowed one more exact "Yes" on it on 2026-10-26, only after this host line; 2 in all, only with -Client
+# a whole log line from its time stamp on, spaces or tabs between the fields (codex #4975, #4976)
+$peerJoined = '(?m)^\d\d:\d\d:\d\d\.\d{3}[ \t]+NETWORK[ \t]+: ### Creating player: PlayerId=2, Name=' + [regex]::Escape($clientUser) + '\r?$'
+$yesTotal = if ($Client) { 2 } else { 1 }
 
 if ($Tag -notmatch '^[a-z0-9][a-z0-9-]{0,39}$') { "BAD_TAG"; exit 2 }
 if (-not (Test-Path $OutDir -PathType Container)) { "OUTDIR_MISSING"; exit 2 }
@@ -100,7 +108,7 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
-"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=1"
+"LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=$yesTotal"
 "PLUGIN menu=`"$pluginMenu`" item=`"$pluginItem`""
 $busy = @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' })
 if ($busy.Count -gt 0) { "BUSY count=$($busy.Count)"; exit 3 }
@@ -304,7 +312,12 @@ function Tick {
 		Raw @{ t = $t; kind = "PLUGIN_INVOKE_DONE"; result = $j.result }
 	}
 	if (-not $ReadAuthOnly) {
-		$y = YesGuardSites $wbPid $t (SitesAllowed $script:played $text) 1
+		# with -Client the log is read again once a prompt is up: in run 144401 the host wrote the PlayerId=2 line before
+		# the prompt, and the Tick's $text may be older than the window. Without the line the prompt still stops the run.
+		# The second press also needs our own client started in this run (codex #4971)
+		$yText = $text
+		if ($Client -and [RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { $yText = LogText }
+		$y = YesGuardSites $wbPid $t (SitesAllowed $script:played $yText $(if ($Client -and $script:clientProc) { $peerJoined } else { "" })) $yesTotal
 		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
 	} elseif (($ah = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)) -ne [IntPtr]::Zero) {
 		"AUTH_PROMPT before Play (read only) t=$t handle=$ah" | Write-Host
@@ -561,7 +574,8 @@ if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	$lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)" | Select-Object -First 400 | ForEach-Object { MaskText $_.Line $script:secrets }
-	# counts only: the host player's lines carry the owner's profile name
+	# counts only: the host player's lines carry the owner's profile name. Diagnostics, not the B0c criterion (a distinct
+	# PlayerId in the host's members is, codex #4960); the client's count includes its own CLI Params line
 	if ($Client) { "IDENTITY host sameIdentity=" + @($lines | Select-String -SimpleMatch "same identity").Count + " peerName=" + @($lines | Select-String -SimpleMatch $clientUser).Count }
 	"LOGSHA " + (Get-FileHash $log -Algorithm SHA256).Hash + " size " + (Get-Item $log).Length
 } else { "NO_LOG" }

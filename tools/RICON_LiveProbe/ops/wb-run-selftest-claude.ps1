@@ -110,6 +110,16 @@ Case "allowed played, PLUGIN_SEEN" (SitesAllowed $true $lSeen) @("ARSENAL_1101")
 Case "allowed after OBSERVATION_END" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=OBSERVATION_END samples=3`n")) @()
 Case "allowed after EDIT_REQUESTED" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_REQUESTED`n")) @()
 Case "allowed after EDIT_STABLE" (SitesAllowed $true ($lSeen + "[RICON_LIVEB] inspect=EDIT_STABLE checks=51`n")) @()
+# B0c (owner 2026-10-26, after run 144401): a second :1101 only once the host logged creating the test client's player
+$pj = '(?m)^\d\d:\d\d:\d\d\.\d{3}[ \t]+NETWORK[ \t]+: ### Creating player: PlayerId=2, Name=RICON_T\r?$'
+$joinLine = "14:45:06.978   NETWORK      : ### Creating player: PlayerId=2, Name=RICON_T`r`n"
+$lJoin = $lSeen + $joinLine
+Case "allowed peer joined" (SitesAllowed $true $lJoin $pj) @("ARSENAL_1101", "ARSENAL_1101")
+Case "allowed peer not joined yet" (SitesAllowed $true $lSeen $pj) @("ARSENAL_1101")
+Case "allowed peer line without -Client" (SitesAllowed $true $lJoin "") @("ARSENAL_1101")
+Case "allowed peer line before PLUGIN_SEEN" (SitesAllowed $true $joinLine $pj) @()
+Case "allowed peer line not played" (SitesAllowed $false $lJoin $pj) @()
+Case "allowed peer joined after OBSERVATION_END" (SitesAllowed $true ($lJoin + "[RICON_LIVEB] inspect=OBSERVATION_END samples=3`n") $pj) @()
 Case "limit plain" (YesLimit $false $false) 1
 Case "limit marker without restart" (YesLimit $false $true) 1
 Case "limit restart before marker" (YesLimit $true $false) 1
@@ -310,6 +320,32 @@ Done $f
 $f = FakeDlg $script:AuthTitle $m174 $btns "p174"
 Case "plugin other site after the one press" (YesGuardSites ([uint32]$f.p.Id) 4 @("ARSENAL_1101", "TEST_174") 1 6>$null) "LIMIT_REACHED"
 Case "plugin presses" $script:yesPressed 1
+Done $f
+# B0c with -Client: total 2; the second window of :1101 waits for the host's PlayerId=2 line, a third one stops
+$script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
+$f = FakeDlg $script:AuthTitle $msg $btns "c1101"
+Case "client 1101 first pressed" (YesGuardSites ([uint32]$f.p.Id) 1 (SitesAllowed $true $lSeen $pj) 2 6>$null) "PRESSED"
+Case "client 1101 first clicked Yes" (Clicks $f) @("Yes")
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "c1101early"
+Case "client 1101 second before join refused" (YesGuardSites ([uint32]$f.p.Id) 2 (SitesAllowed $true $lSeen $pj) 2 6>$null) "SITE_REPEAT"
+Case "client 1101 second before join no click" (Clicks $f).Count 0
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "c1101join"
+Case "client 1101 second after join pressed" (YesGuardSites ([uint32]$f.p.Id) 3 (SitesAllowed $true $lJoin $pj) 2 6>$null) "PRESSED"
+Case "client 1101 second clicked Yes" (Clicks $f) @("Yes")
+Case "client 1101 site count" $script:sitePressed["ARSENAL_1101"].n 2
+Done $f
+$f = FakeDlg $script:AuthTitle $msg $btns "c1101third"
+Case "client 1101 third refused" (YesGuardSites ([uint32]$f.p.Id) 4 (SitesAllowed $true $lJoin $pj) 2 6>$null) "SITE_REPEAT"
+Case "client 1101 third no click" (Clicks $f).Count 0
+Case "client presses" $script:yesPressed 2
+Done $f
+# the same two allowed entries with total 1 (a run without -Client) still stop at the limit
+$script:yesPressed = 1; $script:sitePressed = @{ "ARSENAL_1101" = @{ h = [IntPtr]::Zero; at = (Get-Date).AddSeconds(-30) } }
+$f = FakeDlg $script:AuthTitle $msg $btns "c1101tot"
+Case "client 1101 second over total 1" (YesGuardSites ([uint32]$f.p.Id) 5 (SitesAllowed $true $lJoin $pj) 1 6>$null) "LIMIT_REACHED"
+Case "client 1101 over total no click" (Clicks $f).Count 0
 Done $f
 $script:yesPressed = 0; $script:yesHandles = @(); $script:yesAt = $null; $script:sitePressed = @{}
 $f = FakeDlg "Background Server" "" "OK" "child"
@@ -730,6 +766,28 @@ Case "secrets assignments in order" ($asg -join " ; ") '@() ; @($ha.address, $Ou
 $ha = @{ address = "192.168.1.20" }; $OutDir = "C:\scratch\x"
 . ([scriptblock]::Create('$script:secrets = ' + $asg[-1]))
 Case "secrets mask after the last assignment" (MaskText "to 192.168.1.20 in C:\scratch\x\log" $script:secrets) "to <masked> in <masked>\log"
+# the runner's own peer line regex and Yes total (owner 2026-10-26), against the host line shape of run 144401
+$Client = $true
+foreach ($n in @('$clientUser', '$peerJoined', '$yesTotal')) {
+	$a = @($spAst.FindAll({ param($x) $x -is [System.Management.Automation.Language.AssignmentStatementAst] -and $x.Left.Extent.Text -eq $n }, $true))
+	Case "runner assigns $n once" $a.Count 1
+	. ([scriptblock]::Create($a[0].Extent.Text))
+}
+Case "runner client user" $clientUser "RICON_B0c_peer1"
+Case "runner yes total with -Client" $yesTotal 2
+$hostJoin = "14:45:06.977    NETWORK   (D): ### Matching UserName=RICON_B0c_peer1, IdentityID=00000000-0000-0000-0000-000000000000`r`n14:45:06.978   NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n"
+Case "runner peer line matches 144401" ($hostJoin -match $peerJoined) $true
+$ts = "14:45:06.978   NETWORK      : ### Creating player: "
+Case "runner peer line without CR" (("a`n" + $ts + "PlayerId=2, Name=RICON_B0c_peer1") -match $peerJoined) $true
+Case "runner peer line tab" ("14:45:06.978`tNETWORK`t: ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n" -match $peerJoined) $true
+Case "runner peer line longer name" (($ts + "PlayerId=2, Name=RICON_B0c_peer10`r`n") -match $peerJoined) $false
+Case "runner peer line other id" (($ts + "PlayerId=3, Name=RICON_B0c_peer1`r`n") -match $peerJoined) $false
+Case "runner peer line id 20" (($ts + "PlayerId=20, Name=RICON_B0c_peer1`r`n") -match $peerJoined) $false
+Case "runner peer line host player" (($ts + "PlayerId=1, Name=RICON_B0c_peer1`r`n") -match $peerJoined) $false
+Case "runner peer line matching only" ("14:45:06.977    NETWORK   (D): ### Matching UserName=RICON_B0c_peer1, IdentityID=0`r`n" -match $peerJoined) $false
+Case "runner peer line inside other text" ("14:45:07.000 SCRIPT       : echo NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n" -match $peerJoined) $false
+Case "runner peer line without time stamp" ("NETWORK      : ### Creating player: PlayerId=2, Name=RICON_B0c_peer1`r`n" -match $peerJoined) $false
+Remove-Variable Client
 $script:startCalls = 0; $script:addrCalls = 0; $script:addrNext = @{ result = "OK"; address = "192.168.1.20" }
 function Start-Process { $script:startCalls++; throw "no process in the self-test" }
 function LocalHostAddress { $script:addrCalls++; return $script:addrNext }
