@@ -108,3 +108,22 @@ Play from camera, а полноценный путь появления удал
 изменение при инициализации. Попытка текстового чтения Autotest-мира `183807`
 завершилась INCOMPLETE (ресурс найден, файл не открыт), не отрицательным результатом.
 Следующий метод — прочитать компонент экземпляра и его предка через редактор.
+
+## Готовый кандидат MpTest
+
+Субагент codex `world_route` выполнил отдельную проверку только чтением:
+установленный SDK `interfaceSCR__AutotestHelper.html:131` содержит
+WORLD_MPTEST с ResourceName `{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent`.
+Официальное [General Game Mode Setup](https://community.bistudio.com/wiki/Arma_Reforger%3AGeneral_Game_Mode_Setup)
+описывает MpTest как Plain, автоматическое появление и FFA.
+
+Ограниченный текстовый поиск `rg -a -o` по установленному
+`Arma Reforger/addons/data/resourceDatabase.rdb` отдельно нашёл MpTest.ent,
+MpTest_Basic.ent, MpTest_Empty.ent и Missions/MpTest/10_MpTest.conf.
+Размер RDB — 11 509 935 байт, SHA256
+`c5344847875ab4c94cf3cda88c5f9cc60878b799f33b2137c8e4a18726c19b7c`.
+Распаковка .pak и чтение самого мира не выполнялись.
+
+Поэтому готовый MpTest проверяется перед созданием нового мира. Известный
+отрицательный результат MpTest_Empty не относится ко всем вариантам MpTest.
+Inventory не заменяет WorldList и опыт назначения персонажа.
