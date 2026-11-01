@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-02",
+  "level": "WORKBENCH_PURE_CHECK_AND_STATIC_REVIEW_ONLY",
+  "result": "PASSIVE_OBSERVER_READY_FOR_BOUNDED_LIVE_CHECK",
+  "audioDeliveryTested": false,
+  "microphoneSamplesRecordedByOperator": false,
+  "implementation": {
+    "gate": "riconAudioObserve=1 / runner -AudioObserve",
+    "prefix": "RICON_AUDIO",
+    "captureOrPttRequested": false,
+    "radioOrDirectStateMutation": false,
+    "bindingPollSeconds": 1,
+    "gameTimeLimitSeconds": 900,
+    "externalRuntimeLimitRequired": true,
+    "eventsAreAudioSamples": false
+  },
+  "checks": {
+    "firstAttempt": {
+      "result": "COMPILE_REJECTED_EVENT_ARGUMENT_NAME",
+      "fixed": "OnUpdate argument name matched native prototype timeslice",
+      "log": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-audio-observer-check-20261102-lead/console.log",
+      "sha256": "ebe8ab387ba987c552a2596945fd35db94afe7eed8535a09520e7dc2a797199b"
+    },
+    "finalAttempt": {
+      "result": "PASS",
+      "checks": 10,
+      "passed": 10,
+      "scriptErrors": 0,
+      "worldOpened": false,
+      "playEntered": false,
+      "processExited": true,
+      "log": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-audio-observer-check2-20261102-lead/console.log",
+      "sha256": "93a5f06fa8d6b864bf80084c70c560800b868cc26fe79c9d927404177504030d",
+      "crc": {
+        "RICON_LiveAudioGame.c": "44dc0fc5",
+        "RICON_LiveAudioProbe.c": "1865db43",
+        "RICON_LiveAudioProbeCheckPlugin.c": "800d580a"
+      }
+    },
+    "windowsPowerShellRunnerParserErrors": 0,
+    "audioObserveDryRun": "PASS_NO_PROCESS_STARTED"
+  },
+  "inventory": {
+    "path": "tools/RICON_LiveProbe/ops/audio-inventory-enforce.ps1",
+    "sha256": "14ecbbc0a19921903bf886db574720ae19d82cba3fb1317e8c8bb8215e4214dd",
+    "result": "EXECUTION_POLICY_BLOCKED_BEFORE_LAYOUT_CHECK",
+    "error": "PSSecurityException / UnauthorizedAccess: script is not digitally signed",
+    "coreAudioInvokedByOperator": false,
+    "bypassAttempted": false,
+    "authorizationForProcessOnlyExceptionRequested": true
+  },
+  "sha256": {
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveAudioGame.c": "c401e8aabe4f54fd0dea56473873171f907782b356fbc63b1d1a8fbe9a67629c",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveAudioProbe.c": "1579044e9baf6720739ff773f23995efa6d14b295a707a909451f5eba8e764f8",
+    "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveAudioProbeCheckPlugin.c": "0f3e8d86a9583d3fad74cf914f9ec725f67502c3e4a4e2d7df388a85abb01058",
+    "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1": "7f0c1a5069dcc0e38d5275ec98b4b700b79c4577d0706a00905d351e63f83658",
+    "tools/RICON_LiveProbe/ops/wb-run-lib-claude.ps1": "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57"
+  },
+  "liveAcceptanceGates": [
+    "Explicit RUNNING and local CLIENT_BINDING attached=1 subscriptions=2 on each side",
+    "Host SERVER_BINDING subscriptions=2",
+    "Unambiguous stabilized binding; transition window not attributed by frequency alone",
+    "Contiguous audio seq and clean STOPPED subscriptionsRemaining=0",
+    "Endpoint readiness checker remains independent of the audio prefix",
+    "Settings restore, source stability and complete owned-process teardown"
+  ],
+  "limits": "Pure checks cover CLI gate and journal separation only, not actual subscription lifecycle or audio. Missing binding means UNOBSERVED, not absent TX/RX. Snapshot dropped is not a claim that a streamed event was lost. Neither native delivery nor RICON actuation has been tested."
+}

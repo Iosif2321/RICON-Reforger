@@ -91,6 +91,16 @@
   [E-live-endpoint-bootstrap-codex.md](../../docs/evidence/E-live-endpoint-bootstrap-codex.md); разбор
   `docs/evidence/receipts/live-endpoint-log-check-claude.py <log> off|on|restart`.
 
+## Пассивный двухролевой аудионаблюдатель (2026-11-02)
+
+[Новый probe](<Scripts/Game/RICON_Live/RICON_LiveAudioProbe.c>) и [game lifecycle](<Scripts/Game/RICON_Live/RICON_LiveAudioGame.c>) включаются **только** `-riconAudioObserve=1`; [runner](<ops/wb-serverplay-claude.ps1>) добавляет этот параметр обеим ролям при `-AudioObserve`. Без флага создаваемого аудионаблюдателя нет. Это только подписки существующего radio-only observer, без SetCapture/PTT, PCM, изменений рации или direct.
+
+Журнал использует отдельный `[RICON_AUDIO]`, не загрязняя `[RICON_LIVE]` endpoint-checker. Полный поток печатается по одному событию с возрастающим seq; остановка выводит счётчики кольцевого снимка и `subscriptionsRemaining`. `dropped` относится к снимку, не автоматически к потере потока. При урезанном stdout проверять полные исходные журналы.
+
+До трактовки событий требуются `RUNNING` и `CLIENT_BINDING attached=1 subscriptions=2` каждой роли, у сервера также `SERVER_BINDING subscriptions=2`. Нет этих маркеров — `UNOBSERVED`. Переподключение опрашивается раз в секунду: переходы персонажа/ID неоднозначны до стабилизации. Полный binding рации/трансивера остаётся UNKNOWN; RX не доказывает слышимость.
+
+[Чистый Workbench-пробник](<Scripts/WorkbenchGame/RICON_LiveAudioProbeCheckPlugin.c>) проверяет opt-in и раздельность журналов (10/10), не живые подписки. [Квитанция подготовки](<../../docs/evidence/receipts/audio-passive-preflight-20261102-lead.json>) сохраняет исправленный compile-отказ и финальный успешный лог. Дальнейшие gates — в [локальном аудиоплане](<../../docs/plan/LOCAL_AUDIO_VALIDATION_RU.md>).
+
 ## Запуск самопроверки (Workbench, без мира)
 
 ```

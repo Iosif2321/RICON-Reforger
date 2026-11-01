@@ -53,6 +53,8 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [string]$World = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
       [switch]$ReadAuthOnly,
       [switch]$Client,
+      # Passive TOOL_ONLY subscriptions; never requests capture or PTT.
+      [switch]$AudioObserve,
       [switch]$DryRun)
 
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
@@ -110,6 +112,7 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect",
 	"-riconEndpointProbe=1", "-riconBenchPluginStart=1", "-log-scr-checksum")
 if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
+if ($AudioObserve) { $argList += "-riconAudioObserve=1" }
 "ARGS " + ($argList -join " ")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
 "LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=$yesTotal"
@@ -128,6 +131,7 @@ if ($Client) {
 	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"", "-window", "-screenWidth", "960", "-screenHeight", "540",
 		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-username", $clientUser, "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
 		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-logLevel", "verbose", "-log-scr-checksum", "-riconEndpointProbe=1")
+	if ($AudioObserve) { $clientArgs += "-riconAudioObserve=1" }
 	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
 	$script:secrets = @($ha.address, $OutDir)
 }
@@ -578,7 +582,7 @@ if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	# the stream and its dump both come out, so the cap leaves room for 2 x 1024 events; a cut is never silent
-	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 	$tagged | Select-Object -First $taggedCap | ForEach-Object { MaskText $_.Line $script:secrets }
 	if ($tagged.Count -gt $taggedCap) { "TAGGED_TRUNCATED shown=$taggedCap total=$($tagged.Count)" }
 	# counts only: the host player's lines carry the owner's profile name. Diagnostics, not the B0c criterion (a distinct
@@ -593,7 +597,7 @@ if ($Client) {
 	if ($script:clientLog) {
 		$clines = Get-Content $script:clientLog
 		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count + " clientPeerName=" + @($clines | Select-String -SimpleMatch $clientUser).Count
-		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 		$ctagged | Select-Object -First $taggedCap | ForEach-Object { "C " + (MaskText $_.Line $script:secrets) }
 		if ($ctagged.Count -gt $taggedCap) { "C TAGGED_TRUNCATED shown=$taggedCap total=$($ctagged.Count)" }
 		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length
