@@ -4,7 +4,7 @@
   "scope": "active render endpoints and their active audio sessions with PID/process name",
   "implementation": {
     "path": "tools/RICON_LiveProbe/ops/audio-inventory-enforce.ps1",
-    "sha256": "14ecbbc0a19921903bf886db574720ae19d82cba3fb1317e8c8bb8215e4214dd",
+    "sha256": "79b747cb41385eb3856b79dcfc46178fc81716ad7e424fd2181e7bcfbbd01a30",
     "powershell": "Windows PowerShell 5.1",
     "asciiOnly": true,
     "astParseErrors": 0,
@@ -22,10 +22,30 @@
   },
   "selftest": {
     "path": "tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
-    "sha256": "97aa7b672c09ee2cef1771f541f0244df1a1f6b974f03a38de1cc991b4b7c2a1",
+    "sha256": "1253decc2d027be1e738c18181cbad8af1839f36b97b26adea61550641514559",
     "command": "python -X utf8 tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
     "result": "PASS",
     "kind": "static source and synthetic ordering only"
+  },
+  "priorAttempt": {
+    "implementationSha256": "14ecbbc0a19921903bf886db574720ae19d82cba3fb1317e8c8bb8215e4214dd",
+    "layoutCheck": "PASS",
+    "inventory": "STOPPED_E_NOINTERFACE",
+    "cause": "incorrect IMMDeviceCollection IID suffix",
+    "endpointsOrSessionsEnumerated": false,
+    "settingsCapturePlaybackOrRoutesChanged": false
+  },
+  "installedSdkVerification": {
+    "version": "10.0.26100.0",
+    "result": "PASS",
+    "checks": ["all managed COM IIDs", "MMDeviceEnumerator CLSID", "all declared vtable method orders", "PKEY_Device_FriendlyName"],
+    "headersSha256": {
+      "mmdeviceapi.h": "3e0b02d819dd7ce0cb1b5e0721c7370eb1c42f21aa1d4b2747a97eeb22aa5ede",
+      "audiopolicy.h": "ca9575c2e9a5b11402d0724814db161568f7ba234cac3fe135bab6b45de59838",
+      "propsys.h": "01e7c04dc26439c581ec36cd3d8477373d7883575e3a126138117a6a3647f767",
+      "functiondiscoverykeys_devpkey.h": "69bee422869fbf67dbce48be99006aac784c4898c994906473759d30924bddb6"
+    },
+    "corrected": "IMMDeviceCollection IID suffix corrected to CC5392387B5E"
   },
   "guards": {
     "readActiveRenderEndpointsOnly": true,

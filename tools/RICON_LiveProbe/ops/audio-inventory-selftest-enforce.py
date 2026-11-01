@@ -1,5 +1,6 @@
 """Static/synthetic review of audio-inventory-enforce.ps1; never invokes PowerShell or Core Audio."""
 from pathlib import Path
+import os
 import re
 
 
@@ -65,19 +66,74 @@ for release in (
 assert implementation.count("finally {") >= 5
 assert "Marshal.FinalReleaseComObject(value)" in implementation
 
-# Interface identities and read methods are pinned so vtable drift is visible in review.
-assert csharp.lower().count("77aa99a0-1bd6-484f-8bc7-2c654c9a9b6f") == 2, "Manager2 activation/interface IID drift"
-for guid in (
-    "BCDE0395-E52F-467C-8E3D-C4579291692E",
-    "A95664D2-9614-4F35-A746-DE8DB63617E6",
-    "0BD7A1BE-7A1A-44DB-8397-C0A4A5B2A6C8",
-    "D666063F-1587-4E43-81F1-B948E807363F",
-    "886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99",
-    "77AA99A0-1BD6-484F-8BC7-2C654C9A9B6F",
-    "E2F5BB11-0570-40CA-ACDD-3AA01277DEE8",
-    "BFB7FF88-7239-4FC9-8FA2-07C950BE9C6D",
-):
-    assert guid.lower() in interfaces.lower(), f"Missing COM identity: {guid}"
+# COM identities and vtable order come from the installed Microsoft SDK, not copied constants.
+def version_key(path):
+    return tuple(int(part) for part in path.name.split(".") if part.isdigit())
+
+
+configured = os.environ.get("RICON_WINDOWS_SDK_INCLUDE")
+include_root = Path(configured) if configured else Path(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")) / "Windows Kits" / "10" / "Include"
+candidates = [path for path in include_root.iterdir() if (path / "um" / "mmdeviceapi.h").is_file()
+              and (path / "um" / "audiopolicy.h").is_file() and (path / "um" / "propsys.h").is_file()]
+assert candidates, f"Installed Windows SDK headers not found under {include_root}"
+sdk = max(candidates, key=version_key)
+headers = {
+    "mmdeviceapi": (sdk / "um" / "mmdeviceapi.h").read_text(encoding="utf-8-sig"),
+    "audiopolicy": (sdk / "um" / "audiopolicy.h").read_text(encoding="utf-8-sig"),
+    "propsys": (sdk / "um" / "propsys.h").read_text(encoding="utf-8-sig"),
+    "deviceKeys": (sdk / "um" / "functiondiscoverykeys_devpkey.h").read_text(encoding="utf-8-sig"),
+}
+interface_headers = {
+    "IMMDeviceEnumerator": "mmdeviceapi",
+    "IMMDeviceCollection": "mmdeviceapi",
+    "IMMDevice": "mmdeviceapi",
+    "IPropertyStore": "propsys",
+    "IAudioSessionManager2": "audiopolicy",
+    "IAudioSessionEnumerator": "audiopolicy",
+    "IAudioSessionControl2": "audiopolicy",
+}
+
+
+def native_guid(name, header):
+    match = re.search(r'MIDL_INTERFACE\("([0-9A-Fa-f-]+)"\)\s+' + re.escape(name) + r"\b", header)
+    assert match, f"SDK GUID not found for {name}"
+    return match.group(1).lower()
+
+
+def managed_guid(name):
+    pattern = (r'\[ComImport, InterfaceType\(ComInterfaceType\.InterfaceIsIUnknown\), Guid\("([0-9A-Fa-f-]+)"\)\]\s+'
+               r'interface\s+' + re.escape(name) + r"\b")
+    match = re.search(pattern, interfaces)
+    assert match, f"Managed GUID not found for {name}"
+    return match.group(1).lower()
+
+
+def native_vtable(name, header):
+    match = re.search(r"typedef struct " + re.escape(name) + r"Vtbl\s*\{(.*?)END_INTERFACE", header, re.S)
+    assert match, f"SDK vtable not found for {name}"
+    methods = re.findall(r"DECLSPEC_XFGVIRT\([^,]+,\s*(\w+)\)", match.group(1))
+    return [method for method in methods if method not in ("QueryInterface", "AddRef", "Release")]
+
+
+def managed_vtable(name):
+    match = re.search(r"interface\s+" + re.escape(name) + r"\s*\{(.*?)\n    \}", interfaces, re.S)
+    assert match, f"Managed vtable not found for {name}"
+    return re.findall(r"\[PreserveSig\]\s+int\s+(\w+)\s*\(", match.group(1))
+
+
+for interface_name, header_name in interface_headers.items():
+    header = headers[header_name]
+    assert managed_guid(interface_name) == native_guid(interface_name, header), f"IID drift: {interface_name}"
+    assert managed_vtable(interface_name) == native_vtable(interface_name, header), f"vtable drift: {interface_name}"
+
+class_match = re.search(r'\[ComImport, Guid\("([0-9A-Fa-f-]+)"\)\]\s+class\s+MMDeviceEnumeratorComObject', interfaces)
+sdk_class = re.search(r'class\s+DECLSPEC_UUID\("([0-9A-Fa-f-]+)"\)\s+MMDeviceEnumerator', headers["mmdeviceapi"])
+assert class_match and sdk_class and class_match[1].lower() == sdk_class[1].lower(), "MMDeviceEnumerator CLSID drift"
+manager_iid = re.search(r'IID_IAudioSessionManager2\s*=\s*new Guid\("([0-9A-Fa-f-]+)"\)', csharp)
+assert manager_iid and manager_iid[1].lower() == native_guid("IAudioSessionManager2", headers["audiopolicy"])
+assert csharp.lower().count(manager_iid[1].lower()) == 2, "Manager2 activation/interface IID drift"
+assert re.search(r"DEFINE_PROPERTYKEY\(PKEY_Device_FriendlyName,\s*0xa45c254e,\s*0xdf1c,\s*0x4efd,\s*0x80,\s*0x20,\s*0x67,\s*0xd1,\s*0x46,\s*0xa8,\s*0x50,\s*0xe0,\s*14\)", headers["deviceKeys"])
+assert 'new Guid("a45c254e-df1c-4efd-8020-67d146a850e0"), 14' in csharp
 
 # Synthetic ordering mirrors the public output rule without touching the OS.
 endpoints = [
@@ -92,4 +148,4 @@ assert [row["idSha256"] for row in endpoints] == ["00", "ff"]
 assert endpoints[0]["sessions"] == [(2, "a"), (2, "a")]
 assert endpoints[1]["sessions"] == [(2, "b"), (9, "z")]
 
-print("audio-inventory static selftest: PASS (read-only scope, privacy, deterministic ordering, COM cleanup; Core Audio not invoked)")
+print(f"audio-inventory static selftest: PASS (SDK {sdk.name} GUID/vtables, read-only scope, privacy, ordering, cleanup; Core Audio not invoked)")
