@@ -87,7 +87,8 @@ def parse_log(path, expected_player, require_server):
     if dropped == 0:
         assert count == next_seq and count <= 256, "Pre-overflow snapshot counters are inconsistent"
     else:
-        assert count == 256 and count + dropped == next_seq + 1, "Overflowed ring counters are inconsistent"
+        assert (count == 256 and dropped >= 2 and next_seq > 256
+                and count + dropped == next_seq + 1), "Overflowed ring counters are inconsistent"
 
     kinds = {}
     for event in events:

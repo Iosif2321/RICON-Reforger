@@ -103,7 +103,12 @@ with tempfile.TemporaryDirectory(prefix="ricon-audio-passive-") as directory:
     assert signal["host"]["txCaptureEvents"] == signal["client"]["rxEvents"] == 1
     assert signal["transmissionVerdict"] == signal["audio"] == "NOT_TESTED"
 
-    # Full streamed sequence remains continuous even when the ring snapshot evicted entries.
+    # Exact-capacity pre-overflow and the first possible overflow are both accepted.
+    capacity_kinds = tuple("NOTE" for _ in range(256))
+    capacity = fixture(1, True, capacity_kinds, dropped=0, count=256, next_seq=256)
+    capacity_path = folder / "capacity.log"
+    capacity_path.write_text(capacity, encoding="utf-8")
+    assert parse_log(capacity_path, 1, True)["snapshotDropped"] == 0
     overflow_kinds = tuple("NOTE" for _ in range(257))
     overflow = fixture(1, True, overflow_kinds, dropped=2, count=256, next_seq=257)
     overflow_path = folder / "overflow.log"
@@ -129,6 +134,7 @@ with tempfile.TemporaryDirectory(prefix="ricon-audio-passive-") as directory:
         (host_text, replace_once(client_text, "count=2", "count=1"), "count mismatch"),
         (host_text, move_before(client_text, "seq=0 ", "state=RUNNING"), "event before RUNNING"),
         (host_text, move_after(client_text, "seq=1 ", "snapshot count="), "event after snapshot"),
+        (host_text, fixture(2, kinds=tuple("NOTE" for _ in range(256)), dropped=1, count=256, next_seq=256), "impossible first overflow"),
         (host_text, fixture(2, kinds=tuple("NOTE" for _ in range(256)), dropped=2, count=255, next_seq=256), "overflow count not capacity"),
         (host_text, fixture(2, kinds=tuple("NOTE" for _ in range(257)), dropped=0, count=257, next_seq=257), "pre-overflow exceeds capacity"),
         (host_text + "18:01:00.000 SCRIPT : [RICON_AUDIO] seq=2 t=20 side=client kind=NOTE player=1 device=-1 tr=0 value=2 text=late\n",
