@@ -57,14 +57,23 @@ def read_radios(text, rows):
 
 
 def check_host_completion(text):
-    """Требует штатное завершение окна наблюдения и возврат Play в редактор."""
-    assert "inspect=OBSERVATION_END samples=120 complete=1 isGameMode=1" in text, "Нет полного окна наблюдения хоста"
-    times = []
-    for marker in ("EDIT_REQUESTED", "EDIT_STABLE"):
-        matches = re.findall(r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVEB\] inspect=" + marker + r"\b", text, re.M)
-        assert len(matches) == 1, f"Нужен один маркер {marker}"
-        times.append(datetime.strptime(matches[0], "%H:%M:%S.%f"))
-    assert (times[1] - times[0]).total_seconds() >= 5, "Возврат в редактор не подтверждён"
+    """Требует один упорядоченный цикл завершения; переход через полночь отклоняется."""
+    patterns = (
+        (r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVE\].*\bkind=ENDPOINT_DONE\b.*\bvalue=120\b.*text=cycle=1,samples=120,reason=LIMIT\s*$", 2, "ENDPOINT_DONE"),
+        (r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVEB\] inspect=OBSERVATION_END samples=120 complete=1 isGameMode=1\s*$", 1, "OBSERVATION_END"),
+        (r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVEB\] inspect=EDIT_REQUESTED\b.*$", 1, "EDIT_REQUESTED"),
+        (r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVEB\] inspect=EDIT_STABLE\b.*$", 1, "EDIT_STABLE"),
+    )
+    found = []
+    for pattern, count, label in patterns:
+        matches = list(re.finditer(pattern, text, re.M))
+        assert len(matches) == count, f"Неверное число маркеров {label}"
+        # ENDPOINT_DONE закономерно повторён в полном dump; границей цикла служит последняя копия.
+        match = matches[-1]
+        found.append((match.start(), datetime.strptime(match[1], "%H:%M:%S.%f")))
+    assert all(a[0] < b[0] for a, b in zip(found, found[1:])), "Нарушен порядок lifecycle-маркеров"
+    assert all(a[1] <= b[1] for a, b in zip(found, found[1:])), "Время lifecycle убывает или перешло через полночь"
+    assert (found[3][1] - found[2][1]).total_seconds() >= 5, "Возврат в редактор не подтверждён"
 
 
 def review_pair(host, client):

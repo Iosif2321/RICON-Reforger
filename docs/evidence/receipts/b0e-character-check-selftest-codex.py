@@ -59,9 +59,9 @@ def fixture(mode, count=7, start=0, spawn=1, radio_at=1, gone_at=None):
             f"{(base + timedelta(seconds=1)).strftime('%H:%M:%S.%f')[:-3]} SCRIPT : [RICON_LIVEB] inspect=EDIT_REQUESTED",
             f"{(base + timedelta(seconds=7)).strftime('%H:%M:%S.%f')[:-3]} SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE",
         ]
-    return "\n".join([f"RICON_LiveEndpointProbe.c' CRC: {CRC}", *events, *lifecycle,
+    return "\n".join([f"RICON_LiveEndpointProbe.c' CRC: {CRC}", *events,
                       f"[RICON_LIVE] dump=BEGIN count={len(events)} dropped=0 nextSeq={len(events)}",
-                      *events, "[RICON_LIVE] dump=END"])
+                      *events, "[RICON_LIVE] dump=END", *lifecycle])
 
 
 def parse(folder, text, mode, count=7):
@@ -75,12 +75,35 @@ def parse(folder, text, mode, count=7):
 with tempfile.TemporaryDirectory(prefix="ricon-b0e-check-") as directory:
     folder = Path(directory)
     host_text, client_text = fixture(2), fixture(1)
-    check_host_completion(host_text)
+    lifecycle_text = fixture(2, count=120)
+    check_host_completion(lifecycle_text)
+    check_host_completion(Path(__file__).with_name("b0d-client-claude-20261026-182115.txt").read_text(encoding="utf-8"))
+
+    def event_line(text, marker, occurrence=0):
+        return [line for line in text.splitlines() if marker in line][occurrence]
+
+    def move_after(text, moving, anchor):
+        lines = text.splitlines()
+        lines.remove(moving)
+        lines.insert(lines.index(anchor) + 1, moving)
+        return "\n".join(lines)
+
+    observation = event_line(lifecycle_text, "inspect=OBSERVATION_END")
+    requested = event_line(lifecycle_text, "inspect=EDIT_REQUESTED")
+    stable = event_line(lifecycle_text, "inspect=EDIT_STABLE")
+    endpoint = event_line(lifecycle_text, "kind=ENDPOINT_DONE")
     lifecycle_failures = [
-        host_text.replace("inspect=OBSERVATION_END", "inspect=OBSERVATION_MISSING"),
-        host_text.replace("inspect=EDIT_REQUESTED", "inspect=EDIT_MISSING"),
-        host_text.replace("18:00:14.000 SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE",
-                          "18:00:09.000 SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE"),
+        lifecycle_text.replace("inspect=OBSERVATION_END", "inspect=OBSERVATION_MISSING"),
+        lifecycle_text.replace("inspect=EDIT_REQUESTED", "inspect=EDIT_MISSING"),
+        lifecycle_text.replace(stable, "18:02:02.000" + stable[12:]),
+        lifecycle_text + "\n" + observation,
+        lifecycle_text + "\n" + stable,
+        lifecycle_text + "\n" + endpoint,
+        move_after(lifecycle_text, observation, stable),
+        move_after(lifecycle_text, endpoint, observation),
+        lifecycle_text.replace(observation, "23:59:59.000" + observation[12:])
+                 .replace(requested, "00:00:00.000" + requested[12:])
+                 .replace(stable, "00:00:06.000" + stable[12:]),
     ]
     for broken in lifecycle_failures:
         try:

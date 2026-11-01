@@ -23,20 +23,21 @@
   },
   "checker": {
     "path": "docs/evidence/receipts/b0e-character-check-codex.py",
-    "sha256": "1902c2cb56161c03b9e0e2d0b7a4e34fb931bf93e2ad57abd468bda951f4a6a1",
+    "sha256": "ec4d8e379aa0c62e090cfd0a8dd9e058e7c5f3a5b9d81a051825267c681e3a1c",
     "helperSha256": "808249478c03a00b12c56b720d410a3258c7f4745456733b170fda1167b74c52",
     "finding": "The B0e CLI called the B0d parser but bypassed the B0d CLI lifecycle checks, so complete synthetic endpoint streams could pass without host OBSERVATION_END or confirmed EDIT_STABLE.",
-    "correction": "The B0e CLI now requires the exact 120-sample OBSERVATION_END marker, exactly one EDIT_REQUESTED and EDIT_STABLE marker, and at least five seconds between the latter two before reporting readiness.",
+    "correction": "The B0e CLI requires exactly two ENDPOINT_DONE copies (stream and full dump), exactly one timestamped OBSERVATION_END, EDIT_REQUESTED and EDIT_STABLE, their strict line order, nondecreasing same-day timestamps, and at least five seconds between request and stable. Midnight rollover is rejected.",
     "resultBoundary": "PLAYER2_SPAWN_RADIO_OBSERVED still proves only stable assignment, local VoN/gadget components and an observed radio. It does not prove PTT, radio-path selection, pair suppression, delivery or audible sound. Runner stdout cleanup and guard summaries remain operator evidence outside this checker."
   },
   "selftest": {
     "path": "docs/evidence/receipts/b0e-character-check-selftest-codex.py",
-    "sha256": "8353a3ec9519c58711422390968842558e1eac8aaa14ce06458f67b7d56d5464",
+    "sha256": "08933faa9c8042422b76905eb10270e13187d40e2ecb02fd06126fefe728c349",
     "command": "python -X utf8 docs/evidence/receipts/b0e-character-check-selftest-codex.py",
     "result": "PASS",
     "coverage": {
       "readinessRejections": 24,
-      "lifecycleRejections": 3,
+      "lifecycleRejections": 9,
+      "historicalB0dLifecycleAccepted": true,
       "cliSamples": "120/30",
       "inputOverwriteProtection": true
     },
