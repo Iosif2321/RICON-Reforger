@@ -1,0 +1,43 @@
+{
+  "review": "Passive two-role audio observer checker preflight",
+  "date": "2026-11-02",
+  "checker": {
+    "path": "tools/RICON_LiveProbe/ops/audio-passive-check-enforce.py",
+    "sha256": "530b58a704f42a1c2f2df9004ddc89bb79b47886a132a5a0c75852a07ec2bb7e",
+    "runtime": "Python stdlib",
+    "gameLogsRead": false,
+    "result": "SYNTHETIC_PASS_REVIEW_REQUIRED"
+  },
+  "selftest": {
+    "path": "tools/RICON_LiveProbe/ops/audio-passive-check-selftest-enforce.py",
+    "sha256": "7c40416e3b2d69f6bc5a323ef10f49f7356b628343d41c1e926206d73f33f14c",
+    "command": "python -X utf8 tools/RICON_LiveProbe/ops/audio-passive-check-selftest-enforce.py",
+    "result": "PASS",
+    "syntheticRejections": 19,
+    "cliAndInputProtection": true
+  },
+  "acceptance": {
+    "distinctFullLogs": true,
+    "noScriptErrors": true,
+    "exactlyOneRunningSnapshotStopped": true,
+    "continuousEventSequence": true,
+    "ringCountersConsistent": true,
+    "hostServerSubscriptions": 2,
+    "finalLocalBindings": {
+      "hostPlayer": 1,
+      "clientPlayer": 2,
+      "attached": 1,
+      "subscriptions": 2
+    },
+    "subscriptionsRemainingAtStop": 0,
+    "eventsAfterSnapshotOrStopRejected": true,
+    "inputOverwriteAndHardlinkRejected": true
+  },
+  "boundary": {
+    "success": "PASSIVE_OBSERVER_READY",
+    "transmissionVerdict": "NOT_TESTED",
+    "audio": "NOT_TESTED",
+    "rxTxCounts": "descriptive only",
+    "limitations": "Does not prove PTT, delivery, device/transceiver binding, direct isolation, PCM or audible sound."
+  }
+}
