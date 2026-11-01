@@ -1,0 +1,195 @@
+{
+    "date":  "2026-11-02",
+    "level":  "DOC_AND_WORKBENCH_SOURCE_ONLY",
+    "baseCommit":  "249507a",
+    "result":  "NO_VALIDATED_SAME_PATH_PACKET_MECHANISM_YET",
+    "ownerDecision":  {
+                          "threadRef":  "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
+                          "eventSequence":  680,
+                          "confirmedInputIntent":  "0.1@249507a",
+                          "amendment":  "Valid test information may replace sound only through the same path and protocol"
+                      },
+    "recommendedNextProbe":  "AI_VON_SOUND_EVENT",
+    "candidates":  [
+                       {
+                           "id":  "SCRIPTED_RADIO_MESSAGE",
+                           "sameVoNProtocol":  "NOT_PROVEN",
+                           "checkedCampaignExample":  "OnDelivery -\u003e PlayRadioMsg -\u003e Rpc(RpcDo_PlayRadioMsg, ...)",
+                           "arbitraryCrossProcessPayload":  "NOT_PROVEN"
+                       },
+                       {
+                           "id":  "AI_VON_SOUND_EVENT",
+                           "docSaysTransferThroughVoN":  true,
+                           "playbackEventHookExists":  true,
+                           "hookProvenRemoteVoNReception":  false,
+                           "valuesReadableAtB":  "UNKNOWN",
+                           "sameRadioMuteStage":  "UNKNOWN",
+                           "runtime":  "NOT_RUN"
+                       },
+                       {
+                           "id":  "VON_RX_TIMING_MARKER",
+                           "classification":  "EVENT_TIMING_CHANNEL_CANDIDATE_ONLY",
+                           "sameMediaPath":  "UNKNOWN",
+                           "postMuteDeliveryProof":  false,
+                           "runtime":  "NOT_RUN"
+                       }
+                   ],
+    "reader":  {
+                   "plugin":  "tools/RICON_WbReader/Scripts/WorkbenchGame/RICON_WbReaderPlugin.c",
+                   "pluginSha256":  "8f65dbbcb95ce8737b212d880fe0fd60bac19629265a820b6652cf817381dd16",
+                   "gproj":  "tools/RICON_WbReader/addon.gproj",
+                   "gprojSha256":  "a14f82b2d730e1c9343d223d5ec9dccfbb53afbc2b78bd49c3b58437e29bb71f",
+                   "exeVersion":  "1.8.0.13",
+                   "mode":  "ScriptEditor, wbSilent, exitAfterInit, no world/Play/server",
+                   "maxSourceLinesPerRun":  15,
+                   "firstSearchFailure":  "Wrong resource root, not an API-negative finding",
+                   "lastManagedJobResult":  "Unavailable after resume; final reader done and raw source window verified; child exit code not independently recovered"
+               },
+    "apiPages":  [
+                     {
+                         "name":  "interfaceVoNComponent.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceVoNComponent.html",
+                         "sha256":  "5b04e19f815b5a1d50a52696f42470bc6bd9cf6228af69487843c02689d4a212"
+                     },
+                     {
+                         "name":  "interfaceBaseTransceiver.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceBaseTransceiver.html",
+                         "sha256":  "425bdde345640b18a9185b051bcb765a7361479f92bc39dc6b1b44bcd24aa3e6"
+                     },
+                     {
+                         "name":  "interfaceScriptedRadioMessage.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceScriptedRadioMessage.html",
+                         "sha256":  "9e4d55f406967c51b99c13ce33adb9871353dac48755067fab533b178233fc02"
+                     },
+                     {
+                         "name":  "interfaceVonRadioMessage.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceVonRadioMessage.html",
+                         "sha256":  "11fcda0880889b998d77ea61a26056b3c6184a2e2ebd288583f7cab736de5589"
+                     },
+                     {
+                         "name":  "interfaceCommunicationSoundComponent.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceCommunicationSoundComponent.html",
+                         "sha256":  "4bf72fcffac5fbdcf1e894acc7fdee6afe12cf0337dbb5553711352aa02bb3bd"
+                     },
+                     {
+                         "name":  "interfaceSCR__CommunicationSoundComponent.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceSCR__CommunicationSoundComponent.html",
+                         "sha256":  "4fab87d12ed59feb6132d775052057ce31bb18be47a946a28a2c0f5173628961"
+                     },
+                     {
+                         "name":  "interfaceRadioBroadcastComponent.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceRadioBroadcastComponent.html",
+                         "sha256":  "27f00ad3d36d72e90a1bb4935f144cbe6e7b3233acf3d4fbe1fb68b33bf065f4"
+                     },
+                     {
+                         "name":  "interfaceRadioBroadcastSoundComponent.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceRadioBroadcastSoundComponent.html",
+                         "sha256":  "bfa4749b14d93790dda8a9fee9462705e3491fb00a20f62ee44b689bf9a67663"
+                     },
+                     {
+                         "name":  "interfaceRadioBroadcastManager.html",
+                         "path":  "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceRadioBroadcastManager.html",
+                         "sha256":  "6482e098ab19fc9ce8c83d1c20eb17d795d4d9421ff62b9bd3b815572530064f"
+                     }
+                 ],
+    "sourceLogs":  [
+                       {
+                           "name":  "ricon-wbreader-von-data-candidate-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-von-data-candidate-20261102-lead\\console.log",
+                           "sha256":  "b60c2151ba10c7aa9e6afe59fed00c128a777b0a11db2b61ea1c55c333f9f2ae",
+                           "readerDone":  false,
+                           "sourceLines":  0,
+                           "scriptErrors":  1,
+                           "observedChildExitCode":  3,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-von-data-candidate2-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-von-data-candidate2-20261102-lead\\console.log",
+                           "sha256":  "fd8ee6a5963b025a03daa93e862d8bf01b51eacc1ad315dbf0307d95f637c982",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-von-ai-start-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-von-ai-start-20261102-lead\\console.log",
+                           "sha256":  "5b060e171481ec5bbc982944abed738921b223f44c4f6a34a17189379847df9a",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-radio-msg-delivery-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-radio-msg-delivery-20261102-lead\\console.log",
+                           "sha256":  "9b991fdfda07148a6cddc5c64a8618ff8a8dfbb0aeb33dc3e5b219254131d57f",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-von-ai-callback-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-von-ai-callback-20261102-lead\\console.log",
+                           "sha256":  "f89af15c58377c9d09804c8a04a5ca9cb06aca901244d6279c9f0059aa793a4a",
+                           "readerDone":  true,
+                           "sourceLines":  7,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-von-ai-reference-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-von-ai-reference-20261102-lead\\console.log",
+                           "sha256":  "38683a00a1127a3f449ce4ade37cbf9cde39df45cb409fb588b66aaa0143dd4f",
+                           "readerDone":  true,
+                           "sourceLines":  0,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-radio-msg-next-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-radio-msg-next-20261102-lead\\console.log",
+                           "sha256":  "e08600bcb6fe5f17f01d54d23bcd35ec053506ee577d4c34f557cc37f5d5da38",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-radio-msg-handoff-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-radio-msg-handoff-20261102-lead\\console.log",
+                           "sha256":  "ee463e265ea85a4481c65ba49447def37f0fee3ce2ed1ee037e957983aee77c7",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  0,
+                           "jobOutputAvailable":  true
+                       },
+                       {
+                           "name":  "ricon-wbreader-radio-msg-rpc-20261102-lead",
+                           "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-wbreader-radio-msg-rpc-20261102-lead\\console.log",
+                           "sha256":  "751d678477f7e8fed8779f6a6ac3ec48fcde9f6f3859cbd0466c1e5d4aa7eecb",
+                           "readerDone":  true,
+                           "sourceLines":  15,
+                           "scriptErrors":  0,
+                           "observedChildExitCode":  null,
+                           "jobOutputAvailable":  false
+                       }
+                   ],
+    "payloadTransmitted":  false,
+    "setCaptureCalled":  false,
+    "audioRecorded":  false,
+    "gameWorldStarted":  false,
+    "binaryReverseEngineeringPerformed":  false,
+    "productionOrToolSourceChanged":  false,
+    "remainingGameOrWorkbenchProcesses":  0,
+    "limits":  "Candidate selection only. A common transceiver, a local playback callback, RX counts, timing CRC or a campaign RPC is not equivalent media transport proof. No SAME_PATH_PACKET_PASS, audible output or RICON actuator claim."
+}

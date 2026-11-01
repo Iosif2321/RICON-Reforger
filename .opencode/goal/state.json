@@ -1,45 +1,64 @@
 {
   "schemaVersion": 1,
   "goalId": "ricon-local-radio-slice",
-  "goal": "Довести разработку RICON до воспроизводимого локального испытания радиозвука между двумя игроками с доказанным участием RICON и сохранностью direct voice.",
+  "goal": "Проверить локальную передачу звука либо валидной информации по тому же штатному пути и протоколу между двумя игроками с реальным участием RICON и сохранностью direct voice.",
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "INTENT_RECONCILIATION",
-  "sourceBaseline": "0727a6b",
+  "activePhase": "APPROVED_INTENT_FEASIBILITY_HANDOFF",
+  "sourceBaseline": "249507a",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
     "localIntent": "docs/req/INTENT-local-radio-slice.md",
     "baselineAudioProtocol": "docs/plan/LOCAL_AUDIO_VALIDATION_RU.md",
-    "routeEvidence": "docs/evidence/receipts/audio-route-inventory-20261102-lead.json"
+    "routeEvidence": "docs/evidence/receipts/audio-route-inventory-20261102-lead.json",
+    "markerFeasibility": "docs/evidence/E-von-marker-feasibility-lead.md",
+    "markerSourceManifest": "docs/evidence/receipts/von-marker-feasibility-20261102-lead.json"
   },
   "approval": {
-    "intentRevision": "0.1",
-    "intentStatus": "DRAFT",
-    "explicitApprovalOfThisArtifactRecorded": false,
+    "intentRevision": "0.2",
+    "intentStatus": "APPROVED_WITH_OWNER_PACKET_AMENDMENT",
+    "confirmedInputRevision": "0.1@249507a",
+    "ownerDecisionEventSequence": 680,
+    "explicitApprovalOfIntentRecordedInTeam": true,
+    "packetAllowedOnlyOnSamePathAndProtocol": true,
+    "technicalMechanismApproved": false,
     "implementationGateOpen": false,
-    "freshSessionForNextPhase": "NOT_ESTABLISHED"
+    "leadSessionFreshForDesign": false,
+    "designFreshContext": {
+      "memberRef": "member:76de37ba-f1b6-4a79-9ba2-04b747ac6b95",
+      "humanOwnerAddedEventSequence": 760,
+      "firstAvailableContextAt": "2026-11-02T04:02:31+08:00",
+      "noPriorProjectContextAttested": true,
+      "exactSessionCreationTimeIndependentlyVerified": false,
+      "handoffStatus": "PREPARED_PENDING_RECORDED_INTENT_AND_EXPLICIT_WORKER_GATE_CHECK"
+    }
   },
   "verifiedProgress": {
     "twoPlayerReadiness": "PASS_BOUNDED_B0E",
     "earlierPassiveObserverLifecycle": "PASS_BOUNDED_PREVIOUS_RUN",
     "coreAudioInventory": "SUCCESSFUL_AFTER_IID_CORRECTION",
     "measuredOutputRoutes": "BOTH_GAME_SESSIONS_ON_SHARED_USB",
-    "laterRouteRunPassiveLifecycle": "INCOMPLETE_CLIENT_TERMINAL_MARKERS"
+    "laterRouteRunPassiveLifecycle": "INCOMPLETE_CLIENT_TERMINAL_MARKERS",
+    "voNEventApi": "DOCUMENTED_AI_SOUND_EVENT_INPUT",
+    "campaignMessageExample": "SEPARATE_CAMPAIGN_RPC_HANDOFF_OBSERVED_IN_SOURCE",
+    "samePathPacketMechanism": "NOT_PROVEN"
   },
   "notYetProven": [
-    "Known signal at the real microphone input",
-    "Isolated receiver output and audio observation",
-    "Radio PTT and delivered sound",
+    "Native transport/protocol equivalence for a decodable test marker",
+    "Independent payload recognition at the intended receiver",
+    "Marker passage through the actual radio-only decision/mute stage",
     "Radio-only H2 effect and preservation of direct voice",
     "Real RICON decision reaching a validated actuator"
   ],
   "safety": {
     "productionSeamRemainsBlocked": true,
-    "noNewGameLaunchInThisCycle": true,
+    "readOnlyWorkbenchSourceQueriesOnly": true,
+    "noGameWorldStartedInThisCycle": true,
+    "noBinaryReverseEngineeringInThisCycle": true,
     "audioRoutesChanged": false,
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Explicit owner validation of the intent artifact, recorded revision, then fresh design session; no implementation or deployment implied."
+  "nextGate": "Record approved intent and pass a self-contained handoff to a fresh design context; produce DRAFT probe specification, not implementation. If freshness cannot be established, FRESH_SESSION_REQUIRED remains blocked."
 }
