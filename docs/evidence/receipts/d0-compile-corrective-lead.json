@@ -1,0 +1,83 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "963584c",
+    "level":  "WORKBENCH_COMPILE_AND_PURE_CHECK_ONLY",
+    "result":  "CORRECTIVE_D0_COMPILE_PURE_PASS",
+    "currentGameCrc":  "22c5fa83",
+    "currentPureChecks":  60,
+    "attempts":  [
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-compile-enforce-20261102-010225\\console.log",
+                         "sha256":  "1297b914c863dbf8a5cf96b66c64e5e879a1060b4e860881deaa4787dc4cc035",
+                         "status":  "REJECTED_PRINTFORMAT_ARG10",
+                         "scriptErrors":  4,
+                         "pureChecks":  null,
+                         "childExitReportedByExecutor":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-compile2-enforce-20261102-010323\\console.log",
+                         "sha256":  "48ff5e191fae31b59f8fba4335da5dc4b0fba336e4a49e091f47cf8fd7d7f4fb",
+                         "status":  "REJECTED_POSTFIX_TEMPORARY",
+                         "scriptErrors":  4,
+                         "pureChecks":  null,
+                         "childExitReportedByExecutor":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-compile3-enforce-20261102-010347\\console.log",
+                         "sha256":  "52a50fbea5719d7de2669e3dddbd4920102baa4944f9fc1295caafdc98d71cec",
+                         "status":  "SUPERSEDED_COMPILE_PASS",
+                         "scriptErrors":  0,
+                         "pureChecks":  null,
+                         "childExitReportedByExecutor":  0
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-pure-enforce-20261102-010404\\console.log",
+                         "sha256":  "e4baacfd94c21bff1142ff72772615853649876fac6ab0fc995d4045128501c2",
+                         "status":  "SUPERSEDED_PURE_PASS",
+                         "scriptErrors":  0,
+                         "pureChecks":  49,
+                         "childExitReportedByExecutor":  0
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-corrective-compile-enforce-20261102-011523\\console.log",
+                         "sha256":  "5109fe306fd28f4bf24b4b394a0609e14b9b577cc72acfee709f62d1f0546395",
+                         "status":  "CURRENT_COMPILE_PASS",
+                         "scriptErrors":  0,
+                         "pureChecks":  null,
+                         "childExitReportedByExecutor":  0
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-d0-corrective-pure-enforce-20261102-011539\\console.log",
+                         "sha256":  "b11116cefab254e89fba24a1fceaecb38707c44ce52064cb5c7fc61664de7c9f",
+                         "status":  "CURRENT_PURE_PASS",
+                         "scriptErrors":  0,
+                         "pureChecks":  60,
+                         "childExitReportedByExecutor":  0
+                     }
+                 ],
+    "currentSources":  [
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscovery.c",
+                               "sha256":  "323f35cf3fd9c3d491a09b3a8f83410832a06176cbc22524d628678a13c88599"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscoveryController.c",
+                               "sha256":  "3aaf2eb6d2d830dd1eab1d9699ed54578c75cc2979970b4153824b28156df244"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscoveryGame.c",
+                               "sha256":  "e8d8d1a95bfecf2b6fa14f3d2e83a695c1084cfcf7db788d22e8a23de10088fe"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveCommunicationDiscoveryCheckPlugin.c",
+                               "sha256":  "2301278c6338d37d4047f39e0f980a984755a087d1da1f423357c3d1bd8f3c6b"
+                           }
+                       ],
+    "pureTraceIsNativeRpcIntegration":  false,
+    "preconditionsOrOwnershipEstablished":  false,
+    "runtimePerformed":  false,
+    "queueRequestPerformed":  false,
+    "microphoneCaptureRequested":  false,
+    "packetOrAudioDeliveryClaimed":  false,
+    "limits":  "Pure trace is a separate model sharing mutation predicates, not execution of the actual RPC/state machine. Earlier failing and superseded inputs are retained. This evidence does not authorize runtime without fixture/ownership/profile/callback and cleanup gates."
+}

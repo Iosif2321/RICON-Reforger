@@ -1,6 +1,6 @@
 # Bounded plan — D0 communication-event discovery
 
-Версия: 0.2, 2026-11-02. Статус: **APPROVED_FOR_D0_IMPLEMENTATION_ONLY** по явному решению координатора в пределах автономного поручения владельца 799 после технического VoN/QA ревью и внесения обязательных guards; runtime пока закрыт. Scope: только D0 из [probe spec v0.3](<../req/REQ-von-marker-probe.md>), не транспортные P0–P4. Входной код/цель: `170e9c0`; фактическая редакция spec записывается в том же наборе изменений. Автор/координатор: Lead.
+Версия: 0.3, 2026-11-02. Уточнение v0.3 фиксирует control retry пределы, финальную проверку после логирования, post-observation и собственный host profile; это не изменение транспортной гипотезы. Статус: **APPROVED_FOR_D0_IMPLEMENTATION_ONLY** по явному решению координатора в пределах автономного поручения владельца 799 после технического VoN/QA ревью и внесения обязательных guards; runtime пока закрыт. Scope: только D0 из [probe spec v0.3](<../req/REQ-von-marker-probe.md>), не транспортные P0–P4. Входной код/цель: `170e9c0`; фактическая редакция spec записывается в том же наборе изменений. Автор/координатор: Lead.
 
 Полномочие: прямое поручение владельца продолжать автономно до завершения задачи, событие 799 рабочего Thread; процесс FRESH_SESSION_WAIVED, не clean-session compliance. Это явное ограниченное решение о следующем безопасном срезе, **не автоматическое утверждение всего DRAFT или native VoN механизма**. Техническое ревью D0 VoN/QA выполнено в событиях 1018/1023. Реализация разрешается только в перечисленном TOOL_ONLY scope; runtime — после отдельной проверки исходников, компиляции и подтверждения предусловий ниже.
 
@@ -13,21 +13,23 @@
 ## 2. Точные write-scopes
 
 - Enforce: новые `RICON_LiveCommunicationDiscovery.c`, `RICON_LiveCommunicationDiscoveryGame.c` в TOOL_ONLY Game и чистый `RICON_LiveCommunicationDiscoveryCheckPlugin.c` в WorkbenchGame. При необходимости отдельный TOOL_ONLY player-controller readiness helper; его RPC несёт только readiness/run/generation, не event/payload/время символов. Любой helper предварительно показывается в diff и проверяется.
-- Lead: только opt-in `-CommunicationDiscovery` и публичный run-id обеим ролям в [runner](<../../tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1>); guards, библиотека, worlds allowlist и teardown не ослабляются.
+- Lead: opt-in `-CommunicationDiscovery`, публичный run-id обеим ролям и только для D0 свежий host profile через существующий NewPeerProfile в [runner](<../../tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1>); клиентский профиль тоже свежий. Публичный CLI `-profile` задаёт отдельный scratch-root, не меняет обычный режим. Guards, библиотека, worlds allowlist и teardown не ослабляются; до live нужен readback эффективного profile root.
 - Production Core, RF-модели, snapshot/seam, обычный observer, установленная игра и Windows-настройки не меняются. Без флага новый прибор не создаётся; исходное поведение сохраняется.
 
 ## 3. Фиксированные пределы первого опыта
 
 | Параметр | Значение |
 |---|---|
-| Роли | ровно host/local A=1 и Diag/local B=2; новый собственный мир и клиентский профиль |
+| Роли | ровно host/local A=1 и Diag/local B=2; новый собственный мир и отдельные свежие scratch-профили host/client |
 | Запросы | ровно 1 на A; B никогда не вызывает sound/VoN emitter |
 | Стабильность binding | 5 с до ARM; каждое событие проверяется по текущим refs/generation |
 | Readiness B | до запроса подтверждены run/entity/component/subscription generation, включённые callbacks и подписки B; перед REQUEST требуется свежий control challenge/ACK без event/payload |
 | Quiet baseline | 6 с после готовности A/B; никакой посторонней capture/voice/communication активности; baseline не доказывает пустую очередь сам по себе |
 | Первый запрос | не раньше baseline и свежего ACK; не позже 39 с локального lifetime A, remaining A минус call-budget 1 с ≥30 с |
 | Свежесть ACK | RTT challenge→ACK по одним монотонным часам A ≤1 с; непосредственно на REQUEST: reported remaining B − RTT A − текущий receive-age A − call-budget 1 с ≥30 с; ACK связан с текущими generations, receive-age A ≤1 с |
+| Control retry | initial/fresh имеют разные challenge; ≤20 идентифицированных attempts на challenge с интервалом ≥1500 ms, без сброса t0/deadline. ACK только текущего attempt; retry не переносит event/outcome и не разрешает queue повтор |
 | Ожидание start/finish | максимум 20 с после запроса; не доказанный drain/очистка очереди |
+| Post-observation A | после совпавшего finish ещё 10 с неизменённого наблюдения в прежнем cap; B сохраняет своё bounded окно. Это не доказательство очищенной очереди |
 | Резерв | минимум 10 с cleanup/drain budget после 20 с ожидания; это запас планирования, не гарантия native queue |
 | Наблюдение | максимум 70 с от первоначального старта локального probe t0; deadline никогда не сбрасывается при readiness/rebind; heartbeat 1 с, допустимый разрыв ≤3 с |
 | Поток | максимум 4096 строк на роль: до 4000 ordinary/data, 96 зарезервированы под GAP/terminal/cleanup; переполнение инвалидирует окно |
@@ -46,7 +48,7 @@
 ## 5. Выполнение и cleanup
 
 1. Зарегистрировать callbacks до ARM, показать A/B readiness и generation, выдержать quiet baseline.
-2. Перед единственным запросом повторно проверить role/entity/component и отсутствие foreign activity; выставить флаг request-used до вызова, записать REQUEST_BEGIN/END. `void` — не ACK.
+2. Перед единственным запросом повторно проверить current A refs/flags, server-resolved B controller/entity против initial и fresh адресата, foreign activity и поколения. После context lookup и REQUEST_BEGIN logging заново взять Now и весь RTT/age/remaining gate непосредственно на mutation boundary; invalid/reserve veto/изменение B запрещают очередь. Не логировать между последним guard и единственным native вызовом; one-use фиксируется до него, без принятия pre-call чужого callback как своего. Записать REQUEST_END после возврата; `void` — не ACK.
 3. Неизменённо писать все фактические callbacks, включая посторонние, и read-only native radio RX отдельно. Не вызывать invokers/callbacks вручную. Не присваивать sound-start sender A/RX binding по времени или частоте.
 4. При rebind/gap/clock anomaly/foreign writer запретить дальнейшие requests и инвалидировать результат. Не останавливать чужие или неопределённые audio handles.
 5. Для собственного начавшегося события нужен настоящий finish/terminal либо заранее проверенное уничтожение собственных тестовых ролей при завершении мира/процессов. Detach наблюдателя сам по себе не останавливает звук. Истечение 20 с даёт INCONCLUSIVE_OUTSTANDING_EVENT и требует полного controlled teardown, не успешного D0.

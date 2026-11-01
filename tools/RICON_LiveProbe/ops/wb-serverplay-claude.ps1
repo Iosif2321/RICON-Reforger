@@ -117,14 +117,26 @@ if ($CommunicationDiscovery) {
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $log = "$logsRoot\$logsDir\console.log"
 $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
+$hostLogsArgument = $logsDir
+$d0HostLogsName = ""
+if ($CommunicationDiscovery) {
+	$d0HostLogsName = "$logsDir-host-logs"
+	$d0HostLogsPath = Join-Path $OutDir $d0HostLogsName
+	$hostLogsArgument = "`"$d0HostLogsPath`""
+	$log = Join-Path $d0HostLogsPath "console.log"
+}
 $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=WorldEditor",
-	"-logLevel", "verbose", "-logsDir", $logsDir, "-noFocus", "-maxFPS", "30",
+	"-logLevel", "verbose", "-logsDir", $hostLogsArgument, "-noFocus", "-maxFPS", "30",
 	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect",
 	"-riconEndpointProbe=1", "-riconBenchPluginStart=1", "-log-scr-checksum")
 if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 if ($AudioObserve) { $argList += "-riconAudioObserve=1" }
-if ($CommunicationDiscovery) { $argList += @("-riconCommunicationDiscovery=1", "-riconCommunicationRun=$d0RunId") }
-"ARGS " + ($argList -join " ")
+$d0HostProfileName = ""
+if ($CommunicationDiscovery) {
+	$d0HostProfileName = "$logsDir-host-profile"
+	$argList += @("-riconCommunicationDiscovery=1", "-riconCommunicationRun=$d0RunId", "-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
+}
+"ARGS " + ($argList -join " ").Replace($OutDir, "<scratchpad>")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
 "LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=$yesTotal"
 "PLUGIN menu=`"$pluginMenu`" item=`"$pluginItem`""
@@ -148,6 +160,13 @@ if ($Client) {
 	$script:secrets = @($ha.address, $OutDir)
 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
+if ($CommunicationDiscovery) {
+	$d0HostProfile = NewPeerProfile $OutDir $d0HostProfileName
+	if (-not $d0HostProfile.ok) { "D0_HOST_PROFILE why=$($d0HostProfile.why)"; exit 3 }
+	$d0HostLogs = NewPeerProfile $OutDir $d0HostLogsName
+	if (-not $d0HostLogs.ok) { "D0_HOST_LOGS why=$($d0HostLogs.why)"; exit 3 }
+	"D0_HOST_PROFILE new=1 logsNew=1 root=<scratchpad>"
+}
 if ($Client) {
 	# both directories new and empty, outside the repository (-OutDir is checked above)
 	$pp = NewPeerProfile $OutDir $ppName
@@ -589,7 +608,7 @@ finally {
 	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason; result = $result }
 }
 
-"log=$logsDir/console.log"
+if ($CommunicationDiscovery) { "log=<scratchpad>/$d0HostLogsName/console.log" } else { "log=$logsDir/console.log" }
 if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count

@@ -1,0 +1,23 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "963584c",
+    "level":  "HOST_ARGUMENT_AND_AST_ONLY",
+    "result":  "D0_OWNED_PROFILE_LOG_PATHS_PASS",
+    "runnerSha256":  "8b2b1cacbb5aaf1186e5a62ec8b56b0c7e67cd90d2aa80a322755ada4d9c0dff",
+    "librarySha256":  "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "parserErrors":  0,
+    "defaultHostProfileAndLogsUnchanged":  true,
+    "d0HostProfile":  "GENERATED_SCRATCH_HOST_PROFILE",
+    "d0HostLogs":  "GENERATED_ABSOLUTE_SCRATCH_HOST_LOGS",
+    "d0ClientProfile":  "DISTINCT_GENERATED_PEER1_PROFILE",
+    "d0ClientLogs":  "DISTINCT_ABSOLUTE_PEER1_LOGS",
+    "collectorMatchesHostLogs":  true,
+    "pathsQuotedAndOutDirMasked":  true,
+    "directoryCreationAfterDryRun":  true,
+    "preflightExecutedDirectoryCreation":  false,
+    "gameOrWorkbenchStarted":  false,
+    "runtimeProfileEffectProven":  false,
+    "payloadOrAudioDeliveryClaimed":  false,
+    "apiEvidence":  "Installed Enfusion Page_CLI.html:193-195; profile root and absolute logsDir",
+    "limits":  "Argument/AST evidence only; effective runtime profile/log paths still require native readback. NewPeerProfile was inspected but not executed in these dry runs."
+}

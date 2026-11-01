@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "D0_LIMITED_IMPLEMENTATION_PREPARATION",
+  "activePhase": "D0_RUNTIME_PRECONDITION_REVIEW",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -55,7 +55,11 @@
     "laterRouteRunPassiveLifecycle": "INCOMPLETE_CLIENT_TERMINAL_MARKERS",
     "voNEventApi": "DOCUMENTED_AI_SOUND_EVENT_INPUT",
     "campaignMessageExample": "SEPARATE_CAMPAIGN_RPC_HANDOFF_OBSERVED_IN_SOURCE",
-    "samePathPacketMechanism": "NOT_PROVEN"
+    "samePathPacketMechanism": "NOT_PROVEN",
+    "d0CodeStatus": "CORRECTIVE_VERSION_REVIEWED_NOT_LIVE",
+    "d0CompileGameCrc": "22c5fa83",
+    "d0PureChecks": "60_PASS_MODEL_NOT_NATIVE_RPC",
+    "d0CompileEvidence": "docs/evidence/receipts/d0-compile-corrective-lead.json"
   },
   "notYetProven": [
     "Native transport/protocol equivalence for a decodable test marker",
@@ -66,12 +70,12 @@
   ],
   "safety": {
     "productionSeamRemainsBlocked": true,
-    "readOnlyWorkbenchSourceQueriesOnly": true,
+    "noLiveQueueRequestInThisCycle": true,
     "noGameWorldStartedInThisCycle": true,
     "noBinaryReverseEngineeringInThisCycle": true,
     "audioRoutesChanged": false,
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Technically review and record the probe specification under the owner's autonomous-continuation exception, then execute the smallest permitted P0/P1 preflight. Do not repeat the fresh-session stop or goal approval; unknown alphabet/receiver/protocol gates still fail closed."
+  "nextGate": "Record reviewed corrective D0 sources and current ops/plan; verify fresh host/client profiles and absolute log routing with headless smoke; then one controlled D0 run only if runtime fixture/ownership/callback preconditions hold. P0-P4 and same-path packet equivalence remain closed."
 }
