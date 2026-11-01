@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-02",
+  "level": "HEADLESS_NATIVE_PROFILE_LOG_READBACK_AND_PURE_ONLY",
+  "sourceCommit": "9e280be70615fb8b177bd7ce9d26b3e6028b779a",
+  "result": "OWNED_NATIVE_PROFILE_AND_LOG_ROOTS_OBSERVED",
+  "childExitCode": 0,
+  "processExited": true,
+  "gameWorldStarted": false,
+  "d0FlagPassed": false,
+  "queueRequestPerformed": false,
+  "pureChecks": 60,
+  "gameModuleCrc": "22c5fa83",
+  "nativeReadback": {
+    "logFileAtRequestedAbsoluteRoot": true,
+    "profileFilesystemMountedAtRequestedFreshRoot": true,
+    "profileConfigLookupUsesProfileAlias": true,
+    "sourceLogLines": [2, 4, 5, 10, 88, 6842, 6871, 6872],
+    "limitations": "This readback validates the common profile/log CLI in ScriptEditor, not an already-running World Editor player, queue ownership, or successful event delivery. Live setup must use new empty roots again."
+  },
+  "localArtifacts": {
+    "profileRoot": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/d0-profile-smoke-20261102-013421-profile",
+    "log": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/d0-profile-smoke-20261102-013421-logs/console.log",
+    "logSha256": "59310918435ca1ab7f8a8145cd1c01b8aea193917f1ad035c549364b41b8d106",
+    "metadata": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/d0-profile-smoke-20261102-013421-meta.json",
+    "metadataSha256": "db4934719e20a99f958fd125164a6f0ec7725749366c3c4a3fba3c4fefe32abe"
+  },
+  "remainingGameOrWorkbenchProcesses": 0,
+  "audioOrPacketPassClaimed": false
+}
