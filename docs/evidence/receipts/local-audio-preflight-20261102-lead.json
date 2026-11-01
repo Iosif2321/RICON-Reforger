@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-02",
+  "level": "HOST_PREFLIGHT_ONLY",
+  "baseCommit": "3950e54",
+  "result": "EXECUTION_POLICY_BLOCKED",
+  "gameOrWorkbenchStarted": false,
+  "microphoneSamplesCaptured": false,
+  "audioDeliveryTested": false,
+  "persistentExecutionPolicyChanged": false,
+  "dryRun": {
+    "program": "Windows PowerShell",
+    "runner": "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1",
+    "mode": "-DryRun -Client -Seconds 300 -World MpTest",
+    "exitCode": 1,
+    "error": "PSSecurityException / UnauthorizedAccess: script is not digitally signed",
+    "bypassAttempted": false
+  },
+  "host": {
+    "os": "Windows 10 Enterprise",
+    "version": "10.0.19045",
+    "build": "19045",
+    "presentAudioEndpoints": [
+      "USB PnP Sound Device: speakers",
+      "USB PnP Sound Device: microphone",
+      "DEXP DF24N1 / NVIDIA High Definition Audio: render endpoint"
+    ],
+    "deviceInventoryOnly": true,
+    "captureAndOutputIsolationEstablished": false,
+    "gameOrWorkbenchProcessesBeforeAndAfter": 0
+  },
+  "staticChecks": {
+    "windowsPowerShellParserErrors": 0,
+    "runnerNonAsciiBytes": 0,
+    "b0eSyntheticSelftest": "PASS",
+    "readinessRejections": 24,
+    "lifecycleRejections": 9,
+    "cliSampleCounts": "120/30",
+    "inputOverwriteProtection": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "sha256": {
+    "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1": "3b5f3da0fee55172d8124d36d73ef6cb42e4c8243d6c4c538c5b767e9787a13f",
+    "tools/RICON_LiveProbe/ops/wb-run-lib-claude.ps1": "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "docs/evidence/receipts/b0e-character-check-codex.py": "ec4d8e379aa0c62e090cfd0a8dd9e058e7c5f3a5b9d81a051825267c681e3a1c",
+    "docs/evidence/receipts/b0e-character-check-selftest-codex.py": "08933faa9c8042422b76905eb10270e13187d40e2ecb02fd06126fefe728c349"
+  },
+  "nextGate": "Trust/signature authorization, then bounded B0e; no claim of spawn, TX/RX, sound or RICON actuation."
+}

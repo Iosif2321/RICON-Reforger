@@ -48,7 +48,7 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [int]$Seconds = 240,
       [int]$Settle = 15,
       [int]$MaxChildren = 3,
-      # B0e: только два уже проверенных штатных мира; прежний Plain остаётся значением по умолчанию.
+      # B0e: only two verified vanilla worlds; Plain remains the default.
       [ValidateSet("{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent", "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")]
       [string]$World = "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
       [switch]$ReadAuthOnly,
