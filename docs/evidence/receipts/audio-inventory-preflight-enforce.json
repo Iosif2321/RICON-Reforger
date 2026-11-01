@@ -1,0 +1,40 @@
+{
+  "review": "Core Audio read-only inventory implementation preflight",
+  "date": "2026-11-02",
+  "scope": "active render endpoints and their active audio sessions with PID/process name",
+  "implementation": {
+    "path": "tools/RICON_LiveProbe/ops/audio-inventory-enforce.ps1",
+    "sha256": "9718655405322c2111ac84e89478010468c691d9af30d5d5bdc4551af3668e2c",
+    "powershell": "Windows PowerShell 5.1",
+    "asciiOnly": true,
+    "astParseErrors": 0,
+    "coreAudioInvoked": false,
+    "csharpCompiled": false,
+    "result": "REVIEW_REQUIRED_NOT_RUN"
+  },
+  "selftest": {
+    "path": "tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
+    "sha256": "5a7fc433d78e209dad6a33b89d26d580c2c2888effa52563a2fbe3d318e5c555",
+    "command": "python -X utf8 tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
+    "result": "PASS",
+    "kind": "static source and synthetic ordering only"
+  },
+  "guards": {
+    "readActiveRenderEndpointsOnly": true,
+    "readActiveSessionsOnly": true,
+    "rawEndpointIdsEmitted": false,
+    "sessionIdentifiersRead": false,
+    "captureOrPlayback": false,
+    "routeVolumeOrDefaultMutation": false,
+    "moduleInstallation": false,
+    "explicitComRelease": true,
+    "propVariantClear": true,
+    "deterministicSort": true
+  },
+  "output": {
+    "format": "JSON",
+    "endpointIdentity": "SHA-256 of Core Audio endpoint ID",
+    "sessionFields": ["pid", "process", "ordinal"],
+    "limitations": "No system result exists before review. Active sessions are a point-in-time observation; PID/process name does not prove per-process route isolation or audio delivery."
+  }
+}
