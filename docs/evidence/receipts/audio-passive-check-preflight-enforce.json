@@ -3,17 +3,17 @@
   "date": "2026-11-02",
   "checker": {
     "path": "tools/RICON_LiveProbe/ops/audio-passive-check-enforce.py",
-    "sha256": "530b58a704f42a1c2f2df9004ddc89bb79b47886a132a5a0c75852a07ec2bb7e",
+    "sha256": "f8f5840fa8044a32ef9b30d6b0515e9c6a365fc8a52c8e47551cac56ec4b351f",
     "runtime": "Python stdlib",
     "gameLogsRead": false,
     "result": "SYNTHETIC_PASS_REVIEW_REQUIRED"
   },
   "selftest": {
     "path": "tools/RICON_LiveProbe/ops/audio-passive-check-selftest-enforce.py",
-    "sha256": "7c40416e3b2d69f6bc5a323ef10f49f7356b628343d41c1e926206d73f33f14c",
+    "sha256": "98cae218f2eba88880e00a78f7dfd49719fc35f4c2ebe98091533a65585b32eb",
     "command": "python -X utf8 tools/RICON_LiveProbe/ops/audio-passive-check-selftest-enforce.py",
     "result": "PASS",
-    "syntheticRejections": 19,
+    "syntheticRejections": 23,
     "cliAndInputProtection": true
   },
   "acceptance": {
@@ -21,7 +21,10 @@
     "noScriptErrors": true,
     "exactlyOneRunningSnapshotStopped": true,
     "continuousEventSequence": true,
+    "eventsStrictlyBetweenRunningAndSnapshot": true,
+    "ringCapacity": 256,
     "ringCountersConsistent": true,
+    "serverBindingBeforeRunning": true,
     "hostServerSubscriptions": 2,
     "finalLocalBindings": {
       "hostPlayer": 1,

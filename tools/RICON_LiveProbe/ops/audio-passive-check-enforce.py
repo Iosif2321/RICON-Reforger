@@ -65,7 +65,7 @@ def parse_log(path, expected_player, require_server):
     stopped_line, stopped_match = stopped[0]
     assert running[0] < snapshot_line < stopped_line, "Lifecycle order is not RUNNING -> snapshot -> STOPPED"
     assert int(stopped_match[2]) == 0, "Subscriptions remain at STOPPED"
-    assert not any(event["line"] > snapshot_line for event in events), "Event after snapshot"
+    assert all(running[0] < event["line"] < snapshot_line for event in events), "Event outside RUNNING -> snapshot interval"
     assert not any(event["line"] > stopped_line for event in events), "Event after STOPPED"
 
     assert client_bindings, "No CLIENT_BINDING"
@@ -77,7 +77,7 @@ def parse_log(path, expected_player, require_server):
     if require_server:
         assert len(server_bindings) == 1, "Host needs exactly one SERVER_BINDING"
         assert int(server_bindings[0][1][1]) == 2, "Host server binding needs two subscriptions"
-        assert server_bindings[0][0] < snapshot_line
+        assert server_bindings[0][0] < running[0], "SERVER_BINDING must precede RUNNING"
     else:
         assert not server_bindings, "Client log must not claim SERVER_BINDING"
 
@@ -85,9 +85,9 @@ def parse_log(path, expected_player, require_server):
     assert count >= 0 and dropped >= 0 and next_seq >= 0
     assert [event["seq"] for event in events] == list(range(next_seq)), "Audio event seq is not complete and continuous"
     if dropped == 0:
-        assert count == next_seq, "Snapshot count/nextSeq mismatch"
+        assert count == next_seq and count <= 256, "Pre-overflow snapshot counters are inconsistent"
     else:
-        assert count >= 2 and count + dropped == next_seq + 1, "Ring snapshot counters are inconsistent"
+        assert count == 256 and count + dropped == next_seq + 1, "Overflowed ring counters are inconsistent"
 
     kinds = {}
     for event in events:

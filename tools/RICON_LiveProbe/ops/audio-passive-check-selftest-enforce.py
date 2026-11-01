@@ -53,6 +53,15 @@ def move_after(text, moving_marker, anchor_marker):
     return "\n".join(lines) + "\n"
 
 
+def move_before(text, moving_marker, anchor_marker):
+    lines = text.splitlines()
+    moving = next(line for line in lines if moving_marker in line)
+    anchor = next(line for line in lines if anchor_marker in line)
+    lines.remove(moving)
+    lines.insert(lines.index(anchor), moving)
+    return "\n".join(lines) + "\n"
+
+
 def expect_rejected(folder, host_text, client_text, label):
     host_path, client_path = folder / "bad-host.log", folder / "bad-client.log"
     host_path.write_text(host_text, encoding="utf-8")
@@ -111,13 +120,17 @@ with tempfile.TemporaryDirectory(prefix="ricon-audio-passive-") as directory:
         (replace_once(host_text, "subscriptionsRemaining=0", "subscriptionsRemaining=1"), client_text, "cleanup"),
         (replace_once(host_text, "SERVER_BINDING subscriptions=2", "SERVER_BINDING subscriptions=1"), client_text, "server subscriptions"),
         (duplicate_line(host_text, "SERVER_BINDING"), client_text, "duplicate server binding"),
+        (move_after(host_text, "SERVER_BINDING", "state=RUNNING"), client_text, "server binding after RUNNING"),
         (host_text, replace_once(client_text, "player=2 attached=1", "player=1 attached=1"), "wrong local player"),
         (host_text, replace_once(client_text, "attached=1", "attached=0"), "detached client"),
         (host_text, replace_once(client_text, "subscriptions=2", "subscriptions=1"), "client subscriptions"),
         (host_text, replace_once(client_text, "seq=1", "seq=2"), "event seq gap"),
         (host_text, replace_once(client_text, "nextSeq=2", "nextSeq=3"), "nextSeq mismatch"),
         (host_text, replace_once(client_text, "count=2", "count=1"), "count mismatch"),
+        (host_text, move_before(client_text, "seq=0 ", "state=RUNNING"), "event before RUNNING"),
         (host_text, move_after(client_text, "seq=1 ", "snapshot count="), "event after snapshot"),
+        (host_text, fixture(2, kinds=tuple("NOTE" for _ in range(256)), dropped=2, count=255, next_seq=256), "overflow count not capacity"),
+        (host_text, fixture(2, kinds=tuple("NOTE" for _ in range(257)), dropped=0, count=257, next_seq=257), "pre-overflow exceeds capacity"),
         (host_text + "18:01:00.000 SCRIPT : [RICON_AUDIO] seq=2 t=20 side=client kind=NOTE player=1 device=-1 tr=0 value=2 text=late\n",
          client_text, "event after stop"),
         ("SCRIPT (E): synthetic\n" + host_text, client_text, "script error"),
