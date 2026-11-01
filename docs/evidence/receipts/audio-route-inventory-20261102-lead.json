@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-02",
+  "level": "LIVE_CORE_AUDIO_SESSION_ROUTE_OBSERVATION_ONLY",
+  "baseCommit": "0727a6b",
+  "result": "BOTH_GAME_SESSIONS_ON_USB_OUTPUT",
+  "isolatedReceiverOutput": false,
+  "microphoneSamplesRecorded": false,
+  "radioPttTested": false,
+  "audioDeliveryTested": false,
+  "audioRoutesChanged": false,
+  "persistentExecutionPolicyChanged": false,
+  "authorization": {
+    "sourceThread": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
+    "ownerInstruction": "Выполняй",
+    "scope": "Process-only ExecutionPolicy Bypass for the reviewed read-only audio inventory; no persistent policy or audio setting changes"
+  },
+  "correctedInventory": {
+    "path": "tools/RICON_LiveProbe/ops/audio-inventory-enforce.ps1",
+    "sha256": "79b747cb41385eb3856b79dcfc46178fc81716ad7e424fd2181e7bcfbbd01a30",
+    "layout": "X64_24_BYTES_OFFSETS_0_8",
+    "sdkReview": "docs/evidence/receipts/audio-inventory-preflight-enforce.json",
+    "firstAttempt": {
+      "sourceSha256": "14ecbbc0a19921903bf886db574720ae19d82cba3fb1317e8c8bb8215e4214dd",
+      "result": "E_NOINTERFACE",
+      "cause": "Incorrect IMMDeviceCollection IID, corrected against installed Microsoft SDK",
+      "rawErrorUtf8": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/audio-inventory-idle-failure-20261102.txt",
+      "rawErrorSha256": "4d3108693fdaa016ca7766b230b45b5bbec941ab51440dae1a5838dc49c51a41"
+    },
+    "idleRepeat": "OK_TWO_ACTIVE_RENDER_ENDPOINTS",
+    "liveRepeat": "OK_TWO_SINGLE_PROCESS_GAME_SESSIONS"
+  },
+  "liveObservation": {
+    "startedAtLocal": "2026-11-01T21:08:57.5959938+03:00",
+    "endedAtLocal": "2026-11-01T21:08:58.9476113+03:00",
+    "sameTargetsBeforeAndAfter": true,
+    "host": {
+      "pid": 5056,
+      "process": "ArmaReforgerWorkbenchSteamDiag.exe",
+      "createdAtUtc": "2026-11-01T18:06:37.8941920Z"
+    },
+    "client": {
+      "pid": 33084,
+      "process": "ArmaReforgerSteamDiag.exe",
+      "createdAtUtc": "2026-11-01T18:07:55.0411470Z"
+    },
+    "renderEndpoints": [
+      {
+        "role": "HDMI_MONITOR",
+        "idSha256": "3e560b1836026b594e3d8b48349ed65f1ec48fd878668a5d8299fecba0f3c37c",
+        "gamePids": [],
+        "otherActiveSessionCount": 0
+      },
+      {
+        "role": "USB_SPEAKERS",
+        "idSha256": "a65658e1da45e6821b420f58c65dfe0d044bb36c5ba36d171f4f659a5cdff167",
+        "gameSessions": [
+          {"pid": 5056, "singleProcess": true, "ownership": "SINGLE_PROCESS", "hresult": 0},
+          {"pid": 33084, "singleProcess": true, "ownership": "SINGLE_PROCESS", "hresult": 0}
+        ],
+        "otherActiveSessionCount": 1
+      }
+    ]
+  },
+  "routeRun": {
+    "tag": "dsh-audio-routes",
+    "endpointReadiness": "PLAYER2_SPAWN_RADIO_OBSERVED",
+    "overlapSeconds": 28.033,
+    "passiveLifecycle": "INCOMPLETE_CLIENT_TERMINAL_MARKERS",
+    "passiveCheckerRejected": true,
+    "passiveCheckerReason": "Need exactly one snapshot",
+    "stopReason": "DONE",
+    "restore": "RESTORE_OK",
+    "registryDiffLines": 0,
+    "profileDiffLines": 0,
+    "clientCleanup": "OK",
+    "gameProcessesRemaining": 0,
+    "watchdogsExited": true,
+    "scriptErrorsHostAndClient": 0,
+    "nativeSourcesStable": true
+  },
+  "laterSplitPreparation": {
+    "tag": "dsh-audio-split",
+    "hostPid": 5236,
+    "clientPid": 36676,
+    "result": "NO_CLIENT_OUTPUT_SELECTION_PERFORMED",
+    "receiverIsolationClaimed": false,
+    "restore": "RESTORE_OK",
+    "registryDiffLines": 0,
+    "profileDiffLines": 0,
+    "clientCleanup": "OK",
+    "gameProcessesRemaining": 0,
+    "watchdogsExited": true,
+    "nativeSourcesStable": true
+  },
+  "localArtifacts": {
+    "idleJson": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/audio-inventory-idle2-20261102.json", "sha256": "18a1b612ee1e9fc1a43139c0ab366cb2b740f8fa73e314580c4c68ac5951f420"},
+    "liveJson": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/audio-inventory-live-20261102.json", "sha256": "4caebdfdb0dcf9866e054cd255174766a87ae287d4a8b4bac091941c67a3358a"},
+    "liveIdentityMetadata": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/audio-inventory-live-meta-20261102.json", "sha256": "21d6ad8caf67e30e2939617e808e2e4fddff5abed683b4920cfce6881188a513"},
+    "routeOperatorStdout": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/dsh-audio-routes-operator.txt", "sha256": "7c2ae34f0e56368f673205befdd30da2e4322c698138d517db4117b6e03e5f25"},
+    "routeHostLog": {"path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-dsh-audio-routes-20261101-210632/console.log", "sha256": "9504627b53ad3020a8c65bd9506f1536cf47a5a12ebec342023eded138413c66"},
+    "routeClientLog": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/ricon-dsh-audio-routes-20261101-210632-peer1-logs/console.log", "sha256": "cb2467e377ee30da336c9a76d73c6f2f06407174a2fbed52259e1abb3cde1177"},
+    "splitPreparationStdout": {"path": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/dsh-audio-split-operator.txt", "sha256": "e91c0ee4347285f4d648c0b1e82da25cc30c7c18686e2ecac7c2870a3396c4bd"}
+  },
+  "privacy": "Unrelated process names/PIDs are omitted from this shared receipt; raw observations remain local outside the repository. No audio was recorded.",
+  "limits": "One point-in-time route observation, not independent output isolation or sound. Missing terminal observer markers remain a rejected lifecycle gate. Successful earlier observer evidence does not promote this later run. No RICON actuator has been implemented or tested."
+}
