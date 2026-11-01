@@ -4,17 +4,25 @@
   "scope": "active render endpoints and their active audio sessions with PID/process name",
   "implementation": {
     "path": "tools/RICON_LiveProbe/ops/audio-inventory-enforce.ps1",
-    "sha256": "9718655405322c2111ac84e89478010468c691d9af30d5d5bdc4551af3668e2c",
+    "sha256": "14ecbbc0a19921903bf886db574720ae19d82cba3fb1317e8c8bb8215e4214dd",
     "powershell": "Windows PowerShell 5.1",
     "asciiOnly": true,
     "astParseErrors": 0,
     "coreAudioInvoked": false,
-    "csharpCompiled": false,
-    "result": "REVIEW_REQUIRED_NOT_RUN"
+    "csharpCompiled": true,
+    "layoutCheck": {
+      "result": "LAYOUT_OK",
+      "pointerSize": 8,
+      "propVariantSize": 24,
+      "vtOffset": 0,
+      "pointerOffset": 8,
+      "coreAudio": "NOT_INVOKED"
+    },
+    "result": "REVIEW_REQUIRED_CORE_AUDIO_NOT_RUN"
   },
   "selftest": {
     "path": "tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
-    "sha256": "5a7fc433d78e209dad6a33b89d26d580c2c2888effa52563a2fbe3d318e5c555",
+    "sha256": "97aa7b672c09ee2cef1771f541f0244df1a1f6b974f03a38de1cc991b4b7c2a1",
     "command": "python -X utf8 tools/RICON_LiveProbe/ops/audio-inventory-selftest-enforce.py",
     "result": "PASS",
     "kind": "static source and synthetic ordering only"
@@ -29,12 +37,15 @@
     "moduleInstallation": false,
     "explicitComRelease": true,
     "propVariantClear": true,
+    "x64PropVariantSize24": true,
+    "sharedSessionStatusPreserved": true,
+    "rawGetProcessIdHresultPreserved": true,
     "deterministicSort": true
   },
   "output": {
     "format": "JSON",
     "endpointIdentity": "SHA-256 of Core Audio endpoint ID",
-    "sessionFields": ["pid", "process", "ordinal"],
-    "limitations": "No system result exists before review. Active sessions are a point-in-time observation; PID/process name does not prove per-process route isolation or audio delivery."
+    "sessionFields": ["pid", "process", "singleProcess", "ownership", "hresult", "hresultHex", "ordinal"],
+    "limitations": "No Core Audio result exists before review. Active sessions are a point-in-time observation; an empty list means none observed then. SHARED_INITIAL_PID is the creator PID of a multi-process session and does not prove PID isolation or audio delivery."
   }
 }

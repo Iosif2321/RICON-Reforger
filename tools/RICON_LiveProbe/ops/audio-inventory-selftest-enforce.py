@@ -8,8 +8,10 @@ data = SCRIPT.read_bytes()
 assert data.isascii(), "PowerShell 5.1 source must remain ASCII"
 text = data.decode("ascii")
 
-match = re.fullmatch(r"(?s).*Add-Type -TypeDefinition @'\n(.*)\n'@\n\n\$result = \[RiconAudioInventory\]::Read\(\)\n.*", text)
-assert match, "Unexpected script/C# boundary or missing single inventory call"
+match = re.search(r"(?s)Add-Type -TypeDefinition @'\n(.*)\n'@", text)
+assert match, "Unexpected script/C# boundary"
+assert text.count("[RiconAudioInventory]::Read()") == 1
+assert text.count("[RiconAudioInventory]::LayoutCheck()") == 1
 csharp = match.group(1)
 implementation = csharp.split("    [ComImport", 1)[0]
 interfaces = csharp[len(implementation):]
@@ -24,9 +26,21 @@ required = [
     "endpoints.Sort(",
     "rows.Sort(",
     "ConvertTo-Json -Depth $depth",
+    "[StructLayout(LayoutKind.Explicit, Size = 24)]",
+    "Marshal.SizeOf(typeof(PropVariant))",
+    "Marshal.OffsetOf(typeof(PropVariant), \"vt\")",
+    "Marshal.OffsetOf(typeof(PropVariant), \"pointer\")",
+    "AUDCLNT_S_NO_SINGLE_PROCESS = 0x0889000D",
+    "SHARED_INITIAL_PID",
+    "INCOMPLETE_SUCCESS_STATUS",
+    "hresultHex",
+    "Point-in-time observation",
 ]
 for token in required:
     assert token in text, f"Missing scope/determinism guard: {token}"
+assert 'if ([IntPtr]::Size -ne 8) { throw "X64_REQUIRED_FOR_PROPVARIANT_LAYOUT" }' in text
+assert "int pidHr = control.GetProcessId(out pid);" in implementation
+assert "bool singleProcess = pidHr == 0;" in implementation
 for forbidden in ("GetSessionIdentifier(", "GetSessionInstanceIdentifier(", "GetDefaultAudioEndpoint("):
     assert forbidden not in implementation, f"Privacy/scope violation: {forbidden}"
 assert "public string id { get; set; }" not in csharp

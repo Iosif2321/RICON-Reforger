@@ -1,10 +1,11 @@
 # TOOL_ONLY: read active Windows Core Audio render endpoints and sessions.
 # Windows PowerShell 5.1. Read-only: no capture, playback, routing, volume or default-device calls.
 [CmdletBinding()]
-param([switch]$Pretty)
+param([switch]$Pretty, [switch]$LayoutCheck)
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = "Stop"
+if ([IntPtr]::Size -ne 8) { throw "X64_REQUIRED_FOR_PROPVARIANT_LAYOUT" }
 
 Add-Type -TypeDefinition @'
 using System;
@@ -17,6 +18,10 @@ using System.Text;
 public sealed class RiconAudioSessionRow {
     public uint pid { get; set; }
     public string process { get; set; }
+    public bool singleProcess { get; set; }
+    public string ownership { get; set; }
+    public int hresult { get; set; }
+    public string hresultHex { get; set; }
     public int ordinal { get; set; }
 }
 
@@ -30,16 +35,39 @@ public sealed class RiconAudioEndpointRow {
 public sealed class RiconAudioInventoryResult {
     public string result { get; set; }
     public string scope { get; set; }
+    public string limits { get; set; }
     public RiconAudioEndpointRow[] renderEndpoints { get; set; }
+}
+
+public sealed class RiconAudioLayoutResult {
+    public string result { get; set; }
+    public int pointerSize { get; set; }
+    public int propVariantSize { get; set; }
+    public int vtOffset { get; set; }
+    public int pointerOffset { get; set; }
+    public string coreAudio { get; set; }
 }
 
 public static class RiconAudioInventory {
     const uint DEVICE_STATE_ACTIVE = 0x1;
     const int STGM_READ = 0;
     const uint CLSCTX_ALL = 23;
+    const int AUDCLNT_S_NO_SINGLE_PROCESS = 0x0889000D;
     static readonly Guid IID_IAudioSessionManager2 = new Guid("77aa99a0-1bd6-484f-8bc7-2c654c9a9b6f");
     static readonly PropertyKey PKEY_Device_FriendlyName = new PropertyKey(
         new Guid("a45c254e-df1c-4efd-8020-67d146a850e0"), 14);
+
+    public static RiconAudioLayoutResult LayoutCheck() {
+        int size = Marshal.SizeOf(typeof(PropVariant));
+        int vt = (int)Marshal.OffsetOf(typeof(PropVariant), "vt");
+        int pointer = (int)Marshal.OffsetOf(typeof(PropVariant), "pointer");
+        if (IntPtr.Size != 8 || size != 24 || vt != 0 || pointer != 8)
+            throw new InvalidOperationException("PROPVARIANT_X64_LAYOUT_MISMATCH");
+        return new RiconAudioLayoutResult {
+            result = "LAYOUT_OK", pointerSize = IntPtr.Size, propVariantSize = size,
+            vtOffset = vt, pointerOffset = pointer, coreAudio = "NOT_INVOKED"
+        };
+    }
 
     public static RiconAudioInventoryResult Read() {
         IMMDeviceEnumerator enumerator = null;
@@ -56,6 +84,7 @@ public static class RiconAudioInventory {
             return new RiconAudioInventoryResult {
                 result = "OK",
                 scope = "ACTIVE_RENDER_ENDPOINTS_AND_ACTIVE_SESSIONS",
+                limits = "Point-in-time observation. Empty activeSessions means none observed then. SHARED_INITIAL_PID is not PID isolation.",
                 renderEndpoints = endpoints.ToArray()
             };
         } finally {
@@ -105,8 +134,15 @@ public static class RiconAudioInventory {
                     Check(control.GetState(out state), "GetState");
                     if (state != AudioSessionState.Active) continue;
                     uint pid;
-                    Check(control.GetProcessId(out pid), "GetProcessId");
-                    rows.Add(new RiconAudioSessionRow { pid = pid, process = ProcessName(pid) });
+                    int pidHr = control.GetProcessId(out pid);
+                    Check(pidHr, "GetProcessId");
+                    bool singleProcess = pidHr == 0;
+                    string ownership = singleProcess ? "SINGLE_PROCESS" :
+                        (pidHr == AUDCLNT_S_NO_SINGLE_PROCESS ? "SHARED_INITIAL_PID" : "INCOMPLETE_SUCCESS_STATUS");
+                    rows.Add(new RiconAudioSessionRow {
+                        pid = pid, process = ProcessName(pid), singleProcess = singleProcess,
+                        ownership = ownership, hresult = pidHr, hresultHex = "0x" + pidHr.ToString("X8")
+                    });
                 } finally {
                     Release(controlObject);
                 }
@@ -168,7 +204,8 @@ public static class RiconAudioInventory {
         public PropertyKey(Guid formatId, int propertyId) { this.formatId = formatId; this.propertyId = propertyId; }
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+    // x64 PROPVARIANT: 8-byte header plus a 16-byte union (for example CA* count + pointer).
+    [StructLayout(LayoutKind.Explicit, Size = 24)]
     struct PropVariant {
         [FieldOffset(0)] public ushort vt;
         [FieldOffset(8)] public IntPtr pointer;
@@ -247,7 +284,11 @@ public static class RiconAudioInventory {
 }
 '@
 
-$result = [RiconAudioInventory]::Read()
+if ($LayoutCheck) {
+    $result = [RiconAudioInventory]::LayoutCheck()
+} else {
+    $result = [RiconAudioInventory]::Read()
+}
 $depth = 6
 if ($Pretty) {
     $result | ConvertTo-Json -Depth $depth
