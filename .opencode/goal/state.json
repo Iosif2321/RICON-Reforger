@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "D0_CONTROLLED_RUN_PENDING",
+  "activePhase": "D0_RESULT_RECORDED_V0_INPUT_RESEARCH",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -28,8 +28,8 @@
     "technicalMechanismApproved": false,
     "implementationGateOpen": false,
     "d0LimitedImplementationApproved": true,
-    "d0RuntimeGateOpen": true,
-    "d0RuntimeGateScope": "One controlled D0 run after recorded 60-check/code review and isolated native profile/log smoke; pre-call fixture/ownership/health/identity guards must fail closed. Not P0-P4 or packet/audio/RICON pass.",
+    "d0RuntimeGateOpen": false,
+    "d0RuntimeGateScope": "Consumed by d0-native-001-20261102; no additional request authorized by that one-run gate. Local A event observed; B sink/protocol remain unqualified. V0 requires its own bounded review/compile/run gate.",
     "d0ApprovalScope": "One CommunicationSound queue request discovery only, under bounded plan and closed VoN/QA numerical guards; P0-P4/native transport and production remain DRAFT/BLOCKED",
     "leadSessionFreshForDesign": false,
     "workflowException": {
@@ -57,7 +57,10 @@
     "voNEventApi": "DOCUMENTED_AI_SOUND_EVENT_INPUT",
     "campaignMessageExample": "SEPARATE_CAMPAIGN_RPC_HANDOFF_OBSERVED_IN_SOURCE",
     "samePathPacketMechanism": "NOT_PROVEN",
-    "d0CodeStatus": "CORRECTIVE_VERSION_REVIEWED_NOT_LIVE",
+    "d0CodeStatus": "LIVE_LOCAL_A_EVENT_OBSERVED_NOT_TRANSPORT_QUALIFIED",
+    "d0LiveRun": "d0-native-001-20261102",
+    "d0LiveResult": "A_ONE_START_FINISH_B_LOCAL_OBSERVABLE_INCONCLUSIVE",
+    "d0LiveEvidence": "docs/evidence/receipts/d0-live-001-lead.json",
     "d0CompileGameCrc": "22c5fa83",
     "d0PureChecks": "60_PASS_MODEL_NOT_NATIVE_RPC",
     "d0CompileEvidence": "docs/evidence/receipts/d0-compile-corrective-lead.json"
@@ -71,12 +74,13 @@
   ],
   "safety": {
     "productionSeamRemainsBlocked": true,
-    "noLiveQueueRequestInThisCycle": true,
-    "noGameWorldStartedInThisCycle": true,
+    "liveQueueRequestsPerformed": 1,
+    "ownedGameWorldRunsPerformed": 1,
+    "lastRuntimeProcessesRemaining": 0,
     "noBinaryReverseEngineeringInThisCycle": true,
     "audioRoutesChanged": false,
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Record reviewed corrective D0 sources and current ops/plan; verify fresh host/client profiles and absolute log routing with headless smoke; then one controlled D0 run only if runtime fixture/ownership/callback preconditions hold. P0-P4 and same-path packet equivalence remain closed."
+  "nextGate": "Record independently reviewed D0 local result, then bound/review/compile V0 native VoN input-shape preflight and remote-observable mapping. No additional D0 queue request under the consumed gate. Same-path payload, radio gate/direct preservation and RICON actuation remain unproven."
 }

@@ -1,0 +1,219 @@
+{
+  "date": "2026-11-02",
+  "sourceCommit": "ec2d363",
+  "codeCommit": "9e280be",
+  "run": "d0-native-001-20261102",
+  "level": "LIVE_COMMUNICATION_DISCOVERY_ONLY",
+  "result": "D0_LOCAL_EVENT_OBSERVED_A",
+  "receiverResult": "INCONCLUSIVE_UNQUALIFIED_LOCAL_B_OBSERVABLE",
+  "remoteDeliveryProven": false,
+  "packetOrAudioPass": false,
+  "riconActuationProven": false,
+  "callerSetCaptureOrRadioSetters": false,
+  "pcmRecorded": false,
+  "oneQueueRequest": true,
+  "postObservationMs": 10003,
+  "postObservationProvesDrain": false,
+  "roles": {
+    "A": {
+      "log": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\d0-native-001-20261102\\ricon-d0-native-one-20261102-014040-host-logs\\console.log",
+      "sha256": "edb6b03bf5636af5be189ded977a0522eed2135e80c23ec2fedc6f12bfbc505b",
+      "rows": 50,
+      "sequenceContiguous": true,
+      "localLifetimeMs": 44335,
+      "counts": {
+        "REQUEST_BEGIN": 1,
+        "REQUEST_END": 1,
+        "SOUND_START": 1,
+        "SOUND_FINISH": 1,
+        "POST_OBSERVATION_BEGIN": 1,
+        "POST_OBSERVATION_END": 1,
+        "VON_RECEIVE": 0,
+        "VON_CAPTURE": 0,
+        "INVALID": 0,
+        "GAP": 0
+      },
+      "selectedEvents": [
+        {
+          "seq": 21,
+          "tick": 82760,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 1,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "READINESS_RECEIVED",
+          "data": "challenge=1,attempt=6,remainingB=57034,initial=1"
+        },
+        {
+          "seq": 31,
+          "tick": 88828,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 4,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "READINESS_RECEIVED",
+          "data": "challenge=2,attempt=1,remainingB=50939,initial=0"
+        },
+        {
+          "seq": 32,
+          "tick": 88836,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 5,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "REQUEST_BEGIN",
+          "data": "event=SOUND_VOICE_PAIN_RELIEVE,priority=SOUND_PAIN_RELIEVE,ignoreQueue=0"
+        },
+        {
+          "seq": 33,
+          "tick": 88837,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 6,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "SOUND_START",
+          "data": "event=SOUND_VOICE_PAIN_RELIEVE,handle=268,priority=80,componentMatch=1"
+        },
+        {
+          "seq": 34,
+          "tick": 88838,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 6,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "REQUEST_END",
+          "data": "durationMs=1"
+        },
+        {
+          "seq": 36,
+          "tick": 89757,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 6,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "SOUND_FINISH",
+          "data": "event=SOUND_VOICE_PAIN_RELIEVE,handle=268,priority=80,terminated=0,componentMatch=1"
+        },
+        {
+          "seq": 37,
+          "tick": 89758,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 7,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "POST_OBSERVATION_BEGIN",
+          "data": "durationMs=10000,drain=UNPROVEN"
+        },
+        {
+          "seq": 48,
+          "tick": 99761,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 7,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 2,
+          "kind": "POST_OBSERVATION_END",
+          "data": "drain=UNPROVEN"
+        },
+        {
+          "seq": 49,
+          "tick": 99762,
+          "run": "d0-native-001-20261102",
+          "localRole": 1,
+          "phase": 8,
+          "entityGeneration": 1,
+          "componentGeneration": 1,
+          "subscriptionGeneration": 3,
+          "kind": "TERMINAL",
+          "data": "reason=POST_OBSERVATION_COMPLETE,requestUsed=1,started=1,finished=1,invalid=0,subscriptions=0,ordinary=44,reserved=5"
+        }
+      ]
+    },
+    "B": {
+      "log": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\d0-native-001-20261102\\ricon-d0-native-one-20261102-014040-peer1-logs\\console.log",
+      "sha256": "8417207c2169e032069eaa96c0a2337ffa09c48351f817437eb9288a605ac8c4",
+      "rows": 71,
+      "sequenceContiguous": true,
+      "localLifetimeMs": 70011,
+      "counts": {
+        "REQUEST_BEGIN": 0,
+        "REQUEST_END": 0,
+        "SOUND_START": 0,
+        "SOUND_FINISH": 0,
+        "POST_OBSERVATION_BEGIN": 0,
+        "POST_OBSERVATION_END": 0,
+        "VON_RECEIVE": 0,
+        "VON_CAPTURE": 0,
+        "INVALID": 0,
+        "GAP": 0
+      },
+      "selectedEvents": [
+        {
+          "seq": 12,
+          "tick": 22363,
+          "run": "d0-native-001-20261102",
+          "localRole": 2,
+          "phase": 2,
+          "entityGeneration": 2,
+          "componentGeneration": 2,
+          "subscriptionGeneration": 5,
+          "kind": "READINESS_ACK",
+          "data": "challenge=1,attempt=6,remaining=57034"
+        },
+        {
+          "seq": 19,
+          "tick": 28457,
+          "run": "d0-native-001-20261102",
+          "localRole": 2,
+          "phase": 6,
+          "entityGeneration": 2,
+          "componentGeneration": 2,
+          "subscriptionGeneration": 5,
+          "kind": "READINESS_ACK",
+          "data": "challenge=2,attempt=1,remaining=50939"
+        },
+        {
+          "seq": 70,
+          "tick": 79407,
+          "run": "d0-native-001-20261102",
+          "localRole": 2,
+          "phase": 8,
+          "entityGeneration": 2,
+          "componentGeneration": 2,
+          "subscriptionGeneration": 6,
+          "kind": "TERMINAL",
+          "data": "reason=LIMIT,requestUsed=0,started=0,finished=0,invalid=0,subscriptions=0,ordinary=69,reserved=1"
+        }
+      ]
+    }
+  },
+  "operator": {
+    "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\d0-native-001-20261102\\operator.txt",
+    "sha256": "0536bb6f9f6eaa026aa792552cac24b6beb289488430a230077223eba75f90c2",
+    "runnerExitCode": 0,
+    "stop": "DONE",
+    "restore": "RESTORE_OK",
+    "exactArsenalYes": 2,
+    "registryDiffLines": 0,
+    "defaultProfileDiffLines": 0,
+    "sourcesStable": true,
+    "ownedProcessesAndWatchdogsExited": true,
+    "remainingGameOrWorkbenchProcesses": 0
+  },
+  "limits": "Only A local queue/start/finish and bounded observation/cleanup are established. B readiness is control-plane, not event delivery. No event on monitored local B components does not exclude another remote/proxy sink. No SAME_PATH_PACKET_PASS, audibility, native VoN equivalence, H2/direct preservation or RICON delivery-control claim."
+}

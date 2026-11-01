@@ -1,0 +1,1502 @@
+{
+  "result": "PLAYER2_SPAWN_RADIO_OBSERVED",
+  "audio": "NOT_TESTED",
+  "pairSuppression": "NOT_TESTED",
+  "intervalStart": "01:42:03.256",
+  "intervalEnd": "01:42:27.952",
+  "overlapSeconds": 24.696,
+  "connectedMismatch": 0,
+  "limits": "Наблюдаются назначение и локальные радио/VoN. Звук, PTT и соответствие VoN-entry трансиверу не проверены. obs локальны процессу.",
+  "host": {
+    "commonSamples": 25,
+    "firstSample": 19,
+    "lastSample": 43,
+    "player2": {
+      "connected": 1,
+      "pc": 1,
+      "controlled": 1,
+      "pcControlled": 1,
+      "sameEntity": 1
+    },
+    "localSamples": [
+      {
+        "sample": 19,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 20,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 21,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 22,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 23,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 24,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 25,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 26,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 27,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 28,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 29,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 30,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 31,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 32,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 33,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 34,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 35,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 36,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 37,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 38,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 39,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 40,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 41,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 42,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 43,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "1",
+            "tr": 0,
+            "raw": 32000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "1",
+            "tr": 1,
+            "raw": 48000,
+            "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      }
+    ],
+    "logSha256": "edb6b03bf5636af5be189ded977a0522eed2135e80c23ec2fedc6f12bfbc505b",
+    "events": 365,
+    "samples": 120,
+    "connectedMismatch": []
+  },
+  "client": {
+    "commonSamples": 25,
+    "firstSample": 6,
+    "lastSample": 30,
+    "player2": {
+      "connected": 1,
+      "pc": 1,
+      "controlled": 1,
+      "pcControlled": 1,
+      "sameEntity": 1
+    },
+    "localSamples": [
+      {
+        "sample": 6,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 7,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 8,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 9,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 10,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 11,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 12,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 13,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 14,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 15,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 16,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 17,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 18,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 19,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 20,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 21,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 22,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 23,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 24,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 25,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 26,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 27,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 28,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 29,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      },
+      {
+        "sample": 30,
+        "components": {
+          "entityVoN": "1",
+          "gadgetManager": "1",
+          "vonController": "1"
+        },
+        "controlledPrefab": "{9BDC3AC0BDB50019}Prefabs/Characters/Campaign/Final/OPFOR/USSR_Army/Regular/Campaign_USSR_Player_Rifleman.et",
+        "radios": [
+          {
+            "obs": 0,
+            "player": "2",
+            "tr": 0,
+            "raw": 38000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          },
+          {
+            "obs": 1,
+            "player": "2",
+            "tr": 1,
+            "raw": 42000,
+            "prefab": "{E1A5D4B878AA8980}Prefabs/Items/Equipment/Radios/Radio_R148.et",
+            "powered": 1,
+            "muted": 0
+          }
+        ]
+      }
+    ],
+    "logSha256": "8417207c2169e032069eaa96c0a2337ffa09c48351f817437eb9288a605ac8c4",
+    "events": 96,
+    "samples": 30,
+    "connectedMismatch": []
+  },
+  "probeCRC": "1966ee8a",
+  "streamEqualsDump": true,
+  "dropped": 0,
+  "hostLifecycle": "OBSERVATION_END_EDIT_STABLE",
+  "checkerSha256": "ec4d8e379aa0c62e090cfd0a8dd9e058e7c5f3a5b9d81a051825267c681e3a1c",
+  "helperSha256": "808249478c03a00b12c56b720d410a3258c7f4745456733b170fda1167b74c52"
+}
