@@ -1,0 +1,59 @@
+{
+  "result": "PASSIVE_OBSERVER_READY",
+  "transmissionVerdict": "NOT_TESTED",
+  "audio": "NOT_TESTED",
+  "limits": "Lifecycle, local bindings, subscriptions, event-stream continuity and cleanup are observed. RX/TX counts are descriptive only and do not prove PTT, delivery, device/transceiver binding or sound.",
+  "host": {
+    "logSha256": "ed21bcbb9ec10d5baf893d9b6b69892a98b82e37bd89ddd6d442f351181c1d07",
+    "audioLines": 7,
+    "events": 1,
+    "eventSeqFirst": 0,
+    "eventSeqLast": 0,
+    "snapshotCount": 1,
+    "snapshotDropped": 0,
+    "nextSeq": 1,
+    "running": 1,
+    "finalBinding": {
+      "player": 1,
+      "attached": 1,
+      "subscriptions": 2
+    },
+    "serverBinding": {
+      "subscriptions": 2
+    },
+    "stopped": {
+      "reason": "GAME_END",
+      "subscriptionsRemaining": 0
+    },
+    "kinds": {
+      "SPAWN": 1
+    },
+    "rxEvents": 0,
+    "txCaptureEvents": 0
+  },
+  "client": {
+    "logSha256": "562aa6d9c08a19b582cddb64f68c3e8c29e13f73ab241435c6dda6fc320f8187",
+    "audioLines": 6,
+    "events": 0,
+    "eventSeqFirst": null,
+    "eventSeqLast": null,
+    "snapshotCount": 0,
+    "snapshotDropped": 0,
+    "nextSeq": 0,
+    "running": 1,
+    "finalBinding": {
+      "player": 2,
+      "attached": 1,
+      "subscriptions": 2
+    },
+    "serverBinding": null,
+    "stopped": {
+      "reason": "GAME_END",
+      "subscriptionsRemaining": 0
+    },
+    "kinds": {},
+    "rxEvents": 0,
+    "txCaptureEvents": 0
+  },
+  "checkerSha256": "af190b0ae81ea81a0fa858dcf1c7d2bfac7dbf0f366b7b6f80512eafcf4fbd11"
+}

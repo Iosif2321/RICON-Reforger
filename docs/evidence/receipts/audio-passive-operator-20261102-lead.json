@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-02",
+  "level": "LIVE_PASSIVE_SUBSCRIPTION_LIFECYCLE_ONLY",
+  "baseCommit": "701fe10",
+  "audioDeliveryTested": false,
+  "microphoneSamplesRecordedByOperator": false,
+  "captureOrPttRequestedByInstrument": false,
+  "audioRoutesChanged": false,
+  "coreAudioInventoryInvokedByOperator": false,
+  "persistentExecutionPolicyChanged": false,
+  "run": {
+    "tag": "dsh-audio-passive",
+    "world": "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent",
+    "audioObserveFlagOnBothSides": true,
+    "secondsLimit": 300,
+    "watchdogSeconds": 330,
+    "elapsedSecondsAtStop": 198,
+    "hostPid": 12324,
+    "clientPid": 7432,
+    "knownArsenal1101YesPresses": 2,
+    "stopReason": "DONE",
+    "restoreResult": "RESTORE_OK",
+    "runnerExitCode": 0
+  },
+  "manualAudioJournalReview": {
+    "host": {
+      "running": true,
+      "serverSubscriptions": 2,
+      "finalLocalPlayerId": 1,
+      "finalLocalAttached": true,
+      "finalLocalSubscriptions": 2,
+      "streamEvents": 1,
+      "eventSeq": [0],
+      "eventKinds": ["SPAWN"],
+      "snapshotCount": 1,
+      "snapshotDropped": 0,
+      "nextSeq": 1,
+      "stopReason": "GAME_END",
+      "subscriptionsRemaining": 0
+    },
+    "client": {
+      "running": true,
+      "finalLocalPlayerId": 2,
+      "finalLocalAttached": true,
+      "finalLocalSubscriptions": 2,
+      "streamEvents": 0,
+      "snapshotCount": 0,
+      "snapshotDropped": 0,
+      "nextSeq": 0,
+      "stopReason": "GAME_END",
+      "subscriptionsRemaining": 0
+    },
+    "observedRadioTxCaptureEvents": 0,
+    "observedRadioRxEvents": 0,
+    "zeroEventsMeanAudioSilence": false
+  },
+  "endpointReadiness": {
+    "result": "PLAYER2_SPAWN_RADIO_OBSERVED",
+    "receipt": "docs/evidence/receipts/audio-passive-b0e-20261102-lead.json",
+    "hostSamples": 120,
+    "clientSamples": 30,
+    "commonHostSamples": 24,
+    "commonClientSamples": 25,
+    "overlapSeconds": 24.713,
+    "probeCRC": "1966ee8a"
+  },
+  "cleanup": {
+    "hostAlive": false,
+    "clientAlive": false,
+    "clientChildrenAlive": 0,
+    "clientChildrenUnverified": 0,
+    "clientCleanup": "OK",
+    "hostWatchdogExited": true,
+    "clientWatchdogExited": true,
+    "otherGameOrWorkbenchProcesses": 0,
+    "registryDiffLines": 0,
+    "profileDiffLines": 0,
+    "nativeSourcesStable": true,
+    "hostScriptErrors": 0,
+    "clientScriptErrors": 0,
+    "clientDependencyErrors": 0,
+    "taggedOutputTruncated": false
+  },
+  "localArtifacts": {
+    "hostLog": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-dsh-audio-passive-20261101-204454/console.log",
+    "hostLogSha256": "ed21bcbb9ec10d5baf893d9b6b69892a98b82e37bd89ddd6d442f351181c1d07",
+    "clientLog": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/ricon-dsh-audio-passive-20261101-204454-peer1-logs/console.log",
+    "clientLogSha256": "562aa6d9c08a19b582cddb64f68c3e8c29e13f73ab241435c6dda6fc320f8187",
+    "operatorStdout": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/dsh-audio-passive-operator.txt",
+    "operatorStdoutSha256": "5c5960caa23965306b73a5be41e391802328a7d589f4064cf5f37f45e3d310be"
+  },
+  "runtimeCRCOnBothSides": {
+    "RICON_LiveAudioGame.c": "44dc0fc5",
+    "RICON_LiveAudioProbe.c": "1865db43"
+  },
+  "sha256": {
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveAudioGame.c": "c401e8aabe4f54fd0dea56473873171f907782b356fbc63b1d1a8fbe9a67629c",
+    "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveAudioProbe.c": "1579044e9baf6720739ff773f23995efa6d14b295a707a909451f5eba8e764f8",
+    "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1": "7f0c1a5069dcc0e38d5275ec98b4b700b79c4577d0706a00905d351e63f83658",
+    "tools/RICON_LiveProbe/ops/wb-run-lib-claude.ps1": "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57"
+  },
+  "hostRegressions": {
+    "oracleUnittests": 369,
+    "toolUnittests": 109,
+    "audioApiUnittests": 2,
+    "result": "PASS",
+    "nativeParityOrAudioClaimed": false
+  },
+  "limits": "Passive subscriptions and lifecycle only. No microphone-source proof, output isolation, radio-PTT, audio delivery, direct exclusion or RICON actuation. No conclusion of silence follows from zero TX/RX. Initial binding transitions are ambiguous until stabilized."
+}
