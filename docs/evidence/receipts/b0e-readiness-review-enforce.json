@@ -1,0 +1,45 @@
+{
+  "review": "B0e readiness: runner static review and checker correction",
+  "date": "2026-11-02",
+  "scope": {
+    "runner": "static read and PowerShell AST parse only",
+    "checker": "review, minimal correction and synthetic tests",
+    "gameOrWorkbenchStarted": false,
+    "opsModified": false,
+    "nativeModified": false
+  },
+  "runner": {
+    "path": "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1",
+    "sha256": "3b5f3da0fee55172d8124d36d73ef6cb42e4c8243d6c4c538c5b767e9787a13f",
+    "librarySha256": "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "parseErrors": 0,
+    "worldParameterReferences": 2,
+    "worldDefault": "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
+    "worldAllowlist": [
+      "{3048828FE14AE687}worlds/Tests/TestFramework/Autotest_GameMode_Plain.ent",
+      "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent"
+    ],
+    "verdict": "Static readiness PASS: the selected world is allowlisted and bound into the host argument list; existing process, client, dialog, deadline, restore and teardown guards remain in the reviewed runner. No UI or process experiment was performed."
+  },
+  "checker": {
+    "path": "docs/evidence/receipts/b0e-character-check-codex.py",
+    "sha256": "1902c2cb56161c03b9e0e2d0b7a4e34fb931bf93e2ad57abd468bda951f4a6a1",
+    "helperSha256": "808249478c03a00b12c56b720d410a3258c7f4745456733b170fda1167b74c52",
+    "finding": "The B0e CLI called the B0d parser but bypassed the B0d CLI lifecycle checks, so complete synthetic endpoint streams could pass without host OBSERVATION_END or confirmed EDIT_STABLE.",
+    "correction": "The B0e CLI now requires the exact 120-sample OBSERVATION_END marker, exactly one EDIT_REQUESTED and EDIT_STABLE marker, and at least five seconds between the latter two before reporting readiness.",
+    "resultBoundary": "PLAYER2_SPAWN_RADIO_OBSERVED still proves only stable assignment, local VoN/gadget components and an observed radio. It does not prove PTT, radio-path selection, pair suppression, delivery or audible sound. Runner stdout cleanup and guard summaries remain operator evidence outside this checker."
+  },
+  "selftest": {
+    "path": "docs/evidence/receipts/b0e-character-check-selftest-codex.py",
+    "sha256": "8353a3ec9519c58711422390968842558e1eac8aaa14ce06458f67b7d56d5464",
+    "command": "python -X utf8 docs/evidence/receipts/b0e-character-check-selftest-codex.py",
+    "result": "PASS",
+    "coverage": {
+      "readinessRejections": 24,
+      "lifecycleRejections": 3,
+      "cliSamples": "120/30",
+      "inputOverwriteProtection": true
+    },
+    "gameOrAudioTested": false
+  }
+}

@@ -1,5 +1,6 @@
 """B0e: назначение персонажа 2 и доступность его радио/VoN; звук не проверяется."""
 import argparse
+from datetime import datetime
 import hashlib
 import json
 from pathlib import Path
@@ -55,6 +56,17 @@ def read_radios(text, rows):
     assert all("radios" in row for row in rows), "Не завершены радиоснимки"
 
 
+def check_host_completion(text):
+    """Требует штатное завершение окна наблюдения и возврат Play в редактор."""
+    assert "inspect=OBSERVATION_END samples=120 complete=1 isGameMode=1" in text, "Нет полного окна наблюдения хоста"
+    times = []
+    for marker in ("EDIT_REQUESTED", "EDIT_STABLE"):
+        matches = re.findall(r"^(\d\d:\d\d:\d\d\.\d+).*\[RICON_LIVEB\] inspect=" + marker + r"\b", text, re.M)
+        assert len(matches) == 1, f"Нужен один маркер {marker}"
+        times.append(datetime.strptime(matches[0], "%H:%M:%S.%f"))
+    assert (times[1] - times[0]).total_seconds() >= 5, "Возврат в редактор не подтверждён"
+
+
 def review_pair(host, client):
     """Ищет общую часть конечных непрерывных серий готовности двух процессов."""
     tails = []
@@ -102,12 +114,14 @@ def main():
     host_text, host, host_report = check_log(args.host_log, 2, 120, args.probe_crc)
     client_text, client, client_report = check_log(args.client_log, 1, 30, args.probe_crc)
     assert host_report["logSha256"] != client_report["logSha256"], "Нужны независимые журналы"
+    check_host_completion(host_text)
     read_radios(host_text, host)
     read_radios(client_text, client)
     report = review_pair(host, client)
     report["host"].update(host_report)
     report["client"].update(client_report)
     report.update(probeCRC=args.probe_crc, streamEqualsDump=True, dropped=0,
+                  hostLifecycle="OBSERVATION_END_EDIT_STABLE",
                   checkerSha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                   helperSha256=hashlib.sha256(HELPER.read_bytes()).hexdigest())
     output = json.dumps(report, ensure_ascii=False, indent=2) + "\n"

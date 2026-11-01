@@ -10,7 +10,9 @@ import tempfile
 
 CHECKER = Path(__file__).with_name("b0e-character-check-codex.py")
 checker = runpy.run_path(str(CHECKER))
-check_log, read_radios, review_pair = (checker[key] for key in ("check_log", "read_radios", "review_pair"))
+check_log, check_host_completion, read_radios, review_pair = (
+    checker[key] for key in ("check_log", "check_host_completion", "read_radios", "review_pair")
+)
 CRC = "abcdef01"
 PREFAB = "{0123456789ABCDEF}Prefabs/Characters/Test.et"
 RADIO = "{FEDCBA9876543210}Prefabs/Items/Radios/Test.et"
@@ -49,7 +51,15 @@ def fixture(mode, count=7, start=0, spawn=1, radio_at=1, gone_at=None):
         if mode == 1 and i == gone_at:
             add("RADIO_GONE", local, -1, "binding=LOCAL_ONLY,obs=0", i, 0)
     add("ENDPOINT_DONE", local, count, f"cycle=1,samples={count},reason=LIMIT", count)
-    return "\n".join([f"RICON_LiveEndpointProbe.c' CRC: {CRC}", *events,
+    lifecycle = []
+    if mode == 2:
+        base = datetime(1900, 1, 1, 18) + timedelta(seconds=start + count)
+        lifecycle = [
+            f"{base.strftime('%H:%M:%S.%f')[:-3]} SCRIPT : [RICON_LIVEB] inspect=OBSERVATION_END samples=120 complete=1 isGameMode=1",
+            f"{(base + timedelta(seconds=1)).strftime('%H:%M:%S.%f')[:-3]} SCRIPT : [RICON_LIVEB] inspect=EDIT_REQUESTED",
+            f"{(base + timedelta(seconds=7)).strftime('%H:%M:%S.%f')[:-3]} SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE",
+        ]
+    return "\n".join([f"RICON_LiveEndpointProbe.c' CRC: {CRC}", *events, *lifecycle,
                       f"[RICON_LIVE] dump=BEGIN count={len(events)} dropped=0 nextSeq={len(events)}",
                       *events, "[RICON_LIVE] dump=END"])
 
@@ -65,6 +75,19 @@ def parse(folder, text, mode, count=7):
 with tempfile.TemporaryDirectory(prefix="ricon-b0e-check-") as directory:
     folder = Path(directory)
     host_text, client_text = fixture(2), fixture(1)
+    check_host_completion(host_text)
+    lifecycle_failures = [
+        host_text.replace("inspect=OBSERVATION_END", "inspect=OBSERVATION_MISSING"),
+        host_text.replace("inspect=EDIT_REQUESTED", "inspect=EDIT_MISSING"),
+        host_text.replace("18:00:14.000 SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE",
+                          "18:00:09.000 SCRIPT : [RICON_LIVEB] inspect=EDIT_STABLE"),
+    ]
+    for broken in lifecycle_failures:
+        try:
+            check_host_completion(broken)
+        except AssertionError:
+            continue
+        raise AssertionError("Не отклонено незавершённое окно хоста")
     host = parse(folder, host_text, 2)
     client = parse(folder, client_text, 1)
     report = review_pair(host, client)
@@ -133,6 +156,7 @@ with tempfile.TemporaryDirectory(prefix="ricon-b0e-check-") as directory:
     result = json.loads(stdout)
     assert result["host"]["samples"] == 120 and result["client"]["samples"] == 30
     assert result["client"]["commonSamples"] == 30
+    assert result["hostLifecycle"] == "OBSERVATION_END_EDIT_STABLE"
     assert all(len(result[key]) == 64 for key in ("checkerSha256", "helperSha256"))
     assert str(folder) not in stdout
     assert all(value not in stdout for value in ("PRIVATE_TEST_NAME", "C:\\Private", "192.0.2.77"))
@@ -146,4 +170,5 @@ with tempfile.TemporaryDirectory(prefix="ricon-b0e-check-") as directory:
     overwrite = subprocess.run(command + ["--out", str(hardlink)], capture_output=True)
     assert overwrite.returncode != 0 and host_path.read_bytes() == original
 
-print(f"B0e checker: синтетические положительные случаи, {len(failures)} отказа, CLI 120/30 и защита входа проверены. Игра и звук не проверялись.")
+print(f"B0e checker: синтетические положительные случаи, {len(failures)} отказа готовности, "
+      f"{len(lifecycle_failures)} отказа завершения, CLI 120/30 и защита входа проверены. Игра и звук не проверялись.")
