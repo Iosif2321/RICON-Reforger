@@ -57,6 +57,8 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [switch]$AudioObserve,
       # D0 queue discovery only; public run identity is not a payload/nonce.
       [switch]$CommunicationDiscovery,
+      # V0 native input-shape discovery; never combines with D0.
+      [switch]$VoNInputShapeDiscovery,
       [string]$CommunicationRun = "",
       [switch]$DryRun)
 
@@ -107,11 +109,15 @@ if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_
 if ($Seconds -lt 60 -or $Seconds -gt 600 -or $MaxChildren -lt 0) { "BAD_LIMITS"; exit 2 }
 if ($Client -and $Seconds -lt 300) { "BAD_LIMITS (-Client needs -Seconds 300 or more)"; exit 2 }
 if ($Client -and $ReadAuthOnly) { "BAD_MODES (-ReadAuthOnly never reaches Play)"; exit 2 }
+$boundedDiscovery = $CommunicationDiscovery -or $VoNInputShapeDiscovery
+if ($CommunicationDiscovery -and $VoNInputShapeDiscovery) { "BAD_DISCOVERY_BOTH_MODES"; exit 2 }
+$discoveryArgument = if ($VoNInputShapeDiscovery) { "-riconVoNInputShape=1" } else { "-riconCommunicationDiscovery=1" }
+$discoveryPrefix = if ($VoNInputShapeDiscovery) { "v0-" } else { "d0-" }
 $d0RunId = ""
-if ($CommunicationDiscovery) {
+if ($boundedDiscovery) {
 	if (-not $Client -or $ReadAuthOnly -or $AudioObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent") { "BAD_D0_MODES"; exit 2 }
 	$d0RunId = $CommunicationRun
-	if (-not $d0RunId) { $d0RunId = "d0-" + (Get-Date -Format "yyyyMMdd-HHmmss") + "-" + [guid]::NewGuid().ToString("N").Substring(0, 8) }
+	if (-not $d0RunId) { $d0RunId = $discoveryPrefix + (Get-Date -Format "yyyyMMdd-HHmmss") + "-" + [guid]::NewGuid().ToString("N").Substring(0, 8) }
 	if ($d0RunId -cnotmatch '\A[A-Za-z0-9_.-]{1,64}\z') { "BAD_D0_RUN"; exit 2 }
 } elseif ($CommunicationRun) { "BAD_D0_RUN_WITHOUT_MODE"; exit 2 }
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
@@ -119,7 +125,7 @@ $log = "$logsRoot\$logsDir\console.log"
 $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
 $hostLogsArgument = $logsDir
 $d0HostLogsName = ""
-if ($CommunicationDiscovery) {
+if ($boundedDiscovery) {
 	$d0HostLogsName = "$logsDir-host-logs"
 	$d0HostLogsPath = Join-Path $OutDir $d0HostLogsName
 	$hostLogsArgument = "`"$d0HostLogsPath`""
@@ -132,9 +138,9 @@ $argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-w
 if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 if ($AudioObserve) { $argList += "-riconAudioObserve=1" }
 $d0HostProfileName = ""
-if ($CommunicationDiscovery) {
+if ($boundedDiscovery) {
 	$d0HostProfileName = "$logsDir-host-profile"
-	$argList += @("-riconCommunicationDiscovery=1", "-riconCommunicationRun=$d0RunId", "-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
+	$argList += @($discoveryArgument, "-riconCommunicationRun=$d0RunId", "-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
 }
 "ARGS " + ($argList -join " ").Replace($OutDir, "<scratchpad>")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
@@ -155,12 +161,12 @@ if ($Client) {
 		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-username", $clientUser, "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
 		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-logLevel", "verbose", "-log-scr-checksum", "-riconEndpointProbe=1")
 	if ($AudioObserve) { $clientArgs += "-riconAudioObserve=1" }
-	if ($CommunicationDiscovery) { $clientArgs += @("-riconCommunicationDiscovery=1", "-riconCommunicationRun=$d0RunId") }
+	if ($boundedDiscovery) { $clientArgs += @($discoveryArgument, "-riconCommunicationRun=$d0RunId") }
 	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
 	$script:secrets = @($ha.address, $OutDir)
 }
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
-if ($CommunicationDiscovery) {
+if ($boundedDiscovery) {
 	$d0HostProfile = NewPeerProfile $OutDir $d0HostProfileName
 	if (-not $d0HostProfile.ok) { "D0_HOST_PROFILE why=$($d0HostProfile.why)"; exit 3 }
 	$d0HostLogs = NewPeerProfile $OutDir $d0HostLogsName
@@ -608,12 +614,12 @@ finally {
 	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason; result = $result }
 }
 
-if ($CommunicationDiscovery) { "log=<scratchpad>/$d0HostLogsName/console.log" } else { "log=$logsDir/console.log" }
+if ($boundedDiscovery) { "log=<scratchpad>/$d0HostLogsName/console.log" } else { "log=$logsDir/console.log" }
 if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	# the stream and its dump both come out, so the cap leaves room for 2 x 1024 events; a cut is never silent
-	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 	$tagged | Select-Object -First $taggedCap | ForEach-Object { MaskText $_.Line $script:secrets }
 	if ($tagged.Count -gt $taggedCap) { "TAGGED_TRUNCATED shown=$taggedCap total=$($tagged.Count)" }
 	# counts only: the host player's lines carry the owner's profile name. Diagnostics, not the B0c criterion (a distinct
@@ -628,7 +634,7 @@ if ($Client) {
 	if ($script:clientLog) {
 		$clines = Get-Content $script:clientLog
 		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count + " clientPeerName=" + @($clines | Select-String -SimpleMatch $clientUser).Count
-		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 		$ctagged | Select-Object -First $taggedCap | ForEach-Object { "C " + (MaskText $_.Line $script:secrets) }
 		if ($ctagged.Count -gt $taggedCap) { "C TAGGED_TRUNCATED shown=$taggedCap total=$($ctagged.Count)" }
 		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length

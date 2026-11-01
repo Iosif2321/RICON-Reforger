@@ -1,0 +1,23 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "55e1115",
+    "level":  "HOST_ARGUMENT_AND_AST_PREFLIGHT_ONLY",
+    "result":  "V0_RUNNER_ARGUMENTS_PASS",
+    "runnerSha256":  "8f415d72fadc49ab036317e51a168ac37493585ff82079fed1c4ea4705b6fe6f",
+    "librarySha256":  "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "parseErrors":  0,
+    "normalDryRun":  "PASS_NO_DISCOVERY_FLAGS",
+    "d0DryRun":  "PASS_D0_ONLY_BOTH_ROLES",
+    "v0DryRun":  "PASS_V0_ONLY_BOTH_ROLES",
+    "invalidCombinationsRejected":  3,
+    "strictRunIdGuardPreserved":  true,
+    "ownedProfilesAndAbsoluteLogsPreserved":  true,
+    "modeAndRunMatchBothRoles":  true,
+    "defaultBehaviorUnchanged":  true,
+    "guardsLibraryTeardownWeakened":  false,
+    "gameOrWorkbenchStarted":  false,
+    "directoryCreationPerformed":  false,
+    "nativeArrayOrVoNCallPerformed":  false,
+    "packetOrAudioPassClaimed":  false,
+    "limits":  "AST and DryRun plus independent argument review only; V0 code, semantic admissibility and live receiver remain unqualified."
+}
