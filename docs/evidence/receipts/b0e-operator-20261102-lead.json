@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-02",
+  "level": "LIVE_TWO_ROLE_READINESS_ONLY",
+  "baseCommit": "9553952",
+  "result": "B0E_READINESS_PASS",
+  "audioDeliveryTested": false,
+  "microphoneSamplesCaptured": false,
+  "persistentExecutionPolicyChanged": false,
+  "authorization": {
+    "source": "Human Main stream message:60713af5-886c-4f90-934d-2feda5c1dd2f following the pending signature/process-only exception request",
+    "scope": "Process-only ExecutionPolicy Bypass for verified runner and library; no persistent policy change"
+  },
+  "run": {
+    "tag": "dsh-b0e-live",
+    "world": "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent",
+    "dryRun": "PASS_NO_GAME_PROCESS_STARTED",
+    "secondsLimit": 300,
+    "watchdogSeconds": 330,
+    "elapsedSecondsAtStop": 213,
+    "hostPid": 11208,
+    "clientPid": 28692,
+    "knownArsenal1101YesPresses": 2,
+    "stopReason": "DONE",
+    "restoreResult": "RESTORE_OK",
+    "runnerExitCode": 0
+  },
+  "observations": {
+    "hostSamples": 120,
+    "clientSamples": 30,
+    "commonHostSamples": 30,
+    "commonClientSamples": 29,
+    "overlapSeconds": 29.788,
+    "connectedMismatch": 0,
+    "probeCRC": "1966ee8a",
+    "streamEqualsDump": true,
+    "dropped": 0,
+    "hostLifecycle": "OBSERVATION_END_EDIT_STABLE",
+    "bothLocalRadios": {
+      "prefab": "{73950FBA2D7DB5C5}Prefabs/Items/Equipment/Radios/Radio_ANPRC68.et",
+      "rawFrequencies": [32000, 48000],
+      "powered": 1,
+      "muted": 0
+    },
+    "hostScriptErrors": 0,
+    "clientScriptErrors": 0,
+    "clientDependencyErrors": 0
+  },
+  "cleanup": {
+    "hostAlive": false,
+    "clientAlive": false,
+    "clientChildrenAlive": 0,
+    "clientChildrenUnverified": 0,
+    "clientCleanup": "OK",
+    "hostWatchdogExited": true,
+    "clientWatchdogExited": true,
+    "otherGameOrWorkbenchProcesses": 0,
+    "registryDiffLines": 0,
+    "profileDiffLines": 0,
+    "nativeSourcesStable": true
+  },
+  "localArtifacts": {
+    "hostLog": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-dsh-b0e-live-20261101-203126/console.log",
+    "hostLogSha256": "bdfba32145ddb92a2ff6e0aa01cfd80b549db2ffc76f1899d5d41e7f8cb0b59e",
+    "clientLog": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/ricon-dsh-b0e-live-20261101-203126-peer1-logs/console.log",
+    "clientLogSha256": "3246fdbc489a808fd01a8d60a4153ccb1cb7dd28cfd33709a74907936193060c",
+    "operatorStdout": "C:/Users/Ded/AppData/Local/Temp/ricon-dsh-20261102-b0e/dsh-b0e-live-operator.txt",
+    "operatorStdoutSha256": "87374749debcca72e080295a52ef69dccbf0e1f3892d7615a4046f5ba803416b"
+  },
+  "sha256": {
+    "tools/RICON_LiveProbe/ops/wb-serverplay-claude.ps1": "3b5f3da0fee55172d8124d36d73ef6cb42e4c8243d6c4c538c5b767e9787a13f",
+    "tools/RICON_LiveProbe/ops/wb-run-lib-claude.ps1": "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "docs/evidence/receipts/b0e-character-check-codex.py": "ec4d8e379aa0c62e090cfd0a8dd9e058e7c5f3a5b9d81a051825267c681e3a1c"
+  },
+  "limits": "Player assignment, local radio state and components only. No radio-PTT, TX/RX, microphone capture, isolated output, audible delivery, direct exclusion, RICON actuation or AUDIO_PASS. Local log wall times are not Team timestamps. Native engine noise is not certified absent."
+}
