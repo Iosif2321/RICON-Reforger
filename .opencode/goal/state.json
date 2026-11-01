@@ -5,15 +5,18 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "APPROVED_INTENT_FEASIBILITY_HANDOFF",
-  "sourceBaseline": "249507a",
+  "activePhase": "D0_LIMITED_IMPLEMENTATION_PREPARATION",
+  "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
     "localIntent": "docs/req/INTENT-local-radio-slice.md",
     "baselineAudioProtocol": "docs/plan/LOCAL_AUDIO_VALIDATION_RU.md",
     "routeEvidence": "docs/evidence/receipts/audio-route-inventory-20261102-lead.json",
     "markerFeasibility": "docs/evidence/E-von-marker-feasibility-lead.md",
-    "markerSourceManifest": "docs/evidence/receipts/von-marker-feasibility-20261102-lead.json"
+    "markerSourceManifest": "docs/evidence/receipts/von-marker-feasibility-20261102-lead.json",
+    "probeSpecification": "docs/req/REQ-von-marker-probe.md",
+    "d0ImplementationPlan": "docs/plan/PLAN-communication-discovery-D0.md",
+    "nativePathGateEvidence": "docs/evidence/E-von-native-marker-path-reverse.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -24,14 +27,24 @@
     "packetAllowedOnlyOnSamePathAndProtocol": true,
     "technicalMechanismApproved": false,
     "implementationGateOpen": false,
+    "d0LimitedImplementationApproved": true,
+    "d0RuntimeGateOpen": false,
+    "d0ApprovalScope": "One CommunicationSound queue request discovery only, under bounded plan and closed VoN/QA numerical guards; P0-P4/native transport and production remain DRAFT/BLOCKED",
     "leadSessionFreshForDesign": false,
+    "workflowException": {
+      "code": "FRESH_SESSION_WAIVED",
+      "ownerDecisionEventSequence": 799,
+      "ownerInstruction": "Действующий самостоятельно до завершения данной задачи",
+      "strictFreshSessionCompliance": false,
+      "scope": "Autonomous continuation of this task under technical review; no repeated stop for a new session, no permission for publication, drivers/DLL, direct mutation or unproven production actuation"
+    },
     "designFreshContext": {
       "memberRef": "member:76de37ba-f1b6-4a79-9ba2-04b747ac6b95",
       "humanOwnerAddedEventSequence": 760,
       "firstAvailableContextAt": "2026-11-02T04:02:31+08:00",
       "noPriorProjectContextAttested": true,
       "exactSessionCreationTimeIndependentlyVerified": false,
-      "handoffStatus": "PREPARED_PENDING_RECORDED_INTENT_AND_EXPLICIT_WORKER_GATE_CHECK"
+      "handoffStatus": "D0_DESIGN_TECHNICALLY_REVIEWED_UNDER_OWNER_WAIVER"
     }
   },
   "verifiedProgress": {
@@ -60,5 +73,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Record approved intent and pass a self-contained handoff to a fresh design context; produce DRAFT probe specification, not implementation. If freshness cannot be established, FRESH_SESSION_REQUIRED remains blocked."
+  "nextGate": "Technically review and record the probe specification under the owner's autonomous-continuation exception, then execute the smallest permitted P0/P1 preflight. Do not repeat the fresh-session stop or goal approval; unknown alphabet/receiver/protocol gates still fail closed."
 }
