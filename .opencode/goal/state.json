@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "V0_INCONCLUSIVE_PASSIVE_SOURCE_MAPPING",
+  "activePhase": "I0_PASSIVE_MAPPING_IMPLEMENTATION_PREPARATION",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -17,7 +17,8 @@
     "probeSpecification": "docs/req/REQ-von-marker-probe.md",
     "d0ImplementationPlan": "docs/plan/PLAN-communication-discovery-D0.md",
     "nativePathGateEvidence": "docs/evidence/E-von-native-marker-path-reverse.md",
-    "v0InputShapePlan": "docs/plan/PLAN-von-input-shape-V0.md"
+    "v0InputShapePlan": "docs/plan/PLAN-von-input-shape-V0.md",
+    "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -30,6 +31,9 @@
     "implementationGateOpen": false,
     "d0LimitedImplementationApproved": true,
     "v0LimitedImplementationApproved": true,
+    "i0LimitedImplementationApproved": true,
+    "i0RuntimeGateOpen": false,
+    "i0ApprovalScope": "Read-only passive controller/component/entry/radio/geometry/Rpl mapping and SCRIPT_STATE accessor only; no emitter, setters, subscriptions, RPC or idle/ownership/transport claim",
     "v0RuntimeGateOpen": false,
     "v0RuntimeGateScope": "Consumed by v0-native-001-20261102; native request returned with zero observed local callbacks, INCONCLUSIVE_INPUT_OR_SINK. No values retry/permutation or further native request under that one-run gate. Next mapping is passive only.",
     "v0ApprovalScope": "One type-compatible native VoN input-shape case, allocated non-null values Count=0; semantics unknown, no packet/radio/source-control pass; independent mode and no weakening of D0",
