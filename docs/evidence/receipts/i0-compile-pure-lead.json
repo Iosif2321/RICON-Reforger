@@ -1,0 +1,98 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "0b9fa4e",
+    "level":  "HEADLESS_COMPILE_AND_PURE_ONLY",
+    "result":  "CORRECTIVE_I0_COMPILE_PURE_PASS",
+    "gameModuleCrc":  "3324a84b",
+    "pureChecks":  37,
+    "attempts":  [
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-compile-enforce-20261102-040648\\console.log",
+                         "sha256":  "442c6e8ec85215673f1b7d8e7e3eb93a593dd384e67d40cb61c790e697cf38fd",
+                         "status":  "REJECTED_MISSING_RETURN",
+                         "scriptErrors":  2,
+                         "pureChecks":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-compile2-enforce-20261102-040710\\console.log",
+                         "sha256":  "5c9a90d27aac2d03076edf46c047363fd6c40c20cb5931f7e45c00cdeecc1732",
+                         "status":  "SUPERSEDED_COMPILE",
+                         "scriptErrors":  0,
+                         "pureChecks":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-pure-enforce-20261102-040725\\console.log",
+                         "sha256":  "a46ff8c6fa3bd9003a2a05bc60bee859ad072180e82a2f46e901bc54af864ac5",
+                         "status":  "SUPERSEDED_PURE",
+                         "scriptErrors":  0,
+                         "pureChecks":  24
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-compile3-enforce-20261102-040801\\console.log",
+                         "sha256":  "7976296cd2b31c949c0fdbcd1fae662a90e120fc12aa6d3c60269e59eec6a19a",
+                         "status":  "SUPERSEDED_COMPILE",
+                         "scriptErrors":  0,
+                         "pureChecks":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-pure2-enforce-20261102-040816\\console.log",
+                         "sha256":  "b9435366ef02030b740f2d61f921073f6fad4912ed9b6d0f62f6e16f013786f5",
+                         "status":  "SUPERSEDED_PURE",
+                         "scriptErrors":  0,
+                         "pureChecks":  24
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-corrective-compile-enforce-20261102-041425\\console.log",
+                         "sha256":  "527ff42feff93bad44a768bb78e53c19b4bb1f88c637d4666a34f8adadf50032",
+                         "status":  "SUPERSEDED_CORRECTIVE_COMPILE",
+                         "scriptErrors":  0,
+                         "pureChecks":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-corrective-pure-enforce-20261102-041443\\console.log",
+                         "sha256":  "1cb82a4df34007c69ca962c5726c70ac3290533b69fdf2da8f695208b455782d",
+                         "status":  "SUPERSEDED_CORRECTIVE_PURE",
+                         "scriptErrors":  0,
+                         "pureChecks":  35
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-final-compile-enforce-20261102-041848\\console.log",
+                         "sha256":  "cb6b16256605614bf0c81db06d4e631eba3ef031e0ec477f6c7afb2140dece0a",
+                         "status":  "CURRENT_COMPILE",
+                         "scriptErrors":  0,
+                         "pureChecks":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-i0-final-pure-enforce-20261102-041910\\console.log",
+                         "sha256":  "b023f0d919319efcdbd0375b8b92f08e0ccc815ec97d23912eeadaa2141ee4d9",
+                         "status":  "CURRENT_PURE",
+                         "scriptErrors":  0,
+                         "pureChecks":  37
+                     }
+                 ],
+    "currentSources":  [
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveVoNMappingInspection.c",
+                               "sha256":  "c21b9aad4c7640334a1b60a747288d163a87ea3e3ee8d5be20297c2a9017725a"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveVoNMappingInspectionGame.c",
+                               "sha256":  "334f5f614005724ff92f55c99a7d80ce8a5fd49ddfc0a7d46b91e703aa9e8a0f"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveVoNMappingAccess.c",
+                               "sha256":  "3a3622c992c3eb5da0b09b67bbf9bf4102a44b7aa32dd7d2a1fededa83cbd702"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveVoNMappingInspectionCheckPlugin.c",
+                               "sha256":  "444693e7a8e575ec109b44e2f10f3250f5f01e66bc66750e5bf3e6235644c6f6"
+                           }
+                       ],
+    "getterMappingProvenByRuntime":  false,
+    "nativeIdleOrOwnershipProven":  false,
+    "runtimePerformed":  false,
+    "emitterCalls":  0,
+    "subscriptions":  0,
+    "rpc":  0,
+    "limits":  "Saved compile and shared pure predicates only. Catalog bulk temporary allocation remains API-dependent; no live mapping, continuous binding, authority, transport or RICON pass."
+}
