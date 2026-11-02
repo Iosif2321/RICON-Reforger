@@ -1,5 +1,9 @@
 # Журнал цели
 
+## 2026-11-02 15:39 — frozen N0, подготовка только parse
+
+[План v0.3](<../../docs/plan/PLAN-standard-ptt-K0.md>) SHA-256 `13b573056a9b9eb1eda2e49cac4cb377e1f120e3fc3a9545610019cc432301cc` и четыре исходных файла frozen; их точные SHA приведены в [state](<state.json>). Код написан и read-reviewed, corrective2601/ASCII2613 закрыты review2676; helper/runner review QA2591 и review плана QA2663. G_WRITE закрыт. Только Lead после записи точной сборки и собственного START вправе выполнить Parser.ParseFile без dot-source; AST/pure/helper NOT_RUN, G_PURE/G_RUN и K0/PTT gates закрыты. Эта синхронизация не меняет код/план и не выполняет commit или проверку AST.
+
 ## 2026-11-02 14:33 — RECORD и ограниченный N0 G_WRITE
 
 Lead записал точный [план N0 v0.2](<../../docs/plan/PLAN-standard-ptt-K0.md>) в `2880204` и активировал только G_WRITE для Enforce на четыре новых N0 ops-файла из §3. START автору последует после записи activation metadata. Parse/pure/normal/negative и K0/PTT implementation/runtime остаются закрыты; реальная focus-квалификация NOT_RUN. Эта синхронизация не меняет план/код и не запускает N0; commit выполняет Lead отдельно.

@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "N0_G_WRITE_ACTIVATED_AWAITING_LEAD_START",
+  "activePhase": "N0_FROZEN_READ_REVIEWED_AWAITING_RECORD_AND_PARSE_START",
   "accountableMemberRef": "member:b57715cf-d124-42c0-b14c-898ef0012bcc",
   "coordinationTransferEventSequence": 2298,
   "sourceBaseline": "170e9c0",
@@ -40,8 +40,9 @@
     "i0LimitedImplementationApproved": true,
     "k0ImplementationApproved": false,
     "k0RuntimeGateOpen": false,
-    "n0WritingGateOpen": true,
-    "n0WritingGateCondition": "Lead activated G_WRITE for Enforce only, limited to the four N0 ops files; Lead START follows activation metadata record",
+    "n0WritingGateOpen": false,
+    "n0WritingGateCondition": "Closed on frozen snapshot; new changes require a separate gate",
+    "n0ParseGateCondition": "Only Lead may perform Parser.ParseFile after recording the exact build and Lead START; no dot-source or execution",
     "n0WritingScope": ["tools/RICON_LiveProbe/ops/k0-neutral-core.ps1", "tools/RICON_LiveProbe/ops/k0-neutral-helper.ps1", "tools/RICON_LiveProbe/ops/k0-neutral-preflight.ps1", "tools/RICON_LiveProbe/ops/k0-neutral-selftest.ps1"],
     "n0ParseGateOpen": false,
     "n0PureGateOpen": false,
@@ -108,10 +109,20 @@
     "k0PhysicalInputReadiness": "AWAITING_HUMAN_MICROPHONE_AND_OPERATOR_CONFIRMATION",
     "k0DesignStatus": "V03_DRAFT_TEXT_REVIEW_QA2441_PREFLIGHT_PLANNING_ONLY",
     "k0SpecSha256": "ddc9ac1302ab3d08086eafc238dcff13f499c46cd0c7ed1001d41af4fe4c9f22",
-    "k0PlanStatus": "V02_N0_RECORDED_2880204_QA2518_G_WRITE_ACTIVATED",
-    "n0PlanRecordGit": "2880204",
-    "n0PlanInputGit": "8b56b5e",
-    "n0PlanSha256": "5c14a9a7981b77f7d51bcdfbf26bae9344d1ba30d1b4d6d9205d6d12ad83d335",
+    "k0PlanStatus": "V03_N0_FROZEN_QA2663_AWAITING_RECORD",
+    "n0SourceStatus": "WRITTEN_READ_REVIEWED_CORRECTIVE2601_ASCII2613_CLOSED_NO_EXECUTION",
+    "n0SourceSha256": {
+      "core": "a254d93d93b28cae44556bd14a3a5547242139e682445a7e504451e15d69d0e4",
+      "helper": "9da576fe3b5e6f1fc9eb3cc849d700c02632aad2719256d5a18ce4ae2717605c",
+      "preflight": "d392af9f7735a3130b1521aef4027ffc7ffccec8643fd92d6f7b56bb27e9bc00",
+      "selftest": "d46d393ae65815a62ba0209ae377ad5324be2d993207ebe9517867ab7d76284c"
+    },
+    "n0AstStatus": "NOT_RUN",
+    "n0PureStatus": "NOT_RUN",
+    "n0HelperStatus": "NOT_RUN",
+    "n0PreviousV02PlanRecordGit": "2880204",
+    "n0PreviousV02PlanInputGit": "8b56b5e",
+    "n0PlanSha256": "13b573056a9b9eb1eda2e49cac4cb377e1f120e3fc3a9545610019cc432301cc",
     "n0FocusQualification": "NOT_RUN",
     "k0ApiInventory": "PUBLIC_SIGNATURES_FOUND_ENFORCE2311_NOT_RUNTIME_QUALIFICATION",
     "k0TimingBudget": "BLOCKED_NOTIFY_PLUS_HELD_LEAVES_NO_DISPATCH_OR_CLOCK_ERROR_MARGIN",
@@ -139,5 +150,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Lead retains accountability. N0 neutral same-host preflight plan v0.2 on input 8b56b5e passed QA2518 and Lead review. Exact plan recorded at 2880204; Lead activated G_WRITE only for Enforce and the four specified N0 ops files, with START to follow activation metadata record. Parse, pure, normal and negative runs are closed independently. N0 excludes game, input, VoN, audio and focus changes; real focus qualification is NOT_RUN. K0/PTT implementation and runtime remain closed. QA2282 timing gap, physical K0 safety and provenance remain unqualified; IsUsingLRR is not toggle readback and effective binding remains UNKNOWN. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; selector/capture mutation and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
+  "nextGate": "Lead retains accountability. N0 plan v0.3 and four source files are frozen and read-reviewed; corrective2601 and ASCII2613 closed by review2676, with QA2591 and QA2663. G_WRITE closed. Only Lead may perform Parser.ParseFile after recording the exact build and issuing START; parse is not yet run. Pure, normal and negative runs remain closed and not run. N0 excludes game, input, VoN, audio and focus changes; real focus qualification is NOT_RUN. K0/PTT implementation and runtime remain closed. QA2282 timing gap, physical K0 safety and provenance remain unqualified; IsUsingLRR is not toggle readback and effective binding remains UNKNOWN. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; selector/capture mutation and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
 }
