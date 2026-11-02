@@ -59,6 +59,8 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [switch]$CommunicationDiscovery,
       # V0 native input-shape discovery; never combines with D0.
       [switch]$VoNInputShapeDiscovery,
+      # I0 getter-only mapping; mutually exclusive with emitters.
+      [switch]$VoNMappingInspection,
       [string]$CommunicationRun = "",
       [switch]$DryRun)
 
@@ -109,10 +111,11 @@ if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_
 if ($Seconds -lt 60 -or $Seconds -gt 600 -or $MaxChildren -lt 0) { "BAD_LIMITS"; exit 2 }
 if ($Client -and $Seconds -lt 300) { "BAD_LIMITS (-Client needs -Seconds 300 or more)"; exit 2 }
 if ($Client -and $ReadAuthOnly) { "BAD_MODES (-ReadAuthOnly never reaches Play)"; exit 2 }
-$boundedDiscovery = $CommunicationDiscovery -or $VoNInputShapeDiscovery
-if ($CommunicationDiscovery -and $VoNInputShapeDiscovery) { "BAD_DISCOVERY_BOTH_MODES"; exit 2 }
-$discoveryArgument = if ($VoNInputShapeDiscovery) { "-riconVoNInputShape=1" } else { "-riconCommunicationDiscovery=1" }
-$discoveryPrefix = if ($VoNInputShapeDiscovery) { "v0-" } else { "d0-" }
+$boundedDiscovery = $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection
+$discoveryModeCount = ([int][bool]$CommunicationDiscovery) + ([int][bool]$VoNInputShapeDiscovery) + ([int][bool]$VoNMappingInspection)
+if ($discoveryModeCount -gt 1) { "BAD_DISCOVERY_BOTH_MODES"; exit 2 }
+$discoveryArgument = if ($VoNMappingInspection) { "-riconVoNMapping=1" } elseif ($VoNInputShapeDiscovery) { "-riconVoNInputShape=1" } else { "-riconCommunicationDiscovery=1" }
+$discoveryPrefix = if ($VoNMappingInspection) { "i0-" } elseif ($VoNInputShapeDiscovery) { "v0-" } else { "d0-" }
 $d0RunId = ""
 if ($boundedDiscovery) {
 	if (-not $Client -or $ReadAuthOnly -or $AudioObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent") { "BAD_D0_MODES"; exit 2 }
@@ -619,7 +622,7 @@ if (Test-Path $log) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	# the stream and its dump both come out, so the cap leaves room for 2 x 1024 events; a cut is never silent
-	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+	$tagged = @($lines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVEB\]|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_I0\]|\[RICON_NET\]|\[RICON_WBMODE\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 	$tagged | Select-Object -First $taggedCap | ForEach-Object { MaskText $_.Line $script:secrets }
 	if ($tagged.Count -gt $taggedCap) { "TAGGED_TRUNCATED shown=$taggedCap total=$($tagged.Count)" }
 	# counts only: the host player's lines carry the owner's profile name. Diagnostics, not the B0c criterion (a distinct
@@ -634,7 +637,7 @@ if ($Client) {
 	if ($script:clientLog) {
 		$clines = Get-Content $script:clientLog
 		"clientScriptErrors=" + @($clines | Select-String -Pattern "SCRIPT\s*\(E\)").Count + " clientDependencyErrors=" + @($clines | Select-String -Pattern '\(E\): Addon \S+ dependency \S+ can.t be added').Count + " clientPeerName=" + @($clines | Select-String -SimpleMatch $clientUser).Count
-		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
+		$ctagged = @($clines | Select-String -Pattern "RICON_Live[A-Za-z]*\.c' CRC|\[RICON_LIVE\]|\[RICON_AUDIO\]|\[RICON_D0\]|\[RICON_V0\]|\[RICON_I0\]|\[RICON_NET\]|\[RICON_PROBE\]|SCRIPT\s*\(E\)")
 		$ctagged | Select-Object -First $taggedCap | ForEach-Object { "C " + (MaskText $_.Line $script:secrets) }
 		if ($ctagged.Count -gt $taggedCap) { "C TAGGED_TRUNCATED shown=$taggedCap total=$($ctagged.Count)" }
 		"CLIENT_LOGSHA " + (Get-FileHash $script:clientLog -Algorithm SHA256).Hash + " size " + (Get-Item $script:clientLog).Length

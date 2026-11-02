@@ -1,0 +1,22 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "c62319b",
+    "level":  "HOST_ARGUMENT_AND_AST_ONLY",
+    "result":  "I0_RUNNER_ARGUMENTS_PASS",
+    "runnerSha256":  "a09e57b1c57c2a70013d817098b55a3c6ed6a6cda92f9a719e830604dc65b8bf",
+    "librarySha256":  "ae28e7e4aab955fda726cc34a649c9cbbf54709b33ac4d69b4716e7d00bd1e57",
+    "parserErrors":  0,
+    "normalDryRun":  "PASS",
+    "d0DryRun":  "PASS",
+    "v0DryRun":  "PASS",
+    "i0DryRun":  "PASS_BOTH_ROLES_ONLY_I0_FLAG",
+    "invalidI0Rejections":  4,
+    "modeCombinationsStaticallyReviewed":  8,
+    "initialDryRunBlockedByExistingCompiler":  true,
+    "busyGuardNotBypassed":  true,
+    "ownedProfileAbsoluteLogsPreserved":  true,
+    "directoryOrProcessCreated":  false,
+    "sourceRuntimeMappingProven":  false,
+    "guardsLibraryTeardownWeakened":  false,
+    "limits":  "Argument preflight only. First BUSY exit3 was the existing delegated compiler; tests repeated after END. No native mapping/idle/ownership/transport proof."
+}
