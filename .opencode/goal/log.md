@@ -1,5 +1,9 @@
 # Журнал цели
 
+## 2026-11-02 14:33 — RECORD и ограниченный N0 G_WRITE
+
+Lead записал точный [план N0 v0.2](<../../docs/plan/PLAN-standard-ptt-K0.md>) в `2880204` и активировал только G_WRITE для Enforce на четыре новых N0 ops-файла из §3. START автору последует после записи activation metadata. Parse/pure/normal/negative и K0/PTT implementation/runtime остаются закрыты; реальная focus-квалификация NOT_RUN. Эта синхронизация не меняет план/код и не запускает N0; commit выполняет Lead отдельно.
+
 ## 2026-11-02 14:29 — N0: план принят для условного writing
 
 [План N0 v0.2](<../../docs/plan/PLAN-standard-ptt-K0.md>) на входе `8b56b5e`, SHA-256 `5c14a9a7981b77f7d51bcdfbf26bae9344d1ba30d1b4d6d9205d6d12ad83d335`, прошёл QA2518 и review Lead2531. Нейтральный same-host preflight не включает игру, ввод, VoN, аудио или изменение фокуса; реальная focus-квалификация NOT_RUN. G_WRITE закрыт до записи точной редакции плана, RECORD и отдельной активации Lead для назначенного автора; parse/pure/normal/negative закрыты. K0/PTT implementation/runtime также закрыты. Эта синхронизация не меняет план или код и не выполняет commit или запуск N0.
