@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "V0_CONTROLLED_RUN_PENDING",
+  "activePhase": "V0_INCONCLUSIVE_PASSIVE_SOURCE_MAPPING",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -30,8 +30,8 @@
     "implementationGateOpen": false,
     "d0LimitedImplementationApproved": true,
     "v0LimitedImplementationApproved": true,
-    "v0RuntimeGateOpen": true,
-    "v0RuntimeGateScope": "One controlled V0 typed-input hypothesis after frozen code/84 checks and source review; new own profiles/roles, fail-closed guards before call, sound callback origin UNKNOWN, no semantics/causality/protocol pass. Controlled fixture assurance is setup, not silence.",
+    "v0RuntimeGateOpen": false,
+    "v0RuntimeGateScope": "Consumed by v0-native-001-20261102; native request returned with zero observed local callbacks, INCONCLUSIVE_INPUT_OR_SINK. No values retry/permutation or further native request under that one-run gate. Next mapping is passive only.",
     "v0ApprovalScope": "One type-compatible native VoN input-shape case, allocated non-null values Count=0; semantics unknown, no packet/radio/source-control pass; independent mode and no weakening of D0",
     "d0RuntimeGateOpen": false,
     "d0RuntimeGateScope": "Consumed by d0-native-001-20261102; no additional request authorized by that one-run gate. Local A event observed; B sink/protocol remain unqualified. V0 requires its own bounded review/compile/run gate.",
@@ -69,7 +69,8 @@
     "d0CompileGameCrc": "22c5fa83",
     "d0PureChecks": "60_PASS_MODEL_NOT_NATIVE_RPC",
     "d0CompileEvidence": "docs/evidence/receipts/d0-compile-corrective-lead.json",
-    "v0CodeStatus": "COMPILED_AND_SOURCE_REVIEWED_NOT_LIVE",
+    "v0CodeStatus": "LIVE_ONE_NATIVE_REQUEST_RETURNED_INPUT_OR_SINK_INCONCLUSIVE",
+    "v0LiveEvidence": "docs/evidence/receipts/v0-live-001-lead.json",
     "v0CompileGameCrc": "53cdba32",
     "v0PureChecks": "84_PASS_NOT_NATIVE_INTEGRATION",
     "v0CompileEvidence": "docs/evidence/receipts/v0-compile-pure-lead.json"
@@ -84,12 +85,13 @@
   "safety": {
     "productionSeamRemainsBlocked": true,
     "liveQueueRequestsPerformed": 1,
-    "ownedGameWorldRunsPerformed": 1,
+    "nativeVoNInputShapeRequestsPerformed": 1,
+    "ownedGameWorldRunsPerformed": 2,
     "lastRuntimeProcessesRemaining": 0,
     "noBinaryReverseEngineeringInThisCycle": true,
     "audioRoutesChanged": false,
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Record frozen V0 code and compile/source review; allow only a separately recorded controlled V0 start with new owned fixture and fail-closed native input guards. Sound callbacks origin UNKNOWN. D0 gate consumed; same-path payload, radio/direct preservation and RICON actuation remain unproven."
+  "nextGate": "Record independently reviewed inconclusive V0 result; design/compile passive controller-to-entity VoN, entry/transceiver, replication identity and geometry inspection with no emitter/setters. Do not repeat empty values or assume radio-ready source from mode1/TX null. Same-path packet and RICON effect remain unproven."
 }
