@@ -16,7 +16,7 @@ Enforce — только экспериментальные CommunicationDiscove
 
 ## 3. Пределы первого V0
 
-- Только два своих свежих участника: A=host/local1 и B=Diag/local2 в новом MpTest; новые пустые scratch profile/log roots, raw вне Git; no external input/mod/queue writer setup.
+- Только два своих свежих участника: A=host/local1 и B=Diag/local2 в новом MpTest; новые пустые scratch profile/log roots, raw вне Git. Контролируемое setup фиксирует build/addon snapshot, новые server-resolved refs/roles и отсутствие внешнего игрового ввода/дополнительных emitters. Это отдельное основание изоляции, **не вывод из тишины/совпадения callback** и не универсальная гарантия пустой native очереди. При фактической чужой активности/неустановленном владении — BLOCKED/INVALID, без вызова по предположению.
 - Stable binding 5 с, quiet baseline 6 с, heartbeat1с/gap3с; baseline не заменяет ownership.
 - Initial/fresh readiness с challenge+attempt, не более20 attempts/challenge через≥1500ms, t0/deadline не сбрасываются; fresh ACK не может быть устаревшим или другого binding.
 - Перед native вызовом: новый Now после всех lookups/logging; A remaining и `B reported − RTT − age` **после 1000ms call-budget ≥32000ms**; RTT/age A≤1000ms. V0 deadline A **37000ms** от своего t0. Отдельный запас для fixed-window/tick scheduling; D0 числа не меняются.
@@ -31,7 +31,7 @@ Enforce — только экспериментальные CommunicationDiscove
 | Событие | D0 | V0 после собственного native request |
 |---|---|---|
 | до вызова unexpected sound/capture/voice | abort без queue | такой же abort |
-| sound-start/finish своего компонента | строгий известный D0 event/handle | raw correlation, не обязательный A-finish; wrong component/generation invalid |
+| sound-start/finish своего компонента | строгий известный D0 event/handle | **origin=UNKNOWN**, только raw collection/correlation, не доказанный результат A request и не отсутствие другого writer; A-finish не обязателен, wrong component/generation invalid |
 | B native RX sender A, receiver известный local radio | ограниченное raw наблюдение | RAW_RADIO_ROUTE_UNQUALIFIED; не payload/radio PASS |
 | B native RX sender A, null receiver | D0 не ослабляется | RAW_DIRECT_ROUTE_UNQUALIFIED; не изменение direct и не proof его сохранности |
 | foreign sender/unbound non-null RX/rebind/gap | INVALID | INVALID |

@@ -1,0 +1,59 @@
+{
+    "date":  "2026-11-02",
+    "baseCommit":  "ab8bbe5",
+    "level":  "HEADLESS_COMPILE_AND_PURE_ONLY",
+    "result":  "V0_COMPILE_PURE_PASS",
+    "gameModuleCrc":  "53cdba32",
+    "pureChecks":  84,
+    "d0ChecksRetained":  true,
+    "nativeRpcExecutionProven":  false,
+    "semanticallyValidValuesProven":  false,
+    "runtimePerformed":  false,
+    "queueRequestPerformed":  false,
+    "packetOrAudioPassClaimed":  false,
+    "attempts":  [
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-v0-compile-enforce-20261102-024301\\console.log",
+                         "sha256":  "ef2c768cd947034b8766b05ad485617f60a2db5c18904f15dacac887bd121ab6",
+                         "status":  "REJECTED_FORMULA_RPC",
+                         "scriptErrors":  6,
+                         "checks":  null,
+                         "childExitReportedByExecutor":  null
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-v0-compile2-enforce-20261102-024556\\console.log",
+                         "sha256":  "30b840180af7ba7980f267b94e5696a68009fa7cb1e3e32e1af3ff7d528bbc79",
+                         "status":  "CURRENT_COMPILE_PASS",
+                         "scriptErrors":  0,
+                         "checks":  null,
+                         "childExitReportedByExecutor":  0
+                     },
+                     {
+                         "path":  "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-v0-pure-enforce-20261102-024612\\console.log",
+                         "sha256":  "c55c805048bedb8ac8085a7f4a5bd4e25b323aabcea9fff9abc3e218cb20236f",
+                         "status":  "CURRENT_PURE_PASS",
+                         "scriptErrors":  0,
+                         "checks":  84,
+                         "childExitReportedByExecutor":  0
+                     }
+                 ],
+    "currentSources":  [
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscovery.c",
+                               "sha256":  "1ce9eefae9d21f6b683ca388f1add3ddc341ca6a16fc30f4ff1fd3cc5187c2aa"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscoveryController.c",
+                               "sha256":  "a17812844524ea6ecbf60bcdfb3761bab4bafcf5d2f4c67148e50eb204b63a67"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveCommunicationDiscoveryGame.c",
+                               "sha256":  "e8d8d1a95bfecf2b6fa14f3d2e83a695c1084cfcf7db788d22e8a23de10088fe"
+                           },
+                           {
+                               "path":  "tools/RICON_LiveProbe/Scripts/WorkbenchGame/RICON_LiveCommunicationDiscoveryCheckPlugin.c",
+                               "sha256":  "5c5bb72dfddb87d78e43bb3b5a5762c30f9d362521985198a870a92c8fca227d"
+                           }
+                       ],
+    "limits":  "Source/type and pure helper evidence only. Empty non-null values remains an unqualified input-shape hypothesis. No native call, remote sink/protocol/direct preservation or RICON actuation is established."
+}

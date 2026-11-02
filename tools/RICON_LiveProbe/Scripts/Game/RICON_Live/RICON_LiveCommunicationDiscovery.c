@@ -13,6 +13,20 @@ enum RICON_ED0Phase
 	STOPPED = 8
 }
 
+enum RICON_ECommunicationDiscoveryMode
+{
+	NONE = 0,
+	D0 = 1,
+	V0 = 2
+}
+
+enum RICON_EV0ReceiveClass
+{
+	INVALID = 0,
+	DIRECT_UNQUALIFIED = 1,
+	RADIO_UNQUALIFIED = 2
+}
+
 enum RICON_ED0RequestGate
 {
 	OK = 0,
@@ -64,13 +78,27 @@ class RICON_D0Gate
 {
 	static const int OBSERVER_LIMIT_MS = 70000;
 	static const int REQUEST_DEADLINE_MS = 39000;
+	static const int V0_REQUEST_DEADLINE_MS = 37000;
 	static const int ACK_LIMIT_MS = 1000;
 	static const int CALL_BUDGET_MS = 1000;
 	static const int REQUIRED_REMAINING_MS = 30000;
+	static const int V0_REQUIRED_PRECALL_MS = 32000;
 
 	static bool ResolveRequested(bool configured, string value)
 	{
 		return configured && value == "1";
+	}
+
+	static RICON_ECommunicationDiscoveryMode ResolveMode(bool d0Configured, string d0Value,
+		bool v0Configured, string v0Value)
+	{
+		bool d0 = ResolveRequested(d0Configured, d0Value);
+		bool v0 = ResolveRequested(v0Configured, v0Value);
+		if (d0 == v0)
+			return RICON_ECommunicationDiscoveryMode.NONE;
+		if (v0)
+			return RICON_ECommunicationDiscoveryMode.V0;
+		return RICON_ECommunicationDiscoveryMode.D0;
 	}
 
 	static bool ValidRunId(string value)
@@ -86,6 +114,16 @@ class RICON_D0Gate
 				return false;
 		}
 		return true;
+	}
+
+	static bool ValidControlKey(string value)
+	{
+		if (value.Length() < 4 || value.Length() > 67)
+			return false;
+		string suffix = value.Substring(value.Length() - 3, 3);
+		if (suffix != ".d0" && suffix != ".v0")
+			return false;
+		return ValidRunId(value.Substring(0, value.Length() - 3));
 	}
 
 	static bool Forward(int previous, int current)
@@ -109,6 +147,23 @@ class RICON_D0Gate
 			&& receiverPresent && receiverIndex >= 0;
 	}
 
+	static bool ValidV0Values(bool nonNull, int count)
+	{
+		return nonNull && count == 0;
+	}
+
+	static RICON_EV0ReceiveClass ClassifyV0Receive(bool observing, int localRole, int senderId,
+		bool receiverPresent, int receiverIndex)
+	{
+		if (!observing || localRole != 2 || senderId != 1)
+			return RICON_EV0ReceiveClass.INVALID;
+		if (!receiverPresent)
+			return RICON_EV0ReceiveClass.DIRECT_UNQUALIFIED;
+		if (receiverIndex >= 0)
+			return RICON_EV0ReceiveClass.RADIO_UNQUALIFIED;
+		return RICON_EV0ReceiveClass.INVALID;
+	}
+
 	static bool ValidChallengeSequence(int challengeId, int attempt, int lastChallengeId, int lastAttempt)
 	{
 		if (challengeId < 1 || challengeId > 2 || attempt < 1)
@@ -123,6 +178,11 @@ class RICON_D0Gate
 		return awaiting && attempt < 20 && sinceSentMs >= 1500 && elapsedMs <= REQUEST_DEADLINE_MS;
 	}
 
+	static bool CanRetryChallengeV0(bool awaiting, int attempt, int sinceSentMs, int elapsedMs)
+	{
+		return awaiting && attempt < 20 && sinceSentMs >= 1500 && elapsedMs <= V0_REQUEST_DEADLINE_MS;
+	}
+
 	static bool PostWindowComplete(int now, int postUntil)
 	{
 		return postUntil >= 0 && now >= postUntil;
@@ -135,9 +195,10 @@ class RICON_D0Gate
 			&& currentContext && serverBIdentity;
 	}
 
-	static RICON_ED0RequestGate CanRequest(bool requestUsed, int nowA, int t0A, int ackSentA, int ackReceivedA,
-		int reportedRemainingB, int ackEntityGeneration, int ackComponentGeneration, int ackSubscriptionGeneration,
-		int expectedEntityGeneration, int expectedComponentGeneration, int expectedSubscriptionGeneration)
+	protected static RICON_ED0RequestGate CanRequestWithLimits(bool requestUsed, int nowA, int t0A,
+		int ackSentA, int ackReceivedA, int reportedRemainingB, int ackEntityGeneration,
+		int ackComponentGeneration, int ackSubscriptionGeneration, int expectedEntityGeneration,
+		int expectedComponentGeneration, int expectedSubscriptionGeneration, int deadlineMs, int requiredRemainingMs)
 	{
 		if (requestUsed)
 			return RICON_ED0RequestGate.ALREADY_USED;
@@ -146,13 +207,13 @@ class RICON_D0Gate
 		int elapsedA = nowA - t0A;
 		int rttA = ackReceivedA - ackSentA;
 		int receiveAgeA = nowA - ackReceivedA;
-		if (elapsedA > REQUEST_DEADLINE_MS || OBSERVER_LIMIT_MS - elapsedA - CALL_BUDGET_MS < REQUIRED_REMAINING_MS)
+		if (elapsedA > deadlineMs || OBSERVER_LIMIT_MS - elapsedA - CALL_BUDGET_MS < requiredRemainingMs)
 			return RICON_ED0RequestGate.A_DEADLINE;
 		if (rttA > ACK_LIMIT_MS)
 			return RICON_ED0RequestGate.ACK_RTT;
 		if (receiveAgeA > ACK_LIMIT_MS)
 			return RICON_ED0RequestGate.ACK_AGE;
-		if (reportedRemainingB - rttA - receiveAgeA - CALL_BUDGET_MS < REQUIRED_REMAINING_MS)
+		if (reportedRemainingB - rttA - receiveAgeA - CALL_BUDGET_MS < requiredRemainingMs)
 			return RICON_ED0RequestGate.B_DEADLINE;
 		if (ackEntityGeneration < 1 || ackComponentGeneration < 1 || ackSubscriptionGeneration < 1)
 			return RICON_ED0RequestGate.GENERATION;
@@ -161,6 +222,35 @@ class RICON_D0Gate
 			|| ackSubscriptionGeneration != expectedSubscriptionGeneration)
 			return RICON_ED0RequestGate.GENERATION;
 		return RICON_ED0RequestGate.OK;
+	}
+
+	static RICON_ED0RequestGate CanRequest(bool requestUsed, int nowA, int t0A, int ackSentA, int ackReceivedA,
+		int reportedRemainingB, int ackEntityGeneration, int ackComponentGeneration, int ackSubscriptionGeneration,
+		int expectedEntityGeneration, int expectedComponentGeneration, int expectedSubscriptionGeneration)
+	{
+		return CanRequestWithLimits(requestUsed, nowA, t0A, ackSentA, ackReceivedA, reportedRemainingB,
+			ackEntityGeneration, ackComponentGeneration, ackSubscriptionGeneration, expectedEntityGeneration,
+			expectedComponentGeneration, expectedSubscriptionGeneration, REQUEST_DEADLINE_MS, REQUIRED_REMAINING_MS);
+	}
+
+	static RICON_ED0RequestGate CanRequestV0(bool requestUsed, int nowA, int t0A, int ackSentA, int ackReceivedA,
+		int reportedRemainingB, int ackEntityGeneration, int ackComponentGeneration, int ackSubscriptionGeneration,
+		int expectedEntityGeneration, int expectedComponentGeneration, int expectedSubscriptionGeneration)
+	{
+		return CanRequestWithLimits(requestUsed, nowA, t0A, ackSentA, ackReceivedA, reportedRemainingB,
+			ackEntityGeneration, ackComponentGeneration, ackSubscriptionGeneration, expectedEntityGeneration,
+			expectedComponentGeneration, expectedSubscriptionGeneration, V0_REQUEST_DEADLINE_MS, V0_REQUIRED_PRECALL_MS);
+	}
+
+	static bool CanObserveV0AfterReturn(int returnNowA, int t0A, int ackSentA, int ackReceivedA,
+		int reportedRemainingB)
+	{
+		if (t0A < 0 || ackSentA < t0A || ackReceivedA < ackSentA || returnNowA < ackReceivedA)
+			return false;
+		int rttA = ackReceivedA - ackSentA;
+		int ageA = returnNowA - ackReceivedA;
+		return rttA <= ACK_LIMIT_MS && OBSERVER_LIMIT_MS - (returnNowA - t0A) >= REQUIRED_REMAINING_MS
+			&& reportedRemainingB - rttA - ageA >= REQUIRED_REMAINING_MS;
 	}
 }
 
@@ -276,6 +366,8 @@ class RICON_LiveCommunicationDiscovery
 	protected ScriptInvoker m_VonCapture;
 	protected ScriptInvoker m_VonReceive;
 	protected ref array<BaseTransceiver> m_Radios = {};
+	protected ref array<float> m_V0Values;
+	protected RICON_ECommunicationDiscoveryMode m_Mode = RICON_ECommunicationDiscoveryMode.NONE;
 	protected string m_sRunId;
 	protected int m_iPlayerId = -1;
 	protected int m_iT0 = -1;
@@ -305,6 +397,9 @@ class RICON_LiveCommunicationDiscovery
 	protected int m_iSequence;
 	protected int m_iStarted;
 	protected int m_iFinished;
+	protected int m_iVonReceive;
+	protected int m_iVonDirect;
+	protected int m_iVonRadio;
 	protected AudioHandle m_RequestHandle = AudioHandle.Invalid;
 	protected RICON_ED0Phase m_Phase = RICON_ED0Phase.WAIT_BINDING;
 	protected bool m_bRunning;
@@ -319,11 +414,18 @@ class RICON_LiveCommunicationDiscovery
 		return s_Active;
 	}
 
+	static RICON_ECommunicationDiscoveryMode RequestedMode()
+	{
+		string d0Value;
+		string v0Value;
+		bool d0Configured = System.GetCLIParam("riconCommunicationDiscovery", d0Value);
+		bool v0Configured = System.GetCLIParam("riconVoNInputShape", v0Value);
+		return RICON_D0Gate.ResolveMode(d0Configured, d0Value, v0Configured, v0Value);
+	}
+
 	static bool IsRequested()
 	{
-		string enabled;
-		bool configured = System.GetCLIParam("riconCommunicationDiscovery", enabled);
-		if (!RICON_D0Gate.ResolveRequested(configured, enabled))
+		if (RequestedMode() == RICON_ECommunicationDiscoveryMode.NONE)
 			return false;
 		string runId;
 		return System.GetCLIParam("riconCommunicationRun", runId) && RICON_D0Gate.ValidRunId(runId);
@@ -334,6 +436,46 @@ class RICON_LiveCommunicationDiscovery
 		if (value)
 			return "1";
 		return "0";
+	}
+
+	protected string Prefix()
+	{
+		if (m_Mode == RICON_ECommunicationDiscoveryMode.V0)
+			return "[RICON_V0]";
+		return "[RICON_D0]";
+	}
+
+	protected bool IsV0()
+	{
+		return m_Mode == RICON_ECommunicationDiscoveryMode.V0;
+	}
+
+	protected string ControlKey()
+	{
+		if (IsV0())
+			return m_sRunId + ".v0";
+		return m_sRunId + ".d0";
+	}
+
+	protected bool V0ValuesReady()
+	{
+		if (!m_V0Values)
+			return false;
+		return RICON_D0Gate.ValidV0Values(true, m_V0Values.Count());
+	}
+
+	protected int RequestDeadlineMs()
+	{
+		if (IsV0())
+			return RICON_D0Gate.V0_REQUEST_DEADLINE_MS;
+		return RICON_D0Gate.REQUEST_DEADLINE_MS;
+	}
+
+	protected bool CanRetryCurrent(bool awaiting, int attempt, int sinceSentMs, int elapsedMs)
+	{
+		if (IsV0())
+			return RICON_D0Gate.CanRetryChallengeV0(awaiting, attempt, sinceSentMs, elapsedMs);
+		return RICON_D0Gate.CanRetryChallenge(awaiting, attempt, sinceSentMs, elapsedMs);
 	}
 
 	protected int Now()
@@ -354,14 +496,14 @@ class RICON_LiveCommunicationDiscovery
 			if (!m_bGapRecorded && m_Budget.TakeReserved())
 			{
 				m_bGapRecorded = true;
-				PrintFormat("[RICON_D0] seq=%1 t=%2 run=%3 role=%4 kind=GAP ordinary=%5 reserved=%6",
+				PrintFormat("%1 seq=%2 t=%3 run=%4 role=%5 kind=GAP ordinary=%6 reserved=%7", Prefix(),
 					m_iSequence++, Now(), m_sRunId, m_iPlayerId, m_Budget.Ordinary(), m_Budget.Reserved());
 			}
 			return false;
 		}
 		int sequence = m_iSequence;
 		m_iSequence++;
-		string line = "[RICON_D0] seq=" + sequence.ToString();
+		string line = Prefix() + " seq=" + sequence.ToString();
 		line = line + " t=" + Now().ToString() + " run=" + m_sRunId;
 		line = line + " role=" + m_iPlayerId.ToString() + " phase=" + m_Phase.ToString();
 		line = line + " eg=" + m_iEntityGeneration.ToString() + " cg=" + m_iComponentGeneration.ToString();
@@ -377,7 +519,9 @@ class RICON_LiveCommunicationDiscovery
 
 	bool Start(BaseWorld world)
 	{
-		if (m_bRunning || s_Active || !world || world.IsEditMode() || !ReadRunId(m_sRunId))
+		m_Mode = RequestedMode();
+		if (m_Mode == RICON_ECommunicationDiscoveryMode.NONE || m_bRunning || s_Active
+			|| !world || world.IsEditMode() || !ReadRunId(m_sRunId))
 			return false;
 		m_World = world;
 		m_Budget = new RICON_D0LogBudget();
@@ -388,7 +532,7 @@ class RICON_LiveCommunicationDiscovery
 		m_iLastHeartbeat = m_iT0;
 		m_bRunning = true;
 		s_Active = this;
-		Emit("START", "mutation=QUEUE_POSSIBLE,transport=UNPROVEN", true);
+		Emit("START", "mode=" + m_Mode.ToString() + ",mutation=QUEUE_POSSIBLE,transport=UNPROVEN", true);
 		return true;
 	}
 
@@ -651,13 +795,13 @@ class RICON_LiveCommunicationDiscovery
 		else
 			m_Phase = RICON_ED0Phase.WAIT_ACK;
 		Emit("CHALLENGE_SENT", "challenge=" + m_iChallenge.ToString() + ",attempt=1,initial=" + Bit(initial));
-		return remote.RICON_D0SendReadinessChallenge(m_sRunId, m_iChallenge, m_iChallengeAttempt);
+		return remote.RICON_D0SendReadinessChallenge(ControlKey(), m_iChallenge, m_iChallengeAttempt);
 	}
 
 	protected bool RetryChallenge(int now)
 	{
 		bool awaiting = m_Phase == RICON_ED0Phase.WAIT_INITIAL_ACK || m_Phase == RICON_ED0Phase.WAIT_ACK;
-		if (!RICON_D0Gate.CanRetryChallenge(awaiting, m_iChallengeAttempt, now - m_iChallengeSent, now - m_iT0))
+		if (!CanRetryCurrent(awaiting, m_iChallengeAttempt, now - m_iChallengeSent, now - m_iT0))
 			return false;
 		SCR_PlayerController remote = ResolveRemoteBController();
 		if (!remote)
@@ -673,10 +817,11 @@ class RICON_LiveCommunicationDiscovery
 		m_iChallengeSent = now;
 		m_iAckReceived = -1;
 		Emit("CHALLENGE_RETRY", "challenge=" + m_iChallenge.ToString() + ",attempt=" + m_iChallengeAttempt.ToString());
-		return remote.RICON_D0SendReadinessChallenge(m_sRunId, m_iChallenge, m_iChallengeAttempt);
+		return remote.RICON_D0SendReadinessChallenge(ControlKey(), m_iChallenge, m_iChallengeAttempt);
 	}
 
-	bool BuildReadinessAck(string runId, int challengeId, int attempt, out int remainingMs, out int playerId,
+	bool BuildReadinessAck(string runId, int challengeId, int attempt,
+		out int remainingMs, out int playerId,
 		out int entityGeneration, out int componentGeneration, out int subscriptionGeneration)
 	{
 		remainingMs = -1;
@@ -684,7 +829,7 @@ class RICON_LiveCommunicationDiscovery
 		entityGeneration = -1;
 		componentGeneration = -1;
 		subscriptionGeneration = -1;
-		if (!m_bRunning || m_bInvalid || runId != m_sRunId || m_iPlayerId != ROLE_B
+		if (!m_bRunning || m_bInvalid || runId != ControlKey() || m_iPlayerId != ROLE_B
 			|| !RICON_D0Gate.ValidChallengeSequence(challengeId, attempt, m_iLastChallengeHandled, m_iLastChallengeAttempt))
 			return false;
 		int now = Now();
@@ -711,7 +856,8 @@ class RICON_LiveCommunicationDiscovery
 		return remainingMs > 0;
 	}
 
-	void AcceptReadinessAck(SCR_PlayerController source, string runId, int challengeId, int attempt,
+	void AcceptReadinessAck(SCR_PlayerController source, string runId,
+		int challengeId, int attempt,
 		int remainingMs, int playerId, int entityGeneration, int componentGeneration, int subscriptionGeneration)
 	{
 		PlayerManager manager = GetGame().GetPlayerManager();
@@ -723,7 +869,7 @@ class RICON_LiveCommunicationDiscovery
 			return;
 		bool initial = m_Phase == RICON_ED0Phase.WAIT_INITIAL_ACK && challengeId == 1;
 		bool fresh = m_Phase == RICON_ED0Phase.WAIT_ACK && challengeId == 2;
-		if (!m_bRunning || m_bInvalid || runId != m_sRunId || m_iPlayerId != ROLE_A
+		if (!m_bRunning || m_bInvalid || runId != ControlKey() || m_iPlayerId != ROLE_A
 			|| challengeId != m_iChallenge || attempt != m_iChallengeAttempt
 			|| playerId != ROLE_B || (!initial && !fresh))
 			return;
@@ -759,59 +905,141 @@ class RICON_LiveCommunicationDiscovery
 		}
 	}
 
+	protected RICON_ED0RequestGate EvaluateRequestGate(bool requestUsed, int now)
+	{
+		if (IsV0())
+			return RICON_D0Gate.CanRequestV0(requestUsed, now, m_iT0, m_iChallengeSent, m_iAckReceived,
+				m_iAckRemainingB, m_iAckEntityGeneration, m_iAckComponentGeneration, m_iAckSubscriptionGeneration,
+				m_iInitialEntityGeneration, m_iInitialComponentGeneration, m_iInitialSubscriptionGeneration);
+		return RICON_D0Gate.CanRequest(requestUsed, now, m_iT0, m_iChallengeSent, m_iAckReceived,
+			m_iAckRemainingB, m_iAckEntityGeneration, m_iAckComponentGeneration, m_iAckSubscriptionGeneration,
+			m_iInitialEntityGeneration, m_iInitialComponentGeneration, m_iInitialSubscriptionGeneration);
+	}
+
 	protected void TryRequest(int now)
 	{
 		if (m_iAckReceived < 0)
 		{
-			if (now - m_iT0 > RICON_D0Gate.REQUEST_DEADLINE_MS)
+			if (now - m_iT0 > RequestDeadlineMs())
 				Invalidate("ACK_TIMEOUT");
 			else if (now - m_iChallengeSent >= 1500 && !RetryChallenge(now))
 				Invalidate("ACK_RETRY_LIMIT");
 			return;
 		}
-		RICON_ED0RequestGate gate = RICON_D0Gate.CanRequest(m_bRequestUsed, now, m_iT0, m_iChallengeSent,
-			m_iAckReceived, m_iAckRemainingB, m_iAckEntityGeneration, m_iAckComponentGeneration,
-			m_iAckSubscriptionGeneration, m_iInitialEntityGeneration, m_iInitialComponentGeneration,
-			m_iInitialSubscriptionGeneration);
+		RICON_ED0RequestGate gate = EvaluateRequestGate(m_bRequestUsed, now);
 		if (gate != RICON_ED0RequestGate.OK || !CurrentContextValid(ROLE_A) || !ServerBIdentityValid())
 		{
 			Invalidate("REQUEST_PRECONDITION");
 			return;
 		}
+		if (IsV0())
+			m_V0Values = new array<float>();
+		bool valuesReady = !IsV0() || V0ValuesReady();
+		if (!valuesReady)
+		{
+			Invalidate("V0_VALUES_PRECONDITION");
+			return;
+		}
+		ECommMethod beforeMethod = m_Von.GetCommMethod();
+		BaseTransceiver beforeTransmit = m_Von.GetTransmitRadio();
 		m_bRequestUsed = true;
 		m_Phase = RICON_ED0Phase.PRECALL;
-		bool requestBeginReserved = Emit("REQUEST_BEGIN",
-			"event=SOUND_VOICE_PAIN_RELIEVE,priority=SOUND_PAIN_RELIEVE,ignoreQueue=0", true);
+		string requestText = "event=SOUND_VOICE_PAIN_RELIEVE,ignoreQueue=0,mode=" + m_Mode.ToString();
+		if (IsV0())
+			requestText = requestText + ",priority=80,valuesNonNull=1,valuesCount=0";
+		else
+			requestText = requestText + ",priority=SOUND_PAIN_RELIEVE";
+		requestText = requestText + ",commMethod=" + beforeMethod.ToString();
+		requestText = requestText + ",txRadio=" + Bit(beforeTransmit != null);
+		bool requestBeginReserved = Emit("REQUEST_BEGIN", requestText, true);
 		if (!m_bRunning)
 			return;
 		bool currentContext = CurrentContextValid(ROLE_A);
 		bool serverBIdentity = ServerBIdentityValid();
+		valuesReady = !IsV0() || V0ValuesReady();
 		int mutationNow = Now();
-		RICON_ED0RequestGate finalGate = RICON_D0Gate.CanRequest(false, mutationNow, m_iT0, m_iChallengeSent,
-			m_iAckReceived, m_iAckRemainingB, m_iAckEntityGeneration, m_iAckComponentGeneration,
-			m_iAckSubscriptionGeneration, m_iInitialEntityGeneration, m_iInitialComponentGeneration,
-			m_iInitialSubscriptionGeneration);
+		RICON_ED0RequestGate finalGate = EvaluateRequestGate(false, mutationNow);
 		bool allowMutation = RICON_D0Gate.CanMutateAfterClaim(m_bRequestUsed, requestBeginReserved, !m_bInvalid,
-			finalGate == RICON_ED0RequestGate.OK, currentContext, serverBIdentity);
+			finalGate == RICON_ED0RequestGate.OK, currentContext && valuesReady, serverBIdentity);
 		if (!allowMutation)
 		{
 			Invalidate("PRECALL_VETO");
 			return;
 		}
+		if (IsV0() && !V0ValuesReady())
+		{
+			Invalidate("V0_VALUES_FINAL_BOUNDARY");
+			return;
+		}
+		currentContext = CurrentContextValid(ROLE_A);
+		serverBIdentity = ServerBIdentityValid();
+		mutationNow = Now();
+		finalGate = EvaluateRequestGate(false, mutationNow);
+		if (finalGate != RICON_ED0RequestGate.OK || !currentContext || !serverBIdentity || m_bInvalid)
+		{
+			Invalidate("FINAL_MUTATION_VETO");
+			return;
+		}
 		m_iRequestTick = mutationNow;
 		m_Phase = RICON_ED0Phase.OBSERVE_REQUEST;
 		m_bInNativeCall = true;
-		m_Communication.SoundEventPriority(SCR_SoundEvent.SOUND_VOICE_PAIN_RELIEVE,
-			SCR_ECommunicationSoundEventPriority.SOUND_PAIN_RELIEVE, false);
+		if (IsV0())
+			m_Von.SoundEventPriority(SCR_SoundEvent.SOUND_VOICE_PAIN_RELIEVE, m_V0Values, 80, false);
+		else
+			m_Communication.SoundEventPriority(SCR_SoundEvent.SOUND_VOICE_PAIN_RELIEVE,
+				SCR_ECommunicationSoundEventPriority.SOUND_PAIN_RELIEVE, false);
 		int returned = Now();
 		m_bInNativeCall = false;
-		Emit("REQUEST_END", "durationMs=" + (returned - mutationNow).ToString(), true);
+		if (!m_Von)
+		{
+			Invalidate("VON_LOST_DURING_CALL");
+			return;
+		}
+		ECommMethod afterMethod = m_Von.GetCommMethod();
+		BaseTransceiver afterTransmit = m_Von.GetTransmitRadio();
+		string returnText = "durationMs=" + (returned - mutationNow).ToString();
+		returnText = returnText + ",commMethodBefore=" + beforeMethod.ToString();
+		returnText = returnText + ",commMethodAfter=" + afterMethod.ToString();
+		returnText = returnText + ",txBefore=" + Bit(beforeTransmit != null) + ",txAfter=" + Bit(afterTransmit != null);
+		bool requestEndLogged = Emit("REQUEST_END", returnText, true);
+		if (!requestEndLogged || m_bInvalid)
+		{
+			if (!m_sDeferredStop.IsEmpty())
+				Stop(m_sDeferredStop);
+			else
+				Invalidate("RETURN_LOG_OR_CALLBACK_INVALID");
+			return;
+		}
 		if (!RICON_D0Gate.Forward(mutationNow, returned) || returned - mutationNow > RICON_D0Gate.CALL_BUDGET_MS)
+		{
 			Invalidate("CALL_BUDGET");
+			return;
+		}
+		if (IsV0() && (beforeMethod != afterMethod || beforeTransmit != afterTransmit))
+		{
+			Invalidate("V0_READBACK_CHANGED");
+			return;
+		}
+		if (IsV0() && !RICON_D0Gate.CanObserveV0AfterReturn(returned, m_iT0, m_iChallengeSent,
+			m_iAckReceived, m_iAckRemainingB))
+		{
+			Invalidate("V0_POST_RETURN_REMAINING");
+			return;
+		}
 		if (!m_bRunning)
 			return;
 		if (!m_sDeferredStop.IsEmpty())
+		{
 			Stop(m_sDeferredStop);
+			return;
+		}
+		if (IsV0())
+		{
+			m_iPostUntil = returned + 20000;
+			m_Phase = RICON_ED0Phase.POST_OBSERVE;
+			if (!Emit("V0_CALL_RETURNED", "observeMs=20000,drain=UNPROVEN", true))
+				Invalidate("V0_RETURN_LOG_BUDGET");
+		}
 	}
 
 	void Tick(BaseWorld world, float timeSlice)
@@ -875,7 +1103,7 @@ class RICON_LiveCommunicationDiscovery
 		}
 		else if (m_Phase == RICON_ED0Phase.WAIT_INITIAL_ACK)
 		{
-			if (now - m_iT0 > RICON_D0Gate.REQUEST_DEADLINE_MS)
+			if (now - m_iT0 > RequestDeadlineMs())
 				Invalidate("INITIAL_ACK_TIMEOUT");
 			else if (now - m_iChallengeSent >= 1500 && !RetryChallenge(now))
 				Invalidate("INITIAL_ACK_RETRY_LIMIT");
@@ -895,12 +1123,19 @@ class RICON_LiveCommunicationDiscovery
 		else if (m_iPlayerId == ROLE_A && m_Phase == RICON_ED0Phase.POST_OBSERVE
 			&& RICON_D0Gate.PostWindowComplete(now, m_iPostUntil))
 		{
-			if (!Emit("POST_OBSERVATION_END", "drain=UNPROVEN", true))
+			string postKind = "POST_OBSERVATION_END";
+			string postReason = "POST_OBSERVATION_COMPLETE";
+			if (IsV0())
+			{
+				postKind = "V0_OBSERVATION_END";
+				postReason = "V0_OBSERVATION_COMPLETE";
+			}
+			if (!Emit(postKind, "drain=UNPROVEN", true))
 			{
 				Invalidate("POST_LOG_BUDGET");
 				return;
 			}
-			Stop("POST_OBSERVATION_COMPLETE");
+			Stop(postReason);
 		}
 	}
 
@@ -917,6 +1152,14 @@ class RICON_LiveCommunicationDiscovery
 		if (component != m_Communication)
 		{
 			Invalidate("FOREIGN_COMPONENT");
+			return;
+		}
+		if (IsV0())
+		{
+			if (m_Phase != RICON_ED0Phase.OBSERVE_REQUEST && m_Phase != RICON_ED0Phase.POST_OBSERVE)
+				Invalidate("FOREIGN_ACTIVITY");
+			else
+				m_iStarted++;
 			return;
 		}
 		if (m_Phase != RICON_ED0Phase.OBSERVE_REQUEST)
@@ -946,7 +1189,20 @@ class RICON_LiveCommunicationDiscovery
 			Invalidate("CALLBACK_CONTEXT");
 			return;
 		}
-		if (component != m_Communication || m_Phase != RICON_ED0Phase.OBSERVE_REQUEST)
+		if (component != m_Communication)
+		{
+			Invalidate("FOREIGN_FINISH");
+			return;
+		}
+		if (IsV0())
+		{
+			if (m_Phase != RICON_ED0Phase.OBSERVE_REQUEST && m_Phase != RICON_ED0Phase.POST_OBSERVE)
+				Invalidate("FOREIGN_FINISH");
+			else
+				m_iFinished++;
+			return;
+		}
+		if (m_Phase != RICON_ED0Phase.OBSERVE_REQUEST)
 		{
 			Invalidate("FOREIGN_FINISH");
 			return;
@@ -982,6 +1238,8 @@ class RICON_LiveCommunicationDiscovery
 			Invalidate("CALLBACK_CONTEXT");
 			return;
 		}
+		if (IsV0() && (m_Phase == RICON_ED0Phase.OBSERVE_REQUEST || m_Phase == RICON_ED0Phase.POST_OBSERVE))
+			Emit("UNCLASSIFIED_CAPTURE", "invalid=1", true);
 		Invalidate("UNEXPECTED_CAPTURE");
 	}
 
@@ -997,6 +1255,27 @@ class RICON_LiveCommunicationDiscovery
 			Invalidate("CALLBACK_CONTEXT");
 			return;
 		}
+		if (IsV0())
+		{
+			bool observing = m_Phase == RICON_ED0Phase.OBSERVE_REQUEST || m_Phase == RICON_ED0Phase.POST_OBSERVE;
+			RICON_EV0ReceiveClass route = RICON_D0Gate.ClassifyV0Receive(observing, m_iPlayerId,
+				senderId, receiver != null, rx);
+			if (route == RICON_EV0ReceiveClass.INVALID)
+			{
+				Invalidate("FOREIGN_OR_UNBOUND_RX");
+				return;
+			}
+			m_iVonReceive++;
+			if (route == RICON_EV0ReceiveClass.DIRECT_UNQUALIFIED)
+			{
+				m_iVonDirect++;
+				Emit("RAW_DIRECT_ROUTE_UNQUALIFIED", "sender=1,receiver=null");
+				return;
+			}
+			m_iVonRadio++;
+			Emit("RAW_RADIO_ROUTE_UNQUALIFIED", "sender=1,receiver=" + rx.ToString());
+			return;
+		}
 		if (!RICON_D0Gate.ValidRadioReceive(m_Phase == RICON_ED0Phase.OBSERVE_REQUEST,
 			m_iPlayerId, ROLE_B, senderId, ROLE_A, receiver != null, rx))
 			Invalidate("DIRECT_OR_FOREIGN_RX");
@@ -1006,14 +1285,36 @@ class RICON_LiveCommunicationDiscovery
 	{
 		if (!m_bRunning)
 			return;
-		if (m_iStarted != m_iFinished)
+		if (!IsV0() && m_iStarted != m_iFinished)
 			m_bInvalid = true;
+		if (IsV0())
+		{
+			string verdict = "BLOCKED_NO_REQUEST";
+			if (m_bInvalid)
+				verdict = "INVALID";
+			else if (m_iStarted + m_iFinished + m_iVonReceive > 0)
+				verdict = "RAW_V0_OBSERVABLE";
+			else if (m_bRequestUsed || m_iLastChallengeHandled >= 2)
+				verdict = "INCONCLUSIVE_INPUT_OR_SINK";
+			string verdictText = "verdict=" + verdict + ",reason=" + reason;
+			verdictText = verdictText + ",soundStart=" + m_iStarted.ToString();
+			verdictText = verdictText + ",soundFinish=" + m_iFinished.ToString();
+			verdictText = verdictText + ",rx=" + m_iVonReceive.ToString();
+			verdictText = verdictText + ",direct=" + m_iVonDirect.ToString();
+			verdictText = verdictText + ",radio=" + m_iVonRadio.ToString();
+			Emit("V0_VERDICT", verdictText, true);
+		}
 		Detach();
 		m_Phase = RICON_ED0Phase.STOPPED;
-		Emit("TERMINAL", "reason=" + reason + ",requestUsed=" + Bit(m_bRequestUsed)
-			+ ",started=" + m_iStarted.ToString() + ",finished=" + m_iFinished.ToString()
-			+ ",invalid=" + Bit(m_bInvalid) + ",subscriptions=0,ordinary=" + m_Budget.Ordinary().ToString()
-			+ ",reserved=" + m_Budget.Reserved().ToString(), true);
+		string terminalText = "reason=" + reason + ",mode=" + m_Mode.ToString();
+		terminalText = terminalText + ",requestUsed=" + Bit(m_bRequestUsed);
+		terminalText = terminalText + ",started=" + m_iStarted.ToString();
+		terminalText = terminalText + ",finished=" + m_iFinished.ToString();
+		terminalText = terminalText + ",rx=" + m_iVonReceive.ToString();
+		terminalText = terminalText + ",invalid=" + Bit(m_bInvalid);
+		terminalText = terminalText + ",subscriptions=0,ordinary=" + m_Budget.Ordinary().ToString();
+		terminalText = terminalText + ",reserved=" + m_Budget.Reserved().ToString();
+		Emit("TERMINAL", terminalText, true);
 		m_bRunning = false;
 		m_World = null;
 		m_Controller = null;
@@ -1022,6 +1323,7 @@ class RICON_LiveCommunicationDiscovery
 		m_ServerBEntity = null;
 		m_FreshBController = null;
 		m_FreshBEntity = null;
+		m_V0Values = null;
 		m_Communication = null;
 		m_Von = null;
 		m_Radios.Clear();

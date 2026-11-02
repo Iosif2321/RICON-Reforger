@@ -42,7 +42,7 @@ modded class SCR_PlayerController
 	bool RICON_D0SendReadinessChallenge(string runId, int challengeId, int attempt)
 	{
 		if (!Replication.IsServer() || GetPlayerId() != RICON_LiveCommunicationDiscovery.ROLE_B
-			|| !RICON_D0Gate.ValidRunId(runId) || challengeId < 1 || challengeId > 2 || attempt < 1)
+			|| !RICON_D0Gate.ValidControlKey(runId) || challengeId < 1 || challengeId > 2 || attempt < 1)
 			return false;
 		Rpc(RpcDo_RICON_D0ReadinessChallenge, runId, challengeId, attempt);
 		return true;

@@ -4,16 +4,27 @@ class RICON_LiveCommunicationDiscoveryCheckPlugin : WorkbenchPlugin
 {
 	override void RunCommandline()
 	{
-		int checks = 60;
+		int checks = 84;
 		int passed;
 		if (!RICON_D0Gate.ResolveRequested(false, "1")) passed++;
 		if (!RICON_D0Gate.ResolveRequested(true, "0")) passed++;
 		if (RICON_D0Gate.ResolveRequested(true, "1")) passed++;
+		if (RICON_D0Gate.ResolveMode(false, "", false, "") == RICON_ECommunicationDiscoveryMode.NONE) passed++;
+		if (RICON_D0Gate.ResolveMode(true, "1", false, "") == RICON_ECommunicationDiscoveryMode.D0) passed++;
+		if (RICON_D0Gate.ResolveMode(false, "", true, "1") == RICON_ECommunicationDiscoveryMode.V0) passed++;
+		if (RICON_D0Gate.ResolveMode(true, "1", true, "1") == RICON_ECommunicationDiscoveryMode.NONE) passed++;
+		if (RICON_D0Gate.ValidV0Values(true, 0)) passed++;
+		if (!RICON_D0Gate.ValidV0Values(false, 0)) passed++;
+		if (!RICON_D0Gate.ValidV0Values(true, 1)) passed++;
 		if (!RICON_D0Gate.ValidRunId("")) passed++;
 		if (!RICON_D0Gate.ValidRunId("bad run")) passed++;
 		if (!RICON_D0Gate.ValidRunId("bad,value")) passed++;
 		if (RICON_D0Gate.ValidRunId("D0.public_01")) passed++;
 		if (!RICON_D0Gate.ValidRunId("D0-public\n")) passed++;
+		if (RICON_D0Gate.ValidControlKey("D0.public_01.d0")) passed++;
+		if (RICON_D0Gate.ValidControlKey("D0.public_01.v0")) passed++;
+		if (!RICON_D0Gate.ValidControlKey("D0.public_01")) passed++;
+		if (!RICON_D0Gate.ValidControlKey("D0.public_01.x0")) passed++;
 		string longId = "12345678901234567890123456789012345678901234567890123456789012345";
 		if (!RICON_D0Gate.ValidRunId(longId)) passed++;
 		if (RICON_D0Gate.Forward(100, 100)) passed++;
@@ -28,6 +39,11 @@ class RICON_LiveCommunicationDiscoveryCheckPlugin : WorkbenchPlugin
 		if (!RICON_D0Gate.ValidRadioReceive(true, 2, 2, 1, 1, false, -1)) passed++;
 		if (!RICON_D0Gate.ValidRadioReceive(true, 2, 2, 9, 1, true, 0)) passed++;
 		if (!RICON_D0Gate.ValidRadioReceive(true, 1, 2, 1, 1, true, 0)) passed++;
+		if (RICON_D0Gate.ClassifyV0Receive(true, 2, 1, false, -1) == RICON_EV0ReceiveClass.DIRECT_UNQUALIFIED) passed++;
+		if (RICON_D0Gate.ClassifyV0Receive(true, 2, 1, true, 0) == RICON_EV0ReceiveClass.RADIO_UNQUALIFIED) passed++;
+		if (RICON_D0Gate.ClassifyV0Receive(true, 2, 9, false, -1) == RICON_EV0ReceiveClass.INVALID) passed++;
+		if (RICON_D0Gate.ClassifyV0Receive(true, 2, 1, true, -1) == RICON_EV0ReceiveClass.INVALID) passed++;
+		if (RICON_D0Gate.ClassifyV0Receive(true, 1, 1, false, -1) == RICON_EV0ReceiveClass.INVALID) passed++;
 		if (RICON_D0Gate.ValidChallengeSequence(1, 2, 0, 0)) passed++;
 		if (RICON_D0Gate.ValidChallengeSequence(1, 3, 1, 2)) passed++;
 		if (!RICON_D0Gate.ValidChallengeSequence(1, 2, 1, 2)) passed++;
@@ -36,6 +52,8 @@ class RICON_LiveCommunicationDiscoveryCheckPlugin : WorkbenchPlugin
 		if (!RICON_D0Gate.CanRetryChallenge(true, 1, 1499, 5000)) passed++;
 		if (!RICON_D0Gate.CanRetryChallenge(true, 20, 1500, 30000)) passed++;
 		if (!RICON_D0Gate.CanRetryChallenge(true, 1, 1500, 39001)) passed++;
+		if (RICON_D0Gate.CanRetryChallengeV0(true, 1, 1500, 37000)) passed++;
+		if (!RICON_D0Gate.CanRetryChallengeV0(true, 1, 1500, 37001)) passed++;
 		RICON_D0TraceModel trace = new RICON_D0TraceModel();
 		trace.StartA();
 		bool lateMiss = !trace.InitialReadiness(false, false, 1, 1, 1) && !trace.IsBlocked();
@@ -103,6 +121,15 @@ class RICON_LiveCommunicationDiscoveryCheckPlugin : WorkbenchPlugin
 		if (gate == RICON_ED0RequestGate.ALREADY_USED) passed++;
 		gate = RICON_D0Gate.CanRequest(false, 38900, 0, 39000, 38900, 31500, 2, 4, 6, 2, 4, 6);
 		if (gate == RICON_ED0RequestGate.CLOCK) passed++;
+		gate = RICON_D0Gate.CanRequestV0(false, 37000, 0, 36500, 36900, 33500, 2, 4, 6, 2, 4, 6);
+		if (gate == RICON_ED0RequestGate.OK) passed++;
+		gate = RICON_D0Gate.CanRequestV0(false, 37001, 0, 36500, 36900, 33500, 2, 4, 6, 2, 4, 6);
+		if (gate == RICON_ED0RequestGate.A_DEADLINE) passed++;
+		gate = RICON_D0Gate.CanRequestV0(false, 37000, 0, 36500, 36900, 33499, 2, 4, 6, 2, 4, 6);
+		if (gate == RICON_ED0RequestGate.B_DEADLINE) passed++;
+		if (RICON_D0Gate.CanObserveV0AfterReturn(40000, 0, 36500, 36900, 33500)) passed++;
+		if (!RICON_D0Gate.CanObserveV0AfterReturn(40001, 0, 36500, 36900, 33500)) passed++;
+		if (!RICON_D0Gate.CanObserveV0AfterReturn(40000, 0, 36500, 36900, 33499)) passed++;
 
 		RICON_D0LogBudget budget = new RICON_D0LogBudget();
 		bool ordinary = true;

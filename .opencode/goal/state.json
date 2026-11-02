@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "V0_LIMITED_IMPLEMENTATION_PREPARATION",
+  "activePhase": "V0_RUNTIME_PRECONDITION_REVIEW",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -67,7 +67,11 @@
     "d0LiveEvidence": "docs/evidence/receipts/d0-live-001-lead.json",
     "d0CompileGameCrc": "22c5fa83",
     "d0PureChecks": "60_PASS_MODEL_NOT_NATIVE_RPC",
-    "d0CompileEvidence": "docs/evidence/receipts/d0-compile-corrective-lead.json"
+    "d0CompileEvidence": "docs/evidence/receipts/d0-compile-corrective-lead.json",
+    "v0CodeStatus": "COMPILED_AND_SOURCE_REVIEWED_NOT_LIVE",
+    "v0CompileGameCrc": "53cdba32",
+    "v0PureChecks": "84_PASS_NOT_NATIVE_INTEGRATION",
+    "v0CompileEvidence": "docs/evidence/receipts/v0-compile-pure-lead.json"
   },
   "notYetProven": [
     "Native transport/protocol equivalence for a decodable test marker",
@@ -86,5 +90,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Record independently reviewed D0 local result, then bound/review/compile V0 native VoN input-shape preflight and remote-observable mapping. No additional D0 queue request under the consumed gate. Same-path payload, radio gate/direct preservation and RICON actuation remain unproven."
+  "nextGate": "Record frozen V0 code and compile/source review; allow only a separately recorded controlled V0 start with new owned fixture and fail-closed native input guards. Sound callbacks origin UNKNOWN. D0 gate consumed; same-path payload, radio/direct preservation and RICON actuation remain unproven."
 }
