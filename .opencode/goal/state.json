@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "V0_RUNTIME_PRECONDITION_REVIEW",
+  "activePhase": "V0_CONTROLLED_RUN_PENDING",
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -30,7 +30,8 @@
     "implementationGateOpen": false,
     "d0LimitedImplementationApproved": true,
     "v0LimitedImplementationApproved": true,
-    "v0RuntimeGateOpen": false,
+    "v0RuntimeGateOpen": true,
+    "v0RuntimeGateScope": "One controlled V0 typed-input hypothesis after frozen code/84 checks and source review; new own profiles/roles, fail-closed guards before call, sound callback origin UNKNOWN, no semantics/causality/protocol pass. Controlled fixture assurance is setup, not silence.",
     "v0ApprovalScope": "One type-compatible native VoN input-shape case, allocated non-null values Count=0; semantics unknown, no packet/radio/source-control pass; independent mode and no weakening of D0",
     "d0RuntimeGateOpen": false,
     "d0RuntimeGateScope": "Consumed by d0-native-001-20261102; no additional request authorized by that one-run gate. Local A event observed; B sink/protocol remain unqualified. V0 requires its own bounded review/compile/run gate.",
