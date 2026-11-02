@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "BLOCKED_SOURCE_ACTION_MAPPING_NO_RUNTIME",
+  "activePhase": "BLOCKED_RUNTIME_ACTION_DELIVERY_NO_RUNTIME",
   "accountableMemberRef": "member:50e0aaa4-6321-4cde-8643-6978115707f2",
   "coordinationTransferEventSequence": 1647,
   "sourceBaseline": "170e9c0",
@@ -20,7 +20,8 @@
     "d0ImplementationPlan": "docs/plan/PLAN-communication-discovery-D0.md",
     "nativePathGateEvidence": "docs/evidence/E-von-native-marker-path-reverse.md",
     "v0InputShapePlan": "docs/plan/PLAN-von-input-shape-V0.md",
-    "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md"
+    "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md",
+    "standardRadioPttSource": "docs/evidence/E-standard-radio-ptt-source.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -88,7 +89,9 @@
     "i0ControllerEntityVoN": "NON_NULL_MATCH_OBSERVED_BOTH_NOT_CONTINUOUS",
     "i0NativeTx": "UNKNOWN_NULL_REFS_NOT_RADIO_READY",
     "i0BWindow": "INVALID_MAPPING_CHANGED_TWO_SNAPSHOTS",
-    "standardRadioPttActionMapping": "BLOCKED_SOURCE_ACTION_MAPPING",
+    "standardRadioPttActionMapping": "SOURCE_ACTION_MAPPING_STATIC_PASS_REVIEW1838",
+    "standardRadioPttRuntimeActionDelivery": "BLOCKED_RUNTIME_ACTION_DELIVERY",
+    "standardRadioPttHoldRelease": "BLOCKED_HOLD_RELEASE_SAFETY",
     "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
   "notYetProven": [
@@ -109,5 +112,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Qualify exact standard VONChannel input registration and DOWN/UP controller hold/release source before any new bounded PTT design. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
+  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. Draft J0 inert non-VoN input-delivery preflight before any programmatic PTT use; SetActionValue signature alone proves no listener semantics. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
 }

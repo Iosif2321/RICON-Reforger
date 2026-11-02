@@ -29,3 +29,9 @@
 Принята ответственность по событию1647. Проверены три SHA-256 raw-файлов [I0 receipt](<../../docs/evidence/receipts/i0-live-001-lead.json>) и непрерывные seq A102/B17; независимое QA1642 уже подтвердило содержание/cleanup. Состояние и навигация приведены к завершённому I0, не к ожидающему запуску: A14 дискретных срезов, B2 и invalid MAPPING_CHANGED, native TX UNKNOWN. Production/передача/idle/ownership не доказаны.
 
 Новых процессов, игровых запросов или изменений selectors/capture не выполнялось. Все три разовых gates закрыты. Следующий блокер — точная штатная VONChannel DOWN/UP source-цепочка; Enforce проверил сохранённые окна и выделил минимальные недостающие адресные чтения. Новая реализация/runtime пока не разрешены; FRESH_SESSION_WAIVED сохраняется.
+
+## 2026-11-02 11:57 — статический action mapping закрыт
+
+Восемь ограниченных source-окон в двух сериях по разрешениям1724/1781: [квитанция](<../../docs/evidence/E-standard-radio-ptt-source.md>) содержит raw-хэши, CLI, диапазоны и ограничения. Первая серия записана в65413ea; вторая независимо проверена Enforce1838. ACTION_CHANNEL=VONChannel, DOWN/UP registration, handler и typed stop квалифицированы только статически. Auto-select при null entry и conditional direct fallback не скрыты; тип при UP вычисляется заново.
+
+Активная фаза — BLOCKED_RUNTIME_ACTION_DELIVERY_NO_RUNTIME; отдельно BLOCKED_HOLD_RELEASE_SAFETY и прежний selector/ownership blocker. Public SetActionValue существует, но документация не доказывает listener/edge semantics. Следующий DRAFT — J0 inert non-VoN input preflight; реализации/запуска пока нет. Штатные radio callbacks, реальный input, независимый receiver и RICON effect не доказаны. Все свои reader процессы завершены; persistent policy/production/audio routes не менялись.

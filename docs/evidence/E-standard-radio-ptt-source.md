@@ -1,6 +1,6 @@
 # Штатный radio-PTT: частичная квалификация source
 
-Статус: **BLOCKED_SOURCE_ACTION_MAPPING**, WORKBENCH_STATIC, 2026-11-02. Не runtime/transport PASS.
+Статус: **SOURCE_ACTION_MAPPING_STATIC_PASS** (независимый review1838), WORKBENCH_STATIC, 2026-11-02. BLOCKED_RUNTIME_ACTION_DELIVERY / BLOCKED_HOLD_RELEASE_SAFETY. Не runtime/transport PASS.
 
 ## Метод и границы
 
@@ -25,11 +25,29 @@
 - :457–465: transmitType выбирается LONG_RANGE при long-range toggle, иначе CHANNEL. Для не-UP и уже выбранного типа ранний выход; иначе SetVONBroadcast получает bool «reason не UP» и этот тип.
 - :467–468: при не-UP сохраняется active hold action ACTION_CHANNEL. Из этого не следует native capture ownership.
 - :341–348: protected SetVONBroadcast; выход без VoN component; без active entry пытается выбрать первую unmuted entry и заменяет transmitType результатом выбора. Это не read-only операция и не гарантия сохранения radio selector.
-- :350–358: если персонаж не ALIVE, entry отсутствует или unusable, вызывается proximity-ветвь с учётом activate/unconscious и затем возврат. **Штатный radio-action может уйти в direct.**
-- :361–363: activate-ветвь вызывает ActivateVON(transmitType); виден else, но его тело за пределом окна и не объявляется доказанным.
+- :350–358: если персонаж не ALIVE, entry отсутствует или unusable, вызывается proximity-ветвь с аргументом activate && !unconscious и затем возврат. **Штатный activating radio-action может уйти в direct при не-unconscious; на UP аргумент false.** Это не доказательство фактического capture/слышимости.
+- :361–363: activate-ветвь вызывает ActivateVON(transmitType); первая серия обрывается на else. Stop-call доказан второй серией ниже.
+
+## Вторая серия: source mapping и stop-call
+
+Разрешение владельца1781 в ответ на запрос1775: продолжать необходимое в рамках проекта. В этом слоте выполнены ровно четыре дополнительных read-only окна с тем же неизменённым wrapper, process-local Bypass и без мира/Play. До запуска повторно проверен SHA, чужих Workbench/game не было. Для script-окон общие root/ext/path как в первой серии; для config — `-Root '$ArmaReforger:Configs/System' -Ext conf -PathFilter 'chimeraInputCommon.conf'`. MaxFiles1 во всех случаях. Каждый exit0, SearchResources=true/candidate1/done, SCRIPT(E)=0; Steamworks/resource-leak ошибки присутствуют. Managed jobs собраны, Workbench/game0, дерево перед записью чистое.
+
+| Name / дополнительные параметры | Папка | SHA-256 console.log | Строк |
+|---|---|---|---|
+| `ptt-release-20261102 -Grep 'SetVONBroadcast' -Line 361` | `ricon-wbreader-ptt-release-20261102-20261102-065244` | `9f76e835bfdc0104f673bc10a22be84be9cfe0a5d5982aad7bc2efc51c2dd6ce` | 15:361–375 |
+| `ptt-registration-20261102 -Grep 'ACTION_CHANNEL' -Context 0` | `ricon-wbreader-ptt-registration-20261102-20261102-065303` | `577aeedb05eaa72fe14aaa6a4f99992a846a9b72a4883dd703905a50a3703e4c` | 6 matches |
+| `ptt-config-20261102 -Grep 'VONChannel' -Line 8858` | `ricon-wbreader-ptt-config-20261102-20261102-065319` | `db4be8b24cabc59b897fdab884ae6c238a3343d4b77fe2b6bf761c8d67046d8b` | 15:8858–8872 |
+| `ptt-config-tail-20261102 -Grep 'VONChannel' -Line 8872` | `ricon-wbreader-ptt-config-tail-20261102-20261102-065342` | `409888a908b6554a2565b7ea6ccce43a0a6440ffce71ce7f3c3e503826135bd2` | 15:8872–8886 |
+
+Новые установленные факты:
+- SCR_VONController:40 — ACTION_CHANNEL соответствует строке VONChannel. :830–831 — регистрация ActionVONBroadcast на DOWN и UP; :879–880 — снятие этих же listeners. Условия enclosing lifecycle метода этими шестью совпадениями не исследованы.
+- :361–365 — при activate вызывается ActivateVON(transmitType), иначе DeactivateVON(transmitType); метод закрывается на365. UP вычисляет transmitType заново по long-range toggle: это не сохранённый токен владения удержанием.
+- chimeraInputCommon.conf:8862–8878 — vanilla VONChannel содержит InputSourceSum с keyboard:KC_CAPITAL и FilterPreset hold, gamepad0:shoulder_left и gamepad:hold; явный InputFilterHold с HoldDuration200 относится к gamepad source. Единицы200 отдельно не доказаны. Это default config, не effective user binding или гарантия активного VONContext.
 
 ## Не закрыто и следующий gate
 
-Лимит четырёх окон исчерпан продолжениями handler/dispatch. Регистрация VONChannel/ACTION_CHANNEL с точными trigger types и config binding не читались в этой серии; тело else после363 не прочитано. Ранее подтверждённая нижняя Activate/Deactivate-цепочка не заменяет эти пробелы. Следующий шаг — независимый review сохранённых окон и минимальные адресные дочитки; дополнительные обходящие policy процессы не разрешены текущим четырёхоконным исключением.
+Первая серия независимо проверена Enforce в Team1765; SHA/выводы подтверждены с уточнениями null-only auto-select и conditional proximity fallback. Вторая серия независимо проверена Enforce1838: четыре SHA/диапазоны совпали. Точная source-цепь action→DOWN/UP handler→bool dispatch→typed stop закрывает только SOURCE_ACTION_MAPPING. Новые блокеры: BLOCKED_RUNTIME_ACTION_DELIVERY и BLOCKED_HOLD_RELEASE_SAFETY; native ownership не доказан.
+
+Установленный public API ActionManager.SetActionValue(string,float) объявлен в EnfusionScriptAPI/html/interfaceActionManager.html:365–383 и унаследован InputManager (interfaceInputManager.html:174); блок описания пуст. По одной сигнатуре не доказаны delivery DOWN/UP, hold/release, native capture ownership или возможность безопасной синтетической активации VONChannel. Это кандидат отдельного non-VoN input preflight, не готовый PTT actuator. Пользовательские bindings не читались.
 
 Любой будущий PTT-контракт обязан квалифицировать radio entry/handle, ALIVE/usability, long-range/toggle/hold состояния и отсутствие другого автора ввода; смена этих условий инвалидирует radio-only опыт. Source-проверка не доказывает, что состояние останется стабильным во время удержания. Не создавать protected-wrapper и не обходить fallback догадкой. Реальный input, независимый RX/выход и новый runtime gate остаются отдельными требованиями. D0/V0/I0 gates consumed; selector/capture/production BLOCKED.
