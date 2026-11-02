@@ -51,3 +51,37 @@
 Установленный public API ActionManager.SetActionValue(string,float) объявлен в [ActionManager API:365–383](<C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger Tools/Workbench/docs/EnfusionScriptAPI/html/interfaceActionManager.html#L365-L383>) и унаследован InputManager ([API:174](<C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger Tools/Workbench/docs/EnfusionScriptAPI/html/interfaceInputManager.html#L174>)); блок описания пуст. По одной сигнатуре не доказаны delivery DOWN/UP, hold/release, native capture ownership или возможность безопасной синтетической активации VONChannel. Это кандидат отдельного non-VoN input preflight, не готовый PTT actuator. Пользовательские bindings не читались.
 
 Любой будущий PTT-контракт обязан квалифицировать radio entry/handle, ALIVE/usability, long-range/toggle/hold состояния и отсутствие другого автора ввода; смена этих условий инвалидирует radio-only опыт. Source-проверка не доказывает, что состояние останется стабильным во время удержания. Не создавать protected-wrapper и не обходить fallback догадкой. Реальный input, независимый RX/выход и новый runtime gate остаются отдельными требованиями. D0/V0/I0 gates consumed; selector/capture/production BLOCKED.
+
+## Третья серия: IsUsingLRR и ограниченные binding call-sites
+
+2026-11-02, оператор Enforce. Назначение и лимит — Team2364; START и точные команды — Team2379/2384/2392; END — Team2405. Ровно четыре read-only окна существующим WbReader, не более15 исходных строк на окно, по ранее установленному process-local Bypass1781. Wrapper SHA-256 до/после: `fff482755bd396a050734a8f153606dea3aeccc1b369dac5f8d541b83a6c659c`. Код, профили, постоянная execution policy и Zone.Identifier не менялись. ScriptEditor скрытый, без мира/Play; новых runtime/PTT gates серия не открывает.
+
+Перед START Workbench/game0; после END Workbench/game0. Все четыре managed jobs собраны, каждый exit0, SearchResources=true и done; SCRIPT(E)=0. Source lines по порядку:7/15/15/2. Steamworks RequestCurrentStats и resource-leak (E) присутствуют, поэтому error-free не заявляется. Перед серией в дереве были только пять документов чужого plan/metadata handoff; после серии status показывал те же paths. Эти документы оператор не редактировал. Это состояние на END серии, не утверждение о последующих изменениях команды.
+
+### Точные команды
+
+```powershell
+& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File .\tools\RICON_WbReader\run.ps1 -Name k0-lrr-20261102 -Root '$ArmaReforger:scripts/Game/VON' -Ext c -PathFilter 'SCR_VONController.c' -Grep 'bool IsUsingLRR' -Context 3 -MaxFiles 1
+& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File .\tools\RICON_WbReader\run.ps1 -Name k0-binding-site-20261102 -Root '$ArmaReforger:scripts/Game' -Ext c -Grep 'GetActionKeybinding(' -Context 7 -MaxFiles 1
+& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File .\tools\RICON_WbReader\run.ps1 -Name k0-lrr-tail-20261102 -Root '$ArmaReforger:scripts/Game/VON' -Ext c -PathFilter 'SCR_VONController.c' -Grep 'IsUsingLRR' -Line 178 -MaxFiles 1
+& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' -NoProfile -ExecutionPolicy Bypass -File .\tools\RICON_WbReader\run.ps1 -Name k0-binding-calls-20261102 -Root '$ArmaReforger:scripts/Game/UI/Components/WidgetLibrary/SCR_InputButton' -Ext c -PathFilter 'SCR_InputButtonComponent.c' -Grep 'GetActionKeybinding(' -Context 0 -MaxFiles 1
+```
+
+### Raw evidence
+
+Внешние журналы не копируются в репозиторий; время в имени папки — локальное время машины, не Team clock. SHA ниже вычислены оператором по завершённым raw logs; независимый review этой серии на момент записи ещё не выполнен.
+
+| Окно / raw path | SHA-256 | Source location / охват |
+|---|---|---|
+| [1: console.log](<C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-wbreader-k0-lrr-20261102-20261102-090711/console.log>) | `862664254ca34a0d3f053645b87d9a5584e688957928031c10d703f68fa914ad` | SCR_VONController:175–181; candidate1,7 строк, тело обрезано после null-guard |
+| [2: console.log](<C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-wbreader-k0-binding-site-20261102-20261102-090729/console.log>) | `b3eea2f4e4765e1e7c135225ad9b8840dc09d01f435de1975e8da11240fe4bc5` | SCR_InputButtonComponent:267–281;5576 кандидатов, первый совпавший файл,15 строк, cap остановил дальнейший контекст |
+| [3: console.log](<C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-wbreader-k0-lrr-tail-20261102-20261102-090757/console.log>) | `54f6868493f041e9bbc485aa476bfa008ba43de475f75dd3da8240f5f6fb43b9` | SCR_VONController:178–192; candidate1,15 строк |
+| [4: console.log](<C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-wbreader-k0-binding-calls-20261102-20261102-090820/console.log>) | `3249b625b6eefbdb694f27c508b491bb54e01b173ffaa48dca089ed89be982a0` | SCR_InputButtonComponent:274,341; candidate1,2 совпадения без контекста |
+
+### Установлено и что остаётся UNKNOWN
+
+- `$ArmaReforger:scripts/Game/VON/SCR_VONController.c:178–184`: public `IsUsingLRR()` возвращает false без active entry, иначе сравнивает локальные ссылки long-range entry и active entry. Он **не читает `m_bIsLongRangeToggled` и не является readback этого toggle**. :188–191 `IsLRRAvailable()` проверяет только наличие long-range entry. BLOCKED_K0_LONG_RANGE_READBACK не снят; никакой новый accessor не создан.
+- `$ArmaReforger:scripts/Game/UI/Components/WidgetLibrary/SCR_InputButton/SCR_InputButtonComponent.c:274,341`: оба call-site передают action name, keyStack, filterStack и `m_eCurrentInputDevice`, не передавая preset/index. По [public API defaults](<C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger Tools/Workbench/docs/EnfusionScriptAPI/html/interfaceInputManager.html#L202-L240>) это оставляет preset пустым, keyBindIndex=-1; смысл этих значений серия не устанавливает.
+- :271–272 перед первым вызовом при пустом filterStack вызывается `ProcessFilterStack()`. Тело этого метода, происхождение current device и второй enclosing handler не прочитаны; наличие calls не является доказательством безопасного effective binding getter.
+- UNKNOWN: effective scratch-profile binding, актуальный device/preset/index, полнота альтернатив/filters/conflicts, output array allocation bound и runtime semantics. Окно2 не является полным поиском call-sites по5576 файлам: при первом совпавшем файле/line cap чтение прекращено. Отрицательный вывод об отсутствии других callers недопустим.
+- Возможная адресная дочитка — `ProcessFilterStack` и caller с явными preset/index; это предложение следующего bounded source-slot, не разрешение новых процессов. BLOCKED_K0_EFFECTIVE_BINDING и runtime/hold safety blockers сохраняются. Серия не проверяла физический ввод, доставку callbacks, capture/RX, transport, слышимость или native release.

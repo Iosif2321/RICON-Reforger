@@ -1,10 +1,10 @@
 # REQ-standard-ptt-K0 — квалификация штатного физического radio-PTT
 
-- Тип: спецификация исследовательского TOOL_ONLY опыта, **DRAFT**, v0.2, 2026-11-02. v0.2 применяет блокирующие замечания QA/VoN к таймерам, edge phases, provenance, route identity и overflow.
-- Статус: **DESIGN_DRAFT / IMPLEMENTATION_BLOCKED / RUNTIME_BLOCKED**.
-- Вход Git: `f9a5076`. Источник цели: [INTENT-local-radio-slice v0.2](<INTENT-local-radio-slice.md>); источник статического mapping: [E-standard-radio-ptt-source](<../evidence/E-standard-radio-ptt-source.md>); текущее состояние: [state.json](<../../.opencode/goal/state.json>).
-- Основание DRAFT: VoN-предложение Team1952, QA-review Team1970, поправка Team1978 и независимые review Team2028/2033/2048 в task:ba901e07-814a-4803-a1ae-3655d281a6b7.
-- Текущий координатор и accountable после передачи Team1647 — **Ядро / Логика / Последовательность**. Будущий оператор процессов назначается отдельным bounded plan/runtime gate; прежняя роль Lead автоматически не наследуется. Физическое нажатие выполняет заранее подтверждённый человек на собственной роли A.
+- Тип: спецификация исследовательского TOOL_ONLY опыта, **DRAFT**, v0.3, 2026-11-02. v0.2 применяет блокирующие замечания QA/VoN к таймерам, edge phases, provenance, route identity и overflow; v0.3 отдельно определяет границу пассивного preflight без ослабления требований физического K0. Источник истины редакций — Git; записанной является редакция в содержащем её commit.
+- Статус: **DESIGN_DRAFT / IMPLEMENTATION_BLOCKED / RUNTIME_BLOCKED**. Текстовая поправка v0.3 прошла QA2441; разрешено только отдельное preflight planning по решению Lead2415 под автономным поручением799, не реализация или запуск.
+- Входы Git: spec v0.2 на `dd6cfdf`, qualification-plan v0.1 на `d5018c9`. Источник цели: [INTENT-local-radio-slice v0.2](<INTENT-local-radio-slice.md>); источник статического mapping: [E-standard-radio-ptt-source](<../evidence/E-standard-radio-ptt-source.md>); текущее состояние: [state.json](<../../.opencode/goal/state.json>).
+- Основание DRAFT: VoN-предложение Team1952, QA-review Team1970, поправка Team1978 и независимые review Team2028/2033/2048; поправка v0.3 — назначение Lead2415, автор VoN2432, review QA2441 в task:ba901e07-814a-4803-a1ae-3655d281a6b7.
+- Текущий accountable после передачи Team2298 — **Lead / архитектор**. Будущий оператор процессов назначается отдельным bounded plan/runtime gate; физическое нажатие выполняет заранее подтверждённый человек на собственной роли A.
 - Процесс: **FRESH_SESSION_WAIVED** по решению владельца Team799, не strict clean-session compliance и не разрешение implementation/runtime.
 - Write-scope этой редакции: только `docs/req/REQ-standard-ptt-K0.md`. Plan, код, конфиги, профили, changelog, runtime и commit в этот scope не входят.
 
@@ -196,7 +196,7 @@ Watchdog использует независимые внешние часы и 
 
 ## 11. Будущий минимальный scope и gates
 
-Эта редакция не открывает implementation/compile/runtime. Будущая реализация возможна только после отдельного bounded plan и должна оставаться в `tools/RICON_LiveProbe/**`:
+Эта редакция не открывает implementation/compile/runtime физического K0 и не разрешает действия с preflight. Будущая реализация K0 возможна только после отдельного bounded plan и должна оставаться в `tools/RICON_LiveProbe/**`:
 
 - TOOL_ONLY lifecycle/observer, сохраняющий null/direct/input/capture/RX без setters; существующие D0/V0 capture/RX subscriptions можно использовать только как source reference, их guards/modes не являются K0 gate;
 - отдельный checker/static tests для квот, overflow, generations, verdict separation и teardown;
@@ -206,9 +206,26 @@ Watchdog использует независимые внешние часы и 
 
 Переходы: `DESIGN_DRAFT → INDEPENDENT_REVIEW → RECORDED_SPEC → BOUNDED_PLAN → IMPLEMENTATION/COMPILE_REVIEW → EXPLICIT_RUNTIME_GATE`. Текущий статус останавливается на `DESIGN_DRAFT`. Старые D0/V0/I0 разрешения consumed и не открывают K0.
 
+### 11.1 Отдельный пассивный preflight на нейтральных сигналах
+
+Для устранения круговой зависимости допускается **планировать отдельный TOOL_ONLY preflight** до квалификации runtime-предпосылок физического K0. Его собственные проверки не требуют предварительного доказательства всех Q1–Q8 или выполнения K0. Preflight default-off, изолирован от production и старых D0/V0/I0 режимов; он не активирует VoN, PTT, `VONChannel`, реальные игровые input actions, capture, радио или аудио, не использует setters §4.2 и не модифицирует профили, конфиги или системную политику. Допустимы только нейтральные/fake события в контролируемом тестовом контуре, явно отличимые от настоящих игровых callback; они не подаются в игровой input или VoN и не выдаются за физический ввод.
+
+**Отдельные gates preflight:**
+
+1. **План и разработка:** сначала записать точный bounded plan с файлами, механизмом нейтральных сигналов, limits, владельцами, process ownership, cleanup, отрицательными сценариями и независимым review. После отдельного решения об ограниченной разработке можно написать только согласованный default-off инструмент; ни эта редакция, ни наличие плана не открывают разработку автоматически.
+2. **Pure checks:** отдельный разрешённый срез проверяет детерминированную модель и отрицательные случаи без игровых процессов, реального ввода и VoN. Успех относится только к проверенной модели и не доказывает поведение ОС или игры.
+3. **Compile:** только после отдельного compile gate и review исходников; сам compile не даёт разрешения на запуск preflight или K0.
+4. **Любой process/run:** до запуска указать точный scope, команды, процессы, границы времени/логов и cleanup; нужны отдельный review и явный process/run gate. Результат записывается с идентичностью сборки и среды, сырой evidence и отдельным verdict; отсутствие gate означает NOT_RUN. Никакой preflight gate не открывает ARM или физическую попытку K0.
+
+Preflight может исследовать механику часов, уведомления, защитных таймеров и наблюдения фокуса на нейтральной тестовой цели; соответствие конкретному игровому окну, binding, доставке и автору `VONChannel` остаётся отдельной квалификацией. Разные часы нельзя вычитать без квалифицированного mapping; конечные наблюдения задержек не доказывают универсальную верхнюю границу или real-time гарантию Windows. Потеря фокуса, данных, превышение оговорённых лимитов или неполный cleanup дают INVALID/INCONCLUSIVE в области preflight. Точные численные пределы и тестовые критерии задаются его reviewed plan до запуска, а не выводятся задним числом.
+
+QA выявил, что 100 ms notification + 1900 ms HELD из §6/§8/§10 не оставляют запаса для dispatch и ошибки часов. Эти числа сохранены как **дефектный baseline v0.2, не acceptance готового runner**; для физического K0 нужна отдельная reviewed timing-spec correction и revised plan с полным бюджетом. До неё и выполнения всех действующих требований PTT implementation/ARM/runtime остаются BLOCKED. Best-effort или условный физический опыт этой редакцией не принимается.
+
+Preflight не снимает автоматически ни один K0 blocker §3 и не присваивает `K0_INPUT_CAPTURE_RX_QUALIFIED`, `INPUT_LISTENER_OBSERVED`, `CAPTURE_OBSERVED`, `RX_OBSERVED`, `RELEASE_PASS` или audio/transport PASS. Он не доказывает provenance, native release, работу радио или слышимость. Результаты служат только ограниченной evidence для дальнейшего отдельного review; условия и verdicts §§2–10 не ослабляются.
+
 ## 12. Условия независимого review
 
-Review MUST подтвердить до планирования реализации:
+Review MUST подтвердить до планирования реализации физического K0; отдельное планирование preflight §11.1 этими условиями не блокируется:
 
 - каждый getter/listener/callback реально существует и доступен в заявленном build;
 - effective binding/context можно проверить без изменения профиля;

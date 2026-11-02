@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "K0_QUALIFICATION_PLAN_DRAFT_BLOCKED_TIMING_PROVENANCE",
+  "activePhase": "K0_V03_PREFLIGHT_PLANNING_ONLY",
   "accountableMemberRef": "member:b57715cf-d124-42c0-b14c-898ef0012bcc",
   "coordinationTransferEventSequence": 2298,
   "sourceBaseline": "170e9c0",
@@ -99,12 +99,14 @@
     "inertInputFixtureBootstrap": "BLOCKED_J0_FIXTURE_BOOTSTRAP",
     "standardRadioPttHoldRelease": "BLOCKED_HOLD_RELEASE_SAFETY",
     "k0PhysicalInputReadiness": "AWAITING_HUMAN_MICROPHONE_AND_OPERATOR_CONFIRMATION",
-    "k0DesignStatus": "DRAFT_TEXT_REVIEW2173_2155_NEW_TIMING_GAP_QA2282",
+    "k0DesignStatus": "V03_DRAFT_TEXT_REVIEW_QA2441_PREFLIGHT_PLANNING_ONLY",
+    "k0SpecSha256": "ddc9ac1302ab3d08086eafc238dcff13f499c46cd0c7ed1001d41af4fe4c9f22",
     "k0PlanStatus": "DRAFT_QUALIFICATION_ONLY_QA_REVIEW2352_CORRECTION_CLOSED",
     "k0ApiInventory": "PUBLIC_SIGNATURES_FOUND_ENFORCE2311_NOT_RUNTIME_QUALIFICATION",
     "k0TimingBudget": "BLOCKED_NOTIFY_PLUS_HELD_LEAVES_NO_DISPATCH_OR_CLOCK_ERROR_MARGIN",
     "k0InputProvenance": "UNKNOWN_NO_QUALIFIED_EXCLUSIVE_PHYSICAL_AUTHOR_OBSERVABLE",
-    "k0LongRangeReadback": "PUBLIC_ISUSINGLRR_CANDIDATE_BODY_NOT_READ",
+    "k0LongRangeReadback": "ISUSINGLRR_ACTIVE_ENTRY_COMPARISON_NOT_TOGGLE_READBACK_BLOCKED",
+    "k0EffectiveBinding": "UNKNOWN_FIRST_MATCH_ONLY_NOT_FULL_SEARCH",
     "k0RefsBudget": "BLOCKED_LIFETIME_LEDGER_AND_BULK_PREALLOCATION_BOUND",
     "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
@@ -126,5 +128,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Lead resumed accountability at2298. K0 qualification-only plan DRAFT separates offline inventory, new source observations, separately gated preflight and human actions; no implementation/compile/runtime gate is opened. API inventory2311 found public listener/readiness signatures plus GetActionKeybinding and IsUsingLRR candidates, not effective binding/toggle semantics or refs<=8 qualification. QA2282 found a specification timing gap: notification100ms+held1900ms leaves no dispatch/clock-error margin; ordinary Windows scheduling does not establish an absolute command bound. Independent qualification-only plan review completed and local correction2352 closed; next timing-contract correction/provenance boundary decision and narrowly scoped source reading of IsUsingLRR body and binding call-sites with separately assigned operator. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; SetActionValue/selector/capture mutation, values retry and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
+  "nextGate": "Lead retains accountability after2298. K0 v0.3 DRAFT passed text review QA2441; only separate passive preflight planning is permitted, not implementation, compile or runtime. QA2282 timing gap and physical K0 safety/provenance qualification remain; ordinary Windows scheduling does not establish an absolute bound. Source windows2405 show IsUsingLRR compares active entry, not toggle; effective binding remains UNKNOWN, and the first-match search is not exhaustive. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; SetActionValue/selector/capture mutation, values retry and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
 }
