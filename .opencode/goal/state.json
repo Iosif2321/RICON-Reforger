@@ -21,7 +21,8 @@
     "nativePathGateEvidence": "docs/evidence/E-von-native-marker-path-reverse.md",
     "v0InputShapePlan": "docs/plan/PLAN-von-input-shape-V0.md",
     "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md",
-    "standardRadioPttSource": "docs/evidence/E-standard-radio-ptt-source.md"
+    "standardRadioPttSource": "docs/evidence/E-standard-radio-ptt-source.md",
+    "inertInputBootstrapEvidence": "docs/evidence/E-input-delivery-bootstrap.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -91,6 +92,7 @@
     "i0BWindow": "INVALID_MAPPING_CHANGED_TWO_SNAPSHOTS",
     "standardRadioPttActionMapping": "SOURCE_ACTION_MAPPING_STATIC_PASS_REVIEW1838",
     "standardRadioPttRuntimeActionDelivery": "BLOCKED_RUNTIME_ACTION_DELIVERY",
+    "inertInputFixtureBootstrap": "BLOCKED_J0_FIXTURE_BOOTSTRAP",
     "standardRadioPttHoldRelease": "BLOCKED_HOLD_RELEASE_SAFETY",
     "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
@@ -112,5 +114,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. Draft J0 inert non-VoN input-delivery preflight before any programmatic PTT use; SetActionValue signature alone proves no listener semantics. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
+  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. J0 programmatic input remains BLOCKED_J0_FIXTURE_BOOTSTRAP; schema-only B0a not implemented because it cannot qualify a callable ActionManager or delivery. Draft K0 physical standard-PTT input/capture/RX qualification on fresh owned roles, with human source and separate readiness/hold/cleanup review; SetActionValue is not a qualified substitute. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
 }

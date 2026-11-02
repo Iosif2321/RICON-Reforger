@@ -35,3 +35,9 @@
 Восемь ограниченных source-окон в двух сериях по разрешениям1724/1781: [квитанция](<../../docs/evidence/E-standard-radio-ptt-source.md>) содержит raw-хэши, CLI, диапазоны и ограничения. Первая серия записана в65413ea; вторая независимо проверена Enforce1838. ACTION_CHANNEL=VONChannel, DOWN/UP registration, handler и typed stop квалифицированы только статически. Auto-select при null entry и conditional direct fallback не скрыты; тип при UP вычисляется заново.
 
 Активная фаза — BLOCKED_RUNTIME_ACTION_DELIVERY_NO_RUNTIME; отдельно BLOCKED_HOLD_RELEASE_SAFETY и прежний selector/ownership blocker. Public SetActionValue существует, но документация не доказывает listener/edge semantics. Следующий DRAFT — J0 inert non-VoN input preflight; реализации/запуска пока нет. Штатные radio callbacks, реальный input, независимый receiver и RICON effect не доказаны. Все свои reader процессы завершены; persistent policy/production/audio routes не менялись.
+
+## 2026-11-02 12:07 — bootstrap J0 не квалифицирован, выбрана физическая PTT ветвь
+
+[Четыре J0 source-проверки и public API границы](<../../docs/evidence/E-input-delivery-bootstrap.md>) не установили callable isolated ActionManager factory/loader или синтетическую DOWN/UP delivery. B0a review1927 подтверждает только generic container/schema API; schema-only probe не реализуется, поскольку не закрывает delivery. J0 сохраняется как BLOCKED_J0_FIXTURE_BOOTSTRAP, без кода/compile/runtime.
+
+Выбрана подготовка DRAFT K0: физический штатный PTT на свежем собственном стенде, пассивные input/capture/RX наблюдения, отдельные readiness/hold/cleanup gates. VoN1952 дал начальный контракт; нужны конкретная спецификация/план, API/readback qualification и техническое ревью до кода. Ни реальный микрофон/оператор, ни independent B-output пока не подтверждены. Это не audio/transport/RICON PASS, нового игрового запуска нет.
