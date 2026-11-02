@@ -23,3 +23,9 @@
 Получен технически проревьюенный DRAFT probe; legal review не установил основания для нового binary analysis, поэтому новый RE не выполнялся. Read-only wrapper сначала был отвергнут подписью; последующий прямой ответ владельца «Продолжи» в сессии после узкого запроса применён только к проверенному reader и процессному исключению, не ко всем скриптам. Первая попытка не дала лога; диагностический повтор с явным VFS root завершился exit 0/done и дал штатное communication event SOUND_VOICE_PAIN_RELIEVE. Native VoN overload этим не квалифицирован.
 
 Следующий ограниченный срез — D0 communication-event discovery по отдельному bounded plan. Никакого nonce-пакета, capture, radio setter, RICON-актуатора и SAME_PATH_PACKET_PASS ещё нет.
+
+## 2026-11-02 10:18 — закрытие I0 metadata и передача координации
+
+Принята ответственность по событию1647. Проверены три SHA-256 raw-файлов [I0 receipt](<../../docs/evidence/receipts/i0-live-001-lead.json>) и непрерывные seq A102/B17; независимое QA1642 уже подтвердило содержание/cleanup. Состояние и навигация приведены к завершённому I0, не к ожидающему запуску: A14 дискретных срезов, B2 и invalid MAPPING_CHANGED, native TX UNKNOWN. Production/передача/idle/ownership не доказаны.
+
+Новых процессов, игровых запросов или изменений selectors/capture не выполнялось. Все три разовых gates закрыты. Следующий блокер — точная штатная VONChannel DOWN/UP source-цепочка; Enforce проверил сохранённые окна и выделил минимальные недостающие адресные чтения. Новая реализация/runtime пока не разрешены; FRESH_SESSION_WAIVED сохраняется.

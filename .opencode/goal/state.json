@@ -5,7 +5,9 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "I0_CONTROLLED_PASSIVE_RUN_PENDING",
+  "activePhase": "BLOCKED_SOURCE_ACTION_MAPPING_NO_RUNTIME",
+  "accountableMemberRef": "member:50e0aaa4-6321-4cde-8643-6978115707f2",
+  "coordinationTransferEventSequence": 1647,
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -32,8 +34,8 @@
     "d0LimitedImplementationApproved": true,
     "v0LimitedImplementationApproved": true,
     "i0LimitedImplementationApproved": true,
-    "i0RuntimeGateOpen": true,
-    "i0RuntimeGateScope": "One controlled passive i0-native-001-20261102 after final source review/compile37 and owned profiles/logs; getters/SCRIPT_STATE only, no emitter/RPC/subscriptions/setters. Unknown/incomplete data cannot establish idle/authority/transport.",
+    "i0RuntimeGateOpen": false,
+    "i0RuntimeGateScope": "Consumed by i0-native-001-20261102. A passive map observed; B mapping changed during warmup and invalidated its window. No further run, emitter or selector mutation under this gate.",
     "i0ApprovalScope": "Read-only passive controller/component/entry/radio/geometry/Rpl mapping and SCRIPT_STATE accessor only; no emitter, setters, subscriptions, RPC or idle/ownership/transport claim",
     "v0RuntimeGateOpen": false,
     "v0RuntimeGateScope": "Consumed by v0-native-001-20261102; native request returned with zero observed local callbacks, INCONCLUSIVE_INPUT_OR_SINK. No values retry/permutation or further native request under that one-run gate. Next mapping is passive only.",
@@ -78,7 +80,16 @@
     "v0LiveEvidence": "docs/evidence/receipts/v0-live-001-lead.json",
     "v0CompileGameCrc": "53cdba32",
     "v0PureChecks": "84_PASS_NOT_NATIVE_INTEGRATION",
-    "v0CompileEvidence": "docs/evidence/receipts/v0-compile-pure-lead.json"
+    "v0CompileEvidence": "docs/evidence/receipts/v0-compile-pure-lead.json",
+    "i0CodeStatus": "LIVE_DISCRETE_PASSIVE_MAPPING_A_OBSERVED_B_INCOMPLETE",
+    "i0LiveRun": "i0-native-001-20261102",
+    "i0LiveEvidence": "docs/evidence/receipts/i0-live-001-lead.json",
+    "i0IndependentQaEventSequence": 1642,
+    "i0ControllerEntityVoN": "NON_NULL_MATCH_OBSERVED_BOTH_NOT_CONTINUOUS",
+    "i0NativeTx": "UNKNOWN_NULL_REFS_NOT_RADIO_READY",
+    "i0BWindow": "INVALID_MAPPING_CHANGED_TWO_SNAPSHOTS",
+    "standardRadioPttActionMapping": "BLOCKED_SOURCE_ACTION_MAPPING",
+    "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
   "notYetProven": [
     "Native transport/protocol equivalence for a decodable test marker",
@@ -91,12 +102,12 @@
     "productionSeamRemainsBlocked": true,
     "liveQueueRequestsPerformed": 1,
     "nativeVoNInputShapeRequestsPerformed": 1,
-    "ownedGameWorldRunsPerformed": 2,
+    "ownedGameWorldRunsPerformed": 3,
     "lastRuntimeProcessesRemaining": 0,
     "noBinaryReverseEngineeringInThisCycle": true,
     "audioRoutesChanged": false,
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Record independently reviewed inconclusive V0 result; design/compile passive controller-to-entity VoN, entry/transceiver, replication identity and geometry inspection with no emitter/setters. Do not repeat empty values or assume radio-ready source from mode1/TX null. Same-path packet and RICON effect remain unproven."
+  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Qualify exact standard VONChannel input registration and DOWN/UP controller hold/release source before any new bounded PTT design. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
 }

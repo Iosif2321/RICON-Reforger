@@ -1,0 +1,1129 @@
+{
+  "date": "2026-11-02",
+  "launchCommit": "bd0f1b0",
+  "codeCommit": "25e32b8",
+  "run": "i0-native-001-20261102",
+  "level": "LIVE_DISCRETE_PASSIVE_MAPPING_ONLY",
+  "result": "A_MAPPING_OBSERVED_B_UNKNOWN_INCOMPLETE",
+  "roles": {
+    "A": {
+      "log": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\i0-native-001-20261102\\ricon-i0-native-one-20261102-043514-host-logs\\console.log",
+      "sha256": "20184e8abb8f1d03ef0c4251227834980c29ad6c7ea4721d76ef09f7e3d23b0a",
+      "rows": 102,
+      "localLifetimeMs": 45009,
+      "snapshotCount": 14,
+      "events": [
+        {
+          "seq": 0,
+          "tick": 48730,
+          "run": "i0-native-001-20261102",
+          "player": -1,
+          "generation": 0,
+          "kind": "START",
+          "data": "subscriptions=0,bulkGadgetAllocation=UNKNOWN"
+        },
+        {
+          "seq": 1,
+          "tick": 51373,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "IDENTITY",
+          "data": "ready=1"
+        },
+        {
+          "seq": 2,
+          "tick": 51373,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=1,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 3,
+          "tick": 51374,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=0,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 4,
+          "tick": 51374,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 5,
+          "tick": 51374,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 6,
+          "tick": 51375,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 7,
+          "tick": 51375,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 8,
+          "tick": 51375,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 9,
+          "tick": 54375,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=2,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 10,
+          "tick": 54376,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=0,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 11,
+          "tick": 54377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 12,
+          "tick": 54377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 13,
+          "tick": 54378,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 14,
+          "tick": 54379,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 15,
+          "tick": 54380,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 16,
+          "tick": 57374,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=3,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 17,
+          "tick": 57375,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=0,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 18,
+          "tick": 57376,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 19,
+          "tick": 57376,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 20,
+          "tick": 57377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 21,
+          "tick": 57377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 22,
+          "tick": 57377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 23,
+          "tick": 60377,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=4,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 24,
+          "tick": 60378,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=0,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 25,
+          "tick": 60378,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 26,
+          "tick": 60379,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 27,
+          "tick": 60379,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 28,
+          "tick": 60380,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 29,
+          "tick": 60381,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 30,
+          "tick": 63999,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=5,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 31,
+          "tick": 64000,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=0,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 32,
+          "tick": 64000,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 33,
+          "tick": 64001,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 34,
+          "tick": 64002,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 35,
+          "tick": 64003,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 36,
+          "tick": 64003,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 37,
+          "tick": 67003,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=6,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 38,
+          "tick": 67004,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<127.134, 1.01, 128.5>,distance=1.00005"
+        },
+        {
+          "seq": 39,
+          "tick": 67005,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 40,
+          "tick": 67006,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 41,
+          "tick": 67006,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 42,
+          "tick": 67007,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 43,
+          "tick": 67007,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 44,
+          "tick": 70004,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=7,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 45,
+          "tick": 70005,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 46,
+          "tick": 70005,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 47,
+          "tick": 70006,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 48,
+          "tick": 70006,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 49,
+          "tick": 70006,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 50,
+          "tick": 70007,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 51,
+          "tick": 73012,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=8,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 52,
+          "tick": 73012,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 53,
+          "tick": 73012,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 54,
+          "tick": 73013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 55,
+          "tick": 73013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 56,
+          "tick": 73013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 57,
+          "tick": 73014,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 58,
+          "tick": 76012,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=9,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 59,
+          "tick": 76013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 60,
+          "tick": 76013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 61,
+          "tick": 76014,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 62,
+          "tick": 76014,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 63,
+          "tick": 76015,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 64,
+          "tick": 76015,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 65,
+          "tick": 79012,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=10,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 66,
+          "tick": 79013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 67,
+          "tick": 79013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 68,
+          "tick": 79013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 69,
+          "tick": 79013,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 70,
+          "tick": 79014,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 71,
+          "tick": 79014,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 72,
+          "tick": 82020,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=11,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 73,
+          "tick": 82021,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 74,
+          "tick": 82022,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 75,
+          "tick": 82022,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 76,
+          "tick": 82023,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 77,
+          "tick": 82023,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 78,
+          "tick": 82024,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 79,
+          "tick": 85034,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=12,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 80,
+          "tick": 85034,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 81,
+          "tick": 85035,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 82,
+          "tick": 85035,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 83,
+          "tick": 85036,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 84,
+          "tick": 85036,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 85,
+          "tick": 85037,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 86,
+          "tick": 88043,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=13,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 87,
+          "tick": 88043,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 88,
+          "tick": 88044,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 89,
+          "tick": 88045,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 90,
+          "tick": 88045,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 91,
+          "tick": 88045,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 92,
+          "tick": 88046,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 93,
+          "tick": 91043,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=14,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 94,
+          "tick": 91044,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 1, 129>,distance=1"
+        },
+        {
+          "seq": 95,
+          "tick": 91044,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=1,proxy=0,master=1"
+        },
+        {
+          "seq": 96,
+          "tick": 91044,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=0,master=0"
+        },
+        {
+          "seq": 97,
+          "tick": 91044,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 98,
+          "tick": 91045,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 99,
+          "tick": 91045,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 100,
+          "tick": 93738,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "VERDICT",
+          "data": "value=SOURCE_MAPPING_OBSERVED,reason=LIMIT"
+        },
+        {
+          "seq": 101,
+          "tick": 93739,
+          "run": "i0-native-001-20261102",
+          "player": 1,
+          "generation": 1,
+          "kind": "TERMINAL",
+          "data": "snapshots=14,subscriptions=0,invalid=0,ordinary=99,reserved=2"
+        }
+      ]
+    },
+    "B": {
+      "log": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\i0-native-001-20261102\\ricon-i0-native-one-20261102-043514-peer1-logs\\console.log",
+      "sha256": "5bc64a2225b0570061bc328a3f3351d7eb3591043a870c0e932fb35e4d2d7fe9",
+      "rows": 17,
+      "localLifetimeMs": 8242,
+      "snapshotCount": 2,
+      "events": [
+        {
+          "seq": 0,
+          "tick": 8486,
+          "run": "i0-native-001-20261102",
+          "player": -1,
+          "generation": 0,
+          "kind": "START",
+          "data": "subscriptions=0,bulkGadgetAllocation=UNKNOWN"
+        },
+        {
+          "seq": 1,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "IDENTITY",
+          "data": "ready=1"
+        },
+        {
+          "seq": 2,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=1,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 3,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=0,b=1,sameWorld=0,originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN"
+        },
+        {
+          "seq": 4,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=0,rpl=UNKNOWN"
+        },
+        {
+          "seq": 5,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=0,proxy=1,master=0"
+        },
+        {
+          "seq": 6,
+          "tick": 13658,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=0,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 7,
+          "tick": 16678,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "MAPPING_CHANGED",
+          "data": "generation=1"
+        },
+        {
+          "seq": 8,
+          "tick": 16678,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "SNAPSHOT",
+          "data": "snapshot=2,disabled=0,entityVon=1,activeVon=1,vonMatchState=1,scriptActive=0,toggledDirect=0,vonType=0,hold="
+        },
+        {
+          "seq": 9,
+          "tick": 16678,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "GEOMETRY",
+          "data": "a=1,b=1,sameWorld=1,originA=<128, 1, 128>,originB=<128, 0.999993, 129>,distance=0.999969"
+        },
+        {
+          "seq": 10,
+          "tick": 16678,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "RPL_A",
+          "data": "entity=1,rplId=-2147483335,round=1,owner=0,proxy=1,master=0"
+        },
+        {
+          "seq": 11,
+          "tick": 16678,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "RPL_B",
+          "data": "entity=1,rplId=-2147483004,round=1,owner=1,proxy=1,master=0"
+        },
+        {
+          "seq": 12,
+          "tick": 16679,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=0,activeRef=1,method=1,usable=1,activeFlag=1,radio=1,muted=0,entryNumber1=1,trRef=1,gadget=1,bindingAllowed=1,controllerTxState=0,entityTxState=0,nativeIndex0=0,nativeCount=2"
+        },
+        {
+          "seq": 13,
+          "tick": 16679,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "ENTRY",
+          "data": "i=1,activeRef=0,method=1,usable=1,activeFlag=0,radio=1,muted=0,entryNumber1=2,trRef=1,gadget=1,bindingAllowed=0,controllerTxState=0,entityTxState=0,nativeIndex0=-1,nativeCount=-1"
+        },
+        {
+          "seq": 14,
+          "tick": 16679,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "GADGETS",
+          "data": "count=1,bulkAllocation=UNKNOWN"
+        },
+        {
+          "seq": 15,
+          "tick": 16728,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "VERDICT",
+          "data": "value=UNKNOWN_INCOMPLETE,reason=INVALID_STATE"
+        },
+        {
+          "seq": 16,
+          "tick": 16728,
+          "run": "i0-native-001-20261102",
+          "player": 2,
+          "generation": 1,
+          "kind": "TERMINAL",
+          "data": "snapshots=2,subscriptions=0,invalid=1,ordinary=13,reserved=3"
+        }
+      ]
+    }
+  },
+  "operator": {
+    "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-dsh-20261102-b0e\\i0-native-001-20261102\\operator.txt",
+    "sha256": "eae31166c04afdf715b59ad9e6be039ebdcc435f23fe96a31443772856ab481f",
+    "exitCode": 0,
+    "restore": "RESTORE_OK",
+    "registryDiffLines": 0,
+    "defaultProfileDiffLines": 0,
+    "sourcesStable": true,
+    "ownedProcessesAndWatchdogsExited": true,
+    "remainingGameOrWorkbenchProcesses": 0
+  },
+  "summary": {
+    "controllerEntityVoNNonNullMatchObservedBoth": true,
+    "disabledObservedBoth": false,
+    "scriptStateIsNativeCaptureOwnership": false,
+    "serverSameWorldDistanceApproxM": 1,
+    "clientAProxyResolvedInSecondSnapshot": true,
+    "clientWindowInvalidatedByMappingChange": true,
+    "activeEntryNumber1": 1,
+    "activeNativeIndex0": 0,
+    "entryTxComparisons": "UNKNOWN_NO_CONFIGURED_TX_REF_PROVEN",
+    "continuousMappingOrIdleProven": false
+  },
+  "emitterRequests": 0,
+  "settersCalled": 0,
+  "subscriptions": 0,
+  "rpc": 0,
+  "pcmRecorded": false,
+  "packetAudioOrRiconPass": false,
+  "limits": "A discrete mapping observed; B initial mapping changed and invalidated its entire window. Second B snapshot values are observations in an incomplete trace, not stable/qualified readiness. SCRIPT_STATE/Rpl local roles do not prove native capture idle, writer ownership or mutation rights. No retroactive qualification of V0 radio path."
+}
