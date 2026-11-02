@@ -5,7 +5,7 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "K0_V03_PREFLIGHT_PLANNING_ONLY",
+  "activePhase": "N0_PLAN_FROZEN_AWAITING_RECORD_AND_WRITE_GATE",
   "accountableMemberRef": "member:b57715cf-d124-42c0-b14c-898ef0012bcc",
   "coordinationTransferEventSequence": 2298,
   "sourceBaseline": "170e9c0",
@@ -40,6 +40,12 @@
     "i0LimitedImplementationApproved": true,
     "k0ImplementationApproved": false,
     "k0RuntimeGateOpen": false,
+    "n0WritingGateOpen": false,
+    "n0WritingGateCondition": "Only after exact plan is recorded and Lead issues RECORD and activates G_WRITE for the designated author",
+    "n0ParseGateOpen": false,
+    "n0PureGateOpen": false,
+    "n0NormalGateOpen": false,
+    "n0NegativeGateOpen": false,
     "i0RuntimeGateOpen": false,
     "i0RuntimeGateScope": "Consumed by i0-native-001-20261102. A passive map observed; B mapping changed during warmup and invalidated its window. No further run, emitter or selector mutation under this gate.",
     "i0ApprovalScope": "Read-only passive controller/component/entry/radio/geometry/Rpl mapping and SCRIPT_STATE accessor only; no emitter, setters, subscriptions, RPC or idle/ownership/transport claim",
@@ -101,7 +107,10 @@
     "k0PhysicalInputReadiness": "AWAITING_HUMAN_MICROPHONE_AND_OPERATOR_CONFIRMATION",
     "k0DesignStatus": "V03_DRAFT_TEXT_REVIEW_QA2441_PREFLIGHT_PLANNING_ONLY",
     "k0SpecSha256": "ddc9ac1302ab3d08086eafc238dcff13f499c46cd0c7ed1001d41af4fe4c9f22",
-    "k0PlanStatus": "DRAFT_QUALIFICATION_ONLY_QA_REVIEW2352_CORRECTION_CLOSED",
+    "k0PlanStatus": "V02_N0_FROZEN_QA2518_ACCEPTED_FOR_CONDITIONAL_WRITE_AWAITING_RECORD",
+    "n0PlanInputGit": "8b56b5e",
+    "n0PlanSha256": "5c14a9a7981b77f7d51bcdfbf26bae9344d1ba30d1b4d6d9205d6d12ad83d335",
+    "n0FocusQualification": "NOT_RUN",
     "k0ApiInventory": "PUBLIC_SIGNATURES_FOUND_ENFORCE2311_NOT_RUNTIME_QUALIFICATION",
     "k0TimingBudget": "BLOCKED_NOTIFY_PLUS_HELD_LEAVES_NO_DISPATCH_OR_CLOCK_ERROR_MARGIN",
     "k0InputProvenance": "UNKNOWN_NO_QUALIFIED_EXCLUSIVE_PHYSICAL_AUTHOR_OBSERVABLE",
@@ -128,5 +137,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "Lead retains accountability after2298. K0 v0.3 DRAFT passed text review QA2441; only separate passive preflight planning is permitted, not implementation, compile or runtime. QA2282 timing gap and physical K0 safety/provenance qualification remain; ordinary Windows scheduling does not establish an absolute bound. Source windows2405 show IsUsingLRR compares active entry, not toggle; effective binding remains UNKNOWN, and the first-match search is not exhaustive. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; SetActionValue/selector/capture mutation, values retry and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
+  "nextGate": "Lead retains accountability. N0 neutral same-host preflight plan v0.2 on input 8b56b5e passed QA2518 and Lead review. G_WRITE remains closed until the exact plan is recorded and Lead issues RECORD and activates G_WRITE for one author; parse, pure, normal and negative runs are closed independently. N0 excludes game, input, VoN, audio and focus changes; real focus qualification is NOT_RUN. K0/PTT implementation and runtime remain closed. QA2282 timing gap, physical K0 safety and provenance remain unqualified; IsUsingLRR is not toggle readback and effective binding remains UNKNOWN. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; selector/capture mutation and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
 }

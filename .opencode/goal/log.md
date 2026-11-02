@@ -1,5 +1,9 @@
 # Журнал цели
 
+## 2026-11-02 14:29 — N0: план принят для условного writing
+
+[План N0 v0.2](<../../docs/plan/PLAN-standard-ptt-K0.md>) на входе `8b56b5e`, SHA-256 `5c14a9a7981b77f7d51bcdfbf26bae9344d1ba30d1b4d6d9205d6d12ad83d335`, прошёл QA2518 и review Lead2531. Нейтральный same-host preflight не включает игру, ввод, VoN, аудио или изменение фокуса; реальная focus-квалификация NOT_RUN. G_WRITE закрыт до записи точной редакции плана, RECORD и отдельной активации Lead для назначенного автора; parse/pure/normal/negative закрыты. K0/PTT implementation/runtime также закрыты. Эта синхронизация не меняет план или код и не выполняет commit или запуск N0.
+
 ## 2026-11-02 14:15 — K0 v0.3: только планирование preflight
 
 [K0 spec v0.3](<../../docs/req/REQ-standard-ptt-K0.md>) остаётся DRAFT; текстовая поправка прошла QA2441, header-ready Lead2476, SHA-256 `ddc9ac1302ab3d08086eafc238dcff13f499c46cd0c7ed1001d41af4fe4c9f22`. Разрешено только отдельное планирование пассивного preflight; implementation и runtime PTT закрыты, accountable — Lead. [Source evidence](<../../docs/evidence/E-standard-radio-ptt-source.md>) сохраняет четыре окна2405: `IsUsingLRR` сравнивает active entry и не является toggle readback; effective binding UNKNOWN, первый найденный call-site не доказывает полноту поиска. Физический K0, provenance, timing и остальные safety gates не квалифицированы; передача, звук и эффект RICON не заявляются. Новых запусков или commit эта синхронизация не выполняет.
