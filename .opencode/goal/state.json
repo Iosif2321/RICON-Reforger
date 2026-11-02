@@ -5,9 +5,9 @@
   "taskRef": "task:ba901e07-814a-4803-a1ae-3655d281a6b7",
   "threadRef": "thread:9511c510-9ddd-4a5d-83e0-79760fd2e088",
   "status": "IN_PROGRESS",
-  "activePhase": "BLOCKED_RUNTIME_ACTION_DELIVERY_NO_RUNTIME",
-  "accountableMemberRef": "member:50e0aaa4-6321-4cde-8643-6978115707f2",
-  "coordinationTransferEventSequence": 1647,
+  "activePhase": "K0_QUALIFICATION_PLAN_DRAFT_BLOCKED_TIMING_PROVENANCE",
+  "accountableMemberRef": "member:b57715cf-d124-42c0-b14c-898ef0012bcc",
+  "coordinationTransferEventSequence": 2298,
   "sourceBaseline": "170e9c0",
   "authoritativeArtifacts": {
     "projectPlan": "docs/plan/PLAN_RU.md",
@@ -23,7 +23,8 @@
     "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md",
     "standardRadioPttSource": "docs/evidence/E-standard-radio-ptt-source.md",
     "inertInputBootstrapEvidence": "docs/evidence/E-input-delivery-bootstrap.md",
-    "k0PhysicalPttSpecification": "docs/req/REQ-standard-ptt-K0.md"
+    "k0PhysicalPttSpecification": "docs/req/REQ-standard-ptt-K0.md",
+    "k0QualificationPlan": "docs/plan/PLAN-standard-ptt-K0.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -98,7 +99,13 @@
     "inertInputFixtureBootstrap": "BLOCKED_J0_FIXTURE_BOOTSTRAP",
     "standardRadioPttHoldRelease": "BLOCKED_HOLD_RELEASE_SAFETY",
     "k0PhysicalInputReadiness": "AWAITING_HUMAN_MICROPHONE_AND_OPERATOR_CONFIRMATION",
-    "k0DesignStatus": "DRAFT_TECHNICALLY_REVIEWED_QA2173_VON2155",
+    "k0DesignStatus": "DRAFT_TEXT_REVIEW2173_2155_NEW_TIMING_GAP_QA2282",
+    "k0PlanStatus": "DRAFT_QUALIFICATION_ONLY_QA_REVIEW2352_CORRECTION_CLOSED",
+    "k0ApiInventory": "PUBLIC_SIGNATURES_FOUND_ENFORCE2311_NOT_RUNTIME_QUALIFICATION",
+    "k0TimingBudget": "BLOCKED_NOTIFY_PLUS_HELD_LEAVES_NO_DISPATCH_OR_CLOCK_ERROR_MARGIN",
+    "k0InputProvenance": "UNKNOWN_NO_QUALIFIED_EXCLUSIVE_PHYSICAL_AUTHOR_OBSERVABLE",
+    "k0LongRangeReadback": "PUBLIC_ISUSINGLRR_CANDIDATE_BODY_NOT_READ",
+    "k0RefsBudget": "BLOCKED_LIFETIME_LEDGER_AND_BULK_PREALLOCATION_BOUND",
     "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
   "notYetProven": [
@@ -119,5 +126,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. J0 programmatic input remains BLOCKED_J0_FIXTURE_BOOTSTRAP; schema-only B0a not implemented because it cannot qualify a callable ActionManager or delivery. K0 v0.2 DRAFT has text review QA2173/VoN2155, not runtime qualification. Next: bounded K0 planning, exact API/ref inventory and independent watchdog delivery/focus/binding validation before implementation/runtime gates. Human microphone/operator readiness requested at2076 remains unconfirmed; SetActionValue is not a qualified substitute. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
+  "nextGate": "Lead resumed accountability at2298. K0 qualification-only plan DRAFT separates offline inventory, new source observations, separately gated preflight and human actions; no implementation/compile/runtime gate is opened. API inventory2311 found public listener/readiness signatures plus GetActionKeybinding and IsUsingLRR candidates, not effective binding/toggle semantics or refs<=8 qualification. QA2282 found a specification timing gap: notification100ms+held1900ms leaves no dispatch/clock-error margin; ordinary Windows scheduling does not establish an absolute command bound. Independent qualification-only plan review completed and local correction2352 closed; next timing-contract correction/provenance boundary decision and narrowly scoped source reading of IsUsingLRR body and binding call-sites with separately assigned operator. Human microphone/operator readiness2076 remains unconfirmed. D0/V0/I0 gates consumed, J0 bootstrap blocked; SetActionValue/selector/capture mutation, values retry and production actuation remain unauthorized. Audio/transport/RICON effect and direct preservation are not proven."
 }
