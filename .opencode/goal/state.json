@@ -22,7 +22,8 @@
     "v0InputShapePlan": "docs/plan/PLAN-von-input-shape-V0.md",
     "i0PassiveMappingPlan": "docs/plan/PLAN-von-mapping-I0.md",
     "standardRadioPttSource": "docs/evidence/E-standard-radio-ptt-source.md",
-    "inertInputBootstrapEvidence": "docs/evidence/E-input-delivery-bootstrap.md"
+    "inertInputBootstrapEvidence": "docs/evidence/E-input-delivery-bootstrap.md",
+    "k0PhysicalPttSpecification": "docs/req/REQ-standard-ptt-K0.md"
   },
   "approval": {
     "intentRevision": "0.2",
@@ -36,6 +37,8 @@
     "d0LimitedImplementationApproved": true,
     "v0LimitedImplementationApproved": true,
     "i0LimitedImplementationApproved": true,
+    "k0ImplementationApproved": false,
+    "k0RuntimeGateOpen": false,
     "i0RuntimeGateOpen": false,
     "i0RuntimeGateScope": "Consumed by i0-native-001-20261102. A passive map observed; B mapping changed during warmup and invalidated its window. No further run, emitter or selector mutation under this gate.",
     "i0ApprovalScope": "Read-only passive controller/component/entry/radio/geometry/Rpl mapping and SCRIPT_STATE accessor only; no emitter, setters, subscriptions, RPC or idle/ownership/transport claim",
@@ -94,6 +97,8 @@
     "standardRadioPttRuntimeActionDelivery": "BLOCKED_RUNTIME_ACTION_DELIVERY",
     "inertInputFixtureBootstrap": "BLOCKED_J0_FIXTURE_BOOTSTRAP",
     "standardRadioPttHoldRelease": "BLOCKED_HOLD_RELEASE_SAFETY",
+    "k0PhysicalInputReadiness": "AWAITING_HUMAN_MICROPHONE_AND_OPERATOR_CONFIRMATION",
+    "k0DesignStatus": "DRAFT_TECHNICALLY_REVIEWED_QA2173_VON2155",
     "selectorMutation": "BLOCKED_SELECTOR_OWNERSHIP"
   },
   "notYetProven": [
@@ -114,5 +119,5 @@
     "microphoneSamplesRecorded": false,
     "thirdPartyAudioMustNotBeCaptured": true
   },
-  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. J0 programmatic input remains BLOCKED_J0_FIXTURE_BOOTSTRAP; schema-only B0a not implemented because it cannot qualify a callable ActionManager or delivery. Draft K0 physical standard-PTT input/capture/RX qualification on fresh owned roles, with human source and separate readiness/hold/cleanup review; SetActionValue is not a qualified substitute. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
+  "nextGate": "I0 receipt independently reviewed (QA1642), all D0/V0/I0 runtime gates consumed. Standard VONChannel static action mapping closed by source review1838; runtime action delivery, hold/release safety and ownership remain blocked. J0 programmatic input remains BLOCKED_J0_FIXTURE_BOOTSTRAP; schema-only B0a not implemented because it cannot qualify a callable ActionManager or delivery. K0 v0.2 DRAFT has text review QA2173/VoN2155, not runtime qualification. Next: bounded K0 planning, exact API/ref inventory and independent watchdog delivery/focus/binding validation before implementation/runtime gates. Human microphone/operator readiness requested at2076 remains unconfirmed; SetActionValue is not a qualified substitute. No new runtime, selector/capture mutation, values retry or production actuation is authorized by this state; real input and independently observable receiver remain unproven."
 }

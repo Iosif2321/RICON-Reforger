@@ -41,3 +41,7 @@
 [Четыре J0 source-проверки и public API границы](<../../docs/evidence/E-input-delivery-bootstrap.md>) не установили callable isolated ActionManager factory/loader или синтетическую DOWN/UP delivery. B0a review1927 подтверждает только generic container/schema API; schema-only probe не реализуется, поскольку не закрывает delivery. J0 сохраняется как BLOCKED_J0_FIXTURE_BOOTSTRAP, без кода/compile/runtime.
 
 Выбрана подготовка DRAFT K0: физический штатный PTT на свежем собственном стенде, пассивные input/capture/RX наблюдения, отдельные readiness/hold/cleanup gates. VoN1952 дал начальный контракт; нужны конкретная спецификация/план, API/readback qualification и техническое ревью до кода. Ни реальный микрофон/оператор, ни independent B-output пока не подтверждены. Это не audio/transport/RICON PASS, нового игрового запуска нет.
+
+## 2026-11-02 12:23 — K0 DRAFT прошёл текстовое ревью
+
+[K0 v0.2](<../../docs/req/REQ-standard-ptt-K0.md>) прошёл финальные review VoN2155/QA2173 на SHA-256 a51e6ba8c132b11a9285a69a0d945e8cc58ebd32285bcb0993c51a13ff326e58. Исправлены edge/phase contract, взаимная замена таймеров и normal POST_UP completion; operator self-report, capture/RX windows, null/unknown и native release/cleanup разделены. Это review требований, не доказательство API/стенда. Implementation/runtime остаются false; bounded plan ещё не создан. Человек/микрофон запрошены2076, готовность пока не подтверждена. Источниковые 12 raw SHA/done/caps≤15/SCRIPT(E)=0 повторно сверены; в evidence добавлены прямые local API links без новых source-запусков.
