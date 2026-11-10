@@ -1,0 +1,11 @@
+# Catalog supplements — tiny independent review
+
+**ACCEPT / NEW_ENTRY_FRESH_D_CREATION_AND_RECORD_HANDOFF_ONLY.** Проверены только frozen CATALOG supplement SHA `f215b2a3da11663e1521813ef212644ac875f745952729203141fa72ab05fe9b` и ITEM_LOADER supplement SHA `5953fe58ce831e82baad43700ee00fa0d5bd9193a8f871e554c0660b662aff7d`, их115/795-byte receipts/ASM и нужный known constructor callsite. Оба raw spans910B и ASM hashes совпали с текущим EXE pin `1d221a99…0d9c9`; дополнительно сверены7 direct-call targets и8 ключевых operands. Без новых экспортов/запусков; main Goal/coverage/PROOF не перепроверялись и не менялись.
+
+- Constructor self+50 → config-loader141207ED0 at120A685; loader передаёт каждый элемент в141207F50 at1207F09. Тождество owner catalog L сохранено.
+- В new-entry branch allocation120807E/8083 запрашивает0x98; успешный resultRAX передаётся как RCX в квалифицированный AudioSourceTemplate ctorA17E00 at12080BB. Resource descriptor идёт вRDX, mode вR8B, R9=0; L+38/+40/+48 dependencies переданы через stack. Не извлекается existing VoN T для подстановки вместо allocation result.
+- Pointer результата сохраняется/retains какD; A19930(D,0) вызывается at12080F8. Failure идёт в cleanup; successful path формирует record+0=D at1208208. At1208236/23B/23F передаются RDX=&record и RCX=&L+28 в209F60. **Это доказанный handoff**, не утверждение о прочитанном memory append/refcount/ошибках самого helper.
+- Таким образом, эта успешная ветка создаёт собственный новыйD, а не adopts одновременный live private VoN T. Одинаковый AudioProjectRes/filename/Stream name или общий numeric writer не делают их одним runtime instance/PCM stream.
+- Early dedup141207770 может вернуть!=-1 до allocation; происхождение найденного entry не установлено. Альтернативный SndSystem path141206550, later attachment/interceptor/other mutators и внутренности209F60 остаются вне чтения. Вывод не распространяется на все entries/пути и не доказывает невозможность будущего existingT bridge.
+
+Итоговый client-access gap остаётся конкретным: supported existingT adoption/catalog membership либо native-instance writer/attachment. Свой созданныйD и успешная запись вегоInput не квалифицируют эффект на incoming native A voice. Native access/static proof не равен runtime/audio PASS. Машиночитаемые точные ranges/bytes/calls/hashes — catalog-review-receipt.json.

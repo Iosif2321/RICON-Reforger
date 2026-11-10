@@ -4,6 +4,7 @@ GameProject {
  TITLE "RICON Workbench reader (TOOL_ONLY, not for Workshop)"
  Dependencies {
   "58D0FB3206B6F859"
+  "A1C0DE2026102301"
  }
  Configurations {
   GameProjectConfig PC {

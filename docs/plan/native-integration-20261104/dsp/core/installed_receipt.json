@@ -1,0 +1,60 @@
+{
+  "archive": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\addons\\core\\data.pak",
+  "archive_size": 21211235,
+  "archive_mtime_ns": 1793548140859005600,
+  "index_offset": 21162509,
+  "index_bytes": 48718,
+  "index_sha256": "8f53ad1b3e4acfe703477aa50792cef8cc82c981c9f0d8de043e25278f5b356f",
+  "method": "Exact whitelist, FILE-name length validation, bounded payloads, zlib/end/length assertions; no engine",
+  "scope": "Selected files only; not whole Scripts parity",
+  "records": [
+    {
+      "name": "AudioHandle.c",
+      "status": "not_found_in_this_index"
+    },
+    {
+      "name": "AudioSystem.c",
+      "status": "extracted",
+      "file_table_offset": 7879,
+      "archive_offset": 35164,
+      "compressed_size": 1797,
+      "raw_size": 5890,
+      "compressed_sha256": "1257b7f91c3e23b083e55fc9623244a3e3fbd5116139bef58fcb6e6e7d8c95dc",
+      "raw_sha256": "89e54ce47d013419637e3e9e206e314e164ab4844b5ef382a6edc26188557f27",
+      "output": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-integration-20261104\\dsp\\core\\installed\\AudioSystem.c",
+      "official_comparison": []
+    },
+    {
+      "name": "BaseSoundComponent.c",
+      "status": "extracted",
+      "file_table_offset": 19617,
+      "archive_offset": 248867,
+      "compressed_size": 676,
+      "raw_size": 2424,
+      "compressed_sha256": "5347d99f43466c30a8972cc412369771b9065988d57673efcb4546537fdd8575",
+      "raw_sha256": "fb9071c7762d2284f3db1db09ae7235f9951a17977f500d1bb391f1a3181829e",
+      "output": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-integration-20261104\\dsp\\core\\installed\\BaseSoundComponent.c",
+      "official_comparison": []
+    },
+    {
+      "name": "SndComponent.c",
+      "status": "extracted",
+      "file_table_offset": 20541,
+      "archive_offset": 261401,
+      "compressed_size": 1013,
+      "raw_size": 3364,
+      "compressed_sha256": "51d597b54e23b1924ac2e2a4919b2ea45c73f7d2de9c3c6a6c00ce08a3ceb879",
+      "raw_sha256": "08a7611360441a4fc6c3881349d1409fae06cb2effb01d483a9a92bbe935b976",
+      "output": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-integration-20261104\\dsp\\core\\installed\\SndComponent.c",
+      "official_comparison": []
+    }
+  ],
+  "related_basename_inventory": [
+    "AudioDialogueData.c",
+    "AudioGlobalData.c",
+    "AudioSourceConfig.c",
+    "AudioSystem.c",
+    "DynamicAudioDialogueData.c",
+    "EnAudio.c"
+  ]
+}

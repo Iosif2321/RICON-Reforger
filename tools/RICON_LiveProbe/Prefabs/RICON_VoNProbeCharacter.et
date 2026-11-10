@@ -1,0 +1,8 @@
+SCR_ChimeraCharacter : "{26A9756790131354}Prefabs/Characters/Factions/BLUFOR/US_Army/Character_US_Rifleman.et" {
+ ID "6ACCFBE973F3D52D"
+ components {
+  SCR_VoNComponent "{520EA1D2F659C856}" {
+   Filename "{63C2132413FE4337}Sounds/RICON_VoNProbe/RICON_VoNProbe.acp"
+  }
+ }
+}

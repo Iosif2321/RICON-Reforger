@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import math
 import sys
@@ -64,6 +65,8 @@ def compare(current: Any, incoming: Any) -> str:
         return "INVALID_SNAPSHOT"
     if current is None:
         return "ACCEPT_FIRST"
+    if not is_valid_snapshot(current):
+        return "INVALID_IDENTITY"
     for key in ("schemaVersion", "sessionEpoch", "linkId"):
         if incoming[key] != current[key]:
             return "INVALID_IDENTITY"
@@ -92,7 +95,7 @@ class Receiver:
             self.slots = {}
             return self.result("INVALID_RESYNC", ["REQUEST_RESYNC", "DIAGNOSTIC"])
         self.epoch = epoch
-        self.slots = {s["linkId"]: (s, now_ms) for s in snapshots}
+        self.slots = {s["linkId"]: (copy.deepcopy(s), now_ms) for s in snapshots}
         return self.result("ACCEPT_RESYNC", [])
 
     def receive(self, now_ms: int, s: Any) -> dict[str, Any]:
@@ -109,7 +112,7 @@ class Receiver:
         current = self.slots.get(s["linkId"])
         decision = compare(current[0] if current else None, s)
         if decision in ("ACCEPT_FIRST", "ACCEPT_NEWER"):
-            self.slots[s["linkId"]] = (s, now_ms)
+            self.slots[s["linkId"]] = (copy.deepcopy(s), now_ms)
             return self.result(decision, [])
         if decision == "STALE":
             return self.result(decision, [])

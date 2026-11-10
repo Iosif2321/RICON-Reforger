@@ -1,0 +1,93 @@
+{
+  "schema": "ricon.ct10.ordered-lifecycle-host-result",
+  "version": 1,
+  "date": "2026-11-10",
+  "scope": "HOST_PROTOCOL_ONLY",
+  "verdict": "ACCEPT_SCOPED_HOST_ORDERED_LIFECYCLE_PROTOCOL",
+  "goal": {
+    "threadId": "01a14fdf-35c1-7491-b741-c20d764973af",
+    "status": "active",
+    "complete": false
+  },
+  "team": {
+    "author": "codex.team.core",
+    "reviewer": "codex.team.review",
+    "documentation": "codex.team.docs",
+    "publisher": "codex.lead"
+  },
+  "agora": {
+    "topic": "ricon-reforger-plan",
+    "assignment": 8279,
+    "api": 8285,
+    "frontierCounter": 8287,
+    "rawCopyCounter": 8291,
+    "coreFreeze": 8292,
+    "independentEvidence": 8293,
+    "independentVerdict": 8294
+  },
+  "artifacts": {
+    "oracle/temporal_lifecycle_oracle.py": "d2c0d648b9a986213191a8b3c83bf1e181c71ad48b774cbdffe5f222d678d3e7",
+    "oracle/test_temporal_lifecycle_oracle.py": "4c5db4203a4e62200ba0916b7f5e02d89437709922535c494c062402a83636ff",
+    "docs/req/REQ-temporal-lifecycle.md": "dbd1d8acba904180966a8660976702fecaee52b85dd341e8d74fdf7030f92f84",
+    "docs/evidence/E-ct10-lifecycle-host-20261110.md": "f2cb4ff8e9f2406bf3d144c6c05fe3634b9e84e998a336b4dbc053a6fa9d4b71"
+  },
+  "tests": {
+    "independentNewMethods": 43,
+    "newFailures": 0,
+    "newErrors": 0,
+    "semanticMutantsWithinOneMetaTest": 13,
+    "semanticMutantsDetected": 13,
+    "semanticMutantIncidentalErrors": 0,
+    "canonicalCombinedMethods": 77,
+    "priorTemporalMethods": 34,
+    "command": "python -X utf8 -B -m unittest discover -s oracle -p 'test_temporal*oracle.py'",
+    "canonicalRun": "PASS",
+    "authorOutputRun": "PASS",
+    "moduleAndTestByteIdentical": true,
+    "gitVisibility": "PASS",
+    "whitespace": "PASS"
+  },
+  "provenance": {
+    "initialManualTraces": 30,
+    "manualPreSourceHash": "4c67d051f9eaa5e71f47c6b6b9fad2064c8e1131c5fc19d806ecf5d8d448d1bf",
+    "initialPreSourceDirectTests": 35,
+    "initialTestHashPrefix": "1dc9b093",
+    "coreContractHash": "128d5cf2b962046704de06d1afec9ebcd11e7baa6835588bceda93d608fd2e67",
+    "canonicalContractDelta": "root status/provenance overlay only; rules unchanged",
+    "reviewArtifact": "../Cellular System/output/ct10-lifecycle-20261110/review/CONTRACT_COUNTERS_RU.md",
+    "reviewArtifactHash": "0d89df072e01e2edcd66e7971c1235b6dfda35e3edf6c7d0a69a614fd7fb79eb"
+  },
+  "unchanged": {
+    "rawTemporalOracle": "417cd7a561d1d38e3e7c81561bdd7da5634ab05956167d01243148ce696fdb5e",
+    "snapshotOracle": "98daf7ca987f00264a63b11547bcf0d07d93daa058f4557c60b7c92cb6aafe95",
+    "snapshotV1Corpus": "3440982cea0cce21ef857e09a1db3dbe77a5c85561771212dd9ea1199e93721c"
+  },
+  "preconditions": [
+    "Caller supplies independent truthful current-authority inputs; not derived from packets",
+    "Authority exporter must not return to retired scopes",
+    "H captures assigned/reserved IDs atomically with complete owner post-state",
+    "No reused closed link ID within the same epoch"
+  ],
+  "open": [
+    "actual authority exporter/capture before lifecycle revoke",
+    "manager/lifecycle epoch coordinator and S3b source integration",
+    "Enforce ordered lifecycle protocol port/compile/fixtures",
+    "actual RPC origin/auth/outer wire/ACK/liveness",
+    "persistent physical medium/source builder",
+    "RF/shared RX/world calibration",
+    "game/runtime/JIP/load/content/DSP/audio and full M1/M2/M3"
+  ],
+  "agyAudit": {
+    "name": "agy.port",
+    "lastAck": 8270,
+    "observerSession": 34168,
+    "observerTerminalStatus": "PRINT_TIMEOUT_REPORTED_BACKEND_IN_PROGRESS",
+    "backendCurrentState": "UNVERIFIED",
+    "finalVerdictReceived": false,
+    "restarted": false
+  },
+  "sourceCommitted": false,
+  "engineStarted": false,
+  "newVoiceBackend": false,
+  "newMemoryService": false
+}

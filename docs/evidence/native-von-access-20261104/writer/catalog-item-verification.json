@@ -1,0 +1,11 @@
+{
+  "item_supplement_sha256": "5953fe58ce831e82baad43700ee00fa0d5bd9193a8f871e554c0660b662aff7d",
+  "previous_proof_and_loader_supplement_unchanged": true,
+  "raw_bytes_verified": 795,
+  "acknowledged_padding_bytes": 1,
+  "external_direct_jumps": 0,
+  "local_links_valid": 2,
+  "fresh_D_creation_branch": "PROVED",
+  "arbitrary_private_VoN_T_adoption": "NOT_QUALIFIED",
+  "runtime": "NOT_RUN"
+}

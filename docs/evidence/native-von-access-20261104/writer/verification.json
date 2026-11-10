@@ -1,0 +1,39 @@
+{
+  "proof_sha256": "6405135bf7f5aefdfe08e6ada15a432291ca5841d6d61942fc9817e45103e6d9",
+  "final_checked_artifacts": [
+    {
+      "asm": "basesound-registration.dumpbin.asm",
+      "bytes": 597,
+      "sha256": "dc784296d7f2b8605f84107fbfd74ec0ddcb548ca15d45e2e4f54e2d2c0c6519"
+    },
+    {
+      "asm": "public-writer-wrapper.dumpbin.asm",
+      "bytes": 35,
+      "sha256": "120afbc708d7821a099aecc2d97a5eea7be3e7f8399e62f9eeea569083ab9555"
+    },
+    {
+      "asm": "native-object-unwrap-full.dumpbin.asm",
+      "bytes": 142,
+      "sha256": "adf6c98004aaf70628bcbdbee83a6ea8afbdb81661cf719437e895813bc481f6"
+    },
+    {
+      "asm": "snd-set-signal-value.dumpbin.asm",
+      "bytes": 62,
+      "sha256": "6879744a880e474465c4e404e0ed03f37349aa4ea7f8e7e2538c8dc58b079288"
+    },
+    {
+      "asm": "snd-set-signal-value-str.dumpbin.asm",
+      "bytes": 94,
+      "sha256": "c6547ebe3cc23e44f4ab8df7d942f3772d2a9f463a106529a4231fb96cdef4ac"
+    },
+    {
+      "asm": "snd-owned-signal-write.dumpbin.asm",
+      "bytes": 155,
+      "sha256": "b14408fe9b0e23cd6f55071f63264452b59a54fb9c045bd789c9b3618057115e"
+    }
+  ],
+  "report_local_links": 13,
+  "native_function_bytes_excluding_registrar": 488,
+  "membership": "OPEN",
+  "runtime": "NOT_RUN"
+}

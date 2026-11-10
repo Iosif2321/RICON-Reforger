@@ -1,0 +1,10 @@
+{
+  "observedUtc": "2026-11-04 18:06:32 UTC",
+  "method": "git ls-remote (read-only, no clone, no credentials)",
+  "repository": "https://github.com/BohemiaInteractive/Arma-Reforger-Script-Diff.git",
+  "exitCode": 0,
+  "HEAD": "3d77cc212d5cda9922daf5f45635c7300d2d4cce",
+  "ref": "refs/heads/main",
+  "matchesPreviousFrozenPin": true,
+  "scope": "REVISION_IDENTITY_ONLY_NOT_GAME_RUNTIME_OR_NEW_HOOK"
+}

@@ -1,0 +1,119 @@
+{
+  "range": [
+    "0x14120bf00",
+    "0x14120c173"
+  ],
+  "method": "Exact registration context for2nameanchors,not broad audio registration inventory",
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x14120BF00,0x14120C172",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "raw_hex": "48895c2408574883ec30498bf9c644242001488bda4c8d0d84170000488bd74c8d05cadd9200488bcbe8728269ff4c8d0d1b180000c6442420014c8d05bfdd9200488bd7488bcbe8548269ff4c8d0dad170000c6442420014c8d05b1dd9200488bd7488bcbe8368269ff4c8d0d3f2243ffc6442420014c8d05a35e6900488bd7488bcbe8188269ff4c8d0d61150000c6442420014c8d058ddd9200488bd7488bcbe8fa8169ff4c8d0db3080000c6442420014c8d0577dd9200488bd7488bcbe8dc8169ff4c8d0d25190000c6442420014c8d0569dd9200488bd7488bcbe8be8169ff4c8d0d77190000c6442420014c8d055bdd9200488bd7488bcbe8a08169ff4c8d0d49090000c6442420014c8d05256d6a00488bd7488bcbe8828169ff4c8d0d7b170000c6442420014c8d051f1e6600488bd7488bcbe8648169ff4c8d0d9d170000c6442420014c8d05f96c6a00488bd7488bcbe8468169ff4c8d0d3f180000c6442420014c8d05f3dc9200488bd7488bcbe8288169ff4c8d0dc1170000c6442420014c8d05ed7a8700488bd7488bcbe80a8169ffc6442420014c8d0dfe1b0000488bd74c8d05ccdc9200488bcbe8ec8069ff4c8d0d65190000c6442420014c8d05d1756c00488bd7488bcbe8ce8069ff4c8d0d07190000c6442420014c8d05a3dc9200488bd7488bcbe8b08069ff4c8d0d290b0000c6442420014c8d053d579200488bd7488bcbe8928069ff4c8d0d2b0a0000c6442420014c8d0577dc9200488bd7488bcbe8748069ff4c8d0d7d0a0000c6442420014c8d0571dc9200488bd7488bcbe8568069ff4c8d0d8f080000c6442420014c8d0563dc9200488bd7488bcbe8388069ff488b5c24404883c4305fc3",
+  "raw_sha256": "b756d6bd132a98b19566d177d9c39b9bfeec95c381d315729ec0637efb0929d7",
+  "asm_sha256": "3324dade593601f197a1e103ac12a227cd6830e0488f19770e83abeff61876b6",
+  "rip_string_candidates": [
+    {
+      "instruction": "0x14120bf1f",
+      "target": "0x141b39cf0",
+      "text": "SetCallbackMask"
+    },
+    {
+      "instruction": "0x14120bf3a",
+      "target": "0x141b39d00",
+      "text": "SetForceUpdate"
+    },
+    {
+      "instruction": "0x14120bf58",
+      "target": "0x141b39d10",
+      "text": "SetDisableUpdate"
+    },
+    {
+      "instruction": "0x14120bf76",
+      "target": "0x1418a1e20",
+      "text": "GetOwner"
+    },
+    {
+      "instruction": "0x14120bf94",
+      "target": "0x141b39d28",
+      "text": "PlayStr"
+    },
+    {
+      "instruction": "0x14120bfb2",
+      "target": "0x141b39d30",
+      "text": "GetEventIndex"
+    },
+    {
+      "instruction": "0x14120bfd0",
+      "target": "0x141b39d40",
+      "text": "SoundEventBegin"
+    },
+    {
+      "instruction": "0x14120bfee",
+      "target": "0x141b39d50",
+      "text": "SoundEventEnd"
+    },
+    {
+      "instruction": "0x14120c00c",
+      "target": "0x1418b2d38",
+      "text": "GetSignalIndex"
+    },
+    {
+      "instruction": "0x14120c02a",
+      "target": "0x14186de50",
+      "text": "SetSignalValue"
+    },
+    {
+      "instruction": "0x14120c048",
+      "target": "0x1418b2d48",
+      "text": "SetSignalValueStr"
+    },
+    {
+      "instruction": "0x14120c066",
+      "target": "0x141b39d60",
+      "text": "SetTransformation"
+    },
+    {
+      "instruction": "0x14120c084",
+      "target": "0x141a83b78",
+      "text": "SetSoundTransformation"
+    },
+    {
+      "instruction": "0x14120c0a5",
+      "target": "0x141b39d78",
+      "text": "UpdateTrigger"
+    },
+    {
+      "instruction": "0x14120c0c0",
+      "target": "0x1418d3698",
+      "text": "Terminate"
+    },
+    {
+      "instruction": "0x14120c0de",
+      "target": "0x141b39d88",
+      "text": "TerminateAll"
+    },
+    {
+      "instruction": "0x14120c0fc",
+      "target": "0x141b31840",
+      "text": "IsPlaying"
+    },
+    {
+      "instruction": "0x14120c11a",
+      "target": "0x141b39d98",
+      "text": "IsFinishedPlaying"
+    },
+    {
+      "instruction": "0x14120c138",
+      "target": "0x141b39db0",
+      "text": "IsHandleValid"
+    },
+    {
+      "instruction": "0x14120c156",
+      "target": "0x141b39dc0",
+      "text": "GetSignalNames"
+    }
+  ]
+}

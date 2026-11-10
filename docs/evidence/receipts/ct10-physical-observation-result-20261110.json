@@ -1,0 +1,478 @@
+{
+  "schema": "ricon.ct10.physical-observation.result.v1",
+  "date": "2026-11-10",
+  "publication_status": "ROOT_REVIEWED_READY_FOR_CANONICAL_PUBLICATION",
+  "phase_scope": "OBSERVATION_QUALIFICATION_ONLY",
+  "canonical_publisher": "Root",
+  "evidence_document": {
+    "stage_relative_path": "docs/E-ct10-physical-observation-20261110.md",
+    "sha256": "74cd93c8e46b48ec853c625c332ed1e3621c7e3ec8a5d8951c76065a063365fa",
+    "intended_canonical_path": "docs/evidence/E-ct10-physical-observation-20261110.md"
+  },
+  "intended_canonical_receipt_path": "docs/evidence/receipts/ct10-physical-observation-result-20261110.json",
+  "repo_root": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger",
+  "canonical_sources": [
+    {
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PhysicalObservation.c",
+      "sha256": "23a86d540a31302d51aa383bb19012536623642009dbfec1e62e3784b05319bf",
+      "lines": 681
+    },
+    {
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_BaseWorldPhysicalObservation.c",
+      "sha256": "3f0af441fe34e5d7476d838cfb5b90b99478b18f78dfe3dbaa0ae24484efe9ac",
+      "lines": 237
+    },
+    {
+      "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PhysicalObservationFixtures.c",
+      "sha256": "562307e16bf0a69f4ca6a3fade4960172daa8798beece87ec7464ea4cb641667",
+      "lines": 584
+    },
+    {
+      "path": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "2ace34bc87e1084d7425ac9136811177c00529e6ba69884a16c30fc0964231b1",
+      "lines": 53
+    }
+  ],
+  "source_pins_independently_hashed_by": "Documentation",
+  "sdk_operator": "Root",
+  "sdk_started_by_documentation": false,
+  "sdk_logs": [
+    {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-physical-observation-initial-20261110-165148/console.log",
+      "sha256": "4cefac326f0941fb2b170edcca377d2edb184597845a470ca1aa02ca0ae6fc3e",
+      "outcome": "COMPILE_FAILED_OVERRIDE_ARGUMENT_NAME",
+      "script_error_count": 2,
+      "done_pass_count": 0,
+      "process_exit": null,
+      "runner_exit": null,
+      "exit_source": "Not inferable from console.log; final Root observations recorded separately"
+    },
+    {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-physical-observation-override-fix-20261110-165259/console.log",
+      "sha256": "894412dba83c10627be3f1aa92f87839f7153c7d81d9b4d2d869408634145666",
+      "outcome": "COMPILE_FAILED_FORMULA_TOO_COMPLEX",
+      "script_error_count": 17,
+      "done_pass_count": 0,
+      "process_exit": null,
+      "runner_exit": null,
+      "exit_source": "Not inferable from console.log; final Root observations recorded separately"
+    },
+    {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-physical-observation-formula-fix-20261110-165356/console.log",
+      "sha256": "8959b94e0fb37df6ad5b96d82303f16ebf6d84b062e9bb5329bfb7b0721be707",
+      "outcome": "COMPILE_CONFIRMED_PURE_PASS",
+      "script_error_count": 0,
+      "done_pass_count": 1,
+      "process_exit": null,
+      "runner_exit": null,
+      "exit_source": "Not inferable from console.log; final Root observations recorded separately"
+    },
+    {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-physical-observation-lifetime-20261110-170412/console.log",
+      "sha256": "34a49a24d19581449d50cf400e34f571f3a2ac0b95a9fa42d3ac86afd93cee5f",
+      "outcome": "COMPILE_CONFIRMED_CURRENT_SUPPLEMENTAL_PURE_PASS",
+      "script_error_count": 0,
+      "done_pass_count": 1,
+      "process_exit": null,
+      "runner_exit": null,
+      "exit_source": "Not inferable from console.log; Root observations recorded in final_run"
+    }
+  ],
+  "final_run": {
+    "log_index": 3,
+    "sdk_module_compilation": "LOG_CONFIRMED",
+    "fixture_execution": "ACTUAL_SCRIPTEDITOR_PURE",
+    "observed_source_kind": "TEST_ONLY_INJECTED_SOURCE_DOUBLE",
+    "native_wrapper": "COMPILED_ONLY_NOT_INSTANTIATED_BY_SUITE",
+    "groups": [
+      {
+        "name": "snapshot",
+        "checks": 57,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "ordered",
+        "checks": 40,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "capture",
+        "checks": 59,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "lease_query",
+        "checks": 67,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "capture_batch",
+        "checks": 61,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "producer",
+        "checks": 1496,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "observation",
+        "checks": 285,
+        "failures": 0,
+        "first_failure": 0
+      }
+    ],
+    "total_checks": 2065,
+    "total_failures": 0,
+    "script_error_count": 0,
+    "null_pointer_reason_count": 0,
+    "done_pass_count": 1,
+    "check_marker_lines": [
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170
+    ],
+    "done_marker_line": 171,
+    "process_exit": 0,
+    "runner_exit": 0,
+    "exit_evidence": {
+      "provenance": "ROOT_OBSERVED_REPORTED_TO_DOCUMENTATION",
+      "standalone_exit_receipt_inspected": false,
+      "console_log_alone_proves_exit": false,
+      "root_session": 5661
+    },
+    "modules": [
+      {
+        "name": "WorkbenchGame",
+        "files": 195,
+        "classes": 673,
+        "crc32": "070025ea",
+        "log_line": 157
+      },
+      {
+        "name": "Game",
+        "files": 5805,
+        "classes": 11652,
+        "crc32": "ca2c99e1",
+        "log_line": 158
+      }
+    ],
+    "post_pass_diagnostics": [
+      {
+        "category": "PLATFORM(E)",
+        "message": "Steamworks: RequestCurrentStats failed",
+        "line": 172
+      },
+      {
+        "category": "RESOURCES(E)",
+        "message": "UI font/texture resource leak diagnostics",
+        "lines": [
+          192,
+          216
+        ]
+      }
+    ],
+    "all_log_error_categories_zero": false
+  },
+  "compile_fixes": [
+    {
+      "patch": "sdk-fixture-override-name-fix.patch",
+      "change": "ReadEndpoint alpha-rename e to endpoint plus one indentation-only change",
+      "expectations_weakened": false
+    },
+    {
+      "patch": "sdk-witness-formula-fix.patch",
+      "change": "SameWitness ten-atom conjunction rewritten as equivalent ordered guards",
+      "atoms_preserved": 10,
+      "prior_radio_comparisons_unchanged": 6,
+      "core_reported_exhaustive_boolean_cases": 1024,
+      "validation_scope": "LOGICAL_REWRITE_NOT_ENGINE_PHYSICS"
+    }
+  ],
+  "review": {
+    "core_sdk_review": "ACCEPT_SCOPED_SDK_FIXES_AND_ACTUAL_PURE_LOG",
+    "core_sdk_review_sha256": "b5d3c6232e8b2260bf5e3921f5284eac219aa47cd42c70d67dcda65f6564c2d2",
+    "reviewer_source_verdict_at_read": "ACCEPT_SCOPED_OBSERVATION_QUALIFICATION_UNCOMPILED",
+    "future_supplemental_candidates_counted": false,
+    "related_artifacts": [
+      {
+        "stage_relative_path": "core/API_RU.md",
+        "sha256": "1f85ef31e4277a3f4a14c0276ae47823a49cb5a3c3024bb2011a9e8dbac43cc9"
+      },
+      {
+        "stage_relative_path": "core/NOTE_RU.md",
+        "sha256": "bbf8b5efeb0345aaaa6605b8413ceb35275c3b1325bff64f1f9bfb69c6b6f2c0"
+      },
+      {
+        "stage_relative_path": "core/TEST_REVIEW_RU.md",
+        "sha256": "314ed51cc3ab432ab5ce2643f0ee6f3e13093ca7da42a02c73ca6dbb74ee73d2"
+      },
+      {
+        "stage_relative_path": "core/SDK_REVIEW_RU.md",
+        "sha256": "b5d3c6232e8b2260bf5e3921f5284eac219aa47cd42c70d67dcda65f6564c2d2"
+      },
+      {
+        "stage_relative_path": "before/REVIEW_RU.2065-61b73efa.md",
+        "sha256": "61b73efa8c55846235e95c523cd13f8e54f4a8417c6ec302020f48797b9befe9",
+        "pin_semantics": "ROOT_CREATED_IMMUTABLE_SNAPSHOT_EXACT_2065_REVIEW_BYTES"
+      },
+      {
+        "stage_relative_path": "docs/PRIMARY_INPUTS_RU.md",
+        "sha256": "cd50ad831a9cf69f5f397f3e3be7a7094224f97b32dac6547cf7fa97301f0a67"
+      },
+      {
+        "stage_relative_path": "sdk-fixture-override-name-fix.patch",
+        "sha256": "df3b39538e82fc46ad4732b3ae605c42249db024da7902120ea9ecfa52a0867a"
+      },
+      {
+        "stage_relative_path": "sdk-witness-formula-fix.patch",
+        "sha256": "4a11c7bd816d0b9830f311391eda109045f523494312a8be4d84131625cf8df7"
+      }
+    ],
+    "supplemental_fresh_log_peer_verdict": "REVIEWER_ACCEPT_SCOPED_OBSERVATION_QUALIFICATION_PLUS_PURE_SCRIPTEDITOR_FIXTURES_PASS_285_2065",
+    "reviewer_fresh_report_sha256": "61b73efa8c55846235e95c523cd13f8e54f4a8417c6ec302020f48797b9befe9",
+    "core_sdk_report_scope": "165356 baseline and two compile fixes; no separate fresh SDK verdict inferred",
+    "reviewer_source_historical_report_sha256": "c73b7018e0dc62653499d3947f0b85b0db280bb9829cc4167373d57016d8e1e7",
+    "reviewer_pre_sdk_verdict_is_historical": true,
+    "reviewer_historical_c73_pin_semantics": "SNAPSHOT_AT_READ_NOT_CURRENT_MUTABLE_FILE_HASH; separate immutable capture not claimed",
+    "reviewer_fresh_frozen_report_path": "before/REVIEW_RU.2065-61b73efa.md",
+    "reviewer_original_mutable_report": {
+      "stage_relative_path": "review/REVIEW_RU.md",
+      "observed_sha256_at_publication_fix": "a4f8e67af8da98ab245a2a84c7930c5aceb6f359f522ac1ab6539bbf461d87c7",
+      "semantics": "POINT_IN_TIME_OBSERVATION_AFTER_CONTRACT_APPEND_NOT_THE_61B_SNAPSHOT",
+      "current_hash_stability_claimed": false
+    }
+  },
+  "qualified_behavior": [
+    "stateless bounded request and preflight qualification",
+    "private request copies and detached witness/frame data",
+    "issued callback counts and before-after source/endpoint drift rejection",
+    "failures return no partial frame",
+    "source-domain literal span decisions and large raw-clock double cases",
+    "existing terrain sampling/provider helpers through a synthetic height source",
+    "O19 stable known-zero body versus unavailable provenance",
+    "O20 fresh unretained pure-source lifetime and detached frame"
+  ],
+  "invariants": {
+    "atomic_snapshot": false,
+    "complete_physical_paths": false,
+    "antenna_position": "CALLER_SUPPLIED",
+    "missing_motion": "MOTION_UNAVAILABLE_NOT_KNOWN_ZERO",
+    "clock_qualification": "TEST_ONLY_SPAN_OBSERVED_PHYSICAL_CLOCK_UNQUALIFIED",
+    "terrain_complete_scope": "SAMPLED_PROFILE_ONLY",
+    "contact_or_nohit_proves_full_path_set": false,
+    "scalar_q_or_los_proves_k_factor": false
+  },
+  "not_qualified": [
+    "real radio samples",
+    "real terrain height samples",
+    "real TraceMove/contact samples",
+    "real body velocity samples",
+    "real opaque WorldTimestamp span execution or accuracy",
+    "native authority/manager role execution",
+    "calibrated antenna positions or motion",
+    "RF/material/frequency calibration",
+    "complete physical paths or multipath builder",
+    "persistent physical medium process/history",
+    "CF physical clock mapping",
+    "authoritative world exporter",
+    "common RX or production SERVER/RECEIVER parity",
+    "RPC or wire",
+    "voice/audio",
+    "load",
+    "full product Goal"
+  ],
+  "executed_coverage_limits": [
+    "native engine object and opaque timestamp lifetime not exercised",
+    "O19 known-zero body witness does not certify antenna motion or static medium",
+    "O20 exercises pure script ownership; no native world callbacks",
+    "no post170412 supplemental candidate counts included"
+  ],
+  "history": {
+    "previous_pure_checks": 1780,
+    "previous_pure_groups_rerun_in_final": true,
+    "new_observation_checks": 285,
+    "historical_legacy_checks": 106,
+    "legacy_rerun_in_this_phase": false,
+    "prior_evidence_modified": false,
+    "historical_baseline_observation_checks": 259,
+    "historical_baseline_total": 2039
+  },
+  "permissions": {
+    "documentation_writes": [
+      "docs/E-ct10-physical-observation-20261110.md",
+      "docs/ct10-physical-observation-result-20261110.json"
+    ],
+    "canonical_modified_by_documentation": false,
+    "graph_modified_by_documentation": false,
+    "memory_modified_by_documentation": false,
+    "world_play_server_voice_started_by_documentation": false,
+    "agy_payload_sent_by_documentation": false,
+    "agy_final_producer_audit": "PENDING_EXPLICIT_EXACT_DATA_APPROVAL",
+    "earlier_agy_design_review_promoted_to_code_acceptance": false
+  },
+  "full_goal_status": "ACTIVE_NOT_COMPLETE",
+  "canonical_sources_scope": "Current170412 run pins; earlier165356 baseline pins retained under baseline_run",
+  "baseline_run": {
+    "log_index": 2,
+    "sdk_module_compilation": "LOG_CONFIRMED",
+    "fixture_execution": "ACTUAL_SCRIPTEDITOR_PURE",
+    "observed_source_kind": "TEST_ONLY_INJECTED_SOURCE_DOUBLE",
+    "native_wrapper": "COMPILED_ONLY_NOT_INSTANTIATED_BY_SUITE",
+    "groups": [
+      {
+        "name": "snapshot",
+        "checks": 57,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "ordered",
+        "checks": 40,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "capture",
+        "checks": 59,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "lease_query",
+        "checks": 67,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "capture_batch",
+        "checks": 61,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "producer",
+        "checks": 1496,
+        "failures": 0,
+        "first_failure": 0
+      },
+      {
+        "name": "observation",
+        "checks": 259,
+        "failures": 0,
+        "first_failure": 0
+      }
+    ],
+    "total_checks": 2039,
+    "total_failures": 0,
+    "script_error_count": 0,
+    "null_pointer_reason_count": 0,
+    "done_pass_count": 1,
+    "check_marker_lines": [
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170
+    ],
+    "done_marker_line": 171,
+    "process_exit": 0,
+    "runner_exit": 0,
+    "exit_evidence": {
+      "provenance": "ROOT_OBSERVED_REPORTED_TO_DOCUMENTATION",
+      "standalone_exit_receipt_inspected": false,
+      "console_log_alone_proves_exit": false
+    },
+    "modules": [
+      {
+        "name": "WorkbenchGame",
+        "files": 195,
+        "classes": 673,
+        "crc32": "070025ea",
+        "log_line": 157
+      },
+      {
+        "name": "Game",
+        "files": 5805,
+        "classes": 11651,
+        "crc32": "5f519ae6",
+        "log_line": 158
+      }
+    ],
+    "post_pass_diagnostics": [
+      {
+        "category": "PLATFORM(E)",
+        "message": "Steamworks: RequestCurrentStats failed",
+        "line": 172
+      },
+      {
+        "category": "RESOURCES(E)",
+        "message": "UI font/texture resource leak diagnostics",
+        "lines": [
+          192,
+          216
+        ]
+      }
+    ],
+    "all_log_error_categories_zero": false,
+    "canonical_sources": [
+      {
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PhysicalObservation.c",
+        "sha256": "23a86d540a31302d51aa383bb19012536623642009dbfec1e62e3784b05319bf",
+        "lines": 681
+      },
+      {
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_BaseWorldPhysicalObservation.c",
+        "sha256": "3f0af441fe34e5d7476d838cfb5b90b99478b18f78dfe3dbaa0ae24484efe9ac",
+        "lines": 237
+      },
+      {
+        "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PhysicalObservationFixtures.c",
+        "sha256": "cac3b6cb71cb4d3bebd6855f5a3c8fe09c102c421f103bb41376b8c2c887f210",
+        "lines": 508
+      },
+      {
+        "path": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+        "sha256": "2ace34bc87e1084d7425ac9136811177c00529e6ba69884a16c30fc0964231b1",
+        "lines": 53
+      }
+    ],
+    "scope": "HISTORICAL_165356_BASELINE_259_OBSERVATION_2039_TOTAL_CAC3_FIXTURE"
+  },
+  "supplemental_lineage": {
+    "baseline_fixture_sha256": "cac3b6cb71cb4d3bebd6855f5a3c8fe09c102c421f103bb41376b8c2c887f210",
+    "current_fixture_sha256": "562307e16bf0a69f4ca6a3fade4960172daa8798beece87ec7464ea4cb641667",
+    "baseline_fixture_lines": 508,
+    "current_fixture_lines": 584,
+    "inserted_lines": 76,
+    "added_cases": [
+      "O19 stable known-zero body witness",
+      "O20 ephemeral unretained pure-source objects"
+    ],
+    "added_assertions": 26,
+    "baseline_observation_checks": 259,
+    "current_observation_checks": 285,
+    "baseline_total": 2039,
+    "current_total": 2065,
+    "old_assertions_unchanged_peer_review_reported": true,
+    "other_three_sources_unchanged": true,
+    "source_peer_gate": "ROOT_CORE_ACCEPT_REPORTED",
+    "fresh_sdk_gate": "ACTUAL_LOG_CONFIRMED_PASS",
+    "native_callbacks_invoked": false,
+    "later_candidates_counted": false
+  },
+  "evidence_author": "Documentation (codex.team.docs)",
+  "canonical_publication_claimed": false
+}

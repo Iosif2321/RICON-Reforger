@@ -1,0 +1,31 @@
+{
+  "status": "ENFORCE_MODULE_COMPILE_LOG_CONFIRMED_PLATFORM_INIT_FAILED",
+  "gameModule": {
+    "files": 5764,
+    "classes": 11589,
+    "crc32": "db27f34d"
+  },
+  "workbenchGameModule": {
+    "files": 192,
+    "classes": 637,
+    "crc32": "4e19bd1c"
+  },
+  "scriptErrors": 0,
+  "sourceFilesFound": [
+    "RICON_LivePairShadow.c",
+    "RICON_LiveNativeRxGame.c",
+    "RICON_LiveGenericRadioProbe.c"
+  ],
+  "processExitCode": -1,
+  "platformFailure": "SteamAPI_Init failed after module compilation",
+  "overallProcessPass": false,
+  "processGone": true,
+  "sourcesUnchanged": true,
+  "play": false,
+  "server": false,
+  "captureRequested": false,
+  "pluginRequested": false,
+  "log": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\console.log",
+  "logSHA256": "5d8b24fc3f1cef3cf9be1b6e0692b79e57fc2569fe9cc8fb14c00e75baafc712",
+  "nativeVoiceRuntime": "NOT_RUN"
+}

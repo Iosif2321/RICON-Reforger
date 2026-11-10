@@ -1,0 +1,37 @@
+{
+  "range": [
+    "0x141209970",
+    "0x141209a0b"
+  ],
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x141209970,0x141209A0A",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "chunks": [
+    {
+      "start": "0x141209970",
+      "end": "0x1412099b7",
+      "raw_pdata": "70992001b799200160d8ee01"
+    },
+    {
+      "start": "0x1412099b7",
+      "end": "0x1412099fb",
+      "raw_pdata": "b7992001fb992001e011fe01"
+    },
+    {
+      "start": "0x1412099fb",
+      "end": "0x141209a0b",
+      "raw_pdata": "fb9920010b9a2001f411fe01"
+    }
+  ],
+  "raw_hex": "48895c2410574883ec30488bf90f297424200f28f28bda3b5114736f488b49504885c97413488b010f28da448bc3488bd7ff502084c07553488b5718488bc348c1e0044803470848897424408b48088b400c4803c1488d1c8a488d3482483bde74240fbe43020f28d6488b4f280fbf13488d0440488b0cc1e8a31c81ff4883c304483bde75dc488b742440488b5c24480f287424204883c4305fc3",
+  "raw_sha256": "a8d0653c544ed96bb6970805826c4003c3e140455b4cb57507e63a4e7b7e6690",
+  "asm_sha256": "b14408fe9b0e23cd6f55071f63264452b59a54fb9c045bd789c9b3618057115e",
+  "decoded_bytes_verified_against_raw": 155,
+  "image_sha256_from_current_initial_probe": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "scope": "Single authorized immediate concrete writer callee; no name-index helper/VM expansion",
+  "exit_code": 0
+}

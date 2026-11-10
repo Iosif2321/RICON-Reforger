@@ -1,0 +1,75 @@
+{
+  "status": "CANONICAL_DOCUMENTATION_PUBLISHED",
+  "date": "2026-11-10",
+  "scope": "COMPILE_AND_SHARED_PURE_GUARDS_ONLY",
+  "checks": 175,
+  "new_sdk_run": false,
+  "world_run": false,
+  "goal_complete": false,
+  "team": "codex and personal subagents; Agy deferred by owner",
+  "independent_review_agora": 8428,
+  "frozen_result_sha256": "47e2c4b5bbe6c9c73f5c5f33ca7b70c166e9d01874c53f8e69c5e4ab6244aa8d",
+  "frozen_status_is_historical": true,
+  "source_log_review_pins": {
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\docs\\E-ct10-manual-world-probe-20261110.md": "ca918f2a692f7a571e4e211dabac52071d2d3f40e019954f74c73babc75c2ae2",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\MANUAL_PROBE_INSTALL.json": "14294f90fd40f78b5033a957026351e45a796e5aac44cf9ed55239dd99aff0c5",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\Game\\RICON_Live\\RICON_LivePhysicalObservationProbe.c": "b623857a62144c5ef4dd8fa6c4b3798dacf9ae0d8ae69a385512ee301ddd2704",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\WorkbenchGame\\RICON_LivePhysicalObservationPlugin.c": "c31b496d1af3cb5b58017db0403a829148a90720bbe1b70d60f7d056fc5073fa",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\Game\\RICON_Live\\RICON_LivePhysicalObservationFixtures.c": "e8c61fa5605d1a440e85ec19566942742678b4c2e315d0aa15c08cc7442e418d",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\WorkbenchGame\\RICON_LivePhysicalObservationCheckPlugin.c": "36dc6a68b1458960e440bb9de19a55fcb15571315fefd748ed873b2d788cd34f",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\addon.gproj": "8b47f08ce19736da62a06f25b5af521c6e71828aa087fa63197ca2617acf0e90",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\addons\\RICON_Core\\Scripts\\Game\\RICON\\Propagation\\RICON_PhysicalObservation.c": "23a86d540a31302d51aa383bb19012536623642009dbfec1e62e3784b05319bf",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\addons\\RICON_Core\\Scripts\\Game\\RICON\\Propagation\\RICON_BaseWorldPhysicalObservation.c": "3f0af441fe34e5d7476d838cfb5b90b99478b18f78dfe3dbaa0ae24484efe9ac",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\ricon-physical-manual-guards-20261110-174031-operator.json": "e0f11cda3014087d32cb83546cad5cebd19cfd1d953ddf2e525d84cd8ab28805",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\core\\WORLD_PROBE_PLAN_RU.md": "4c7d495e5d620e39344369d3f52d803148f862b2e521b90bab096fe68fbfd188",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\core\\WORLD_PROBE_CODE_RU.md": "9737b7cc3134c7fe216b39077f9976e689f54e3c5863aa3f4e6131f555c35654",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\review\\WORLD_PROBE_REVIEW.source9619.md": "9619e9f83654195e2222d4a2b93e341aad73135e58aac61beda1c605eceacf6e",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\core\\MANUAL_SDK_REVIEW_RU.md": "3813a27f47c3984878d50b71b0070634479c1a2bb8a082d46f3158475f2d8661",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\review\\WORLD_PROBE_REVIEW_RU.md": "d527dedeb33f268272f2f2c59e539be09b57d054b0fd0fca134ae5ff20f78d88",
+    "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\docs\\WORLD_FIXTURE_INTAKE_RU.md": "49b0bf1c2155f59eef009d17802913d93bf3cfb20ead09729c3cba0025ace2c4",
+    "C:\\Users\\Ded\\Documents\\My Games\\ArmaReforgerWorkbench\\logs\\ricon-physical-manual-guards-20261110-174031\\console.log": "36bb25b999ae09b2537c0f5bed67beac411cf293171612661cb944ebe1812641"
+  },
+  "files": [
+    {
+      "target": "docs/evidence/E-ct10-manual-world-probe-20261110.md",
+      "staged": "C:\\Users\\Ded\\duo\\work\\ricon-resume-20261110\\publication\\docs\\evidence\\E-ct10-manual-world-probe-20261110.md",
+      "before_sha256": null,
+      "after_sha256": "ca918f2a692f7a571e4e211dabac52071d2d3f40e019954f74c73babc75c2ae2",
+      "source": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\docs\\E-ct10-manual-world-probe-20261110.md",
+      "frozen_copy": true
+    },
+    {
+      "target": "docs/evidence/receipts/ct10-manual-world-probe-result-20261110.json",
+      "staged": "C:\\Users\\Ded\\duo\\work\\ricon-resume-20261110\\publication\\docs\\evidence\\receipts\\ct10-manual-world-probe-result-20261110.json",
+      "before_sha256": null,
+      "after_sha256": "47e2c4b5bbe6c9c73f5c5f33ca7b70c166e9d01874c53f8e69c5e4ab6244aa8d",
+      "source": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ct10-physical-source-20261110\\docs\\ct10-manual-world-probe-result-20261110.json",
+      "frozen_copy": true
+    },
+    {
+      "target": "docs/INDEX_RU.md",
+      "staged": "C:\\Users\\Ded\\duo\\work\\ricon-resume-20261110\\publication\\docs\\INDEX_RU.md",
+      "before_sha256": "c2bd94b99e3d4bc0ff213024668974c2a9075661b9be79c46e053c31393a2d85",
+      "after_sha256": "b7a279e60eecd6c5606f58ecf231541ec90f651b7e528433836e95f53c418075",
+      "history_preserved_byte_exact": true,
+      "edit": "insert_dated_entry_after_first_heading"
+    },
+    {
+      "target": "docs/plan/STATUS_RU.md",
+      "staged": "C:\\Users\\Ded\\duo\\work\\ricon-resume-20261110\\publication\\docs\\plan\\STATUS_RU.md",
+      "before_sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47",
+      "after_sha256": "f44f44f5b5d0ba734bc56c2bd29ab79104547384792245c669ade2b8bcaa99f9",
+      "history_preserved_byte_exact": true,
+      "edit": "insert_dated_entry_after_first_heading"
+    },
+    {
+      "target": "AGENT_CONTEXT_RU.md",
+      "staged": "C:\\Users\\Ded\\duo\\work\\ricon-resume-20261110\\publication\\AGENT_CONTEXT_RU.md",
+      "before_sha256": "d823725fc81854c091f8f1352adbb531fd2d2acf95c569adbb87caf647c667e8",
+      "after_sha256": "05c22b1d96f2b6237aa5178932f0c15cd289c2145ed41736e052e761f45997c4",
+      "history_preserved_byte_exact": true,
+      "edit": "insert_dated_entry_after_first_heading"
+    }
+  ],
+  "next_gate": "Owner approval of WorldEditor AUTHORING_ONLY proposal; no Play/server/voice"
+}

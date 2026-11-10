@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "scope": "Map structure, frozen source/renderer review, actual browser interaction and deterministic export; not game/audio acceptance",
+  "counts": {
+    "nodes": 186,
+    "leaves": 172,
+    "domains": 12,
+    "dependencies": 338,
+    "coverage": 21,
+    "requirements": 22,
+    "invariants": 14,
+    "sources": 92,
+    "workflows": {
+      "done": 42,
+      "current": 5,
+      "partial": 54,
+      "planned": 65,
+      "blocked": 20
+    },
+    "priorities": {
+      "P0": 17,
+      "P1": 65,
+      "P2": 21,
+      "P3": 5,
+      "none": 78
+    },
+    "htmlSha256": "8ce5867bdd06ea2a175f3a8318aafbdedb00505c47f18df0661089229c8911a2",
+    "modelSha256": "3c69eac3633e59d01f7d8d0930f67e6434646f8fbc2e86932bffb920a028dedb",
+    "radial": {
+      "outputPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-full-development-graph-20261109\\RICON_RADIAL_OVERVIEW.html",
+      "bytes": 989758,
+      "sha256": "1A8A3AC023910D212506DABB7707C89A7178C3D5879DDB229F53FA46A893501F",
+      "svgOutputPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-full-development-graph-20261109\\RICON_RADIAL_OVERVIEW.svg",
+      "stages": 8,
+      "branches": 12,
+      "panels": 85,
+      "explicitEdges": 26
+    }
+  },
+  "deterministicOutputs": {
+    "RICON_FULL_DEVELOPMENT_GRAPH.html": "8ce5867bdd06ea2a175f3a8318aafbdedb00505c47f18df0661089229c8911a2",
+    "RICON_FULL_DEVELOPMENT_GRAPH.json": "3c69eac3633e59d01f7d8d0930f67e6434646f8fbc2e86932bffb920a028dedb",
+    "RICON_FULL_DEVELOPMENT_TREE_RU.md": "a8f8d348f701935892b65471e499353a2b561464db37386d1180649612f001a4",
+    "radial-project.json": "f3f67c5610676245eb8444e530e1075788cd2041cf63ac8ff71cfc47784847cd",
+    "RICON_RADIAL_OVERVIEW.html": "1a8a3ac023910d212506dabb7707c89a7178c3d5879ddb229f53fa46a893501f",
+    "RICON_RADIAL_OVERVIEW.svg": "cad9c44743fe4a6ec7193e275f48ba36affaabfe5a84e9d6b4703cf8f31d36fa"
+  },
+  "reviewSha256": "f62bfbf04dd35e81afd7d3d8bd6a5546f2df8732a14f4ce037746232ccac3991",
+  "mainBrowserChecks": 15,
+  "compactViewport": {
+    "w": 900,
+    "h": 700,
+    "scrollW": 900,
+    "scrollH": 700,
+    "detailClosed": true
+  },
+  "radialBranches": 12,
+  "radialGeneratorSelfTests": {
+    "passed": 6,
+    "failed": 0,
+    "browserIncluded": true
+  },
+  "productRuntimeTestsRepeated": false
+}

@@ -1,0 +1,186 @@
+{
+  "status": "ENFORCE_MODULE_COMPILE_LOG_CONFIRMED_PLATFORM_INIT_FAILED",
+  "scope": "Independent read-only audit of compile01; no process launch",
+  "overall_process_pass": false,
+  "exit_code": -1,
+  "process_gone_receipt": true,
+  "source_inventory_count": 59,
+  "all_before_hashes_match_current": true,
+  "targets": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\Game\\RICON_Live\\RICON_LiveGenericRadioProbe.c",
+      "before_sha256": "c0185fa5222bd7b926bf3f81b77c1c9ad1322d228c9ef7e689bb88cd6d679ce1",
+      "current_sha256": "c0185fa5222bd7b926bf3f81b77c1c9ad1322d228c9ef7e689bb88cd6d679ce1",
+      "matches": true,
+      "crc_log": {
+        "line": 6653,
+        "text": "20:25:55.566    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveGenericRadioProbe.c' CRC: 5312eefc"
+      }
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\Game\\RICON_Live\\RICON_LivePairShadow.c",
+      "before_sha256": "389f5ba2c2c8047a331d578cae74b247504b3a769f704191acf105964168b5ac",
+      "current_sha256": "389f5ba2c2c8047a331d578cae74b247504b3a769f704191acf105964168b5ac",
+      "matches": true,
+      "crc_log": {
+        "line": 6661,
+        "text": "20:25:55.568    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LivePairShadow.c' CRC: d06a9b42"
+      }
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\Scripts\\Game\\RICON_Live\\RICON_LiveNativeRxGame.c",
+      "before_sha256": "71165c07fd12b2e83e9e81f9d6f56af431457400e06d724a8b0bfe5e4671f5ad",
+      "current_sha256": "71165c07fd12b2e83e9e81f9d6f56af431457400e06d724a8b0bfe5e4671f5ad",
+      "matches": true,
+      "crc_log": {
+        "line": 6657,
+        "text": "20:25:55.567    SCRIPT    (V): Script file: 'Scripts/Game/RICON_Live/RICON_LiveNativeRxGame.c' CRC: 38e945ae"
+      }
+    }
+  ],
+  "logs": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\console.log",
+      "bytes": 868079,
+      "lines": 6938,
+      "sha256": "5d8b24fc3f1cef3cf9be1b6e0692b79e57fc2569fe9cc8fb14c00e75baafc712",
+      "script_errors": 0,
+      "ends_with_newline": true,
+      "nul_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\logs\\console.log",
+      "bytes": 868079,
+      "lines": 6938,
+      "sha256": "5d8b24fc3f1cef3cf9be1b6e0692b79e57fc2569fe9cc8fb14c00e75baafc712",
+      "script_errors": 0,
+      "ends_with_newline": true,
+      "nul_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\logs\\script.log",
+      "bytes": 847102,
+      "lines": 6718,
+      "sha256": "356b142ff41b2e47639c3ede850f6ed3a6da2dcdab0e163d27f871f4ef817480",
+      "script_errors": 0,
+      "ends_with_newline": true,
+      "nul_bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\logs\\error.log",
+      "bytes": 4551,
+      "lines": 51,
+      "sha256": "c7a76689c4eb9d44aaded24bfcd5c9c4fd9bf27a9ac5aa74e21a7d6f6f252ae5",
+      "script_errors": 0,
+      "ends_with_newline": true,
+      "nul_bytes": 0
+    }
+  ],
+  "receipt_sha256": "d8f7573ae4da6480a973cc477cea5d374de1b62934a3e33e93028aff30119364",
+  "receipt_log_hash_matches": true,
+  "console_copy_byte_equal": true,
+  "module_and_failure_evidence": [
+    {
+      "line": 6881,
+      "text": "20:25:58.612    SCRIPT       : Module: WorkbenchGame; loaded 192x files; 637x classes; used 2594K of static memory; defines: \"ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE\"; CRC32: 4e19bd1c"
+    },
+    {
+      "line": 6882,
+      "text": "20:25:58.623    SCRIPT       : Module: Game; loaded 5764x files; 11589x classes; used 36304K of static memory; defines: \"ENF_WB,WORKBENCH,PLATFORM_WINDOWS,ENABLE_DIAG,ENF_ENABLE_VHC_OVERRIDE,ENF_ENABLE_RPLCOMPONENT_IN_GAMECODE,ENABLE_BASE_DESTRUCTION,BUDGET_OPTIMIZATION_CHECKS,SHOW_DISCLAIMER,DEBUG,RESPAWN_TIMER_COMPONENT_DEBUG,GAME_MODE_DEBUG,DEBUG_CONFIGURABLE_DIALOGS,DISABLE_WEAPON_SWITCHING,SCRIPTED_AIM_MODIFIER_DEBUG\"; CRC32: db27f34d"
+    },
+    {
+      "line": 6883,
+      "text": "20:25:58.719   PROFILING    : Compiling Game scripts took: 3962.587400 ms"
+    },
+    {
+      "line": 6889,
+      "text": "20:25:58.786   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+    },
+    {
+      "line": 6890,
+      "text": "20:25:58.786   PLATFORM  (E): Could not initialize platform services."
+    }
+  ],
+  "script_errors": 0,
+  "fixture_marker_prefixes_checked": [
+    "[RICON_AUDIOCHECK]",
+    "[RICON_AUDIO]",
+    "[RICON_CAPTURE_FREQ]",
+    "[RICON_CPOWER]",
+    "[RICON_D0CHECK]",
+    "[RICON_D0]",
+    "[RICON_FHCCHECK]",
+    "[RICON_FHC]",
+    "[RICON_FHC_ALIAS]",
+    "[RICON_GENERICCHECK]",
+    "[RICON_GENERIC]",
+    "[RICON_GENERIC_PAIR]",
+    "[RICON_I0CHECK]",
+    "[RICON_I0]",
+    "[RICON_LIVEB]",
+    "[RICON_LIVEG]",
+    "[RICON_LIVEJ]",
+    "[RICON_LIVEO]",
+    "[RICON_LIVERES]",
+    "[RICON_LIVER]",
+    "[RICON_LIVES]",
+    "[RICON_LIVET]",
+    "[RICON_LIVEW]",
+    "[RICON_LIVE]",
+    "[RICON_LOWPREP]",
+    "[RICON_LOWREAD]",
+    "[RICON_METERCHECK]",
+    "[RICON_METER]",
+    "[RICON_NET]",
+    "[RICON_NRXCHECK]",
+    "[RICON_NRX]",
+    "[RICON_PAIR_SHADOW]",
+    "[RICON_PLACE]",
+    "[RICON_PLUGIN_SIGNAL]",
+    "[RICON_PROBE]",
+    "[RICON_PROBE_CONFIG]",
+    "[RICON_PULSECHECK]",
+    "[RICON_PULSE]",
+    "[RICON_PULSE_UI]",
+    "[RICON_RESPAWN_SCOPE]",
+    "[RICON_RESTCHECK]",
+    "[RICON_REST]",
+    "[RICON_REST_ARM]",
+    "[RICON_REST_CAPTURE]",
+    "[RICON_REST_CTX]",
+    "[RICON_RPLMODE]",
+    "[RICON_RPOWER]",
+    "[RICON_V0]",
+    "[RICON_VSOUND]",
+    "[RICON_WBMODE]"
+  ],
+  "fixture_marker_hits": [],
+  "arguments": [
+    "-gproj",
+    "\"C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_LiveProbe\\addon.gproj\"",
+    "-addonsDir",
+    "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\addons,C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\addons,C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\addons\"",
+    "-profile",
+    "\"C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\profile\"",
+    "-noBackend",
+    "-wbModule=ScriptEditor",
+    "-wbSilent",
+    "-exitAfterInit",
+    "-noThrow",
+    "-noFocus",
+    "-forceUpdate",
+    "-logLevel",
+    "verbose",
+    "-log-scr-checksum",
+    "-logsDir",
+    "\"C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-native-implementation-20261104\\compile\\compile01\\logs\"",
+    "-maxFPS",
+    "15"
+  ],
+  "limitations": [
+    "CRC rows prove these source paths entered compiler input; no fixture execution or gameplay claim",
+    "Workbench plugin class sources are compiled but no -plugin or execution marker is present",
+    "Platform initialization failed after completed module log summaries; resource leak errors follow shutdown",
+    "Log tails are newline-complete and both console copies byte-equal; complete module summaries observed, not successful whole process"
+  ]
+}

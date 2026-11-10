@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "branchCards": [
+    {
+      "domain": "legacy",
+      "id": "panel:legacy:d-a3-authority",
+      "title": "Arma 3: серверная модель маршрута и тонкий TS-плагин",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "migration",
+      "id": "panel:migration:d-migration-transport",
+      "title": "Выбор Reforger built-in VoN вместо TS-механизмов",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "core",
+      "id": "panel:core:d-core-contracts",
+      "title": "Э2: типы устройств/сетей и registry contracts",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "world",
+      "id": "panel:world:d-world-pure-layers",
+      "title": "Э4: FSPL/terrain/path layers в oracle/Enforce",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "native",
+      "id": "panel:native:d-native-baseline",
+      "title": "Э1r/Э5: настоящий player-voice baseline",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "temporal",
+      "id": "panel:temporal:d-temporal-kernel",
+      "title": "Отдельные fading/descriptor/cutoff вычислители",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "devices",
+      "id": "panel:devices:d-device-identity",
+      "title": "Device ownership/generation и безопасные каталоги",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "infrastructure",
+      "id": "panel:infrastructure:d-infra-site",
+      "title": "Э7a: Site/стационарная станция и мачта",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "multiplayer",
+      "id": "panel:multiplayer:d-mp-radio-acceptance",
+      "title": "Э1b/Э5: несколько настоящих endpoints и content controls",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "radio-release",
+      "id": "panel:radio-release:d-radio-vertical",
+      "title": "Э5: первая рабочая носимая рация",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "cellular",
+      "id": "panel:cellular:d-cellular-subscriber",
+      "title": "M3a: SubscriberRegistry и публичные номера",
+      "pinned": "pinned",
+      "bounded": true
+    },
+    {
+      "domain": "release",
+      "id": "panel:release:vehicle-extensions",
+      "title": "M2 · Радиосвязь техники, интерком и динамики",
+      "pinned": "pinned",
+      "bounded": true
+    }
+  ],
+  "hover": "preview",
+  "pinned": "pinned",
+  "detailsVisible": true,
+  "insideViewport": true,
+  "semanticObjects": 246,
+  "pageNoScroll": true
+}

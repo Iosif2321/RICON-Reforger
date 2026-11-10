@@ -22,6 +22,8 @@ class RICON_LiveBenchLauncherPlugin : WorkbenchPlugin
 		if (editor)
 			api = editor.GetApi();
 		bool edit = api && api.GetWorld() && !api.IsGameMode() && api.GetWorld().IsEditMode();
+		if (s_PluginArmed && !s_PluginRequested && edit && !RICON_FileHandleCapabilityBridge.Prepare())
+			return;
 		if (!TryPluginSignal(edit))
 		{
 			Print("[RICON_LIVEB] inspect=REFUSED reason=PLUGIN_NOT_ARMED_OR_NOT_EDIT");

@@ -1,2 +1,21 @@
 # Workbench resource cache (regenerated on every open/validate)
 **/resourceDatabase.rdb
+
+# Generated output and Python caches
+/output/
+__pycache__/
+*.py[cod]
+
+# Local agent state and operating instructions
+/.claude/
+/.harness/
+/.opencode/
+/.re/
+/AGENT_CONTEXT_RU.md
+/AGENTS_ACCELERATION_RU.md
+/AGENTS.md
+
+# Extracted SDK/engine files stay local (see NOTICE.md)
+/docs/**/installed/
+/docs/**/*.asm
+/docs/plan/native-integration-20261104/dsp/native/

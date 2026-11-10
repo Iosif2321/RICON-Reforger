@@ -1,0 +1,70 @@
+{
+  "image_sha256_from_getter_receipt": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "range": [
+    "0x1409faeb0",
+    "0x1409faf6d"
+  ],
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x1409FAEB0,0x1409FAF6C",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "chunks": [
+    {
+      "start": "0x1409faeb0",
+      "end": "0x1409faec9",
+      "raw_pdata": "b0ae9f00c9ae9f0010ecea01"
+    },
+    {
+      "start": "0x1409faec9",
+      "end": "0x1409faf6d",
+      "raw_pdata": "c9ae9f006daf9f001ce5f401"
+    }
+  ],
+  "raw_hex": "40534883ec20f6413801488bd90f85ae0000008b81a400000048896c243048897424384032f648897c2440488bb998000000488d2c87483bfd742b0f1f440000488b430833d28b0f48c1e105488b4c0110488b01ff9090000000400af04883c704483bfd75da488bbba80000008b83b4000000488d2c87483bfd742d0f1f40008b0733d2488d0c40488b43284803c9488b4cc820488b01ff9090000000400af04883c704483bfd75d7488b7c24404084f6488b742438488b6c24307415",
+  "raw_sha256": "d8424d6ed085b0458f2308f9c978192b9e7c380b0d81f26c41812f816cd9e629",
+  "asm_sha256": "87b5eeaabd5b23ce5e3ebeaa74b1a1e00647314acb2820e6aae46edc59c50509",
+  "decoded_bytes_verified_against_raw": 189,
+  "source_stat_unchanged": true,
+  "exit_code": 0,
+  "direct_flows": [
+    {
+      "from": "00000001409FAEBD",
+      "kind": "jne",
+      "to": "00000001409FAF71",
+      "external": true
+    },
+    {
+      "from": "00000001409FAEE9",
+      "kind": "je",
+      "to": "00000001409FAF16",
+      "external": false
+    },
+    {
+      "from": "00000001409FAF14",
+      "kind": "jne",
+      "to": "00000001409FAEF0",
+      "external": false
+    },
+    {
+      "from": "00000001409FAF2A",
+      "kind": "je",
+      "to": "00000001409FAF59",
+      "external": false
+    },
+    {
+      "from": "00000001409FAF57",
+      "kind": "jne",
+      "to": "00000001409FAF30",
+      "external": false
+    },
+    {
+      "from": "00000001409FAF6B",
+      "kind": "je",
+      "to": "00000001409FAF82",
+      "external": true
+    }
+  ]
+}

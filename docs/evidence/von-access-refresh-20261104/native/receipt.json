@@ -1,0 +1,340 @@
+{
+  "status": "UNCHANGED_PUBLIC_SURFACE_HOST_COMPATIBILITY_UNVERIFIED_NO_QUALIFIED_VON_PORT",
+  "checked_utc": "2026-11-04T18:06:07.279183+00:00",
+  "head": {
+    "sha": "b28a1e4310d6d066673af8e608578bce3e7b33f1",
+    "date": "2026-07-10T18:19:55Z",
+    "pushed_at": "2026-07-10T18:19:58Z",
+    "url": "https://api.github.com/repos/intercept/interceptAR/branches/master",
+    "immutable_url": "https://github.com/intercept/interceptAR/tree/b28a1e4310d6d066673af8e608578bce3e7b33f1",
+    "same_as_prior": true
+  },
+  "readme": {
+    "url": "https://raw.githubusercontent.com/intercept/interceptAR/master/README.md",
+    "bytes": 5768,
+    "sha256": "bdd0266d908d30e25959eb919f4c8d32131d359b13854494b14b474a9d359430",
+    "same_as_prior": true,
+    "environment_claim": [
+      {
+        "line": 17,
+        "text": "And for safety reasons Intercept plugins **will only work on a dedicated server or inside workbench**, but not on clients."
+      }
+    ]
+  },
+  "latest": {
+    "url": "https://github.com/intercept/interceptAR/releases/latest",
+    "resolved_url": "https://github.com/intercept/interceptAR/releases/tag/Alpha8",
+    "published_utc": "2026-05-17T19:05:14Z",
+    "exact_body": "Reforger 1.7 Experimental support"
+  },
+  "baseline_sdk": {
+    "receipt": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\evidence\\receipts\\native-extension-source-codex.json",
+    "receipt_sha256": "9641f580385b1d4cf148ef1971d5ca8d0d354bdc89c7c4454a1087063c317ef1",
+    "head": "b28a1e4310d6d066673af8e608578bce3e7b33f1",
+    "tree_truncated": false,
+    "files": [
+      {
+        "path": ".clang-format",
+        "bytes": 764,
+        "lines": 28,
+        "sha256": "7856a2fe707f6e8bb54cc9d913afc4ccf61e6ddaa791841bba28fe18b150edc3",
+        "terms": []
+      },
+      {
+        "path": ".editorconfig",
+        "bytes": 118,
+        "lines": 8,
+        "sha256": "28e0681d29fcc135b16ad80984dd30821393fae66c05580532c79cac4254c3ab",
+        "terms": []
+      },
+      {
+        "path": ".gitignore",
+        "bytes": 366,
+        "lines": 44,
+        "sha256": "817d5ca4f081424194e11a3c59afe6b2e2ebe79287485c46863abe286d49923a",
+        "terms": []
+      },
+      {
+        "path": ".gitmodules",
+        "bytes": 93,
+        "lines": 3,
+        "sha256": "71c4672531f3bf1af7c680a4188cbd994db7db3b39c11f6f82a1ca86a6412662",
+        "terms": []
+      },
+      {
+        "path": "LICENSE.md",
+        "bytes": 17160,
+        "lines": 148,
+        "sha256": "9aed319b54f0ed4b24938c61bcb41cf37f369fd7fc0142ca5988c5f33a35bcb3",
+        "terms": [
+          {
+            "line": 59,
+            "terms": [
+              "recipients"
+            ]
+          },
+          {
+            "line": 61,
+            "terms": [
+              "recipient"
+            ]
+          },
+          {
+            "line": 62,
+            "terms": [
+              "recipient"
+            ]
+          },
+          {
+            "line": 63,
+            "terms": [
+              "recipient"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "README.md",
+        "bytes": 5768,
+        "lines": 131,
+        "sha256": "bdd0266d908d30e25959eb919f4c8d32131d359b13854494b14b474a9d359430",
+        "terms": [
+          {
+            "line": 101,
+            "terms": [
+              "ScriptClassBaseSimple"
+            ]
+          },
+          {
+            "line": 102,
+            "terms": [
+              "DoSetup"
+            ]
+          },
+          {
+            "line": 104,
+            "terms": [
+              "ScriptClassBaseSimple"
+            ]
+          },
+          {
+            "line": 114,
+            "terms": [
+              "DoSetup",
+              "RegisterFuncHandler",
+              "ScriptClassBaseSimple"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "misc/linuxLaunchScript.sh",
+        "bytes": 74,
+        "lines": 5,
+        "sha256": "cb9d05582f78d881d7bd9c280a7e8a584c55b41ba9d8ab3bdaad6d02437f773c",
+        "terms": []
+      },
+      {
+        "path": "misc/nixShellCMakeWrapper.sh",
+        "bytes": 105,
+        "lines": 3,
+        "sha256": "d1b43930b52a98cd629a37723cb7858f20e123c7dba96b4e8eca5b7b4ebf81b9",
+        "terms": []
+      },
+      {
+        "path": "src/CMakeLists.txt",
+        "bytes": 4351,
+        "lines": 90,
+        "sha256": "f31d641f427acffaf78f3e949b7563f1dbc973da9c91df1b883300288b4707c8",
+        "terms": []
+      },
+      {
+        "path": "src/common/CMakeLists.txt",
+        "bytes": 634,
+        "lines": 27,
+        "sha256": "9033aad9c61da0cdd46c8c5e75a1412d0b8224aceeb51cde7d23ba2f463d1fb0",
+        "terms": []
+      },
+      {
+        "path": "src/common/DllInterface.ixx",
+        "bytes": 7498,
+        "lines": 223,
+        "sha256": "5f42178374abcdec432158985f6b8a30506f494000866411d690c56596af3e71",
+        "terms": []
+      },
+      {
+        "path": "src/common/Types/EnfusionContainers.ixx",
+        "bytes": 324,
+        "lines": 21,
+        "sha256": "be50387f0fd94d9f99fb0ad5c862b5f147cd5f66940777a0c577f1796faea39b",
+        "terms": []
+      },
+      {
+        "path": "src/common/Types/EnfusionTypes.ixx",
+        "bytes": 20480,
+        "lines": 686,
+        "sha256": "9b9d259fa00e68e84900bd96a25aee1f5e482b30104ba034671b26dfc0de2a98",
+        "terms": [
+          {
+            "line": 649,
+            "terms": [
+              "RegisterFuncHandler"
+            ]
+          },
+          {
+            "line": 650,
+            "terms": [
+              "DoSetup",
+              "RegisterFuncHandler"
+            ]
+          },
+          {
+            "line": 660,
+            "terms": [
+              "ScriptClassBaseSimple"
+            ]
+          },
+          {
+            "line": 662,
+            "terms": [
+              "ScriptClassBaseSimple"
+            ]
+          },
+          {
+            "line": 663,
+            "terms": [
+              "RegisterFuncHandler"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "src/common/Types/GenericTypes.ixx",
+        "bytes": 729,
+        "lines": 24,
+        "sha256": "ea55bf6ea491dcdf5357fafffc38af556e1575c3f63b6c5f29baa8a6e8b17f99",
+        "terms": []
+      },
+      {
+        "path": "src/common/Types/InterceptTypes.ixx",
+        "bytes": 7774,
+        "lines": 256,
+        "sha256": "d16e09f1cb12a439309d6158e1cde9b6b7bed2cebf9e27131408983bb4774c26",
+        "terms": []
+      },
+      {
+        "path": "src/common/Util.ixx",
+        "bytes": 7260,
+        "lines": 262,
+        "sha256": "8b6ccf32552b33af8d1145fa8c1d616309318616ecf9cd67506526fd7056ba70",
+        "terms": []
+      },
+      {
+        "path": "src/common/Wrappers/ClassType.ixx",
+        "bytes": 1525,
+        "lines": 58,
+        "sha256": "244a18700b8dca170eaba58e02ed333c33faca6c33e7239b565f5ebc46f3ce88",
+        "terms": []
+      },
+      {
+        "path": "src/common/Wrappers/ScriptModule.ixx",
+        "bytes": 1384,
+        "lines": 50,
+        "sha256": "fc6cb90937eb2b6fc5f0cd5532c94d61a0f72e2a6a56132e4ce93c48f2ef7a75",
+        "terms": []
+      },
+      {
+        "path": "src/common/interceptCommon.ixx",
+        "bytes": 268,
+        "lines": 12,
+        "sha256": "fe790d0cc4e7f2482d3fc1bfd21e6498cccb4f91344fdeed33391200ee20377c",
+        "terms": []
+      },
+      {
+        "path": "src/loader/CMakeLists.txt",
+        "bytes": 1222,
+        "lines": 41,
+        "sha256": "4a9b6bb30cdf4d8d6226e135e3a7814ace0ea41527d880fa530fd2b7d087aa58",
+        "terms": []
+      },
+      {
+        "path": "src/loader/loader.cpp",
+        "bytes": 1414,
+        "lines": 55,
+        "sha256": "53a381894bc8e4dfe0cba2845d667993daee80f044ffaaa04da2a6d8337a88c2",
+        "terms": []
+      }
+    ],
+    "file_count": 21,
+    "total_bytes": 79311,
+    "action": "No21file refetch or rescan because immutable HEAD identical",
+    "host_submodule": "src/host excluded from prior source inventory"
+  },
+  "installed": {
+    "game_FileVersion": "1.8.0.13",
+    "game_ProductVersion": "1.8.0.13",
+    "workbench_FileVersion": "1.8.0.13",
+    "workbench_ProductVersion": "1.8.0.13",
+    "method": "Current local VersionInfo read, no executable launch"
+  },
+  "capabilities": {
+    "own_cpp_proto": "PUBLIC_SOURCE_CONFIRMED",
+    "von_source_binding": "NOT_EXPOSED_OR_QUALIFIED_IN_KNOWN_PUBLIC_SDK",
+    "recipient_population_or_veto": "NOT_EXPOSED_OR_QUALIFIED_IN_KNOWN_PUBLIC_SDK",
+    "final_per_pair_quality": "NOT_EXPOSED_OR_QUALIFIED_IN_KNOWN_PUBLIC_SDK",
+    "host_1_8_0_13": "UNVERIFIED_NO_PRIMARY_CLAIM",
+    "limit": "No assertion about closed host internals or all other native implementations"
+  },
+  "fetch": {
+    "checked_utc": "2026-11-04T18:04:25.854775+00:00",
+    "results": [
+      {
+        "name": "repository_page",
+        "url": "https://github.com/intercept/interceptAR",
+        "final_url": "https://github.com/intercept/interceptAR",
+        "http": 200,
+        "bytes": 258814,
+        "sha256": "0dc90b6d87c4e66959c26a531fa8bca83ce539cc6d092fc767b5cc8de658da6a"
+      },
+      {
+        "name": "releases_page",
+        "url": "https://github.com/intercept/interceptAR/releases",
+        "final_url": "https://github.com/intercept/interceptAR/releases",
+        "http": 200,
+        "bytes": 333892,
+        "sha256": "83dbf5a9680b479a2d626f0a9de266284b8ce951c1f482c78d6dea1570a1cf51"
+      },
+      {
+        "name": "latest_redirect",
+        "url": "https://github.com/intercept/interceptAR/releases/latest",
+        "final_url": "https://github.com/intercept/interceptAR/releases/tag/Alpha8",
+        "http": 200,
+        "bytes": 158647,
+        "sha256": "397dde40da39fe4e0a2a22cb61681ca967191b0843b5f0def968176409dff1ce"
+      },
+      {
+        "name": "readme",
+        "url": "https://raw.githubusercontent.com/intercept/interceptAR/master/README.md",
+        "final_url": "https://raw.githubusercontent.com/intercept/interceptAR/master/README.md",
+        "http": 200,
+        "bytes": 5768,
+        "sha256": "bdd0266d908d30e25959eb919f4c8d32131d359b13854494b14b474a9d359430"
+      },
+      {
+        "name": "head_branch",
+        "url": "https://api.github.com/repos/intercept/interceptAR/branches/master",
+        "final_url": "https://api.github.com/repos/intercept/interceptAR/branches/master",
+        "http": 200,
+        "bytes": 4357,
+        "sha256": "ca67e9de22dc51ef81a1a0aefa182b635a697d9fb5dc1b2c71f330f6c0dacc0b"
+      }
+    ]
+  },
+  "network_notes": [
+    "Initial sandbox socket WinError10013; authorized elevated read-only metadata succeeded",
+    "Some GitHub API endpoints403rate limit; publicHTML/raw/branchfallback succeeded"
+  ],
+  "assets_downloaded": false,
+  "executables_or_dll_launched": false,
+  "other_mutations": false
+}

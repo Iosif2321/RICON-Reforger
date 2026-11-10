@@ -18,14 +18,25 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 
 	override void RunCommandline()
 	{
+		string geometry;
+		m_bGeometry = System.GetCLIParam("riconListGeometry", geometry) && geometry == "1";
 		WorldEditor editor = Workbench.GetModule(WorldEditor);
 		if (!editor)
 		{
 			Print("[RICON_LIVEW] state=NO_WORLD_EDITOR");
+			if (m_bGeometry)
+			{
+				GeometryResult(0, "INCOMPLETE", "NO_WORLD_EDITOR", 0);
+			}
 			return;
 		}
 		string detail;
 		m_bDetail = System.GetCLIParam("riconListDetail", detail) && detail == "1";
+		if (m_bGeometry && m_bDetail)
+		{
+			GeometryResult(0, "INCOMPLETE", "DETAIL_NOT_ALLOWED", 0);
+			return;
+		}
 		int listed = 0;
 		for (int w = 1; w <= MAX_WORLDS; w++)
 		{
@@ -36,23 +47,49 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			ListWorld(editor, w, world);
 		}
 		if (listed == 0)
+		{
 			Print("[RICON_LIVEW] state=NO_WORLD_ARGUMENT tried=System.GetCLIParam");
+			if (m_bGeometry)
+			{
+				GeometryResult(0, "INCOMPLETE", "NO_WORLD_ARGUMENT", 0);
+			}
+		}
 		PrintFormat("[RICON_LIVEW] state=DONE worlds=%1 saved=0 play=0", listed);
 	}
 
 	protected void ListWorld(WorldEditor editor, int w, string world)
 	{
+		if (m_bGeometry && world != "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")
+		{
+			GeometryResult(w, "INCOMPLETE", "WORLD_NOT_FIXED_MPTEST", 0);
+			return;
+		}
 		bool opened = editor.SetOpenedResource(world);
 		PrintFormat("[RICON_LIVEW] w=%1 state=OPEN world=%2 opened=%3", w, world, opened);
 		if (!opened)
+		{
+			if (m_bGeometry)
+			{
+				GeometryResult(w, "INCOMPLETE", "WORLD_NOT_OPENED", 0);
+			}
 			return;
+		}
 		WorldEditorAPI api = editor.GetApi();
 		if (!api)
 		{
 			PrintFormat("[RICON_LIVEW] w=%1 state=NO_API", w);
+			if (m_bGeometry)
+			{
+				GeometryResult(w, "INCOMPLETE", "NO_API", 0);
+			}
 			return;
 		}
 		bool gameBefore = api.IsGameMode();
+		if (m_bGeometry && gameBefore)
+		{
+			GeometryResult(w, "INCOMPLETE", "NOT_EDITOR_CONTEXT", 0);
+			return;
+		}
 		int count = api.GetEditorEntityCount();
 		PrintFormat("[RICON_LIVEW] w=%1 entities=%2 subScenes=%3 isGameModeBefore=%4", w, count, api.GetNumSubScenes(), gameBefore);
 		map<string, int> classes = new map<string, int>();
@@ -61,6 +98,8 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 		int nulls = 0;
 		int noInstance = 0;
 		int noInstanceGameModeClass = 0;
+		int geometryTerrainCount = 0;
+		IEntity geometryTerrain;
 		for (int i = 0; i < count; i++)
 		{
 			IEntitySource src = api.GetEditorEntity(i);
@@ -70,6 +109,10 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 				continue;
 			}
 			string cls = src.GetClassName();
+			if (m_bGeometry && cls == "GenericTerrainEntity")
+			{
+				geometryTerrainCount++;
+			}
 			string prefab = PrefabOf(src);
 			if (i < MAX_ENTITIES)
 				PrintFormat("[RICON_LIVEW] w=%1 entity=%2 class=%3 name=%4 prefab=%5", w, i, cls, src.GetName(), prefab);
@@ -90,6 +133,10 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 				continue;
 			}
 			BaseGameMode gameMode = BaseGameMode.Cast(instance);
+			if (m_bGeometry && cls == "GenericTerrainEntity")
+			{
+				geometryTerrain = instance;
+			}
 			if (gameMode)
 			{
 				gameModes++;
@@ -107,12 +154,88 @@ class RICON_LiveWorldListPlugin : WorkbenchPlugin
 			PrintFormat("[RICON_LIVEW] w=%1 class=%2 count=%3", w, order[c], classes.Get(order[c]));
 		PrintFormat("[RICON_LIVEW] w=%1 summary entities=%2 nullSources=%3 noInstance=%4 noInstanceGameModeClass=%5 distinctClasses=%6 gameModes=%7 isGameModeAfter=%8",
 			w, count, nulls, noInstance, noInstanceGameModeClass, order.Count(), gameModes, api.IsGameMode());
+		if (m_bGeometry)
+		{
+			ReadGeometry(api, w, geometryTerrain, geometryTerrainCount);
+		}
+	}
+
+	//! Только пять фиксированных XZ кандидатов. Это не voice radius и не проверка безопасной постановки персонажа.
+	protected bool GeometryFinite(float value)
+	{
+		return value <= float.MAX && value >= -float.MAX;
+	}
+
+	protected void GeometryResult(int w, string result, string reason, int samples)
+	{
+		PrintFormat("[RICON_LIVEG] terminal=1 w=%1 result=%2 reason=%3 samples=%4 scope=EDITOR_SOURCE voiceRange=UNKNOWN standingSafe=NOT_TESTED physics=NOT_TESTED", w, result, reason, samples);
+	}
+
+	protected void ReadGeometry(WorldEditorAPI api, int w, IEntity terrain, int terrainCount)
+	{
+		if (api.IsGameMode() || terrainCount != 1 || !terrain)
+		{
+			GeometryResult(w, "INCOMPLETE", "EDITOR_OR_TERRAIN_NOT_UNIQUE", 0);
+			return;
+		}
+		BaseWorld geometryWorld = terrain.GetWorld();
+		if (!geometryWorld)
+		{
+			GeometryResult(w, "INCOMPLETE", "NO_BASE_WORLD", 0);
+			return;
+		}
+		vector boundsMin;
+		vector boundsMax;
+		geometryWorld.GetBoundBox(boundsMin, boundsMax);
+		for (int axis = 0; axis < 3; axis++)
+		{
+			if (!GeometryFinite(boundsMin[axis]) || !GeometryFinite(boundsMax[axis]) || boundsMin[axis] > boundsMax[axis])
+			{
+				GeometryResult(w, "INCOMPLETE", "NONFINITE_OR_UNORDERED_BOUNDS", 0);
+				return;
+			}
+		}
+		if (boundsMin[0] >= boundsMax[0] || boundsMin[2] >= boundsMax[2])
+		{
+			GeometryResult(w, "INCOMPLETE", "EMPTY_XZ_BOUNDS", 0);
+			return;
+		}
+		PrintFormat("[RICON_LIVEG] w=%1 bounds=1 minX=%2 minY=%3 minZ=%4 maxX=%5 maxY=%6 maxZ=%7", w, boundsMin[0], boundsMin[1], boundsMin[2], boundsMax[0], boundsMax[1], boundsMax[2]);
+		array<vector> points = {"128 0 128", "228 0 128", "28 0 128", "128 0 228", "128 0 28"};
+		// Весь fixed набор проверяется до первого height getter; невалидная точка не читается.
+		for (int checkIndex = 0; checkIndex < 5; checkIndex++)
+		{
+			vector checkPoint = points[checkIndex];
+			if (checkPoint[0] < boundsMin[0] || checkPoint[0] > boundsMax[0] || checkPoint[2] < boundsMin[2] || checkPoint[2] > boundsMax[2])
+			{
+				GeometryResult(w, "INCOMPLETE", "POINT_OUTSIDE_WORLD_XZ", 0);
+				return;
+			}
+		}
+		for (int pointIndex = 0; pointIndex < 5; pointIndex++)
+		{
+			if (api.IsGameMode())
+			{
+				GeometryResult(w, "INCOMPLETE", "EDITOR_CONTEXT_CHANGED", pointIndex);
+				return;
+			}
+			vector samplePoint = points[pointIndex];
+			float heightM = geometryWorld.GetSurfaceY(samplePoint[0], samplePoint[2]);
+			if (!GeometryFinite(heightM))
+			{
+				GeometryResult(w, "INCOMPLETE", "NONFINITE_HEIGHT", pointIndex);
+				return;
+			}
+			PrintFormat("[RICON_LIVEG] w=%1 point=%2 x=%3 z=%4 surfaceY=%5", w, pointIndex, samplePoint[0], samplePoint[2], heightM);
+		}
+		GeometryResult(w, "EDITOR_GEOMETRY_OBSERVED", "FIVE_FIXED_POINTS", 5);
 	}
 
 	static const int MAX_DETAIL = 40;        //!< классов компонентов GameMode
 	static const int MAX_STRING_VARS = 8;    //!< строковых полей EditorCommentEntity (codex #4165)
 	static const int MAX_VALUE_CHARS = 200;  //!< символов на значение (codex #4165)
 	protected bool m_bDetail;
+	protected bool m_bGeometry;
 
 	//! Классы компонентов сущности (только чтение IEntitySource.GetComponentCount/GetComponent), не более MAX_DETAIL.
 	protected void PrintComponents(int w, int entity, IEntitySource src)

@@ -1,0 +1,36 @@
+{
+  "nodes": 186,
+  "leaves": 172,
+  "domains": 12,
+  "dependencies": 338,
+  "coverage": 21,
+  "requirements": 22,
+  "invariants": 14,
+  "sources": 92,
+  "workflows": {
+    "done": 42,
+    "current": 5,
+    "partial": 54,
+    "planned": 65,
+    "blocked": 20
+  },
+  "priorities": {
+    "P0": 17,
+    "P1": 65,
+    "P2": 21,
+    "P3": 5,
+    "none": 78
+  },
+  "htmlSha256": "8ce5867bdd06ea2a175f3a8318aafbdedb00505c47f18df0661089229c8911a2",
+  "modelSha256": "3c69eac3633e59d01f7d8d0930f67e6434646f8fbc2e86932bffb920a028dedb",
+  "radial": {
+    "outputPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-full-development-graph-20261109\\RICON_RADIAL_OVERVIEW.html",
+    "bytes": 989758,
+    "sha256": "1A8A3AC023910D212506DABB7707C89A7178C3D5879DDB229F53FA46A893501F",
+    "svgOutputPath": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-full-development-graph-20261109\\RICON_RADIAL_OVERVIEW.svg",
+    "stages": 8,
+    "branches": 12,
+    "panels": 85,
+    "explicitEdges": 26
+  }
+}

@@ -1,0 +1,275 @@
+{
+  "status": "ACCEPT_WITH_RAW_DECODE_AND_GLOBAL_LOOKUP_AND_CONDITIONAL_RF_SCOPE",
+  "binary_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "verified_owned_artifacts": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\context_inject.asm",
+      "sha256": "1630a556311bebacbb49a0879c762da2a292e79328942e1061f972a9d55d11ac"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\global_id_slot_lookup.asm",
+      "sha256": "4685ef365c2ba372a88a17afed2670f2b4c5eb3787d339dcc9fd7e021b350c68"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\global_lookup_wrapper.asm",
+      "sha256": "84b0dda485f7536c5f6ef2e84168789444b41229fce9ef32b80bc7d5e9a038f7"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\raw_bit_dispatch.asm",
+      "sha256": "0f9e21e4d44413c1a9820fd3a3d09c23e31032e67fb82862083d001b43b2799e"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\raw_bit_reader.asm",
+      "sha256": "e25e4ecf25ccb14649a4dbea003fa0fb5e8d7b88e1dcdb3434372fcac95f922e"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\raw_memory_read.asm",
+      "sha256": "2d4f7cb11ca7087e421bb668d43f8118856eafb67dd4f1ed9125d20c8c40fd41"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\raw_memory_transfer.asm",
+      "sha256": "a47174353995afffc9d8a8355aa47b215ccd29060095f451cbc3bc63f8d55ef1"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-goal-20261104\\rpl-source\\raw_memory_write.asm",
+      "sha256": "2f4d7ac65f2006470f4c181689dbdc86e48dbf44ce363c464ad3dc1ff7d533ae"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_SetRange.asm",
+      "sha256": "3f5355f7bab52dc21eb7fea21c3d350642d3a32d8785ada21fbf5ead166a4ff4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_ConcreteSlot6.asm",
+      "sha256": "bce0fe736b14bd24efa4f9dd6882482825181549883d4723cedbb72c9ced36d4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_GraphCandidate.asm",
+      "sha256": "d16dcce2efdebfe3420b5a0eab1263ad311a6c0bf318e852f2dd1e3e1d9d723a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Relay_FullSlot6.asm",
+      "sha256": "57e1cff406da8753756a520891f1c62e87b70940b1677170237ef6296926ab60"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Radio_CommonSync.asm",
+      "sha256": "d7913dabf6ff748a7c06d7231b4b1c77534bde379ecb14e0677b7f844d63ce0e"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Radio_GraphSlot8_DFC30_Union.asm",
+      "sha256": "ea48932019f0adc7a5d4cc5163506db3fe596f7437e1757dec9b7488b1f72ddb"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch12\\export\\RPC_Authorize.asm",
+      "sha256": "a69c0e575c52c6bdd3c1f66f6d295a927d5fe18d455676b6c2b9c5b9be1d31d3"
+    }
+  ],
+  "additional_frozen_joins": [
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\VoN_RPC_Registration.asm",
+      "sha256": "a92e87878168ab010ecd41257efc2e69a169b9de90a29ce13a5634a8988d7847"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch03\\export\\next_body_02.asm",
+      "sha256": "c297dbfe45d425ffb013d54366a32f57b713e0dd61ee38e9054d2cf50011579c"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch03\\export\\next_body_03.asm",
+      "sha256": "eb72533463bfeeb0cd3970c20b61a898b7a5c2259b4917fafc623db999268944"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\VoN_RadioGraphCaller.asm",
+      "sha256": "a07b397ae4a2fb369b2a50eefa8b0ce91f744689b34495f55b30110a18a7fd5a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch11\\export\\Radio_LookupById.asm",
+      "sha256": "97eb689f07acec4abe7fede33415ef8eb95582d341f0a79b9a291674d44fb3a0"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch16\\export\\Radio_IdLookup.asm",
+      "sha256": "560c9df5a4f96057cfd169a81004a1c87a1e1ecb32ac2b6150c95ec29d6ce7ed"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch18\\export\\NET_InvokeAdmission.asm",
+      "sha256": "18f747eb3c92fbb879a33020543fbbdd8ce5f8a15e0a0406050276b5aa98d7c4"
+    }
+  ],
+  "current_raw_spans": [
+    {
+      "name": "global_lookup_wrapper",
+      "start": "0x140846fc0",
+      "end_exclusive": "0x140846fe2",
+      "bytes": 34,
+      "current_span_sha256": "4703e5413f65c6776b1d8680c68da7a7d05dcc5baaff42903ac34dad6f2699ea"
+    },
+    {
+      "name": "global_id_slot_lookup",
+      "start": "0x140daa9b0",
+      "end_exclusive": "0x140daa9ea",
+      "bytes": 58,
+      "current_span_sha256": "f9d6f35b3e296da7041d45c5ec926085ccbc660c55d73e27cbc201ebdd51ced5"
+    },
+    {
+      "name": "context_inject",
+      "start": "0x14029ff60",
+      "end_exclusive": "0x14029ff6e",
+      "bytes": 14,
+      "current_span_sha256": "f7d9d68fdcb4b367f231794d39bfda08fe2d254fad44abb8c26c41017af44648"
+    },
+    {
+      "name": "raw_memory_transfer",
+      "start": "0x1408ae0c0",
+      "end_exclusive": "0x1408ae15b",
+      "bytes": 155,
+      "current_span_sha256": "fb4c5a2cf623f0598661a6e639d8331b884620d73c360d176f8a129f294a886b"
+    },
+    {
+      "name": "raw_memory_read",
+      "start": "0x1408adef0",
+      "end_exclusive": "0x1408adf3b",
+      "bytes": 75,
+      "current_span_sha256": "2a02f2e3ca773e636a4309a664b0da0139304ed6adeb904933a36b6e806290c6"
+    },
+    {
+      "name": "raw_memory_write",
+      "start": "0x1408ae180",
+      "end_exclusive": "0x1408ae1ed",
+      "bytes": 109,
+      "current_span_sha256": "77eab745b7f0584fc6ba5aea5e71a56859f677f488d5466228f3dad2dfd0f754"
+    },
+    {
+      "name": "raw_bit_dispatch",
+      "start": "0x1408aeaf0",
+      "end_exclusive": "0x1408aeb05",
+      "bytes": 21,
+      "current_span_sha256": "3a400cde1f5182fd9ade1abbc5c34e7c2dcaa03ec7619b5684d8d299f15694e3"
+    },
+    {
+      "name": "raw_bit_reader",
+      "start": "0x140192690",
+      "end_exclusive": "0x140192855",
+      "bytes": 453,
+      "current_span_sha256": "7b4462c4b7cd350ef0f679207f57804faa7fe26952833a974197130133be59e3"
+    }
+  ],
+  "current_operand_checks": [
+    {
+      "va": "0x14029f691",
+      "bytes": "41b8c0000000",
+      "meaning": "wire192bit arg"
+    },
+    {
+      "va": "0x14029f6ae",
+      "bytes": "41b818000000",
+      "meaning": "intermediate24B"
+    },
+    {
+      "va": "0x14029f7ee",
+      "bytes": "41b8c0000000",
+      "meaning": "writer192bit arg"
+    },
+    {
+      "va": "0x14029ff63",
+      "bytes": "41b818000000",
+      "meaning": "injection24B"
+    },
+    {
+      "va": "0x1402a0cdf",
+      "bytes": "418b4e0c",
+      "meaning": "sourcecontext+C"
+    },
+    {
+      "va": "0x1411c6a1b",
+      "bytes": "8bd1",
+      "meaning": "id copiedEDX"
+    },
+    {
+      "va": "0x140daa9b0",
+      "bytes": "8bc281e2ffffff3fc1e81e4803c0",
+      "meaning": "globalbank high2/low30 split"
+    },
+    {
+      "va": "0x140daa9d1",
+      "bytes": "8b422c9085c07f0a33c0483902480f45c2c3488bc2c333c0c3",
+      "meaning": "slotvalidity localbranches"
+    },
+    {
+      "va": "0x1405e24f6",
+      "bytes": "f3410f107740",
+      "meaning": "source rangeR15+40"
+    },
+    {
+      "va": "0x1405e25bf",
+      "bytes": "f3410f104f40",
+      "meaning": "source squaredrange input"
+    },
+    {
+      "va": "0x1405e25dd",
+      "bytes": "0f2fd1777e",
+      "meaning": "rejectdistanceaboveRange"
+    },
+    {
+      "va": "0x1405df94a",
+      "bytes": "ff5028",
+      "meaning": "expandablevslot5"
+    },
+    {
+      "va": "0x1405e2b98",
+      "bytes": "f3410f107540",
+      "meaning": "relay sourceR13+40"
+    },
+    {
+      "va": "0x1405e2ca5",
+      "bytes": "0f2ff27279",
+      "meaning": "relay squaredrangegate"
+    },
+    {
+      "va": "0x1405e046b",
+      "bytes": "f30f115840",
+      "meaning": "SetRange localwrite+40"
+    },
+    {
+      "va": "0x140e67f66",
+      "bytes": "84d274098b470441394728757e",
+      "meaning": "callingnode ownercomparison"
+    }
+  ],
+  "direct_calls": [
+    {
+      "va": "0x14029f69c",
+      "target": "0x1408aeaf0"
+    },
+    {
+      "va": "0x14029f7fc",
+      "target": "0x1408aeaf0"
+    },
+    {
+      "va": "0x1402a0ce3",
+      "target": "0x1405dd350"
+    },
+    {
+      "va": "0x1411c6a24",
+      "target": "0x140846fc0"
+    },
+    {
+      "va": "0x140846fcb",
+      "target": "0x140daa9b0"
+    },
+    {
+      "va": "0x140192805",
+      "target": "0x1417ec84a"
+    }
+  ],
+  "global_manager_rip_target": "0x142177b60",
+  "conditional_math": {
+    "direct_d10_R1_rejected": true,
+    "relay_firsthop_d0_5_R1_admitted": true,
+    "relay_secondhop_d9_5_R65535_admitted": true,
+    "equality_admitted_q0": true
+  },
+  "limits": [
+    "Known live valid server radioID required; no ID discovery or active delivery demonstrated",
+    "Calling replicated VoN node owner admission remains; later RF/transceiver/Social/recipient gates retained",
+    "SetRange proxy-local write lacks local role guard; remote authority write/bypass not established",
+    "No SDK/Ghidra/engine/packet or exploit operation; no new targets; fullVoN goal not closed by this review"
+  ]
+}

@@ -5,4 +5,6 @@ modded class SCR_VONController
 	bool RICON_I0ToggledDirect() { return m_bIsToggledDirect; }
 	string RICON_I0ActiveHoldAction() { return m_sActiveHoldAction; }
 	EVONTransmitType RICON_I0TransmitType() { return m_eVONType; }
+	//! Только чтение существующего cache; InitEncryptionKey не вызывается.
+	string RICON_I0CachedLocalEncryptionKey() { return m_sLocalEncryptionKey; }
 }

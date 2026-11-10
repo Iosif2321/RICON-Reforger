@@ -1,5 +1,569 @@
 # RICON-Reforger — живой статус
 
+**2026-11-10 — продолжение Codex с личными субагентами:** закрыта независимая проверка [пакета manual probe175](../evidence/E-ct10-manual-world-probe-20261110.md); [исходный receipt](../evidence/receipts/ct10-manual-world-probe-result-20261110.json) сохранён без изменения, [приёмка и публикация Root](../evidence/receipts/ct10-manual-world-probe-root-acceptance-20261110.json) оформлены отдельно. Подтверждён scope COMPILE_AND_SHARED_PURE_GUARDS_ONLY: 175 checks, failures=0, SCRIPT(E)=0, process_exit=0. Manual/native/world path — NOT_RUN; 2065 прежних checks не пересчитывались и не объединяются с этим прогоном. Agy временно отложен по текущему составу команды. Машинная Goal-карточка в этом продолжении не объявляется active или complete; указание владельца продолжать и степень готовности продукта — отдельные сведения. Frozen READY_FOR_ROOT_REVIEW/«Goal ACTIVE» остаются историческими полями исходного документа. Следующий prerequisite — проверка mounted stock resource/parent и авторинг пары RICON_Physical_A/B; authoring, Play и native observation этим пакетом не разрешены и не выполнены. RF/antenna/clock qualification, общий RX, production parity, audio/content/load и полная цель OPEN. Старые датированные записи ниже сохранены целиком.
+
+> 2026-11-06: сверка get_goal обнаружила системный status=blocked (updatedAt17:11:38UTC). Причина UNKNOWN; root в этом продолжении не вызывал blocked/complete/paused. Последующие команды владельца продолжать действуют, работа по проекту дала capture05–10 и source/SDK результаты. Проектная работа продолжается, full objective/complete=false сохранены; системную карточку нельзя честно называть active до возобновления. У доступного update_goal нет active/resume, create_goal не заменяет unfinished Goal. Две UI-инвентаризации подтвердили недоступный native pipe/browser host; UI действий и правок внутренней базы Codex не было. Для автоматических Goal turns запрошено возобновление карточки владельцем; новое разрешение на RICON не требуется. Последний native результат — reviewed capture10 numeric OUTPUT-cache; actual Radio descriptor/DSP/content и полный план остаются открытыми.
+
+> 2026-11-06: capture10 независимо подтвердил пять numeric OUTPUT-cache снимков actual ownB T/R63C. В state0 output count3: найден ID5=0.20000040531158447, ID8=0.0010000000474974513, ID12=0.0; все три присутствуют во всех пяти точках, адреса совпали, dirty0. ID12 является найденной нулевой записью, а не fallback при отсутствии. Ненулевые другие записи исключают описание всего кеша как нулевого, но не доказывают cache readiness или actual consumption. Parent input q=0.9999994039535522/gain0, локальный source API readback1/index75 сохранён. Parent elapsed 0/103.6031/312.8568/601.5514/912.5764ms; отдельные времена OUTPUT чтений сохранены. Названия Quality_W/Noise_V/Radio_V пока source hints, mappingQualified=false. Actual Bus/Radio descriptor и имя→native port join ещё открыты. Callbacks A:31 capture/30 used, B:30 RX; reader295 выборок/139 превышений периода, partial/nonAtomic. Kill request1505.9802ms/exit1706.8902ms: строгие1500ms не подтверждены, validator2000ms соблюдён. Все четыре собственных процесса завершены без ошибок, текущая OS-инвентаризация Arma пуста. Изменялась только read-only диагностика; GameA6/runnerB505/spec8F43/source registration1 сохранены, .25 challenge не выполнялся. Текущий source getter49 читает state+18/count24, прежний input observer — state+8/count14. Одинаковый float offset entry+18 не связывает эти коллекции. Source control280/gain-like61/neighbor44 независимо проверены: descriptor имеет bypass/literal/provider пути; конкретный Radio descriptor не установлен. Cpp RTTI известного VoN C содержит 13 записей без sound-backed base; новое Script cast этим не обосновано. AI SoundEventPriority остаётся отдельным metadata-кандидатом, не player voice/DSP port. Следующий один факт — actual Radio control descriptor/selector и его связь с тем же T и найденной OUTPUT записью; неизменный source1 повторять не нужно. Полная Goal активна: оба режима RECEIVER/SERVER, A/B, content/DSP, DIRECT/другие потоки/sharedRX, физика/калибровка/lifecycle/32 пользователей и все21раздел/этапы0–8 сохраняются; complete=false.
+
+> 2026-11-06: capture09 независимо принят в двух отдельных пределах. На B выполнен reviewed local AddOrFindSignal(name,1) и GetSignalValue=1 на source A-proxy; script index75, READY seq4, latest prerelease heartbeat seq6, source/own RPL и manager совпали. После ARM ACK новый gate повторно подтвердил готовность до release timestamp; remaining1422.891ms. Во всех пяти дискретных private T/R63C снимках gain k1/state0/record18 остался0, guard/dirty0; q k0/state0/record1=0.9999994039535522. Фактические начала 0/101.7425/314.2742/607.5449/901.7163ms, завершение последней918.2774ms. Script index75, native parameter k1 и record ID18 не смешиваются. Source readback1 не доказал persistent propagation в этой записи; universal binding/consumer/DSP/mute вывод не делается. Initial C snapshot был пуст до READY, первый typed V/T наблюдался после READY/release/RX; непрерывное отсутствие или точный момент рождения T этим не установлены. Callbacks A:31 capture/30 used, B:30 RX; reader288 выборок/163 превышения периода, partial/nonAtomic. Kill request1508.1136ms/exit1684.9192ms: строгие1500ms не подтверждены, validator2000ms соблюдён. Все четыре собственных процесса завершены без ошибок; root OS-инвентаризация Arma пуста. Применён только default-off NativeRx delta +54/-2, SHA A6AB, backup8B7 сохранён; остальные133 исходника неизменны. Compile09: exit0/SCRIPT(E)0, реальный Game module load;27 resource messages точно совпали с compile08, отдельная Steamworks ошибка сохранена. Новый runner B505/spec8F43/gate9E22 независимо проверены:49 PS parser/behavior cases и181 source/AST/hash assertions, не runtime tests. Следующий шаг до новых captures — actual graph output reader/consumer: current150-byte A3CB20 вызывает обработку A39D70 и getter ED1FC0; текущий54-byte ED1FC0 вызывает A1DF90 и tail A1DAF0. Это другой путь, чем прямая загрузка stored entry+18. Повторять неизменный preregistration1 опыт не требуется. Полная Goal активна; A/B, content/DSP, DIRECT/другие потоки/sharedRX, RECEIVER/SERVER и все21раздел/этапы0–8 остаются обязательными, complete=false.
+
+> 2026-11-06: capture08 независимо принят как пять дискретных stored-снимков одного свежего ownB T/R63C. Фактические начала относительно первого квалифицированного parent return: 0/103.8791/304.2828/606.0353/914.2755ms; завершения: 0.0488/122.2284/323.7788/622.0912/931.0329ms. Первая точка переиспользует свой исходный observed_utc; остальные четыре — новые двойные чтения. В каждой gain native k1, packed9216, state0, record ID18, stored float0, guard0/dirty0; quality k0, packed512, state0/id1, float0.9999994039535522. Mapping/адреса и typed chain совпали, UNKNOWN/STOP нет. Это не непрерывный или универсальный ноль и не DSP/mute/consumer доказательство. Callbacks A:32 capture/31 used, B:31 RX; reader347 выборок/246 превышений периода, partial/nonAtomic. Kill request1507.7439ms/exit1694.5131ms: строгие1500ms не подтверждены, validator2000ms соблюдён. Собственные клиенты/watchdogs завершены без ошибок, root OS-инвентаризация Arma пуста; source134/assets11/helpers3 сохранены. Следующая единственная переменная — default-off preregistration нового имени RICON_RadioOnlyProbeGain со значением1 на локальном source A-proxy у B до создания T. Готовится staged source, actual Game/runner ещё не изменялись. Это пока без .25 challenge; FindSignal=-1 означает отрицательный API-result, не атомарное доказательство создания/ownership. AddOrFind по SDK сохраняет существующее значение; Set/Remove/stock-сигналы/user settings не используются. Baseline1 перед будущим .25 challenge должен наблюдаться после preregistration1; no-source0 не является запретом владельца или доказательством невозможности binding. Полная Goal активна: A/B, DSP/content, DIRECT/sharedRX, оба режима RECEIVER/SERVER и все21раздел/этапы0–8 сохраняются; complete=false.
+
+> 2026-11-06: capture07 независимо подтвердил один ранний снимок значений actual ownB T с текущим собственным ACP. TransmissionQuality: native k=0, packed=512, state=0, record ID=1, float=0.9999994039535522; RICON_RadioOnlyProbeGain: k=1, packed=9216, state=0, record ID=18, float=0.0. Guard и dirty равны 0; два прохода и повторная проверка цепочки совпали. ID18 вычислен из native metadata, а не взят из SIG. В текущем SIG задан value=1; гипотеза раннего stored baseline=1 не прошла. Это НЕ доказательство устойчивого нуля, mute или DSP: поздние scalar значения и consumer/hydration ещё не наблюдались. Проверка изменения нового source сигнала пока не подготовлена к запуску. Свежие PID/start/image/generation/V/T/R подтверждены; callbacks A:32 capture/31 used, B:31 RX. Reader: 294 выборки, 151 превышение запрошенного периода, partial/nonAtomic. Kill request 1507.7014ms, exit 1670.8892ms: строгие 1500ms не подтверждены, граница validator 2000ms соблюдена. Все четыре собственных процесса завершены без ошибок; текущая OS-инвентаризация Arma пуста; source134/assets11/helpers3 сохранены. Независимый source review принял конкретную current цепочку factory V → dispatch1370bytes → copier450bytes → T → scalar writer и формулу readback. Новый helper прошёл 39 pure mock проверок; общий предел двух scalar проходов 128KiB/2048 чтения, превышение отклоняется до чтения. Следующий один опыт capture08 меняет только read-only диагностику: значения на первом снимке и около +100/+300/+600/+900ms, с фактическими задержками. Новые Game setters/сигналы пока не добавлялись. Полная Goal активна: A/B, DSP/content, DIRECT/sharedRX, RECEIVER/SERVER, все 21 раздел и этапы 0–8 остаются обязательными; complete=false.
+
+> 2026-11-06: capture06 независимо принят как exact-name metadata observation текущего ownB private T/resource63C. В таблице7 строк: TransmissionQuality native_k0, RICON_RadioOnlyProbeGain native_k1. Metadata выдана ровно1раз; два чтения table/names и повторная typedchain совпали; следующий snapshot того же T/R metadata не переиздаёт. Свежие run/PID/start/generation1/V/T/R, B exact child0DE; stock A/proxy creation resourceB4C сохранён. Callbacks A32 capture/31 used, B31 RX; это не packets/loss/content. Public CharacterSoundComponent GetSignalIndex снова-1: отрицательный public lookup не означает отсутствия параметра в actual VoN resource. Watcher211 samples/165 overruns, partial/nonAtomic; lifetime/ABA не квалифицированы. Killrequest1506.7685ms/exit1702.808ms: strict1500 false, validator2000 true. Все4owned процесса gone/errornull; fresh root OS inventory Arma пусто; исходники134/assets11/helpers3 не изменены. Read-only wrapper прошёл independent source review и23pure mock cases, исходный watcher/runner сохранены. Current native name lookup A1F170 прочитан офлайн133bytes, raw=decoded; внешняя comparator semantics остаётся UNKNOWN. Следующее — квалифицировать actual T scalar readback и один default-off новый source-proxy SignalsManager Input test; stock environment signals/user state не использовать как обход. Поддерживаемый writer B, DSP/content/достаточная доставка A, DIRECT/sharedRX и полный21раздел/этапы0–8/RECEIVER/SERVER/физика/калибровка/lifecycle/32user не завершены. Goal active, complete=false.
+
+> 2026-11-06: capture05 независимо принят в ограниченном scope: A32 RAW_CAPTURE/31 RAW_USED, B31 RAW_RX; own B exact child0DE75817F6D87DD2, typed C→key1 V→T→current ownACP63C2132413FE4337. T.current resource и C.creation resource совпали также по указателю. Это не content/DSP/private writer PASS. На первом valid RX CharacterSoundComponent ownB/sourceAproxy по gain/TransmissionQuality снова -1. Watcher309 samples/130 overruns, nonAtomic/PROCESS_ENDED_PARTIAL; lifetime/ABA/absence не квалифицированы. Kill request1511.9513ms, exit1680.5785ms; strict1500 false, validator2000 true. Оба клиента и watchdogs завершены, source134/assets11/helper3 сохранены. До запуска процессов Arma уже не было; сохранены журналы assertion Workbench GameApp.cpp1284/2 leaked GenericEntity, причина не установлена, оператор его не закрывал. Admission памяти восстановился: A RAM22021234688/commit26346549248bytes, B final RAM20573134848/commit23513096192bytes. Pagefile/чужие приложения/пороги не менялись. Следующий шаг — подтверждение имени параметра в actual VoN resource отдельным read-only наблюдением; public binding к T всё ещё открыт. Полные21раздел/этапы0–8, RECEIVER/SERVER, noLOSTmute, DIRECT/sharedRX, физика/калибровка/lifecycle/32 пользователя обязательны. Goal active, complete=false.
+
+> 2026-11-06: capture04 source preparation принята независимо. Проверка latest B player2 controlled child до guarded ARM/release, 12 поведенческих случаев helper; общий selfcheck332 включает hashes/path/structure, не332native tests. Попытка capture04 остановлена A_MEMORY_ADMISSION ДО запуска A/B: RAM6737174528bytes (~6.27GiB), commit5146759168bytes (~4.79GiB)<6GiB. capture.attempted=false; watcher завершился samples0, target не открывал. Повторное измерение16:24UTC: RAM6.478GiB/commit4.510GiB, игр нет, только защищённый Workbench19984. Это не VoN-negative и не новая ошибка prefab. Goal полная активна, первый текущий turn этого ресурсного ожидания. Пороги/pagefile/чужие приложения не менялись. Следующий допустимый запуск — новый capture05 только после измеренного достаточного изменения headroom для двух процессов, с актуальными source/asset pins и own-child gate. Последний доказанный результат — passive pair09 own child и typed C creation resource own ACP; active V/T own ACP, writer/DSP и достаточная доставка содержания ещё открыты.
+
+
+> 2026-11-06: полная Goal активна. После узкого отрицательного public Snd-index capture03 выполнен начальный выбор B. pair07 дал replication missing entity ID до B binding, без capture. Один штатный native resave01 записал root ID в собственный prefab; GUID/meta, родитель и VoN Filename сохранены, остальные 10 assets неизменны. Fresh verify02: exit 0, script errors 0, чтение прежнего GUID и own ACP со stock-контролем. pair08 остановлен B_MEMORY_ADMISSION до запуска B. Новый пассивный pair09 с back buffer 640x360 прошёл прежние пороги: B управляет нашим child, proxy A RPL совпадает с A own RPL, есть свежий VoN и радио; ошибок Rpl layout в наблюдавшемся окне нет. В native typed C у B creation resource — own ACP 63C, у proxy A — stock B4; векторы пусты, callbacks 0, голос не передавался. Полная radio ownership/server numeric B RPL oracle, active V/T, writer/DSP и содержание A не квалифицированы. Все owned процессы завершены, Workbench владельца сохранён. Экономия памяти причинно не измерена. Следующий один опыт — capture04 с проверкой current own child до dispatch и наблюдением actual V/T/resource во время RX; подготовка идёт. Full0–8, RECEIVER/SERVER, время/общий RX/информативность/DIRECT/калибровка/32 пользователя остаются обязательными.
+
+
+> 2026-11-06: capture03 независимо проверен: A31 capture/30 used, B30 RX; на первом valid ownB RX существующие CharacterSoundComponent sourceAproxy/ownB оба вернули -1 для RICON_RadioOnlyProbeGain и TransmissionQuality. Четыре read-only запроса, setters0; свежий ownB V/T→stockACP наблюдался. Отрицательный вывод ограничен этими двумя компонентами/именами. Default-off диагностика скомпилирована compile06 exit0/scriptErrors0, original capture02 runner сохранён, новый runner содержит только отдельный spec и B-only flag. Owned процессы завершены, owner/source/assets сохранены; kill request1527.5886ms, exit1859.6662ms, strict1500ms не квалифицирован. Полная Goal активна, A/B/DSP/content открыты. Следующий grounded кандидат — штатный начальный выбор registered own receiver prefab без убийства/принудительной eligibility/изменения stock; требует квалифицировать конкретный current1.9 spawn hook до default deployment.
+
+
+> 2026-11-06: текущая полная Codex Goal активна в чате 01a1b149-f944-7942-8cef-9ffcdeeed551. Race watcher b:null исправлена:29 целевых checks, старый source воспроизводит regression. Один capture02 независимо принят как native RX-correlated typed ownB C→key1→V→T→stock ACP; A32 capture/31 used, B31 RX. Оба actor stock, свой child не выбирался. Снимки неатомарные;278 samples/233 overruns; kill request1509.9079ms, exit1707.0986ms, строгие1500ms не квалифицированы. Owned процессы завершены, owner и source/assets сохранены. Private writer, DSP, достаточная доставка содержания и full0–8 остаются открытыми. Следующий опыт: default-off read-only GetSignalIndex на source proxyA/ownB при validRX; без setters/actor changes.
+
+
+<!-- RICON_NATIVE_CALLBACK_CAPTURE01_20261106 -->
+**2026-11-06 — capture01: штатный radio callback-path A1→B2 наблюдён.** A дал31 RAW_CAPTURE/30 RAW_USED, B —30 RAW_RX; совпалиrun/generations/ownB receivercatalog/nativeindex0/32000kHz, q0.999999404. START/STOPaccepted1, requestinterval1003ms. Этоnativecallback-path, неPCM/содержание/coverageA/privatewriterB/DSP/DIRECT/ownactorPASS; внутреннееcapture/releaseсостояниеUNKNOWN. Killrequest1522.1349ms, exit1775.9784ms: observedexit<2000, строгие1500 НЕподтверждены. Обаownпроцесса/watchdogsзавершены, ownerWB19984/source134/assets11 сохранены. [Независимыйreview](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/guarded-cli-capture/capture01/review.json>). Следующийdefault-off8lineopaqueVoNrefdiagnosticужеcompiled05exit0/SCRIPT(E)0; rawC ещёнеqualified. ПолнаяGoalне завершена, complete=false; broadgrantactive.
+
+Ниже история предыдущих срезов.
+
+<!-- RICON_PASSIVE_RETAIL_PAIR05_20261106 -->
+**2026-11-06 — pair05: два retail участника соединены, пассивная script radio readiness подтверждена.** Штатный CLI -server создал Listen/localA1; retailB присоединился какClient/local2. Одинrun, stablegeneration1, BproxyA совпал с AownRpl, обаowncontroller/entity/VoN иradioentry прочитаны. Сервер видит уникальныеA/Binventory, одинаковыеkeys и32000|48000kHz; Bproxyview остаётсянеполным. Overlapvalidlogwindows не являетсяclockmapping/atomic proof. Callbacks0/capture0; nativeOwnership остаётсяUNQUALIFIED, actualvoice/DSP/A-B/privatewriter иowninheritedactor ещёнеприняты. ОбаownGameиwatchdog завершены, ownerWB19984/source134/assets11 сохранены. [Independentreview](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/paired-passive/pair05/review.json>). GUI больше не нужен: далееодинboundedguardedCLIcapture с сохранениемoneuse/identity/route/freshness/PIDstart/QPC/cutoff. Broadgrantactive; complete=false.
+
+Ниже история прошлых срезов.
+
+<!-- RICON_NATIVE_BASELINE01_20261106 -->
+**2026-11-06 — Game baseline01: загрузка RICON/Plain и read-only наблюдение подтверждены.** Exact retail Game1.9 e877 запущен с отдельным профилем; LiveProbe/Core/CoreTests и Plain world загружены, actual module/ASLR/COL/RTTI names проверены. V0/T0 в двух PARTIAL scans по128MiB не доказывают отсутствие объектов; actual RX/voice/DSP/A-B не квалифицированы. SCRIPT(E)=0, 13 loading-layout/Rally resource errors сохранены отдельно. Завершён только собственный PID30756 после stop-request; exit-1 ожидаем для intentional Kill, не normal-clean-exit. Owner WB19984/source134 сохранены. [Outcome](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/native-baseline/baseline01/outcome.json>), [independent review](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/native-baseline/baseline01/review.json>). Далее — пассивная пара WB listen-host A + retail Game B; повторные app-допуски не требуются в рамках broad owner grant. Полная Goal/приёмка/complete=false сохранены.
+
+Ниже сохранена история предыдущих срезов.
+
+<!-- RICON_VERIFY01_BROAD_APPROVAL_20261106 -->
+**2026-11-06 — verify01: fresh GUID-only source lookup подтверждён; необходимые действия проекта разрешены владельцем.** Новый Reader загрузил stock и own prefab по одному GUID с правильными full ResourceName. В обоих по 51 компоненту/1 VoN; child Filename — own ACP, original before/after — stock ACP. Wrong GUID нового ID — 0, own startup-unregistered — 0; exit 0/SCRIPT(E)=0, 134 source pins unchanged, Reader завершён, Workbench владельца сохранён. Причина старых register01 diagnostics UNKNOWN, stale cache не доказан. Это source lookup в данном Reader context; actual actor/voice/DSP/A-B ещё не приняты. [Независимый review](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-von-attachment-20261104/fixture/von-project-config/verify01/review.json>). Прямые «разрешаю все необходимые действия»/«все можно» внесены в §19 плана и полную Goal: дальнейшие необходимые подготовленные проверки выполнять без новых отдельных запросов; pagefile и защита чужих files/apps сохранены. Следующее — наблюдение actual native template/resource и адресного private порта. Полная цель не завершена.
+
+Ниже сохранена история предыдущих проверок и допусков.
+
+<!-- RICON_REGISTER01_OBSERVED_20261106 -->
+**2026-11-06 — register01 исполнен по разрешению владельца: собственная ACP прочитана у нового наследуемого prefab, исходный VoN Filename остался штатным.** Resource Manager вернул успешную регистрацию, создал native GUID `{0DE75817F6D87DD2}` и сообщил `Build successful`. При чтении нового ресурса зафиксированы три `Wrong GUID` в property `identity`; причина UNKNOWN, чистая и повторная GUID-загрузка не квалифицированы. Это положительный результат source-конфигурации, не работающий VoN/DSP. Reader завершён (exit 0, SCRIPT(E)=0), Workbench владельца сохранён, 134 исходника и собственные ACP/SIG/meta не изменились. Одноразовый допуск использован; Spawn/Play/server/mic/capture/transmission/preview не выполнялись. Прежняя граница допуска снята; machine Goal всё ещё наблюдается blocked, полный план и complete=false сохранены. [Результат и ограничения](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-von-attachment-20261104/fixture/von-project-config/register01/assessment.json>); [независимая проверка](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/REGISTER01_REVIEW_RU.md>).
+
+**Следующая проверка подготовлена, но не запускалась.** Read-only триаж подтвердил совпадающую запись GUID/path в собственных `.meta` и `resourceDatabase.rdb`. Причина трёх diagnostics и маршрут прежнего GUID+path Load остаются UNKNOWN; устаревший mapping в том же процессе — только гипотеза. Подготовлен один fresh Reader `verify01 / prefab-inspect-existing`: сначала stock GUID-only positive control, затем own GUID-only load, ResourceName/Filename readback. Если штатный контроль не пройдёт, результат STOP_CAPABILITY/own-not-tested. Helper прошёл независимое source review; compile04 exit 0/SCRIPT(E)=0, 134 source pins unchanged, Reader 30644 завершён, owner 19984 сохранён. Compile-only не вызывал новый resource worker. Загрузка по одному GUID ещё не квалифицирована. В новом worker нет регистрации/Clone/Set/Save/Spawn/Play; loadedResourceName и raw diagnostics требуют ручной оценки, terminal OBSERVED не означает clean GUID автоматически. [Подготовленная команда и ограничения](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/load-only/preparation.json>), [source review](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/load-only/review.json>). Старый одноразовый допуск использован; новый load-only запуск ждёт отдельного согласия владельца. Полная Goal, RECEIVER/SERVER, no-LOST-mute и complete=false сохранены.
+
+Ниже сохранена датированная история предыдущих состояний.
+
+<!-- RICON_REGISTRATION_PERMISSION_BLOCKED_20261106 -->
+**2026-11-06 — Goal BLOCKED, complete=false: ожидается точный допуск регистрации нового prefab.** Новая Goal по полному плану сохранилась; source/helper/mount/compile03 подготовка и независимые reviews завершены. Третье последовательное наблюдение одного отсутствующего допуска прошло [аудит](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/REGISTRATION_BLOCKED_AUDIT_RU.md>); machine Goal фактически blocked. Никакого нового native run или повторного запроса нет. [Подготовленная команда](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-goal-plan-20261106/prepared-registration.json>). Ответ требуется на уже отправленный вопрос регистрации, не на старый исполненный inspect01. Ниже история ранее выполненной работы.
+
+<!-- RICON_FULL_PLAN_SOURCE_COMPILE_20261106 -->
+**2026-11-06 — Goal active, source работа начата; регистрация нового prefab ещё не выполнялась.** Source C200 и новый helper E589 прошли review; Reader получил внутреннюю зависимость LiveProbe. Compile-only03 exit0/SCRIPT(E)0, 134source pins unchanged, native mount четырёх проектов наблюдён, owner Workbench сохранён. Подготовлен register01/readback; точный owner допуск запрошен, source prefab в addon не перенесён. A/B/DSP/native selection не квалифицированы. [Полная Goal](GOAL_RICON_TEMPORAL_RU.md). Ниже датированная история.
+
+<!-- RICON_FULL_PLAN_GOAL_ACTIVE_20261106 -->
+**2026-11-06 — новая Goal по полному плану создана и активна.** Качество, слышимость, информативность, физические замирания и RECEIVER/SERVER закреплены в полном контракте; local PCM/common RX/noLOSTmute/A-B/этапы0–8 и вся приёмка сохранены. Ближайшее — проверенный source inherited prefab и подготовка data-only регистрации; app-операции/Spawn/Play/audio не разрешены новым текстом автоматически. [Полная Goal](GOAL_RICON_TEMPORAL_RU.md) и [основной план](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md). Ниже датированная история, включая прежнюю blocked карточку.
+
+<!-- RICON_INSPECT01_RESULT_20261106 -->
+**2026-11-06 — допуск получен, inspect01 выполнен: защитная остановка до Set.** В исходном и клонированном entity source по51компоненту/одному VoN, roots различны. Среди компонентов найдено совпадение контейнеров, поэтому SHARED_COMPONENT_CONTAINER/exit3 при SCRIPT(E)=0. Какой компонент shared, не логировалось; shared именно VoN не доказано. Filename не изменялся, after-readback не выполнялся. Owner Workbench сохранён, Reader завершён, source/assets unchanged. [Результат](../evidence/native-von-access-20261104/VON_PROJECT_CONFIG_RU.md). Прежнее ожидание разрешения снято; machine Goal пока blocked, complete=false.
+
+Ниже сохранена история прежних состояний.
+
+<!-- RICON_PREFAB_PERMISSION_BLOCKED_20261105 -->
+**2026-11-05 — Goal BLOCKED, complete=false: ожидается точный допуск data-only clone-inspect.** Подготовка, source review, compile-only и launcher завершены. Третье последовательное наблюдение того же отсутствующего разрешения прошло независимый аудит; Goal tool фактически вернул blocked. Runtime/clone/Play/audio не выполнялись, owner Workbench сохранён. [Подготовленная проверка](../evidence/native-von-access-20261104/VON_PROJECT_CONFIG_RU.md), [аудит](<C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ricon-von-attachment-20261104/goal/version19/prefab-permission-blocked-audit.md>). Полная RECEIVER/SERVER temporal-цель и приёмка неизменны. Условие продолжения — ответ владельца на уже отправленный запрос; новый вопрос не нужен.
+
+Ниже сохранена история предыдущих срезов.
+
+<!-- RICON_PREFAB_CONFIG_PREP_20261105 -->
+**2026-11-05 — source selector найден; проверочный модуль скомпилирован, clone-inspect ждёт допуска.** SCR_VoNComponent.Filename и цепочка четырёх prefab установлены; compile-only exit0/SCRIPT(E)0 без resource operations, owner Workbench сохранён. [Подготовленная проверка](../evidence/native-von-access-20261104/VON_PROJECT_CONFIG_RU.md). Это не private VoN actuator; Goal active/complete=false, runtime/audio не проверены.
+
+
+<!-- RICON_V19_RESUMED_20261105_BEGIN -->
+**2026-11-05 — Goal active, complete=false / own SIG и ACP сохранены.** Редактор 1.9 сохранил SIG 7d02 и ACP 9e396d64 (v2); inputs/defaults/outputs и все остальные явные связи проверены, SIG/meta сохранены. Независимый saved-graph review принят; omitted sample defaults остаются UNQUALIFIED. Current native writer проверен отдельно: private VoN membership и actuator не установлены; реальная передача не проверялась. [Текущий итог](../evidence/native-von-access-20261104/ASSET_PREPARATION_RU.md). Полная RECEIVER/SERVER temporal-цель сохранена. Ниже история предыдущих срезов.
+<!-- RICON_V19_RESUMED_20261105_END -->
+
+## История прежних срезов
+
+Следующие blocked/manual-draft/CUA записи описывают прежние наблюдения; текущий статус указан выше. Инструкция Value 1→0.5 устарела: в UI 1.9 нужного поля не было, Name tmp/restore Save уже выполнен и повторения не требует.
+
+<!-- RICON_GOAL_BLOCKED_20261105_BEGIN -->
+**2026-11-05 — GOAL BLOCKED / НЕ ЗАВЕРШЕНА.** Отличающиеся settings/resource-read проверки завершены; три Goal-turn повторили CUA failure. Own SIG загружается (author18 exit0), native program непрозрачен, private VoN access не квалифицирован. Build successful09 сохранён; source11 не объявлен native failure. Текущая own SIG — reviewed draft для ручного Save, ACP/meta сохранены. [Итог и точный внешний шаг](../evidence/native-von-access-20261104/ASSET_PREPARATION_RU.md). Полная temporal-цель и приёмка сохранены, complete=false. Ниже история прежних срезов.
+<!-- RICON_GOAL_BLOCKED_20261105_END -->
+
+<!-- RICON_CONFIG_PROVENANCE_20261105_BEGIN -->
+**2026-11-05 — CONFIG_PROVENANCE_CLOSED / PRIVATE_VON_ATTACHMENT_OPEN.** [Продолжение](../evidence/native-von-access-20261104/ASSET_PREPARATION_RU.md): обе исследованные конфигурационные загрузки создают свежий template. Передача D=U доказана, но этот U не принимает существующий private VoN T. CUA/AX изменение графа не квалифицировано; clean own assets восстановлены. Следующий шаг — поддерживаемый external attachment/interception, не повторная конфигурационная загрузка. Полная temporal Goal active, complete=false.
+<!-- RICON_CONFIG_PROVENANCE_20261105_END -->
+
+<!-- RICON_OWN_ASSET_AUTHORING_20261105_BEGIN -->
+**2026-11-05 — OWN_RESOURCES_REGISTERED / COMPILED_GRAPH_UNQUALIFIED / PRIVATE_VON_ATTACHMENT_OPEN.** [Текущий результат](../evidence/native-von-access-20261104/ASSET_PREPARATION_RU.md): own SIG фактически открыта; draft не пересобран, working assets восстановлены, native meta сохранены. Условная передача готового instance в каталог доказана, private VoN provenance ещё OPEN. Разрешены own-resource authoring и Computer Use Workbench; Play/server/preview/capture/transmissions не выполнялись. Полная temporal Goal остаётся active, complete=false.
+<!-- RICON_OWN_ASSET_AUTHORING_20261105_END -->
+
+<!-- RICON_NATIVE_WRITER_COVERAGE_20261104_BEGIN -->
+**2026-11-04 — FULL_OBJECTIVE_ACTIVE / STATIC_ACCESS_PROGRESS / NATIVE_NOT_QUALIFIED.** [Два новых результата](../evidence/native-von-access-20261104/RESULT_RU.md): public concrete Snd writer → owner catalog → тот же scalar helper; default new-entry catalog path создаёт свой template, private VoN membership остаётся OPEN. Native range envelope допустим лишь при доказанных finite bounds; maximum radius перечисляет около6.88M координат клеток, это не benchmark. Никакого автоматического отключения по LOST/Q0; два режима и две ступени сохранены. Машинная Goal active с ссылкой на полную задачу; исходники/компиляция сохранены, runtime не запускался.
+<!-- RICON_NATIVE_WRITER_COVERAGE_20261104_END -->
+
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_BEGIN -->
+**2026-11-04 — OWNER_AMENDED / PROJECT_IN_PROGRESS / NATIVE_NOT_QUALIFIED.** [План переписан](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md): RECEIVER/SERVER, временной канал → receiver/audio, без автоматической тишины/transport drop из LOST/Q0. Старый blocked audit относится к прежней server-hardgate архитектуре; владелец прямо поручил продолжение. Project Goal обновлён, machine Goal старой objective инструментом не возобновлён. [Новая проверка DSP binding](../analysis/VON_TEMPORAL_INPUT_BINDING_RU.md) уточнила внутренний Input update/writer; поддерживаемый доступ к private VoN instance пока не квалифицирован. Core/fixtures не изменены, полноценная интеграция не завершена.
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_END -->
+
+<!-- RICON_GOAL_BLOCKED_AUDIT_20261104_BEGIN -->
+**2026-11-04 — Goal BLOCKED, задача не завершена.** Три последовательных проверки подтвердили `NO_QUALIFIED_ALLOWED_VON_POLICY_ACCESS`; `update_goal` вернул `blocked`. [Независимый аудит](../review/R-native-von-blocked-20261104.md). Нужен конкретный совместимый интерфейс серверной привязки отправителя к TX и применения radio population/final q либо отдельно согласованное вмешательство в native server с квалификацией совместимости. Одно разрешение Play этот интерфейс не создаёт. Внесённые исходники/доказательства компиляции сохранены; `complete=false`, Core actuator/calibration открыты, текущие ограничения не расширены.
+<!-- RICON_GOAL_BLOCKED_AUDIT_20261104_END -->
+
+<!-- RICON_VON_ACCESS_REVALIDATED_20261104_BEGIN -->
+**2026-11-04 — повторная квалификация voice-policy доступа:** [первичные источники и текущие ревизии](../evidence/von-access-refresh-20261104/FINAL_RU.md). Official HEAD и native SDK не изменились; совместимость host1.8.0.13 и VoN policy порт не квалифицированы. Нового адаптера/эффекта нет; цель active, complete=false, текущие ограничения сохранены.
+<!-- RICON_VON_ACCESS_REVALIDATED_20261104_END -->
+
+<!-- RICON_SOURCE_REFERENCE_QUALIFIED_20261104_BEGIN -->
+**Active Goal, 2026-11-04: квалификация source-reference.** [Проверенный результат](../evidence/native-source-id-20261104/DECISION_RU.md): raw24B voice context разрешает source-radio ID через общий server lookup, без peer-local remap/streaming authorization. Скрытие server-owned TX и range1 RX leaves не закрывает source binding; reachable relay — отдельный RF-контрпример. Это статический вывод с независимым ACCEPT, не native exploit/voice PASS. Нового adapter/source effect нет. Текущий machine Goal active; прежние paused/null snapshots — история. Compile-only ограничения, BLOCKED_NO_ACTUATOR и незавершённость полной цели сохраняются.
+<!-- RICON_SOURCE_REFERENCE_QUALIFIED_20261104_END -->
+
+<!-- RICON_SCRIPTEDITOR_COMPILE_20261104_BEGIN -->
+**2026-11-04 — ENFORCE_MODULE_COMPILE_LOG_CONFIRMED_PLATFORM_INIT_FAILED.** По отдельному разрешению владельца выполнен только Script Editor: Game/WorkbenchGame module summaries и три target source подтверждены, `SCRIPT(E)=0`. Затем `SteamAPI_Init failed`, exit−1, общий процесс не PASS; target завершён, source unchanged. [Отчёт](../evidence/E-native-ricon-integration-20261104.md), [independent compile review](../review/R-native-ricon-compile-20261104.md). Play/server/capture/native transmission не выполнялись; VoN actuator и production calibration открыты.
+<!-- RICON_SCRIPTEDITOR_COMPILE_20261104_END -->
+
+<!-- RICON_NATIVE_SOURCE_APPLIED_20261104_BEGIN -->
+**2026-11-04 — SOURCE_APPLIED_VERIFIED.** [Отчёт](../evidence/E-native-ricon-integration-20261104.md), [независимый review](../review/R-native-ricon-integration-20261104.md). Три TOOL_ONLY исходника фактически применены: shadow bridge и отдельный generic same-world ONE_RX информационный режим. Source/offline checks прошли, compiler/native не запускались. Player VoN `NO_SUPPORTED_PAIR_HOOK`, Core `BLOCKED_NO_ACTUATOR`, calibration открыта. Общая программа не завершена; полный Goal и история сохранены.
+<!-- RICON_NATIVE_SOURCE_APPLIED_20261104_END -->
+
+<!-- RICON_NATIVE_INTEGRATION_DESIGN_20261104_BEGIN -->
+**Интеграция RICON, 2026-11-04 — DESIGN_REVIEW_ACCEPTED / ENGINE_CAPABILITY_NOT_QUALIFIED.** [План](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md) и три исследования определяют server radio population/q до radio overlay; native capture/Opus/network/decoder и DIRECT переиспользуются. Public pre-route hook не найден; custom-signal DSP binding остаётся OPEN. Source binding, cache/expiry, user state и независимость пар включены в контракт. Код продукта не менялся: `BLOCKED_NO_ACTUATOR`, `BLOCKED_CALIBRATION` и незавершённость полной программы сохраняются. Игра/Workbench/движок не запускались.
+<!-- RICON_NATIVE_INTEGRATION_DESIGN_20261104_END -->
+
+<!-- VON_NATIVE_CODE_REVIEW_20261104_BEGIN -->
+## Актуальное дополнение — 2026-11-04
+
+**Пункт 1: STATIC_CODE_DATAFLOW_REVIEWED.** Завершён статический разбор VoN и радио по машинному коду, установленным скриптам и ресурсам, включая входные данные, настройки, радио/ретрансляцию, Opus, сетевые очереди и UDP, проверку получателя, звуковые эффекты, Windows-аудиоинтерфейсы и уведомления. [Человекопонятный граф](../analysis/VON_RADIO_DATAFLOW_RU.html) · [подробная карта и доказательства](../analysis/VON_RADIO_DATAFLOW_RU.md).
+
+Область доказательства: Windows game EXE 1.8.0.13 SHA256 `1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9`, текущие vanilla assets/scripts и указанные границы общих интерфейсов. Последний SRC-SIG1 принят как условный статический результат для единственной stock-декларации без дополнительной реализации/override. Arma/Workbench/движок для этого разбора не запускались. Доставка слышимого контента, radio-only/per-pair actuator, интеграция RICON и этапы 3–8 не объявляются готовыми. Пункт 1.1 извлечения подсистемы не выполнялся. Ниже сохранены прежние датированные срезы; их runtime результаты и отказы не переклассифицированы.
+<!-- VON_NATIVE_CODE_REVIEW_20261104_END -->
+
+**Срез Agora 2026-11-03:** подтверждены отдельный RICON→native radio→B сигнал с wrong-frequency/model-LOST/recovery контролями и согласованная двухпроцессная привязка на дискретных срезах. Native VoN AI input выполнен, но callback A-прокси пережил расстройку всех B-трансиверов; он не доказывает B-radio RX. Production Core/actuator не менялся. Точные уровни, 480 HOST/199 Enforce проверок, выводы по engine-моду и ссылки на журналы — [E-agora-radio-native-20261103.md](../evidence/E-agora-radio-native-20261103.md).
+
+## Текущая утверждённая фаза — 2026-11-03
+
+Владелец утвердил продолжение в Agora (#6582): **0 документация → 1 вся цепочка VoN → 2 механизмы
+радиопередачи VoN → baseline → actuator → RICON → данные мира/физика → lifecycle → нагрузка**.
+Это текущая очередь; исторические этапы, числа и блокеры ниже сохранены как датированные записи.
+
+| Область | Подтверждено в датированных срезах | Не подтверждено / следующий gate |
+|---|---|---|
+| Локальные роли | Host + отдельный Diag-клиент; согласованное I0 mapping на дискретных срезах | Непрерывное владение native binding и player-voice delivery |
+| Generic radio | Точный same-world B endpoint; real-evaluator TX admission; wrong-frequency, model-LOST и recovery | Cross-process payload, directed receiver gate, VoN/звук |
+| Native AI input | Вызов VoN AI event и A-proxy sound-start в B; matched/wrong-frequency/fresh recovery | B own radio RX не наблюдался; proxy событие не является matched-frequency RX witness |
+| Пассивная fixture NRX | A/B binding, локальные каталоги по 2 трансивера, heartbeat и 60 s terminals: invalid0, subscriptions0, callbacks0; отдельный metadata/lifecycle PASS | Capture/PTT/mic не включались; callback owner и межпроцессная identity radio items не квалифицированы; не player RX/content/audio baseline |
+| Meter и контроль | Meter compile attempt 2: 44/44 PASS_PURE_ONLY; runtime упал до B bind, flag-off контроль FAILED_CONTROL_INCOMPLETE | Samples/native calls/requests до первого failure были 0; calibration, player RX/content/audio и причина native crash не установлены |
+| Script-policy readiness | Pulse policy 52/52 synthetic PASS; PREPARED по ADMIN при faction UNKNOWN, unarmed/capture NOT_REQUESTED | Только script eligibility; не armed rehearsal, native capture/RX/content/audio/release |
+| Первый native capture/RX | A OnCapture и B own VoN OnReceive(senderA, local catalog0 ref) наблюдались при 32000 kHz; NATIVE_CAPTURE_INGRESS_AND_RADIO_RX_METADATA_CANDIDATE | Перед controls: не PCM/input energy/content/playback/exclusive radio path или exact release |
+| Native no-send | SQUAD_RADIO/exactTx=1; 1002 ms, оба capture API вызова пропущены; A 21 / B 8 NRX rows, raw capture/RX/used0 | B heartbeat за 50 ms до stop: finite absence, не atomic health, microphone-off или global idle |
+| Новые Wrong/Matched metadata | Wrong A 74 / B 70: 69 null и один receiver в sampled transition; Matched A 80 / B 77: все receiver-present, null0, 39 distinct snapshots | Wrong callback tuning UNKNOWN; null не DIRECT; это не content/audio/RF/per-pair PASS |
+| Проверки | 480 canonical HOST и 199 Enforce прежнего среза; отдельно NRX 39/39, meter 44/44, pulse policy 52/52 synthetic; отказы не суммируются как PASS | Ни число тестов, ни compile не закрывают voice/content/playback/production authority |
+| Engine-мод | Исследован Enforce/receiver ACP/debug путь и недостающий per-stream/recipient contract | Клиентский native hook, совместимость стороннего host/ABI, per-pair DSP/gate |
+
+NRX подтверждён [runtime-квитанцией](<../../../Cellular System/output/agora-native-von-20261103/nrx-passive-runtime-receipt.json>),
+[sidecar SHA](<../../../Cellular System/output/agora-native-von-20261103/nrx-passive-runtime-receipt.sha256>) и
+[pure-квитанцией](<../../../Cellular System/output/agora-native-von-20261103/nrx-pure-receipt.json>) (Agora #6767/#6768).
+Четыре новых TOOL_ONLY source-файла и ops поддержка применены и проверены; compile-попытки 1–3
+завершились отказами и не суммируются как положительные. Cleanup: RESTORE_OK за 216 s, свои процессы
+завершены, registry/profile diff0, источники стабильны. Наблюдённый heartbeat gap A = 3432 ms
+не даёт непрерывной liveness-гарантии: будущий capture требует отдельного external guard.
+Предыдущий парный guarded rehearsal был только control-only с actual probe capture=0; это не описание новой capture-пробы. Meter прошёл pure-проверки, но его semantics/energy/playback
+не квалифицированы; source, sink и content gates остаются открытыми. Player-media baseline — NOT_READY.
+
+Meter: [pure receipt](<../../../Cellular System/output/agora-native-von-20261103/meter-pure-receipt.json>),
+[failed runtime receipt](<../../../Cellular System/output/agora-native-von-20261103/audio-meter-runtime-failed-receipt.json>) и
+[triage](<../../../Cellular System/output/agora-native-von-20261103/audio-meter-runtime-triage.md>).
+B записал только START и GAME_END/TERMINAL, generation0, samples0/nativeCalls0/requested0; bind,
+OutputVolume и локальный stimulus не исполнены. WER host: nvwgf2umx.dll/c0000409 — fault location,
+не доказанная причина. Failed попытка сохранена; 44 pure не означают runtime/energy/playback PASS.
+
+[Flag-off control receipt](<../../../Cellular System/output/agora-native-von-20261103/audio-meter-flagoff-failed-control-receipt.json>):
+контроль на OPS 2535 также неуспешен; B аварийно завершился до сохранения клиентских логов,
+PowerShell 5 operator вышел с кодом 1; finally/footer и RESTORE_OK не наблюдались. Отсутствие footer
+не доказывает неисполнение finally. Root сообщил identity-checked
+containment собственных Workbench/watchdog; это не замена отсутствующему rollback receipt.
+[WER signatures](<../../../Cellular System/output/agora-native-von-20261103/flagoff-client-operator-wer-signatures.json>)
+фиксируют client ntdll.dll/c0000005, отличный от первого host fault. PowerShell OutOfMemoryException
+совпадает по времени, но PID не доказан; причинный вывод остаётся UNKNOWN.
+[Event 2004 resource snapshot](<../../../Cellular System/output/agora-native-von-20261103/flagoff-resource-exhaustion-memory.json>)
+фиксирует 2026-11-03 09:03:33 UTC: system commit 99,50%, headroom 202,91 MiB, примерно за 2,5 секунды
+до recorded PowerShell OOM. Это contemporaneous resource pressure, не exact cause клиентского fault
+или прежнего host crash. Более поздний текущий memory snapshot не подменяет состояние в момент аварии.
+
+[Последний InspectOnly receipt](<../../../Cellular System/output/agora-native-von-20261103/flagoff-edit-inspection/recovery-a8dcf64d413c485db28d966ab84a2e60.json>):
+10 menu items, оба localhost Off, actions false, без Play/capture; target/watchdog exited.
+Статус INCOMPLETE: только собственный scratch resourceDatabase.rdb размером 84 bytes изменил digest.
+Ни текущий Off, ни завершение процессов не доказывают восстановление исходной транзакции;
+RESTORE_OK не присвоен. Flag-off не стал здоровым контролем или повтором идентичного host crash.
+
+Ресурсная подготовка: [disk Low receipt](<../../../Cellular System/output/agora-native-von-20261103/native-low-cfg-disk-receipt.json>)
+подтверждает собственный сохранённый native config с OverallQuality=0 и SHA 9A91E43D…; memory savings
+и VoN не измерены. [Normal-close NVIDIA Overlay](<../../../Cellular System/output/agora-native-von-20261103/overlay-close-20261103-131943.json>)
+получил accepted signal, но exitfalse; другие приложения не трогались. Память освободилась внешне,
+это не результат нашего закрытия/Low и не measured saving. По прямому запрету владельца pagefile
+не включать, не расширять и не перенастраивать как решение этой задачи.
+
+Первый [pulse-ready отказ](<../../../Cellular System/output/agora-native-von-20261103/nrx-pulse-ready-runtime-receipt.json>)
+с LOCAL_FACTION_UNKNOWN был лишним guard нашей fixture, не native radio veto. [Source triage](<../../../Cellular System/output/agora-native-von-20261103/pulse-local-faction-triage.md>),
+[точный apply](<../../../Cellular System/output/agora-native-von-20261103/pulse-policy-apply/compile-input.json>) и
+[52/52 pure receipt](<../../../Cellular System/output/agora-native-von-20261103/pulse-pure-20261103-135644/receipt.json>)
+уточняют cross/admin/empty effective key/match. При неизвестной faction cache не обнуляется;
+новый TOOL_ONLY getter только читает cache. Faction/key/policy setters не добавлялись.
+[Sealed ready run](<../../../Cellular System/output/agora-native-von-20261103/nrx-policy-ready-runtime-receipt.json>) и
+[sidecar](<../../../Cellular System/output/agora-native-von-20261103/nrx-policy-ready-runtime-receipt.json.sha256>)
+подтверждают PREPARED по observed ADMIN при faction UNKNOWN, unarmed/capture NOT_REQUESTED.
+RESTORE_OK за 195 s относится к наблюдённому меню и captured registry export/profile diff0; свои
+процессы завершены. B post-window assertion «Resources are leaking!» сохранён отдельно, cause UNKNOWN;
+clean native teardown не заявлен. Armed coordinator применён; проверенный UI путь закрыт, actual arm не получен.
+Source/sink/content, native capture и этапы 3–8 остаются открытыми.
+
+Управляющий путь: [armed attempts aggregate](<../../../Cellular System/output/agora-native-von-20261103/armed-rehearsal-failed-attempts-aggregate.json>)
+сохраняет applied coordinator и две failed попытки без actual guard/Invoke/arm. Root наблюдал Plugins
+disabled в Play: этот UI путь закрыт. Последующий EDIT InspectOnly подтвердил current Off без actions,
+но не historical RESTORE_OK этих failed попыток. [FHC receipt](<../../../Cellular System/output/agora-native-von-20261103/file-handle-capability-runtime-receipt.json>)
+подтверждает survival открытого READ holder в Play; parent write0 с MethodInvocationException,
+inner exception/HResult не записаны. Sharing/root cause UNKNOWN; external visibility/ReadLine не проверены.
+
+[REST noBackend receipt](<../../../Cellular System/output/agora-native-von-20261103/rest-capability-runtime-receipt.json>):
+Game context null, GET не вызван; pure22 отдельно. В WB тот же URL дал context0 с noBackend/context1
+без него (наблюдение root), что не является Game callback PASS. [Предыдущий solo Game control](<../../../Cellular System/output/agora-native-von-20261103/rest-single-host-control-runtime-receipt.json>)
+без noBackend получил context nonnull/GET1; parent accepted = 1 / HTTP200 = 1; native callbackSeen = 0 до локального timeout.
+Ретроспективная корреляция оценивает responseReturn как 17:51:38.387 при завершении native окна
+17:51:37.868; contemporaneous run anchor и точная timely delivery не доказаны. Это не доказанный
+сломанный callback и не установленная причина того timeout; предыдущий результат сохранён.
+
+[Новый sealed async control](<../../../Cellular System/output/agora-native-von-20261103/rest-async-control-runtime-receipt.json>):
+PASS строго CONTROL_NATIVE_TOKEN_CALLBACK_SINGLE_HOST, terminal TOKEN_OBSERVED. Native callback
+получен за 684 ms в том же Game clock, HTTP200/tokenMatch1; parent anchor contemporaneous.
+Own cleanup RESTORE_OK за 217 s, captured registry/profile diff0/0. Это не arm/capture/VoN/media PASS.
+Предыдущий guarded-readiness цикл: применены пять Game-файлов и три parent-модуля после source review #7046/#7047.
+[Native ScriptEditor](<../../../Cellular System/output/agora-native-von-20261103/rest-rehearsal-check-20261103-190005/receipt.json>)
+дал прежние REST (22 проверки) и scoped REHEARSAL (22 проверки) PASS отдельно, actualCaptureCalls=0.
+Parent-проверки socket13/gate9/writer7/OPS15 и один stream-cleanup case имеют собственный scope; они не суммируются в VoN PASS.
+[Actual NoPlay receipt](<../../../Cellular System/output/agora-native-von-20261103/recovery-no-play-runtime-receipt.json>)
+подтверждает own Off→On, typed held exit/guard KILLED; наблюдалось 1748,732 ms — не hard1500 и не nativeRelease.
+Fresh baseline Off подтверждён, action=false; restorative On→Off setter не испытан/UNKNOWN. Worker
+остаётся INCOMPLETE только по own scratch resourceDatabase.rdb: 51→84 bytes; проверялась metadata, содержимое
+не читалось и доказанно безвредным не объявлено. Старый отрицательный результат не повышается до PASS.
+[Canonical readiness DryRun](<../../../Cellular System/output/agora-native-von-20261103/paired-rest-rehearsal-readiness/readiness-receipt.json>)
+прошёл без Game; [memory-preflight](<../../../Cellular System/output/agora-native-von-20261103/paired-rest-rehearsal-readiness/memory-preflight.json>)
+отказал: прежний порог — commit headroom ≥8 GiB и available physical ≥6 GiB. [Normal CloseMainWindow](<../../../Cellular System/output/agora-native-von-20261103/overlay-normal-close-20261103-195736.json>)
+запрошен у одного NVIDIA Overlay, exits0 через 2 s, remaining5; предыдущий срез 4,91/7,82 GiB сохранён в receipt.
+[Наблюдение 2026-11-03 17:03:51 UTC](<../../../Cellular System/output/agora-native-von-20261103/overlay-close-observation-20261103-200351.json>)
+не посылало новый close: все пять исходных процессов живы, включая target; игровых процессов 0. Запас commit
+4,76 GiB, available 7,74 GiB — датированный snapshot, не causal effect закрытия. Force, другие приложения
+и pagefile не трогались; окончательный выход Overlay не заявлен.
+Последующий [парный guarded rehearsal](<../../../Cellular System/output/agora-native-von-20261103/guarded-rehearsal-runtime-receipt.json>)
+принят строго как CONTROL_GUARDED_REHEARSAL_ONLY_PAIRED: согласованные prepared/world generations,
+parent witness 167,3453 ms (<400), WouldRequestTrue/False и INTENDED_STOP; actual probe capture и routing
+setter calls=0. Внешний guard проверял parent, а не Game. Метрика coordinator releaseBefore→observation
+равна 74,5954 ms; это не parent releaseObserved→observation 64,6847 ms. Kill request 1508,9223 ms и
+exit 1714,5988 ms не доказывают hard1500, native release или будущую границу планировщика.
+Fresh baseline Off/action=false подтверждён; restorative setter не испытан. Новый worker INCOMPLETE
+сохраняется из-за own profile drift (84→84 bytes, digest изменился), содержимое не читалось;
+полное восстановление и безвредность drift не доказаны. Прежние отрицательные receipts не повышены.
+[Локальная аудиокалибровка](<../../../Cellular System/output/agora-native-von-20261103/local-audio-calibration-runtime-receipt.json>)
+подтвердила ровно один PAIN_RELIEVE start/finish с handle 256 за 1267 ms: 140 raw samples = 0, наблюдённые
+последовательные master readbacks все 1. Это SEQUENCE_ONLY: input energy, meter semantics, waveform,
+audible playback и B sink UNKNOWN. Старый endpointSamples=90/SAMPLE_LIMIT отказ до meter bind/request сохранён;
+действительный operator SHA 87717… использовал endpointSamples=120 — это не секунды или число audio samples.
+[Diag correction](<../../../Cellular System/output/agora-native-von-20261103/diag-local-context-audit-correction.json>)
+отзывает ошибочный source-drift вывод CCBD08A9: literal coordinator 2C61559D совпадает с runtime pin;
+standalone Diag не является B. Frozen audit и receipts не переписаны.
+Для текущей host-backend fixture требовался Steam: первоначальный startup без него был setup-ошибкой.
+[Root запустил существующий Steam штатно и silent](<../../../Cellular System/output/agora-native-von-20261103/steam-runtime-start-20261103-211308.json>),
+без credentials; другие приложения не закрывались. Для actual pair оператор сообщил headroom 9,66 GiB/
+available 8,29 GiB при прежнем 8/6: основной ресурсный blocker этого запуска снялся, но это не savings
+от Low/закрытия приложений и не постоянная гарантия памяти. Pagefile по-прежнему не менять.
+[Первый native capture receipt](<../../../Cellular System/output/agora-native-von-20261103/native-capture-runtime-receipt.json>)
+фиксирует принятые true/false capture requests с call window 1005 ms, A RAW_CAPTURE 82 и B own VoN
+RAW_RX 79 с senderA и exact local catalog0/radio ref при 32000 kHz. Это observer rows, не уникальные пакеты
+или frame IDs; post-stop metadata тоже наблюдалась. Уровень строго NATIVE_CAPTURE_INGRESS_AND_RADIO_RX_METADATA_CANDIDATE:
+input energy/PCM/контент/playback, causal matched/exclusive radio path и native release не квалифицированы.
+[Отдельный native no-send receipt](<../../../Cellular System/output/agora-native-von-20261103/native-no-send-runtime-receipt.json>)
+фиксирует тот же SQUAD_RADIO/exactTx=1 и окно 1002 ms, но оба capture API вызова намеренно пропущены;
+нет native bool return для skipped calls. A 21 / B 8 NRX rows непрерывны, RAW_CAPTURE/RX/USED0, оба локальных
+каталога по два трансивера с tune 32000/48000 kHz. Key/policy сведения только A-server, не полная B eligibility. Последний
+валидный heartbeat B за 50 ms до stop; отсутствие callback ограничено наблюдённым окном, не atomic
+health и не global native idle/microphone-off. Guard kill request 1520,9186/exit 1756,2518 ms не hardRT/nativeRelease.
+Typed recovery 4c61: exact baseline обоих localhost Off, original transaction proven, action=false,
+target/watchdog exited. Primary failure пуст, secondary RR_PROFILE_CHANGED_NO_REWRITE; worker exit1/INCOMPLETE
+сохраняется по own resourceDatabase.rdb metadata drift. Contents не читались; full restore/media/RF proof нет.
+Последующая серия завершена по [Wrong receipt](<../../../Cellular System/output/agora-native-von-20261103/native-wrong-frequency-runtime-receipt.json>)
+и [fresh Matched receipt](<../../../Cellular System/output/agora-native-von-20261103/native-matched-recovery-runtime-receipt.json>):
+
+| Случай | A capture rows | B receive rows | Предел |
+|---|---:|---|---|
+| Первый candidate | 82 | 79 receiver-associated | Более ранняя source revision, не content/frame count |
+| NoSend | 0 | 0 | Конечное наблюдение при пропущенных capture calls |
+| Wrong | 74 | 70: 69 null + 1 exact receiver | Для одного receiver фактическая B tuning в callback UNKNOWN |
+| Fresh Matched | 80 | 77 receiver-present, null0; 39 distinct snapshots | Full source/contexts совпадают с Wrong, не packet count |
+
+В sampled Wrong B показывал 32200/48000 kHz при A 32000 kHz. Единственный exact B receiver попал в transition:
+последний detuned getter был за 152 ms, следующий restored getter — через 348 ms. Incoming RX frequency
+не заменяет current tuning. Это не RF_PASS и не RF falsifier; 69 null не классифицируются как DIRECT.
+A-server restore сообщил 2 restored/conflict0 и неизменность прочих bits; это не атомарный B restore.
+Matched first-to-last own spans A 1010 / B 999 ms — не network latency. Только Wrong/Matched делят frozen
+full sources/prepared contexts; ранние positive/NoSend были намеренными ранними revisions. Все четыре
+случая вместе дают metadata pattern, не radio-only/content/audio/per-pair, exact release или full restore.
+Guard Wrong kill 1508,2425 / exit 1783,3673 ms и Matched 1506,4897 / 1727,3541 ms не hardRT/nativeRelease.
+Оба typed recovery подтвердили original baseline/localhost Off/action=false и own exits, но сохранили
+INCOMPLETE/exit1 с secondary RR_PROFILE_CHANGED_NO_REWRITE/profile RDB; активный restorative setter
+и full restore не испытаны. Старые отрицательные receipts не переименованы в PASS.
+[Geometry audit](<../../../Cellular System/output/agora-native-von-20261103/native-controls-logged-geometry.json>)
+фиксирует только radio-owner entity positions, расстояние около 1,000046 m. Character GetOrigin не
+логировался, proximity-disable UNQUALIFIED; это не измерение character distance и не DIRECT diagnosis.
+[Language erratum](<../../../Cellular System/output/agora-native-von-20261103/native-controls-geometry-language-erratum.md>)
+даёт читаемый утраченный prose отдельно; sealed geometry D5 и его числовые данные не переписывались.
+Первый [compile отказ](<../../../Cellular System/output/agora-native-von-20261103/wrong-frequency-check-20261104-000028/receipt.json>)
+с reserved vector сохранён. После reviewed BF79 rename/targeted review #7153 последующий
+[pure receipt](<../../../Cellular System/output/agora-native-von-20261103/wrong-frequency-check-20261104-000526/receipt.json>)
+дал scoped REST22/REHEARSAL22/CAPTURE34/NOSEND20/WRONG20 PASS отдельно, не общий native VoN PASS.
+[Bounded parent-text чтение уже начато](<../../../Cellular System/output/agora-native-von-20261103/von-prefab-parent-read-runtime-receipt.json>):
+первые два reads дали US_Rifleman→US_BaseLoadout→US_Base; старый receipt 22C4 сохранён.
+[Продолжение inheritance text reads](<../../../Cellular System/output/agora-native-von-20261103/von-prefab-inheritance-text-runtime-receipt.json>)
+дошло по declared chain до Core/Character_Base без parent. Полный SCR_VoNComponent block 379–381
+содержит только Filename von.acp. Это не отсутствие descendant overrides вне прежних 15-строчных окон;
+native default/effective Speaking Range UNKNOWN. Последующий
+[numeric fixed-prefab lookup](<../../../Cellular System/output/agora-native-von-20261103/von-attribute-read-runtime-receipt.json>)
+реально исполнился в SDK после review source 352C/#7166: exit = 2, INCOMPLETE/ANCESTOR_CAP_OR_NO_NUMERIC_FIELDS.
+IEntitySource перечислил 51 component, найден единственный SCR_VoNComponent; посещён один уровень 0.
+Три descriptor fields: Enabled/BOOLEAN, components/OBJECT_ARRAY, Filename/RESOURCE_NAME; все values
+NOT_READ, numericRead = 0. Это имена/типы, не значения Enabled/Filename. OR reason не доказывает, что cap
+фактически достигнут. Scope — SourceContainer; Play instance NOT_TESTED, setters = 0, cleanup завершён.
+Ни Speaking Range = 0, ни невозможность любого другого native/context-specific чтения не установлены.
+[Existing MpTest TerrainEntity text-read](<../../../Cellular System/output/agora-native-von-20261103/mptest-terrain-text-read-runtime-receipt.json>)
+получил searchSucceeded=true/candidate=1, но exact MpTest.ent не открылся: native exit = 4 / runner exit = 1,
+source lines = 0. TerrainEntity presence/bounds UNKNOWN; FileIO/text-open ограничение не TerrainAbsent.
+Line1 fallback не повторён: open failed — не no-match. По receipt current noGame/own exit подтверждены.
+Оба lookup шли без Play/teleport/capture/setters, sealed text-chain/native/geometry источники не менялись.
+Поздний [Edit WorldList](<../../../Cellular System/output/agora-native-von-20261103/mptest-worldlist-runtime-receipt.json>)
+открыл MpTest: 25 сущностей, одна GenericTerrainEntity, 17 классов при лимите вывода 15.
+Отсутствие сущностей вне этого лимита не установлено; сохранения мира и Play в этом чтении не было.
+[Чтение геометрии редактора](<../../../Cellular System/output/agora-native-von-20261103/mptest-editor-geometry-runtime-receipt.json>)
+дало GetBoundBox объекта мира: min = (-100, 0, -100), max = (228, 21, 229). Пять GetSurfaceY readbacks
+равны 1: центр X/Z = (128, 128) и смещения ±100 по одной оси. Это только EDITOR_SOURCE: не terrain/collision
+bounds, не live standing safety, не интерполяция между точками и не Speaking Range. Для следующей fixture
+root выбрал внутренний кандидат X/Z = (28, 128), а не граничный X = 228; безопасность позиции не принята.
+
+[Парная пассивная placement-проба](<../../../Cellular System/output/agora-native-von-20261103/passive-pair-placement-runtime-receipt.json>)
+завершилась для A и B: UNBOUND, REFUSED/CONFIG_OR_WORLD, attempted = 0, setterResult = -1,
+samples = 0, actualCaptureCalls = 0. Это sentinel до вызова setter: Teleport и landing не выполнялись,
+точная ветка общего guard UNKNOWN. NRX отдельно связался на обеих сторонах, каталоги по две записи,
+60-секундные окна завершены LIMIT с invalid = 0, callbacks = 0 и subscriptionsRemaining = 0;
+это не доказательство глобальной тишины, перемещения или радио baseline.
+NativePairPlacement — отдельный default-off typed путь before Play/applied/closed/recovery,
+attempt PairPlacement.1, без Pulse/REST/coordinator. Typed цепочка подтверждена; свежий baseline обоих
+localhost Off, actionAttempted = false, свои target/watchdog завершены. Recovery INCOMPLETE/exit = 1:
+только secondary RR_PROFILE_CHANGED_NO_REWRITE для resourceDatabase.rdb; содержимое не читалось.
+Runtime reg/profile diff = 0/0 — отдельный scope, не full restore или отсутствие worker profile drift.
+Целевые Game pure 39/30/20, OPS 17 и typed 15 mocks учитываются отдельно от native результата.
+Поздняя [различающая диагностика placement](<../../../Cellular System/output/agora-native-von-20261103/pair-placement-diagnostic-runtime-receipt.json>)
+зафиксировала на A/B WORLD_NOT_ALLOWED: public-root представление
+`$ArmaReforger:worlds/MP/MpTest/MpTest.ent`, длина 41, не принималось fixed-world guard.
+Остальные проверенные config/world predicates были корректны; old worldAllowed = 0. Это не другой
+загруженный мир и не failure owner/landing/setter. Старый CONFIG_OR_WORLD receipt не переписан:
+его исходный log не различал ветки. Принятая #7216 корректировка exact literal D3FB сохранила отказ
+произвольных aliases.
+[Исправленная пассивная парная проба](<../../../Cellular System/output/agora-native-von-20261103/corrected-passive-pair-placement-runtime-receipt.json>)
+дала конечное согласование A-server/B-local на тех же actor replication identities: A — восемь samples
+на 100 m; B — первый около 1 m и затем семь на 100 m. Не все 16 samples были на 100 m.
+В settled samples собственные radio positions совпали с actor positions; A delta = 0.
+B_LOCAL_OWNER_ONCE вызвал setter один раз, result = 1; семь settle samples. Target = (28, 1.01, 128),
+финальная B position = (28, 1, 128), target distance = 0.0099983 m.
+В actual Game прочитаны surfaceY = 1, free-cylinder result = 1 и owner guards; это ограниченные
+landing/helper наблюдения, не full standing/capsule/collision/physics guarantee или Speaking Range.
+Межпроцессная latency и постоянная network convergence этим не измерены.
+Путь остался пассивным: Pulse/REST arm не наблюдались, probe capture calls = 0, callbacks = 0.
+Typed closed 272C и recovery 910f связаны; свежий baseline localhost Off, action = false, свои процессы
+завершены. Recovery INCOMPLETE только по secondary resourceDatabase.rdb, не full restore/native release.
+Поздняя отдельная default-off CaptureSeparatedPair серия для existing RestGuardedCapture завершена.
+Пассивный NativePairPlacement без Pulse сохранён. Каждый запуск заново квалифицировал свежую Game
+geometry 100 m по current actor refs/RPL и A-server/B-local positions, QPC progress и parent release;
+прежние восемь helper samples не использовались как доказательство свежести. Все три случая имеют
+одинаковые frozen full sources, prepared contexts и Game/parent input hashes.
+
+| Separated case / квитанция | A capture rows / B RX rows | B exact receiver / null / distinct tick-payload | Own-clock span A/B, ms | Rows at/after false A/B |
+|---|---|---|---|---|
+| [Positive](<../../../Cellular System/output/agora-native-von-20261103/separated-radio-positive-runtime-receipt.json>) | 96 / 74 | 74 / 0 / 36 | 1001 / 949 | 1 / 3 |
+| [Wrong](<../../../Cellular System/output/agora-native-von-20261103/separated-radio-wrong-runtime-receipt.json>) | 98 / 1 | 1 / 0 / 1 | 1014 / 0 | 1 / 1 |
+| [Fresh Matched](<../../../Cellular System/output/agora-native-von-20261103/separated-radio-matched-runtime-receipt.json>) | 97 / 88 | 88 / 0 / 31 | 1002 / 1000 | 1 / 5 |
+
+В Wrong B RX до false return = 0; единственный raw RX — post-false. Текущая B tuning при нём UNKNOWN:
+последний B detuned getter за 203 ms, первый restored getter через 298 ms. Server restore за 57 ms по
+wall-сопоставлению не доказывает B tuning или queue drain в callback. Incoming frequency — metadata
+передачи, не текущая настройка приёмника. Ни RF_PASS, ни RF falsifier этим RX не установлены.
+Во всех наблюдённых receiver rows Q = 0.994082868, scalar valid. Это native metadata, не causal RF
+transfer function, dBm, разборчивость или audio quality; отсутствие callback не означает Q = 0.
+Rows/distinct snapshots не packets, отношение A/B не packet loss, own-clock spans не network latency.
+Фазы A сопоставлены по own clock, B — по wall; geometry readbacks последовательны, не атомарны.
+Строки at/after false сохранены; точный native release и queue drain UNKNOWN.
+Во всех трёх случаях typed chains и свежий baseline localhost Off подтверждены, action = false,
+свои target/watchdog завершены. Recovery INCOMPLETE только по secondary worker resourceDatabase.rdb;
+это не full restore. Guard kill/exit times — реальные process observations, не hard 1500 ms/native release.
+Game pure 39/30/27/17 и parent 31/11/16/18 — отдельные scopes, не сумма VoN acceptance.
+Budget 8/6 и guard 400/1500/2000 сохраняются; новый RPC/framework не введён.
+Поздний [один известный short400 pilot](<../../../Cellular System/output/agora-native-von-20261103/capture-duration-feasibility-runtime-receipt.json>)
+завершён как ONE_KNOWN_SHORT400_B_CALLBACK_SPAN_OBSERVED_FEASIBILITY_ONLY. При planned 400 ms
+A request span = return span = 409 ms, overshoot = 9 ms. B-only callback span = 392 ms:
+33 raw receiver rows, null = 0, distinct tick-payload snapshots = 15, Q = 0.994082868, все scalar valid.
+Это timing/metadata одного известного профиля, не latency, packets, causal RF/audio quality или decoder PASS.
+Собственная B metadata продолжалась 1048 ms после последнего RX и 1440 ms после первого.
+Common guard не зависел от selected 400 ms; after-guard read был до B stop. Это исключает только
+остановку B process на выбранных 400 ms. VAD/input energy, queue drain и другие truncation причины UNKNOWN;
+поздний final file read после stop не продлевает живое окно наблюдения.
+Внутри 409 ms public LIVE samples отсутствуют при cadence около 1 s. Fresh admission и before/after
+100 m подтверждены, continuous pose внутри короткого окна не квалифицирована.
+В B args нет selected 400/profile flag, A trial label или B stop flag; нормализованные B base args
+совпали с long, public run/tag opaque. Это не полный blind/leak audit; A control profile не voice payload.
+Сравнение B span 392 ms с прежними 949/1000 ms только описательное: known selection и намеренные
+source changes не доказывают causal information transfer или robust decoding. Parent request valid —
+валидность управляющего запроса, не feasibility/content PASS. Source stability, typed chain, свежий Off,
+action = false и свои exits подтверждены; recovery INCOMPLETE только по secondary worker resourceDatabase.rdb.
+Поздняя [known-LONG qualification окна B](<../../../Cellular System/output/agora-native-von-20261103/b-observe-long-qualification-runtime-receipt.json>)
+дала собственный heartbeat seq = 119, tick = 18400 при first RX = 17201 и fixed window end = 18301
+(first + 1100 ms), same binding/context. Frozen code C91/rule 1ED9/window 7866 выдал LONG/span = 1000 ms.
+Прежние long материалы 4755/DDD6 и их INVALID по frozen window остаются неизменными; это не перепись
+наблюдённых native metadata или backfill heartbeat. Исходный SDK receipt INCOMPLETE из-за matcher
+сохранён; postparse E11 того же SDK log подтвердил scoped pure 39/30/27/17/19, без native rerun.
+
+[Единственный exploratory blind trial](<../../../Cellular System/output/agora-native-von-20261103/single-blind-trial-runtime-receipt.json>)
+завершён ONE_EXPLORATORY_BLIND_TRIAL_MATCH_OBSERVED_CHANCE_HALF. Rule/window/code заморожены до fresh
+setup и позднего OS CSPRNG выбора одного бита с отдельным 32-byte nonce. Один recorded choice, без reroll.
+Salted commitment записан до body release/arm; ранняя регистрация held GET до commitment ожидаема,
+утверждение «commit до request» не делается. Raw nonce здесь не воспроизводится.
+Свежий B-only judge использовал только sealed собственный B NRX input, rule/code/public run, без A choice
+или selected stop. Decision/input/rule/code hashes запечатаны до A reveal, затем commitment проверен.
+Fresh process/no-A-input подтверждены matching source, cleanup и artifact bindings; отдельный PID/argv
+execution transcript не сохранялся. Порядок артефактов — trusted-local evidence, не hardware attestation.
+Открытый после seal выбор = 1/LONG1000; A request/return = 1005 ms. B decision LONG/span = 1000 ms,
+distinct ticks = 27, raw input = 113 NRX rows. First RX = 15510, window end = 16610, last own observation = 16708.
+Это одно совпадение: при независимом равномерном бинарном null вероятность случайного match = 1/2.
+Передача выбранной информации, надёжность, chosen content/playback, radio-only/per-pair и full voice
+baseline не установлены. Новых испытаний ради reroll или decoder framework результат не назначает.
+Typed closed 641C и recovery связаны: baseline localhost Off, action = false, свои exits подтверждены;
+recovery INCOMPLETE только по secondary worker resourceDatabase.rdb, не native release/full restore.
+Первый [sound-observe опыт](<../../../Cellular System/output/agora-native-von-20261103/von-sound-observe-runtime-receipt.json>)
+завершён CONTROL_INVALID_BEFORE_RELEASE_SOUND_SUBSCRIPTIONS_AVAILABLE: guard отказал
+REST_FRESH_BINDING_CHANGED, body не released, capture/RX = 0. На ownB/sourceAproxy доступны
+SCR_CommunicationSoundComponent, уже scripted-enabled, hooks по 2 subscriptions; 17 READY rows.
+Это availability, не negative callback test: native stimulus не было. Старый absolute-age source counter
+сохранён; исправление проверяет observed READY sequence/tick progress по QPC с пределом 500 ms,
+а не ослабляет admission. Это свежесть наблюдённого progress, не data-age каждого capture tick.
+[Исправленная ordinary SQUAD sound-проба](<../../../Cellular System/output/agora-native-von-20261103/corrected-von-sound-observe-runtime-receipt.json>)
+на свежих separated 100 m дала A capture rows = 92 / B RX rows = 86: все exact bound catalog,
+null = 0, B distinct tick-payload = 33, Q = 0.994082868 scalar valid. Counts не packets/audio frames,
+Q не causal RF/audio quality. До capture на ownB и sourceAproxy уже были доступны enabled components,
+по 2 subscriptions; 14 READY rows со стабильными binding/component refs, до capture и после RX.
+В конечном окне started = 0 / finished = 0. Это только отсутствие событий этих двух hooks в данном
+опыте, не тишина, не отсутствие audio routing/native stream и не universal non-emission.
+Scope component-owner only: joint RX token отсутствует, attributable stream binding UNQUALIFIED,
+DIRECT positive/actuator/content/playback/per-pair/Core PASS не получены.
+Source correction принята #7311; Game SDK scoped pure 39/30/27/17/19/24 — отдельный неизменный уровень,
+не voice/runtime acceptance. Неизменный callback опыт повторно не назначается.
+Recovery provenance раздельны: исходный 60ea — primary RR_STALE_PARENT_ROW_NO_OWNERSHIP,
+finalMenu = {}, без baseline proof. Поздний a142 InspectOnly увидел current Off/action = false,
+profile-only secondary, но не доказал исходную transaction/restore. Исправленный ee7b typed recovery
+подтвердил exact baseline Off/action = false и свои exits, INCOMPLETE только по worker resourceDatabase.rdb.
+Ни один из этих исходов не full restore/native release PASS; содержимое профилей не читалось.
+Первый [native radio power опыт](<../../../Cellular System/output/agora-native-von-20261103/native-radio-power-runtime-receipt.json>)
+наблюдал асинхронный B OFF после одного void SetPowered(false). Conditional ON был вызван, но
+немедленный getter оставался OFF; helper завершился APPLIED_UNKNOWN и отсоединил subscription.
+Позднего own-B getter ON в этом helper нет. Отдельный A mirror увидел OFF/ON, но не заменяет B readback.
+[Исправленная power-проба](<../../../Cellular System/output/agora-native-von-20261103/corrected-native-radio-power-runtime-receipt.json>)
+наблюдала B LOCAL_STATE_CYCLE_OBSERVED: один OFF и один conditional ON, setters = 2, power events = 2,
+те же binding/identity/protected readbacks. ON call tick = 14142; immediate getter ещё OFF,
+ON event = 14192, первый qualifying own getter ON = 14193. Фиксированный deadline = 15142
+(ON call + 1000 ms), без reset/extension; qualification получена вовремя на tick 14193.
+Endpoint getter = 15192, опоздание 50 ms, late flag = true; этот поздний sample не создал qualification.
+51 ms call→getter — локальный B clock span, не network latency или hard real-time guarantee.
+SetPowered возвращает void, не acceptance boolean. A mirror отдельно имеет setters = 0/events = 2;
+ни A mirror, ни B local sequence не устанавливают authority/replication contract.
+Capture/RX/capture calls = 0. Проверен whole-device property cycle, не radio receive effect,
+DIRECT сохранность, player voice, per-pair actuation или Core actuator/integration PASS.
+SDK history сохранена раздельно: 071315 Identity compile failure, rename после review #7332,
+071649 scoped pure 39/30/27/17/19/24/16; restore-observe review #7340 и 074955 scoped pure с RESTORE14.
+Pure native power calls = 0; parent ops неизменен между power runs, source stability footer подтверждён.
+Старый 79ED остаётся APPLIED_UNKNOWN: новый запуск не является retroactive restore proof.
+Typed recoveries b438/f570 оба подтвердили exact editor localhost Off/PeerTool Off, action = false,
+primary пустой, свои exits; INCOMPLETE только по secondary worker resourceDatabase.rdb.
+Этот editor baseline отдельно от native B radio ON; full restore/native release не квалифицированы.
+Поздний [controlled B power OFF](<../../../Cellular System/output/agora-native-von-20261103/capture-b-power-off-runtime-receipt.json>)
+дал A capture rows = 94 / B raw RX = 0 при ordinary SQUAD request span 1003 ms на свежих 100 m.
+Actual B-local и A-server getters показывали OFF, refs/catalog/protected fields подтверждены;
+B binding/subscriptions/catalog/heartbeats здоровы. Zero raw RX не упражняет receiver callback refs
+и не заменяет их positive qualification. Input energy/VAD/queue остаются UNKNOWN.
+Основной conservative budget = 2449 ms, final HTTP budget = 2258 ms, оба ≥ 2000 ms. Значения в каждом
+раннем checkpoint отдельно не сохранялись: там только matching source/valid-path evidence.
+Fixed B window: OFF call = 12211, deadline = 18211, без reset; последний OFF getter = 17314,
+remaining = 897 ms. OFF calls = 1 / ON calls = 0; teardown прошёл до deadline.
+Conditional cleanup не доказывает ON restoration — старый native radio restore UNKNOWN.
+[Fresh ON metadata recovery](<../../../Cellular System/output/agora-native-von-20261103/capture-b-power-on-recovery-runtime-receipt.json>)
+на том же frozen Game/parent коде и prepared contexts, только без PowerOff mode flag, дал
+A capture rows = 91 / B RX = 81: exact own-B receiver catalog, null = 0, distinct snapshots = 32,
+Q = 0.994082868 valid для всех 81 rows, request span = 1006 ms. Fresh profiles/run/ports — отдельные
+instance identifiers; это не source/Low изменение. Existing native radio reader вызвал IsPowered = 1
+на B в LOCAL_ONLY scope, связанном с own current actor/catalog/observation context, без RadioGone.
+Observation IDs/device = -1 не native cross-process IDs и не придуманное pointer equality;
+getter snapshots не атомарны/непрерывны относительно каждого RX.
+Это association OFF/no RX → fresh ON/exact metadata, не causal RF block, silence, DIRECT/audio/per-pair
+или Core actuator PASS. Fresh world ON не восстановил старый OFF объект; старые 79ED/C1F3 неизменны.
+Rows/Q/spans не packets/loss, RF/audio quality или network latency.
+Typed recoveries 9d53588/baf173: original transaction proven, exact editor localhost/PeerTool Off,
+action = false, primary пустой, свои target/watchdog exited. INCOMPLETE только по secondary worker
+resourceDatabase.rdb; editor baseline не native radio restore и не full restore/native release.
+Первый [DIRECT prerelease опыт](<../../../Cellular System/output/agora-native-von-20261103/capture-direct-prerelease-invalid-runtime-receipt.json>)
+завершён INVALID/WAIT:REST_TERMINAL_BEFORE_RELEASE: release/route/arm/capture не достигнуты.
+В DIRECT PREPARED отсутствовал producer field scriptIdleOnly, обязательный для неизменного parent
+consumer. Пропуск не означает native false; это contract field omission, не DIRECT positive/negative.
+Exact producer contract fix и replay 6 сохранены отдельно; parent contract/guards не ослаблялись.
+[Исправленный explicit DIRECT опыт](<../../../Cellular System/output/agora-native-von-20261103/capture-direct-candidate-runtime-receipt.json>)
+дал actual native method DIRECT/TX null getter на tick 78893 до true 78894; false 79897,
+request span = 1003 ms. A native rows = 86, все TX null/direct capture = 1. B RX rows = 80,
+все receiver null, sender A, source owner own-B/current context; distinct tick-payload = 33.
+Q = 0 valid во всех 80 rows — metadata, не нулевое качество звука/RF или loss.
+Классификация опирается на совокупность route getter + A native flags + own-B sender-A callbacks.
+Null RX сам по себе не DIRECT proof; raw B direct = UNQUALIFIED сохранён, старые Wrong null rows
+не переклассифицированы. Native stream ID/joint token, input energy/VAD/queue, playback/content,
+per-pair и Core actuator не квалифицированы. External guard receipt отдельно от проверки внутри Game.
+Near geometry по current LIVE_REFERENCES последовательна, не атомарна и не Speaking Range:
+A eligible distance 1–1.73208 m, final 1 m; B 1.00005 m. Не все A rows были ровно 1 m.
+SDK history раздельна: fixture-owned compile failure с broken expression, rename/review #7378,
+Pulse pure 52/17/12 и NRX pure; затем metadata fix/review #7386 и Pulse SDK 101104 pure 52/17/12.
+Это compile/pure scopes, не сумма native acceptance; исходный failure и prerelease raw не менялись.
+Editor recoveries ad1/ef71: original transaction proven, exact localhost/PeerTool Off, action = false,
+primary пустой, свои exits. INCOMPLETE только по secondary worker resourceDatabase.rdb, не full restore.
+Следующий шаг keeper — короткая контрпроверка дизайна и один near preservation control с тем же DIRECT
+и whole-B power OFF. Третий mode flag/framework не вводится, standalone power опыт не повторяется;
+новый control ещё не выполнен. Native radio-only/per-pair baseline и вся цель остаются открытыми.
+Core остаётся BLOCKED_NO_ACTUATOR без квалифицированной capability; 32 influences, physics/lifecycle/load
+и вся цель 0–8 открыты. Max capture 1 s, guard/memory/common B horizon и passive/default-off ограничения
+сохраняются; прежние исследования/datasets и бесконечный decoder framework не назначаются.
+Radio-only, chosen content/output/playback/per-pair, полный native voice baseline и source/sink открыты.
+Единственный SDK оператор — native_controls_executor. Полная цель, source/sink, RF/radio-only,
+Core integration, 32 native influences, physics/lifecycle/load и этапы 3–8 остаются открытыми.
+
+Нормализация входных документов и покрытие цепочки VoN/радиомеханизмов пунктов1/2 приняты
+(SOURCE_COVERAGE_REVIEWED; Agora #6740/#6741). Native input,
+recipient selection, transport, decode/ACP, callback и post-gate output учитываются отдельно; закрытые
+алгоритмы помечаются UNKNOWN с конкретным методом проверки. Сначала здоровый exact B baseline,
+затем scoped actuator и лишь после этого production integration. DIRECT и чужое mute не меняются.
+
+Навигация: [INDEX_RU](../INDEX_RU.md), [ROADMAP — текущий порядок](ROADMAP_RU.md),
+[последний evidence-срез](../evidence/E-agora-radio-native-20261103.md). Исследование или назначение
+агента не равно исполнению/приёмке следующего gate; runtime оператор — координатор.
+
+Консолидация пунктов1/2 принята:  [pipeline](../analysis/VON_PIPELINE_RU.md),
+[32 radio influences](../analysis/VON_RADIO_MECHANISMS_RU.md), [последовательный native план](PLAN_NATIVE_VON_RU.md).
+Покрытие источников принято: SOURCE_COVERAGE_REVIEWED (Agora #6740/#6741). Native player baseline,
+control/integration, native UNKNOWN и этапы3–8 остаются открытыми.
+
+## Исторический журнал и состояние предыдущих этапов
+
+Ниже сохранены прежние формулировки, приёмки и номера сообщений. «Сейчас», «игру не запускали»,
+BLOCKED_NO_RUNTIME и запросы разрешений в этом журнале относятся к указанному там этапу/дате.
+Они не отменяют последующие результаты и текущую очередь выше; frozen evidence не переписывается.
+
 Обновлено: 2026-10-26. S1, S2, S3, S3b, P1 (отсечка), P2 (наблюдение пути и вода) и ядро P1b.1 (мгновенный коэффициент
 среды) закрыты по чистому коду; P4 (растительность, ансамбль моделей) — REQ v0.4 и корпус 59 заморожены,
 чистый слой P4.1 закрыт (Enforce codex 58/58 в Workbench у обоих); P4.2 «над кронами» (ITU-R P.2108-1) закрыт как
@@ -106,7 +670,7 @@ Diag-клиент с `-username RICON_B0c_peer1` вошёл в этот listen-�
 | 2 | ревью ядра (оси A, B — claude; ось C — codex), способ компиляции по документации Tools | закрыт: оба отчёта — взаимный agree (id446, id452). Главное: черновик вычислителя повторяет структуру A3 → переписать с нуля по REQ; шум без P.372 занижен на 12–18 дБ на 30–50 МГц; чувствительность по умолчанию = 0 дБм (почти всё LOST); `m_Model` — слабая ссылка |
 | 1 | перенос корпуса, матрица, лицензия APL-SA, baseline-коммит, заказ `[Workbench]` | закрыт: `598e4e8` (baseline, agree codex id410); заказ `[Workbench]` №001 — id406. Замечания codex учтены: хэш dossier (id399), граница SOURCE ≠ runtime (id402) |
 
-## Текущее состояние (после спринта 30)
+## Историческое состояние после спринта 30
 
 **План:** `ROADMAP_RU.md` (простыми словами). Владелец утвердил часть 1 — Э3, Э4T-s, Э4 L2 без запуска игры.
 **Э3:** код написан и совпадает с эталоном при исполнении в Workbench (`ENFORCE_PARITY`, спринт 15). Не проверено: работа в игре — события подключения, отправитель RPC, JIP, голос (`BLOCKED_NO_RUNTIME`). Событие истечения передачи несёт номер сессии выдачи (v0.4, спринт 16), parity 209/209.
@@ -526,7 +1090,7 @@ RX/TX, слышимость, репликация и per-pair не провер�
 **Ванильные файлы (№001):** `SOURCE_EVIDENCE` — пункты 3, 4, 7, 9; `PARTIAL_SOURCE` — 1, 5, 6, 8; `OPEN_UNREADABLE` — 2
 (звуковой граф `.acp` через `FileIO` не открывается → Audio Editor). ADR-002/REQ-core синхронизированы с компиляцией (`36997b3`, по разрешению владельца).
 
-## Вопросы владельцу
+## Исторические вопросы владельцу и записанные ответы
 
 | Метка | Вопрос | Статус |
 |---|---|---|

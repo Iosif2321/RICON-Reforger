@@ -1,0 +1,72 @@
+{
+  "schema": "ricon.ct10.enforce-source-result",
+  "version": 1,
+  "date": "2026-11-10",
+  "status": "SOURCE_REVIEWED_UNCOMPILED",
+  "goalStatus": "active",
+  "author": "codex.team.core",
+  "publisher": "codex.lead",
+  "reviewer": "codex.team.review",
+  "documentation": "codex.team.docs",
+  "agora": {
+    "topic": "ricon-reforger-plan",
+    "assignment": 8255,
+    "clockEvidence": 8260,
+    "reasonOrderCounter": 8266,
+    "review": 8272,
+    "probeReview": 8273,
+    "coreFreeze": 8275,
+    "agyAck": 8270
+  },
+  "artifacts": {
+    "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalClock.c": "cf14159533a3a4819e65d7bf65a4e6ebb13aa1825cc517fa78d96fd8543cfc0e",
+    "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c": "e22b675dce8ff2c2086bf0d44aca37cdb7d263287842a00f09f8972ca911b916",
+    "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalSnapshotFixtures.c": "eabbccaa9a60d770595ad14f9dfe812019c6ef76e8955f230340772c961de8aa",
+    "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalSnapshotProbePlugin.c": "30206274729684731b5fe9c7e30ab4f2877875812b28e2a77d7a44d8a3f88885",
+    "tools/RICON_TestRunner/check_temporal_clock.ps1": "6335c78e6ffb861c15910b4657051c9a4b3cd78545b4418c90dc20ee6876f83e"
+  },
+  "clockCheck": {
+    "status": "PASS",
+    "scope": "SOURCE_EXTRACTED_CHECKED_INT32_ALGORITHM_ONLY",
+    "sourceSha256": "cf14159533a3a4819e65d7bf65a4e6ebb13aa1825cc517fa78d96fd8543cfc0e",
+    "mappingCases": 85907,
+    "containmentCases": 34359,
+    "negativeControlsDetected": [
+      "UpperInclusive",
+      "BorrowLost"
+    ],
+    "enforceCompiled": false,
+    "engineStarted": false
+  },
+  "canonicalByteIdentity": true,
+  "gitVisibleNewFiles": 5,
+  "whitespaceCheck": "PASS",
+  "enforceCompiled": false,
+  "enforceFixturesExecuted": false,
+  "engineStarted": false,
+  "agyAudit": {
+    "name": "agy.port",
+    "observerSessionId": 34168,
+    "observerTerminalExit": 1,
+    "observerStatus": "PRINT_TIMEOUT_BACKEND_TURN_REPORTED_IN_PROGRESS",
+    "finalVerdictReceived": false,
+    "restarted": false
+  },
+  "unchanged": {
+    "legacySnapshot": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c",
+    "legacyPublication": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb",
+    "legacySeam": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1",
+    "hostOracle": "417cd7a561d1d38e3e7c81561bdd7da5634ab05956167d01243148ce696fdb5e"
+  },
+  "open": [
+    "typed END + tombstone/fresh full bounded protocol",
+    "authoritative lifecycle Expected flow",
+    "manager/lifecycle epoch coordination",
+    "real producer/publication/receiver dispatcher",
+    "outer wire/auth/clock adapter",
+    "Enforce compiler and actual fixture execution",
+    "RF/world/builder/shared RX/calibration",
+    "supported voice/media content/DSP/audio",
+    "runtime/JIP/load32/30+/60 and full M1/M2/M3"
+  ]
+}

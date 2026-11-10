@@ -63,6 +63,9 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 
 	protected int m_iSessionEpoch;
 	protected bool m_bRegistriesFrozen;
+	protected ref RICON_TemporalAuthorityJournal m_TemporalAuthorityJournal;
+    protected string m_sTemporalProducerBandId;
+    protected bool m_bTemporalProducerPublishing;
 	protected string m_sLastRegistryError;
 
 	protected ref map<string, ref RICON_PropagationModel> m_mPropagationById = new map<string, ref RICON_PropagationModel>();
@@ -276,6 +279,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	//! Used before linkSeq would reach int.MAX. Full-resync effects are handled by the snapshot service.
 	bool RotateSessionEpoch()
 	{
+        if (!m_sTemporalProducerBandId.IsEmpty() && !m_bTemporalProducerPublishing)
+            return false;
 		if (!IsAuthority())
 			return false;
 		int previous = m_iSessionEpoch;
@@ -291,6 +296,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	{
 		linkSeq = 0;
 		rotated = false;
+        if (!m_sTemporalProducerBandId.IsEmpty() && !m_bTemporalProducerPublishing)
+            return false;
 		if (!IsAuthority() || linkId <= 0 || m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX)
 			return false;
 
@@ -327,6 +334,183 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		PrintFormat("[RICON] registry rejected: %1", message);
 		return false;
 	}
+
+    protected static RICON_TemporalPublicationResult ProducerFailure(string code, bool resync = false)
+    {
+        RICON_TemporalPublicationResult result = new RICON_TemporalPublicationResult();
+        result.m_sCode = code; result.m_bRequiresFullResync = resync;
+        return result;
+    }
+
+    //! Explicit fresh-scope opt-in; scalar v1 and manual capture cannot share this ID namespace.
+    bool ConfigureTemporalProducerV2(string bandId, RICON_LinkPublicationLimits publicationLimits, RICON_TemporalLimits temporalLimits)
+    {
+        if (!IsAuthority() || !m_bRegistriesFrozen || m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX)
+            return false;
+        if (m_TemporalAuthorityJournal || m_mLinkSeqById.Count() != 0 || bandId.IsEmpty())
+            return false;
+        if (!publicationLimits || !temporalLimits || !temporalLimits.IsValid())
+            return false;
+        if (publicationLimits.m_iMaxBindings < 1 || publicationLimits.m_iMaxBindings > 4096)
+            return false;
+        if (publicationLimits.m_iMaxPairs < 1 || publicationLimits.m_iMaxPairs > 65536
+            || publicationLimits.m_iMaxActiveLinks < 1 || publicationLimits.m_iMaxActiveLinks > 65536)
+            return false;
+        if (!GetBandEvaluator(bandId))
+            return false;
+        RICON_TemporalPublicationOwner owner = new RICON_TemporalPublicationOwner(m_iSessionEpoch, temporalLimits, publicationLimits);
+        if (owner.GetSessionEpoch() != m_iSessionEpoch || owner.GetCaptureLimit() != temporalLimits.m_iMaxSnapshots)
+            return false;
+        m_TemporalAuthorityJournal = owner; m_sTemporalProducerBandId = bandId;
+        return true;
+    }
+
+    //! Source-only entrypoint: the owner calls the real PairService with this registered evaluator.
+    RICON_TemporalPublicationResult PublishTemporalPairs2(RICON_TemporalProducerTick tick, RICON_LifecycleStateMachine lifecycle, int lifecycleNowMs)
+    {
+        if (!IsAuthority()) return ProducerFailure("AUTHORITY_REQUIRED");
+        RICON_TemporalPublicationOwner owner = RICON_TemporalPublicationOwner.Cast(m_TemporalAuthorityJournal);
+        if (!owner || m_sTemporalProducerBandId.IsEmpty()) return ProducerFailure("PRODUCER_DISABLED");
+        if (m_bTemporalProducerPublishing) return ProducerFailure("PRODUCER_BUSY");
+        if (!tick || !tick.m_PairInput || !tick.m_PairInput.m_Context || !lifecycle)
+            return ProducerFailure("INVALID_INPUT");
+        if (tick.m_PairInput.m_Context.m_sBandId != m_sTemporalProducerBandId)
+            return ProducerFailure("BAND_MISMATCH");
+        if (tick.m_PairInput.m_iSessionEpoch != m_iSessionEpoch || lifecycle.GetSessionEpoch() != m_iSessionEpoch
+            || owner.GetSessionEpoch() != m_iSessionEpoch)
+            return ProducerFailure("SCOPE_MISMATCH", true);
+        RICON_LinkEvaluator evaluator = GetBandEvaluator(m_sTemporalProducerBandId);
+        if (!evaluator) return ProducerFailure("UNKNOWN_BAND");
+        RICON_ManagerLinkSequenceSource source = new RICON_ManagerLinkSequenceSource(this);
+        m_bTemporalProducerPublishing = true;
+        RICON_TemporalPublicationResult result = owner.Publish(tick, evaluator, lifecycle, lifecycleNowMs, source);
+        m_bTemporalProducerPublishing = false;
+        return result;
+    }
+
+    RICON_TemporalProducerRegistry ReadTemporalProducerRegistry()
+    {
+        if (!IsAuthority()) return null;
+        RICON_TemporalPublicationOwner owner = RICON_TemporalPublicationOwner.Cast(m_TemporalAuthorityJournal);
+        if (!owner) return null;
+        return owner.ReadProducerRegistry();
+    }
+
+    //! Internal all-owner source handoff; it makes no network FULL/ACK claim.
+    RICON_TemporalPublicationResult BuildTemporalProducerFullHandoff()
+    {
+        if (!IsAuthority()) return ProducerFailure("AUTHORITY_REQUIRED");
+        RICON_TemporalPublicationOwner owner = RICON_TemporalPublicationOwner.Cast(m_TemporalAuthorityJournal);
+        if (!owner || m_sTemporalProducerBandId.IsEmpty()) return ProducerFailure("PRODUCER_DISABLED");
+        if (m_bTemporalProducerPublishing) return ProducerFailure("PRODUCER_BUSY");
+        m_bTemporalProducerPublishing = true;
+        RICON_TemporalPublicationResult result = owner.BuildFullSourceHandoff();
+        m_bTemporalProducerPublishing = false;
+        return result;
+    }
+
+    //! Explicit server-only opt-in. Reconfiguration cannot silently drop an old scope.
+    bool ConfigureTemporalAuthority(RICON_TemporalLimits limits)
+    {
+        if (!IsAuthority() || m_iSessionEpoch <= 0 || m_iSessionEpoch >= int.MAX || !limits || !limits.IsValid())
+            return false;
+        if (m_TemporalAuthorityJournal)
+            return m_TemporalAuthorityJournal.GetSessionEpoch() == m_iSessionEpoch && m_TemporalAuthorityJournal.MatchesLimits(limits);
+        m_TemporalAuthorityJournal = new RICON_TemporalAuthorityJournal(m_iSessionEpoch, limits);
+        return true;
+    }
+
+    int GetTemporalCaptureEpoch()
+    {
+        if (!IsAuthority() || !m_TemporalAuthorityJournal) return 0;
+        return m_TemporalAuthorityJournal.GetSessionEpoch();
+    }
+
+    //! Read-only admission shared by the single and batch capture paths.
+    protected RICON_TemporalCaptureResult PrepareTemporalCapture(RICON_TemporalSnapshot snapshot, RICON_TemporalExpected expected, RICON_LifecycleStateMachine lifecycle, int lifecycleNowMs, out RICON_TemporalCaptureInput row)
+    {
+        row = null;
+        if (!snapshot || !snapshot.m_Binding) return RICON_TemporalAuthorityJournal.Result("INVALID_SNAPSHOT");
+        if (m_TemporalAuthorityJournal.GetSessionEpoch() != m_iSessionEpoch || snapshot.m_iSessionEpoch != m_iSessionEpoch)
+            return RICON_TemporalAuthorityJournal.Result("SCOPE_MISMATCH", true);
+        int issued;
+        if (!m_mLinkSeqById.Find(snapshot.m_iLinkId, issued) || issued != snapshot.m_iLinkSeq)
+            return RICON_TemporalAuthorityJournal.Result("UNISSUED_SEQUENCE", true);
+        if (!lifecycle || lifecycle.GetSessionEpoch() != m_iSessionEpoch
+            || lifecycle.GetPlayerState(snapshot.m_iTalkerPlayerId) != RICON_EPlayerLifecycleState.BOUND_ACTIVE
+            || lifecycle.GetPlayerState(snapshot.m_iListenerPlayerId) != RICON_EPlayerLifecycleState.BOUND_ACTIVE
+            || lifecycle.GetPlayerGeneration(snapshot.m_iTalkerPlayerId) != snapshot.m_Binding.m_iTxGeneration
+            || lifecycle.GetPlayerGeneration(snapshot.m_iListenerPlayerId) != snapshot.m_Binding.m_iRxGeneration)
+            return RICON_TemporalAuthorityJournal.Result("STALE_LIFECYCLE_CONTEXT", true);
+        // Lifecycle time is supplied by the authoritative caller, not a descriptor anchor or presentation TTL.
+        RICON_LifecycleLease sourceLease = lifecycle.QueryActiveLease(snapshot.m_Binding.m_iLeaseId, lifecycleNowMs);
+        if (!sourceLease || sourceLease.m_iLeaseId != snapshot.m_Binding.m_iLeaseId
+            || sourceLease.m_iPlayerId != snapshot.m_iTalkerPlayerId
+            || sourceLease.m_iGeneration != snapshot.m_Binding.m_iTxGeneration
+            || sourceLease.m_iDeviceId != snapshot.m_Binding.m_iTxDeviceId)
+            return RICON_TemporalAuthorityJournal.Result("LEASE_CONTEXT_UNAVAILABLE", true);
+        int receiverEntityId = lifecycle.GetPlayerEntityId(snapshot.m_iListenerPlayerId);
+        if (receiverEntityId <= 0) return RICON_TemporalAuthorityJournal.Result("INVALID_RECEIVER_ENTITY");
+        row = new RICON_TemporalCaptureInput(snapshot, expected, receiverEntityId);
+        return RICON_TemporalAuthorityJournal.Result("OK");
+    }
+
+    //! Expected provenance and an actual producer commit remain the caller's responsibility.
+    RICON_TemporalCaptureResult CaptureTemporalPublication(RICON_TemporalSnapshot snapshot, RICON_TemporalExpected expected, RICON_LifecycleStateMachine lifecycle, int lifecycleNowMs)
+    {
+        if (!IsAuthority()) return RICON_TemporalAuthorityJournal.Result("AUTHORITY_REQUIRED");
+        if (!m_TemporalAuthorityJournal) return RICON_TemporalAuthorityJournal.Result("CAPTURE_DISABLED");
+        if (!m_sTemporalProducerBandId.IsEmpty()) return RICON_TemporalAuthorityJournal.Result("PRODUCER_OWNER_REQUIRED");
+        RICON_TemporalCaptureInput row;
+        RICON_TemporalCaptureResult admission = PrepareTemporalCapture(snapshot, expected, lifecycle, lifecycleNowMs, row);
+        if (admission.m_sCode != "OK") return admission;
+        return m_TemporalAuthorityJournal.CapturePublished(row.m_Snapshot, row.m_Expected, row.m_iReceiverEntityId);
+    }
+
+    //! All source admission completes before the journal can commit any row; no RPC or dispatch.
+    RICON_TemporalCaptureResult CaptureTemporalPublications(array<ref RICON_TemporalSnapshot> snapshots, map<int, ref RICON_TemporalExpected> expectedByLink, RICON_LifecycleStateMachine lifecycle, int lifecycleNowMs)
+    {
+        if (!IsAuthority()) return RICON_TemporalAuthorityJournal.Result("AUTHORITY_REQUIRED");
+        if (!m_TemporalAuthorityJournal) return RICON_TemporalAuthorityJournal.Result("CAPTURE_DISABLED");
+        if (!m_sTemporalProducerBandId.IsEmpty()) return RICON_TemporalAuthorityJournal.Result("PRODUCER_OWNER_REQUIRED");
+        if (!snapshots || !expectedByLink) return RICON_TemporalAuthorityJournal.Result("INVALID_INPUT");
+        if (snapshots.Count() > m_TemporalAuthorityJournal.GetCaptureLimit())
+            return RICON_TemporalAuthorityJournal.Result("BATCH_LIMIT");
+        array<ref RICON_TemporalCaptureInput> rows = {};
+        foreach (RICON_TemporalSnapshot snapshot : snapshots)
+        {
+            RICON_TemporalExpected expected;
+            if (snapshot) expected = expectedByLink.Get(snapshot.m_iLinkId);
+            RICON_TemporalCaptureInput row;
+            RICON_TemporalCaptureResult admission = PrepareTemporalCapture(snapshot, expected, lifecycle, lifecycleNowMs, row);
+            if (admission.m_sCode != "OK") return admission;
+            rows.Insert(row);
+        }
+        return m_TemporalAuthorityJournal.CapturePublishedBatch(rows);
+    }
+
+    //! Capture preEventEpoch from the actual Lifecycle before calling it.
+    //! A rotation result can contain old-epoch expiries even when the manager has already advanced.
+    RICON_TemporalCaptureResult ConsumeTemporalLifecycleResult(RICON_LifecycleResult result, int preEventEpoch)
+    {
+        if (!IsAuthority()) return RICON_TemporalAuthorityJournal.Result("AUTHORITY_REQUIRED");
+        if (!m_TemporalAuthorityJournal) return RICON_TemporalAuthorityJournal.Result("CAPTURE_DISABLED");
+        return m_TemporalAuthorityJournal.ConsumeLifecycleResult(result, preEventEpoch);
+    }
+
+    //! Internal producer handoff only; never feed an untrusted client checkpoint into this method.
+    RICON_TemporalCaptureResult CommitTemporalSourceCheckpoint(int sourceEpoch, int highWater, array<int> activeIds)
+    {
+        if (!IsAuthority()) return RICON_TemporalAuthorityJournal.Result("AUTHORITY_REQUIRED");
+        if (!m_TemporalAuthorityJournal) return RICON_TemporalAuthorityJournal.Result("CAPTURE_DISABLED");
+        return m_TemporalAuthorityJournal.CommitSourceCheckpoint(sourceEpoch, highWater, activeIds);
+    }
+
+    RICON_TemporalClosureIntent ReadTemporalClosure(int linkId)
+    {
+        if (!IsAuthority() || !m_TemporalAuthorityJournal) return null;
+        return m_TemporalAuthorityJournal.ReadPending(linkId);
+    }
 
 	//! Starts with Unix seconds and then increments process-locally across world/session generations.
 	//! If script state is rebuilt, clients must establish a fresh session; global historical uniqueness is not claimed.

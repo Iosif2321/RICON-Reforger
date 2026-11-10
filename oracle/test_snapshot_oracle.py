@@ -39,6 +39,39 @@ class SnapshotOracleTests(unittest.TestCase):
         self.assertNotIn(self.document["intMax"], issued)
         self.assertEqual([self.document["intMax"] - 1, 1, 2], issued)
 
+    def accepted_snapshot(self):
+        return copy.deepcopy(self.document["vectors"][0]["input"]["incoming"])
+
+    def test_receive_copies_accepted_snapshot(self) -> None:
+        for current in ([], [self.accepted_snapshot()]):
+            with self.subTest(decision="ACCEPT_NEWER" if current else "ACCEPT_FIRST"):
+                receiver = snapshot_oracle.Receiver(1)
+                receiver.full_resync(0, 7, 1, current)
+                incoming = self.accepted_snapshot()
+                incoming["linkSeq"] = 6 if current else 5
+                accepted_seq = incoming["linkSeq"]
+                self.assertEqual(receiver.receive(10, incoming)["decision"], "ACCEPT_NEWER" if current else "ACCEPT_FIRST")
+                incoming["linkSeq"] = 999
+                incoming["ttlMs"] = 100000
+                incoming["quality"] = 0.0
+                self.assertEqual(receiver.slot_view(), {"10": accepted_seq})
+                self.assertEqual(receiver.visible(1010, 10), {"visible": False, "effects": []})
+                self.assertEqual(receiver.slots[10][0]["quality"], 0.9)
+
+    def test_full_resync_copies_accepted_snapshots(self) -> None:
+        receiver = snapshot_oracle.Receiver(1)
+        incoming = self.accepted_snapshot()
+        batch = [incoming]
+        self.assertEqual(receiver.full_resync(10, 7, 1, batch)["decision"], "ACCEPT_RESYNC")
+        incoming["linkSeq"] = 999
+        incoming["ttlMs"] = 100000
+        batch.clear()
+        self.assertEqual(receiver.slot_view(), {"10": 5})
+        self.assertEqual(receiver.visible(1010, 10), {"visible": False, "effects": []})
+
+    def test_compare_rejects_invalid_current_slot(self) -> None:
+        self.assertEqual(snapshot_oracle.compare({}, self.accepted_snapshot()), "INVALID_IDENTITY")
+
 
 if __name__ == "__main__":
     unittest.main()

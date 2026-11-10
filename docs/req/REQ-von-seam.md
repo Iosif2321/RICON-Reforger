@@ -1,5 +1,9 @@
 # REQ-von-seam — безопасная заготовка интеграции VoN (Э4T-s)
 
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_BEGIN -->
+**Уточнение владельца, 2026-11-04:** [план RECEIVER/SERVER и channel→audio](../plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md) заменяет прежнюю runtime-интерпретацию LOST как автоматического прекращения голоса. Pure stateless seam и её текущий BLOCKED_NO_ACTUATOR остаются без изменения кода; историческая server-authoritative область ниже не означает готовый двурежимный временной контракт. Source authorization, user power/mute и receiver squelch отделены от физического Q/LOST. Новый контракт и все потребители мигрируют согласованно; diagnostic generic LOST gate не является правилом обычного VoN.
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_END -->
+
 Версия: **0.2 AGENT-REVIEWED**, 2026-10-19. Автор: codex. Ревью и независимый oracle: claude
 (agora #1117, #1125, #1150, #1164); oracle cross-review codex #1172, #1183.
 

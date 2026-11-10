@@ -1,0 +1,1460 @@
+{
+  "schema": "ricon.ct10.producer-owner-result",
+  "version": 1,
+  "status": "EXPLICIT_V2_SOURCE_CO_COMMIT_SELECTED_PURE_PASS",
+  "observation_utc": "2026-11-10T12:45:01.496191+00:00",
+  "author": "codex.team.docs",
+  "canonical_publisher": "codex.lead",
+  "canonical_targets": [
+    "docs/evidence/E-ct10-producer-owner-20261110.md",
+    "docs/evidence/receipts/ct10-producer-owner-result-20261110.json"
+  ],
+  "qualification": "PURE_SCHEMA2_SOURCE_OWNER_FIXTURES_PASS_SCOPED",
+  "logs": [
+    {
+      "id": "legacy_before",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-legacy-baseline-20261110-141808/console.log",
+      "sha256": "ec21500dc03af38da9eaf3009a3aa86b32f45ed4f8b1cb34f7a03519fbd82526",
+      "bytes": 34457,
+      "lines": 320,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "bb0c914c",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5799,
+          "classes": 11602,
+          "crc32": "4bae5ed1",
+          "line": 158
+        }
+      ],
+      "suites": {},
+      "legacy": {
+        "cases": 106,
+        "match": 106,
+        "immutable": 106,
+        "controls": 15,
+        "extras": 4,
+        "snapshots": 37,
+        "line": 274
+      },
+      "legacy_individual_records": 106,
+      "legacy_all_match_immutable": true,
+      "completion": [
+        {
+          "tag": "RICON_LINKPUB",
+          "status": "PASS",
+          "line": 275
+        }
+      ],
+      "script_error_lines": [],
+      "vm_exception_lines": [],
+      "first_vm_excerpt": [],
+      "non_script_error_diagnostics": [
+        {
+          "line": 276,
+          "text": "14:18:17.666  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 296,
+          "text": "14:18:17.927 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 297,
+          "text": "14:18:17.927 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 298,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 299,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 300,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 301,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 302,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 303,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 304,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 305,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 306,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 307,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 308,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 309,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 310,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 311,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 312,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 313,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 314,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 315,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 316,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 317,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 318,
+          "text": "14:18:17.927 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 319,
+          "text": "14:18:17.927 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 320,
+          "text": "14:18:17.927 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": 0,
+      "runner_exit_root_reported": null,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    },
+    {
+      "id": "old284_only",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-initial-20261110-151638/console.log",
+      "sha256": "69566df64a70d760ca4bca79a50a6c528136c697d58d067116d8b1c2c989c500",
+      "bytes": 21841,
+      "lines": 214,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "bb0c914c",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5799,
+          "classes": 11602,
+          "crc32": "4bae5ed1",
+          "line": 158
+        }
+      ],
+      "suites": {
+        "snapshot": {
+          "checks": 57,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 164
+        },
+        "ordered": {
+          "checks": 40,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 165
+        },
+        "capture": {
+          "checks": 59,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 166
+        },
+        "lease_query": {
+          "checks": 67,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 167
+        },
+        "capture_batch": {
+          "checks": 61,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 168
+        }
+      },
+      "legacy": null,
+      "legacy_individual_records": 0,
+      "legacy_all_match_immutable": null,
+      "completion": [
+        {
+          "tag": "RICON_TEMPORAL_INTEGRATION",
+          "status": "PASS",
+          "line": 169
+        }
+      ],
+      "script_error_lines": [],
+      "vm_exception_lines": [],
+      "first_vm_excerpt": [],
+      "non_script_error_diagnostics": [
+        {
+          "line": 170,
+          "text": "15:16:47.270  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 190,
+          "text": "15:16:47.472 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 191,
+          "text": "15:16:47.472 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 192,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 193,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 194,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 195,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 196,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 197,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 198,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 199,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 200,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 201,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 202,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 203,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 204,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 205,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 206,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 207,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 208,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 209,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 210,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 211,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 212,
+          "text": "15:16:47.472 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 213,
+          "text": "15:16:47.472 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 214,
+          "text": "15:16:47.472 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": null,
+      "runner_exit_root_reported": null,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    },
+    {
+      "id": "published_vm_fail",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-published-20261110-151847/console.log",
+      "sha256": "69468ad0c1594a908728008427afc2c8376a22ef423755f436dbbbf383cbaabf",
+      "bytes": 55535,
+      "lines": 831,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "9e6abf06",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5802,
+          "classes": 11626,
+          "crc32": "21d18801",
+          "line": 158
+        }
+      ],
+      "suites": {
+        "snapshot": {
+          "checks": 57,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 780
+        },
+        "ordered": {
+          "checks": 40,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 781
+        },
+        "capture": {
+          "checks": 59,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 782
+        },
+        "lease_query": {
+          "checks": 67,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 783
+        },
+        "capture_batch": {
+          "checks": 61,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 784
+        },
+        "producer": {
+          "checks": 1439,
+          "failures": 5,
+          "first": 99,
+          "label": "PC05 151 exact keepalive boundary",
+          "line": 785
+        }
+      },
+      "legacy": null,
+      "legacy_individual_records": 0,
+      "legacy_all_match_immutable": null,
+      "completion": [
+        {
+          "tag": "RICON_TEMPORAL_INTEGRATION",
+          "status": "FAIL",
+          "line": 786
+        }
+      ],
+      "script_error_lines": [
+        164,
+        179,
+        194,
+        209,
+        224,
+        239,
+        254,
+        270,
+        285,
+        300,
+        317,
+        332,
+        348,
+        364,
+        380,
+        396,
+        412,
+        428,
+        444,
+        460,
+        475,
+        490,
+        505,
+        520,
+        535,
+        550,
+        565,
+        581,
+        597,
+        612,
+        627,
+        642,
+        657,
+        673,
+        690,
+        705,
+        720,
+        735,
+        750,
+        765
+      ],
+      "vm_exception_lines": [
+        164,
+        179,
+        194,
+        209,
+        224,
+        239,
+        254,
+        270,
+        285,
+        300,
+        317,
+        332,
+        348,
+        364,
+        380,
+        396,
+        412,
+        428,
+        444,
+        460,
+        475,
+        490,
+        505,
+        520,
+        535,
+        550,
+        565,
+        581,
+        597,
+        612,
+        627,
+        642,
+        657,
+        673,
+        690,
+        705,
+        720,
+        735,
+        750,
+        765
+      ],
+      "first_vm_excerpt": [
+        "15:18:56.278  SCRIPT    (E): Virtual Machine Exception",
+        "",
+        "Reason: NULL pointer to instance. Variable 'm_eState'",
+        "",
+        "Class:      'RICON_TemporalPublicationService'",
+        "Function: 'NeedSnapshot'",
+        "Stack trace:",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function NeedSnapshot",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function Prepare",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function PublishCore",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function Publish",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function Publish",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function DescriptorCanonicalAndTiming",
+        "Scripts/Game/RICON/Core/RICON_LinkPublication.c:554 Function RunAll"
+      ],
+      "non_script_error_diagnostics": [
+        {
+          "line": 787,
+          "text": "15:18:56.591  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 807,
+          "text": "15:18:56.797 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 808,
+          "text": "15:18:56.797 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 809,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 810,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 811,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 812,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 813,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 814,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 815,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 816,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 817,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 818,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 819,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 820,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 821,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 822,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 823,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 824,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 825,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 826,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 827,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 828,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 829,
+          "text": "15:18:56.797 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 830,
+          "text": "15:18:56.797 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 831,
+          "text": "15:18:56.797 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": 5,
+      "runner_exit_root_reported": null,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    },
+    {
+      "id": "lifetime1723",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-lifetime-fix-20261110-152059/console.log",
+      "sha256": "e206362822190be6fc8ef7b3b4fd3f44a478233e8608878708621042f73f0729",
+      "bytes": 21976,
+      "lines": 215,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "9e6abf06",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5802,
+          "classes": 11626,
+          "crc32": "f0134a8d",
+          "line": 158
+        }
+      ],
+      "suites": {
+        "snapshot": {
+          "checks": 57,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 164
+        },
+        "ordered": {
+          "checks": 40,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 165
+        },
+        "capture": {
+          "checks": 59,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 166
+        },
+        "lease_query": {
+          "checks": 67,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 167
+        },
+        "capture_batch": {
+          "checks": 61,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 168
+        },
+        "producer": {
+          "checks": 1439,
+          "failures": 0,
+          "first": 0,
+          "label": "",
+          "line": 169
+        }
+      },
+      "legacy": null,
+      "legacy_individual_records": 0,
+      "legacy_all_match_immutable": null,
+      "completion": [
+        {
+          "tag": "RICON_TEMPORAL_INTEGRATION",
+          "status": "PASS",
+          "line": 170
+        }
+      ],
+      "script_error_lines": [],
+      "vm_exception_lines": [],
+      "first_vm_excerpt": [],
+      "non_script_error_diagnostics": [
+        {
+          "line": 171,
+          "text": "15:21:08.797  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 191,
+          "text": "15:21:09.007 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 192,
+          "text": "15:21:09.007 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 193,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 194,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 195,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 196,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 197,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 198,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 199,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 200,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 201,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 202,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 203,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 204,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 205,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 206,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 207,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 208,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 209,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 210,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 211,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 212,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 213,
+          "text": "15:21:09.008 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 214,
+          "text": "15:21:09.008 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 215,
+          "text": "15:21:09.008 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": 0,
+      "runner_exit_root_reported": 0,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    },
+    {
+      "id": "extra1780",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-extra-fixtures-20261110-153120/console.log",
+      "sha256": "208c33b4abc521f879131c2868f17a3ce16641a046bab509cf907f833914262f",
+      "bytes": 21988,
+      "lines": 215,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "9e6abf06",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5802,
+          "classes": 11628,
+          "crc32": "38080dfb",
+          "line": 158
+        }
+      ],
+      "suites": {
+        "snapshot": {
+          "checks": 57,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 164
+        },
+        "ordered": {
+          "checks": 40,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 165
+        },
+        "capture": {
+          "checks": 59,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 166
+        },
+        "lease_query": {
+          "checks": 67,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 167
+        },
+        "capture_batch": {
+          "checks": 61,
+          "failures": 0,
+          "first": 0,
+          "label": null,
+          "line": 168
+        },
+        "producer": {
+          "checks": 1496,
+          "failures": 0,
+          "first": 0,
+          "label": "",
+          "line": 169
+        }
+      },
+      "legacy": null,
+      "legacy_individual_records": 0,
+      "legacy_all_match_immutable": null,
+      "completion": [
+        {
+          "tag": "RICON_TEMPORAL_INTEGRATION",
+          "status": "PASS",
+          "line": 170
+        }
+      ],
+      "script_error_lines": [],
+      "vm_exception_lines": [],
+      "first_vm_excerpt": [],
+      "non_script_error_diagnostics": [
+        {
+          "line": 171,
+          "text": "15:31:29.646  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 191,
+          "text": "15:31:29.840 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 192,
+          "text": "15:31:29.840 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 193,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 194,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 195,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 196,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 197,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 198,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 199,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 200,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 201,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 202,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 203,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 204,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 205,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 206,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 207,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 208,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 209,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 210,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 211,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 212,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 213,
+          "text": "15:31:29.840 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 214,
+          "text": "15:31:29.840 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 215,
+          "text": "15:31:29.840 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": 0,
+      "runner_exit_root_reported": 0,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    },
+    {
+      "id": "legacy_after",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-producer-legacy-after-20261110-153220/console.log",
+      "sha256": "7a1e790feeb60fca21dcd8c6baabe9ceb9ca0eafeab33598a1aab844816e4d8b",
+      "bytes": 34439,
+      "lines": 320,
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "9e6abf06",
+          "line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5802,
+          "classes": 11628,
+          "crc32": "38080dfb",
+          "line": 158
+        }
+      ],
+      "suites": {},
+      "legacy": {
+        "cases": 106,
+        "match": 106,
+        "immutable": 106,
+        "controls": 15,
+        "extras": 4,
+        "snapshots": 37,
+        "line": 274
+      },
+      "legacy_individual_records": 106,
+      "legacy_all_match_immutable": true,
+      "completion": [
+        {
+          "tag": "RICON_LINKPUB",
+          "status": "PASS",
+          "line": 275
+        }
+      ],
+      "script_error_lines": [],
+      "vm_exception_lines": [],
+      "first_vm_excerpt": [],
+      "non_script_error_diagnostics": [
+        {
+          "line": 276,
+          "text": "15:32:29.187  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 296,
+          "text": "15:32:29.385 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 297,
+          "text": "15:32:29.386 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 298,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 299,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 300,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 301,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 302,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 303,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 304,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 305,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 306,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 307,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 308,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 309,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 310,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 311,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 312,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 313,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 314,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 315,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 316,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 317,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 318,
+          "text": "15:32:29.386 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 319,
+          "text": "15:32:29.386 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 320,
+          "text": "15:32:29.386 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "sdk_process_exit_root_reported": 0,
+      "runner_exit_root_reported": 0,
+      "exit_provenance": "Root owned-process observations/task/Agora8391,8395; console independently read, not a Docs process run"
+    }
+  ],
+  "current_canonical_pins": [
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalPublication.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalPublication.c",
+      "sha256": "35ecc9ae702f4e9a870b955c3934e04508072ea28fb077e869df5cd6f69d6f77",
+      "bytes": 19637
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalPublicationOwner.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalPublicationOwner.c",
+      "sha256": "3f5eb16f9f981b812e8c5580ac16230e23e443a40443f885d32fb9ffdf02dd96",
+      "bytes": 23183
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "sha256": "192b410301228b23079643ff725c2e3c61d75ec39925a5a2ef3e2014e5f2dae2",
+      "bytes": 23533
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "3a5412270a2197465192bf77ad46338e433e1742f30eff4eceb14e95d4e806f4",
+      "bytes": 45993
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalProducerFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalProducerFixtures.c",
+      "sha256": "ab62319b65d183bbd3aeaed150af07d4147b21126629e015cda60e7211818348",
+      "bytes": 65525
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "b3f847e3da2d982850cf15c7f81e829b50ee82be85ce76f31f744eb6a4be61ee",
+      "bytes": 3194
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+      "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb",
+      "bytes": 24031
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "sha256": "7a0c694c75e1e6906b46c78400ed20f320a7dfa0cbd22daa47e8d70b9aaeb434",
+      "bytes": 17899
+    }
+  ],
+  "source_pin_scope": "Exact post-run source observation plus Root publication chronology; console CRCs are not per-source SHA attestations.",
+  "checkpoint_scope": {
+    "legacy_pre_post": "Actual106/106/106,15controls,4extras,37snapshots before/after; unchanged b3 source and corpus expected.",
+    "named_initial": "Manager install oversized argv failed before ANY edit (Root8390). Named producer-initial contains only old284, not new-code acceptance.",
+    "published_failure": "New code compiled but40VM NULL NeedSnapshot/m_Old exceptions andproducer1439/5FAIL; old284 stillPASS.",
+    "lifetime_fix": "Strong local readonly scalarRegistry keeps borrowed legacy plan entries alive through NeedSnapshot. Only this source replacement; no broad VM bug or legacy behavior rewrite claimed.",
+    "after_fix1723": "1439producer+284previous checks actualPASS with a927 fixture.",
+    "extra1780": "1496producer+284previous checks actualPASS with ab623, including PC36/PC37."
+  },
+  "lifetime_fix": {
+    "patch": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/sdk-scalar-lifetime-fix.patch",
+      "sha256": "573be14fc2ac521f6a33930fc4ea72fbee6f9d2e266c7ba89aab6aa012bc1730",
+      "bytes": 570
+    },
+    "service_before_fix": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/core/RICON_TemporalPublication.c",
+      "sha256": "396e45864a00f73c4c5c22b3eb26ffc6b6ec583f63a36dfe7a1cd7cab2cf5fec",
+      "bytes": 19481
+    },
+    "byte_exact_replacement_to35ecc": true,
+    "legacy_b3_and_parent_journal7a_unchanged": true
+  },
+  "lifecycle_readside": {
+    "before339": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/before/RICON_Lifecycle.c",
+      "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+      "bytes": 45601
+    },
+    "current3a": {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "3a5412270a2197465192bf77ad46338e433e1742f30eff4eceb14e95d4e806f4",
+      "bytes": 45993
+    },
+    "inverse_to339_verified_in_prior_read": true,
+    "delta": "CanQueryAt/QueryDevice read-only helpers plus QueryActiveLease delegates equivalent guard; reverse insertion and guard replacement restores exact339; old public event/effect bodies preserved.",
+    "query16_literals_3mutants": "Root reported SOURCE_EXTRACTED_QUERY_ALGORITHM_ONLY; no native execution claim",
+    "checker": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/check_active_lease_query.ps1",
+      "sha256": "b93bcd515ef98bac34bb5c4b7b53f206b9eae7fde857a68f19c2725ed3c4b27c",
+      "bytes": 7009
+    }
+  },
+  "fixture_and_expectations": {
+    "manual_pc01_pc34": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/review/EXPECTATIONS_RU.md",
+      "sha256": "936883212580be54bc0689bd50e454c92d1219148049cf99716d7af8aecf6165",
+      "bytes": 31240
+    },
+    "premigration_map_immutable": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/docs/MIGRATION_MAP_RU.md",
+      "sha256": "b7f6874ae2b09615c2ed9b7478bee117691a32a2a570f72cbfce003b07105ee5",
+      "bytes": 24233
+    },
+    "fixture_at1723": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/review/RICON_TemporalProducerFixtures.c",
+      "sha256": "a927d330c6715c557a3075b73070edde1c05f36bfb4e3cf68864648068c9983d",
+      "bytes": 58379
+    },
+    "final_extra_fixture": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/review/RICON_TemporalProducerFixtures.candidate.c",
+      "sha256": "ab62319b65d183bbd3aeaed150af07d4147b21126629e015cda60e7211818348",
+      "bytes": 65525
+    },
+    "corrections_before_next": [
+      "Forged disallowed channel + empty channel map rejects, does not masquerade as END",
+      "Same-player/different-device full typed normalize rejects before Next",
+      "Actual global generations1/2/3 used; immutable9368 expectations not weakened"
+    ],
+    "PC36": "Actual pure positive liveB/closedA internal full handoff, exact Expected/IDs/H/detach and no closed-ID reuse; not network ACK or native world.",
+    "PC37": "Actual SDK TEST_ONLY protected ScratchOwner/ScratchCapture override fails after2Next; committed R/J/budgets/floors unchanged while external issuance consumed. Defensive fault injection, not natural live resource/race reproducer."
+  },
+  "test_doubles_and_limits": {
+    "actual_pure_code": "Actual owner, PairService, S2 query builder and Lifecycle state machine.",
+    "scalar_quality_double": "Named RICON_TemporalProducerFixtureEvaluator supplies scalar mean Q; separate ActualEvaluatorSmoke uses real FreeSpace evaluator.",
+    "constructors_cast": "Three-prefix/base ctor and Owner.Cast SDK compiled; not a universal language rule.",
+    "native_manager_role_world_admission": false,
+    "physical_descriptor_builder_calibration": false,
+    "receiver_production_parity": false,
+    "rpc_wire_audio_load": false,
+    "sdk_framework_game_instance": "Observed SDK startup; no Play/world/server/mic acceptance."
+  },
+  "reviews": {
+    "source_counter_agora": [
+      8384,
+      8388
+    ],
+    "actual_sdk_root_agora": [
+      8391,
+      8395
+    ],
+    "artifact_pins": [
+      {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/review/REVIEW_RU.md",
+        "sha256": "28cb80291457ef592e6cf2dbab352664e86572f1853fd423cfa33e42f57c567f",
+        "bytes": 27436
+      },
+      {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-producer-20261110/core/SDK_TEST_REVIEW_RU.md",
+        "sha256": "35799c546b9999f8fd9d5034f5358e6097ad54a575f5e2b904e83017a0c79570",
+        "bytes": 7797
+      }
+    ],
+    "final_peer_freeze": "Mutable draft records current peer report hashes; Root will publish final acceptance after verify."
+  },
+  "agy_gate": {
+    "earlier_agy8382": "BOUNDED_SOURCE_DESIGN_REVIEWED only; not final implementation/log review.",
+    "new_final_review": "AUTO_REVIEW_REJECTED_NOT_RUN_AUTHORIZATION_GATE",
+    "reported_reason": "External payload private code/paths/hashes through unmanaged proxy.",
+    "no_new_payload_sent_to_agy": true,
+    "bypass_performed": false,
+    "root_prepared_review_bundle": "review-share:4source+sanitized SDK_RESULT; owner explicit approval question pending, no answer means no approval."
+  },
+  "historical_evidence_unchanged": [
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/E-ct10-capture-batch-20261110.md",
+      "sha256": "7847f53950a3f9e731fd38477baa5aa03cd1359693aa6b4762496b25cc1c33cb",
+      "bytes": 13059
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/receipts/ct10-capture-batch-result-20261110.json",
+      "sha256": "6ff16c81fdbdc74b31ccdb474f297a4cdb6383fc4df27a5dfe81442f3a7bf761",
+      "bytes": 40014
+    }
+  ],
+  "documentation_sdk_runs": 0,
+  "documentation_memory_writes": 0,
+  "canonical_edits_by_documentation": false,
+  "graph_touched": false,
+  "goal_complete": false,
+  "remaining_open": [
+    "nativeManagerRole/world/RPC/auth/source-clock provenance",
+    "physical descriptor builder/world exporter/RF calibration/sharedRX",
+    "RECEIVER production execution parity",
+    "epoch coordinator/retirement/network transport",
+    "VoN/content/DSP/audio/load/full Goal"
+  ],
+  "observation_finished_utc": "2026-11-10T12:45:01.515699+00:00",
+  "root_verification": {
+    "shaPins": 27,
+    "actualLogs": 6,
+    "selectedPureAssertions": 1780,
+    "legacyCasesBeforeAndAfter": 106,
+    "uniqueIndividualRowsVerified": true,
+    "processRunnerExitByRoot": 0,
+    "allScriptErrorsFinal": 0,
+    "allEngineDiagnosticsZeroClaimed": false,
+    "documentationSdkRuns": 0,
+    "graphPeerReview": 8398,
+    "graphReviewSha256": "b2e6436aa4614bd7b6c2949e549d9aef54f5e879a93cc28752dcaf812eef60dd",
+    "contractReviewSha256": "e3d6f16219f19cf387317837b483a440921aed31b563baefef657df5ee9a386b",
+    "issuerGuardQualification": "Outside producer operation; synchronous single-writer/no-interleaving required during operation",
+    "agySpecificPayloadApprovalPending": true,
+    "newAgyImplementationRequestSent": false,
+    "goalComplete": false
+  }
+}

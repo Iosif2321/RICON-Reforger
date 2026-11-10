@@ -1,0 +1,161 @@
+{
+  "image": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe",
+  "image_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "method": "Only2 exact null-terminated method names in data; code RIP-form refs and data pointers restricted to those exact targets. References are byte candidates until bounded instruction verification; no broad audio/callgraph scan.",
+  "strings": [
+    {
+      "va": "0x14186de50",
+      "name": "SetSignalValue"
+    },
+    {
+      "va": "0x1418b2d48",
+      "name": "SetSignalValueStr"
+    }
+  ],
+  "code_candidates": [
+    {
+      "method": "SetSignalValue",
+      "source": "0x14016bb6e",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d05db227001",
+      "pdata": [
+        "0x14016ba60",
+        "0x14016bbae"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x14027e7b3",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d0596f65e01",
+      "pdata": [
+        "0x14027e6d0",
+        "0x14027e7f3"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x14028da9c",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d05ad035e01",
+      "pdata": [
+        "0x14028d920",
+        "0x14028dadc"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValueStr",
+      "source": "0x14028daba",
+      "target_string": "0x1418b2d48",
+      "bytes": "4c8d0587526201",
+      "pdata": [
+        "0x14028d920",
+        "0x14028dadc"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x1406178f7",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d0552652501",
+      "pdata": [
+        "0x1406177f0",
+        "0x140617919"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x14120c02a",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d051f1e6600",
+      "pdata": [
+        "0x14120bf00",
+        "0x14120c173"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValueStr",
+      "source": "0x14120c048",
+      "target_string": "0x1418b2d48",
+      "bytes": "4c8d05f96c6a00",
+      "pdata": [
+        "0x14120bf00",
+        "0x14120c173"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x141362c84",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d05c5b15000",
+      "pdata": [
+        "0x141362bf0",
+        "0x141362e45"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValueStr",
+      "source": "0x141362ca2",
+      "target_string": "0x1418b2d48",
+      "bytes": "4c8d059f005500",
+      "pdata": [
+        "0x141362bf0",
+        "0x141362e45"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x141384775",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d05d4964e00",
+      "pdata": [
+        "0x1413846a0",
+        "0x1413847b5"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x141385bc3",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d0586824e00",
+      "pdata": [
+        "0x141385ad0",
+        "0x141385c03"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValueStr",
+      "source": "0x14142f5d4",
+      "target_string": "0x1418b2d48",
+      "bytes": "4c8d056d374800",
+      "pdata": [
+        "0x14142f460",
+        "0x14142f6e9"
+      ],
+      "boundary_verified": false
+    },
+    {
+      "method": "SetSignalValue",
+      "source": "0x14142f5f2",
+      "target_string": "0x14186de50",
+      "bytes": "4c8d0557e84300",
+      "pdata": [
+        "0x14142f460",
+        "0x14142f6e9"
+      ],
+      "boundary_verified": false
+    }
+  ],
+  "data_pointers": []
+}

@@ -46,6 +46,10 @@ class RICON_I0Gate
 	{
 		return selectedRef && activeFlag && transceiverNonNull;
 	}
+	static bool MappingReady(bool vonMatch, bool usableRadio, bool nativeBinding, bool sameWorld)
+	{
+		return vonMatch && usableRadio && nativeBinding && sameWorld;
+	}
 	static bool SameWorldGeometry(bool a, bool b, bool sameWorld) { return a && b && sameWorld; }
 	static bool RplRoundTripAllowed(bool validId, bool roundSame) { return validId && roundSame; }
 	static bool EntriesAllowed(int preCount, int actualCount, int returnedCount)
@@ -170,8 +174,9 @@ class RICON_LiveVoNMappingInspection
 		return text + ",master=" + Bit(rpl.IsMaster());
 	}
 
-	protected bool InspectEntries()
+	protected bool InspectEntries(SCR_VONEntry expectedEntry, BaseTransceiver expectedTransceiver, out bool activeBinding)
 	{
+		activeBinding = false;
 		int preCount = m_VonController.GetVONEntryCount();
 		if (preCount < 0 || preCount > 8)
 		{
@@ -226,6 +231,8 @@ class RICON_LiveVoNMappingInspection
 						for (int t = 0; t < nativeCount; t++) if (radio.GetTransceiver(t) == tr) nativeIndex = t;
 					}
 				}
+				if (bindingAllowed && entry == expectedEntry && tr == expectedTransceiver
+					&& entry.IsUsable() && nativeIndex >= 0) activeBinding = true;
 				text = text + ",nativeIndex0=" + nativeIndex.ToString() + ",nativeCount=" + nativeCount.ToString();
 			}
 			else text = text + ",radio=0";
@@ -254,13 +261,6 @@ class RICON_LiveVoNMappingInspection
 		SCR_VONEntryRadio activeRadio = SCR_VONEntryRadio.Cast(activeEntry);
 		BaseTransceiver activeTransceiver;
 		if (activeRadio && activeEntry.IsActive()) activeTransceiver = activeRadio.GetTransceiver();
-		if (m_bMappingObserved && (entityVon != m_LastEntityVon || activeVon != m_LastActiveVon
-			|| activeEntry != m_LastActiveEntry || activeTransceiver != m_LastActiveTransceiver))
-		{
-			m_bInvalid = true; Emit("MAPPING_CHANGED", "generation=" + m_iGeneration.ToString(), true);
-		}
-		m_LastEntityVon = entityVon; m_LastActiveVon = activeVon; m_LastActiveEntry = activeEntry;
-		m_LastActiveTransceiver = activeTransceiver; m_bMappingObserved = true;
 		int matchState = RICON_I0Gate.MatchState(entityVon != null, activeVon != null, entityVon == activeVon);
 		string text = "snapshot=" + m_iSnapshots.ToString() + ",disabled=" + Bit(m_VonController.IsVONDisabled());
 		text = text + ",entityVon=" + Bit(entityVon != null) + ",activeVon=" + Bit(activeVon != null);
@@ -281,7 +281,24 @@ class RICON_LiveVoNMappingInspection
 		}
 		else geometry = geometry + ",originA=UNKNOWN,originB=UNKNOWN,distance=UNKNOWN";
 		Emit("GEOMETRY", geometry); Emit("RPL_A", RplText(a)); Emit("RPL_B", RplText(b));
-		if (!InspectEntries() || !InspectGadgetCaps()) m_bInvalid = true;
+		bool activeBinding;
+		if (!InspectEntries(activeEntry, activeTransceiver, activeBinding) || !InspectGadgetCaps()) { m_bInvalid = true; return; }
+		bool usableRadio = activeRadio && activeEntry.IsActive() && activeEntry.IsUsable();
+		bool ready = RICON_I0Gate.MappingReady(matchState == 1, usableRadio, activeBinding, sameWorld);
+		if (m_bMappingObserved)
+		{
+			if (!ready || entityVon != m_LastEntityVon || activeVon != m_LastActiveVon
+				|| activeEntry != m_LastActiveEntry || activeTransceiver != m_LastActiveTransceiver)
+			{
+				m_bInvalid = true; Emit("MAPPING_CHANGED", "generation=" + m_iGeneration.ToString(), true);
+			}
+			return;
+		}
+		// Initial radio replication is warm-up; only a complete mapping becomes the immutable baseline.
+		if (!ready) { Emit("WAIT_MAPPING", "ready=0"); return; }
+		m_LastEntityVon = entityVon; m_LastActiveVon = activeVon; m_LastActiveEntry = activeEntry;
+		m_LastActiveTransceiver = activeTransceiver; m_bMappingObserved = true;
+		Emit("MAPPING_READY", "ready=1");
 	}
 
 	void Tick(BaseWorld world, float timeSlice)
@@ -305,7 +322,7 @@ class RICON_LiveVoNMappingInspection
 	void Stop(string reason)
 	{
 		if (!m_bRunning) return;
-		string verdict = "SOURCE_MAPPING_OBSERVED"; if (!m_bIdentityReady) verdict = "BLOCKED"; if (m_bInvalid) verdict = "UNKNOWN_INCOMPLETE";
+		string verdict = "SOURCE_MAPPING_OBSERVED"; if (!m_bIdentityReady || !m_bMappingObserved) verdict = "BLOCKED"; if (m_bInvalid) verdict = "UNKNOWN_INCOMPLETE";
 		Emit("VERDICT", "value=" + verdict + ",reason=" + reason, true);
 		Emit("TERMINAL", "snapshots=" + m_iSnapshots.ToString() + ",subscriptions=0,invalid=" + Bit(m_bInvalid)
 			+ ",ordinary=" + m_Budget.Ordinary().ToString() + ",reserved=" + m_Budget.Reserved().ToString(), true);

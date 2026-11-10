@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "name": "default focuses actual native prerequisite",
+      "pass": true
+    },
+    {
+      "name": "search reaches collapsed cellular tree",
+      "pass": true
+    },
+    {
+      "name": "four filters intersect",
+      "pass": true
+    },
+    {
+      "name": "empty state",
+      "pass": true
+    },
+    {
+      "name": "all 186 nodes accessible",
+      "pass": true
+    },
+    {
+      "name": "keyboard focus preserved",
+      "pass": true
+    },
+    {
+      "name": "selected dependencies drawn",
+      "pass": true
+    },
+    {
+      "name": "wheel zoom changes camera",
+      "pass": true
+    },
+    {
+      "name": "capture10 evidence leaf present",
+      "pass": true
+    },
+    {
+      "name": "historical evidence scope visible",
+      "pass": true
+    },
+    {
+      "name": "resolved source hyperlinks",
+      "pass": true
+    },
+    {
+      "name": "no native page scroll",
+      "pass": true
+    },
+    {
+      "name": "no external active resources",
+      "pass": true
+    },
+    {
+      "name": "all plan coverage",
+      "pass": true
+    },
+    {
+      "name": "requirements and invariants preserved",
+      "pass": true
+    }
+  ],
+  "viewport": [
+    1600,
+    1000
+  ],
+  "modelNodes": 186
+}

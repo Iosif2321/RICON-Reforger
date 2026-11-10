@@ -1,0 +1,60 @@
+{
+  "image_sha256_from_getter_receipt": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "method": "One exact four-variant Input RTTI lookup: only .data names, .rdata COL/pointer refs,known vtable+90 and16targetbytes; no code-xref scan, source scan or generic RTTI inventory",
+  "source_stat_unchanged": true,
+  "data_bytes": 1201152,
+  "data_sha256": "5358a3a1283dd295cdc42d1f57ddec86bdc69a2545e5e00e0a6e1dd65c7c7500",
+  "rdata_bytes": 8273408,
+  "rdata_sha256": "886af977b007a74f41e1dfd7952f0458e32e317afeec2a0b4da1d0b80390057a",
+  "searches": [
+    {
+      "exact_name": ".?AUIOPItemInput@iop@enf@@",
+      "matches": 1
+    },
+    {
+      "exact_name": ".?AVIOPItemInput@iop@enf@@",
+      "matches": 0
+    },
+    {
+      "exact_name": ".?AUIOPItemInputClass@iop@enf@@",
+      "matches": 1
+    },
+    {
+      "exact_name": ".?AVIOPItemInputClass@iop@enf@@",
+      "matches": 0
+    }
+  ],
+  "records": [
+    {
+      "name": ".?AUIOPItemInput@iop@enf@@",
+      "td": "0x1420cd890",
+      "COL": "0x141dccd08",
+      "COL_bytes": "01000000000000000000000090d80c0230cddc0108cddc01",
+      "this_offset": 0,
+      "vtable": "0x141a72778",
+      "primary_table_prefix19slots": "30a5c8400100000010cdc84001000000409d9f400100000040b6c84001000000304b9f4001000000305d16400100000000aec8400100000010aec84001000000f0a7c84001000000e045164001000000e045164001000000e045164001000000e045164001000000e0451640010000009062164001000000a0a6174001000000d0c7c84001000000f0182c4001000000e045164001000000",
+      "slot90_pointer_bytes": "e045164001000000",
+      "slot90_target": "0x1401645e0",
+      "target_pdata": null,
+      "target_first16bytes": "32c0c3cccccccccccccccccccccccccc"
+    },
+    {
+      "name": ".?AUIOPItemInput@iop@enf@@",
+      "td": "0x1420cd890",
+      "COL": "0x141dccdc0",
+      "COL_bytes": "01000000180000000000000090d80c0230cddc01c0cddc01",
+      "this_offset": 24,
+      "vtable": "0x141a72828",
+      "slot90_status": "NOT_APPLIED_TO_SECONDARY_OR_CLASS_DESCRIPTOR"
+    },
+    {
+      "name": ".?AUIOPItemInputClass@iop@enf@@",
+      "td": "0x1420d2840",
+      "COL": "0x141dccc50",
+      "COL_bytes": "01000000000000000000000040280d0278ccdc0150ccdc01",
+      "this_offset": 0,
+      "vtable": "0x141a72848",
+      "slot90_status": "NOT_APPLIED_TO_SECONDARY_OR_CLASS_DESCRIPTOR"
+    }
+  ]
+}

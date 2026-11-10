@@ -4,7 +4,7 @@ class RICON_LiveVoNMappingInspectionCheckPlugin : WorkbenchPlugin
 {
 	override void RunCommandline()
 	{
-		int checks = 37; int passed;
+		int checks = 53; int passed;
 		if (!RICON_I0Gate.ResolveRequested(false, "1")) passed++;
 		if (!RICON_I0Gate.ResolveRequested(true, "0")) passed++;
 		if (RICON_I0Gate.ResolveRequested(true, "1")) passed++;
@@ -42,6 +42,12 @@ class RICON_LiveVoNMappingInspectionCheckPlugin : WorkbenchPlugin
 		if (RICON_I0Gate.EntryBindingAllowed(true, true, true)) passed++;
 		if (!RICON_I0Gate.EntryBindingAllowed(false, false, false)) passed++;
 		if (!RICON_I0Gate.EntryBindingAllowed(true, false, true)) passed++;
+		for (int mapping = 0; mapping < 16; mapping++)
+		{
+			bool ready = RICON_I0Gate.MappingReady((mapping & 1) != 0, (mapping & 2) != 0,
+				(mapping & 4) != 0, (mapping & 8) != 0);
+			if (ready == (mapping == 15)) passed++;
+		}
 		if (RICON_I0Gate.SameWorldGeometry(true, true, true)) passed++;
 		if (!RICON_I0Gate.SameWorldGeometry(true, true, false)) passed++;
 		if (RICON_I0Gate.RplRoundTripAllowed(true, true)) passed++;

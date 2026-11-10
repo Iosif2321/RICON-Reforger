@@ -792,6 +792,46 @@ class RICON_LifecycleStateMachine
 		return player.m_iEntityId;
 	}
 
+	//! Read-only admission at one explicit Lifecycle time; never observes or sweeps.
+	bool CanQueryAt(int nowMs)
+	{
+		return m_bReady && !m_bTickAnomaly && nowMs >= 0 && nowMs >= m_iLastObservedNowMs;
+	}
+
+	RICON_LifecycleDevice QueryDevice(int deviceId, int nowMs)
+	{
+		if (!CanQueryAt(nowMs) || deviceId <= 0)
+			return null;
+		RICON_LifecycleDevice device = FindDevice(deviceId);
+		if (!device)
+			return null;
+		return device.CloneDevice();
+	}
+
+	//! Read-only authority query at explicit lifecycle time; does not observe time or sweep expiry.
+	RICON_LifecycleLease QueryActiveLease(int leaseId, int nowMs)
+	{
+		if (!CanQueryAt(nowMs) || leaseId <= 0)
+			return null;
+		RICON_LifecycleLease lease = FindLease(leaseId);
+		if (!lease || lease.m_eState != RICON_ETransmitLeaseState.ACTIVE
+			|| lease.m_iIssuedAtMs < 0 || lease.m_iTtlMs <= 0 || nowMs < lease.m_iIssuedAtMs)
+			return null;
+		if (nowMs - lease.m_iIssuedAtMs >= lease.m_iTtlMs)
+			return null;
+		RICON_LifecycleLease copy = new RICON_LifecycleLease();
+		copy.m_iLeaseId = lease.m_iLeaseId;
+		copy.m_iPlayerId = lease.m_iPlayerId;
+		copy.m_iGeneration = lease.m_iGeneration;
+		copy.m_iDeviceId = lease.m_iDeviceId;
+		copy.m_iIssuedAtMs = lease.m_iIssuedAtMs;
+		copy.m_iTtlMs = lease.m_iTtlMs;
+		copy.m_iTerminalAtMs = lease.m_iTerminalAtMs;
+		copy.m_eState = lease.m_eState;
+		copy.m_eTerminalReason = lease.m_eTerminalReason;
+		return copy;
+	}
+
 	protected RICON_LifecycleResult ProcessNewPtt(
 		RICON_LifecyclePttRequest request,
 		RICON_LifecyclePlayer player,

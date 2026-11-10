@@ -1,0 +1,334 @@
+{
+  "schema": "ricon.review.ct10.manual-semantic-traces",
+  "version": 1,
+  "status": "INDEPENDENT_MANUAL_DRAFT_BEFORE_IMPLEMENTATION",
+  "author": "codex.team.review",
+  "createdDate": "2026-11-10",
+  "ownership": "Reviewer owns this file and TEST_PLAN_RU.md only; root owns contract and implementation.",
+  "expectationsOrigin": "Written manually from CT04-CT10, CF03-CF09, CD01-CD08 and existing snapshot/publication contracts. No future temporal oracle or root implementation was read or called.",
+  "executable": false,
+  "futureOracleUsedToProduceExpectedValues": false,
+  "target": "Proposed temporal snapshot schema 2; existing snapshot schema 1 and its vectors remain unchanged.",
+  "semanticVocabulary": "Outcome names describe assertions, not binding names for a future API enum. Bind them to the reviewed contract before implementing an adapter; never rewrite expected outcomes from actual results.",
+  "units": {
+    "serverNowMs": "Explicit synthetic server-model time in integer milliseconds; not derived from receipt time.",
+    "localNowMs": "Receiver-local monotonic integer milliseconds; only presentation TTL uses this clock.",
+    "subUs": "Integer microseconds within a millisecond, 0..999.",
+    "ttlMs": "Presentation lease duration in milliseconds from the latest accepted receipt.",
+    "phaseQ": "Integer turns / 2^30; M=1073741824.",
+    "dopplerQ": "Integer turns / 2^30 per microsecond.",
+    "frequencyMHz": "IEEE binary32 megahertz.",
+    "bandwidthHz": "IEEE binary32 hertz.",
+    "powerWeight": "Relative medium power, binary32 in [0,1]; not received power or quality.",
+    "maxBytes": "Integer bytes in the standalone RCFD frame; no network headers included."
+  },
+  "sourceRefs": {
+    "CT": "RICON-Reforger/docs/req/REQ-channel-time.md:45-102",
+    "CF": "RICON-Reforger/docs/req/REQ-channel-fading.md:31-86",
+    "CD": "RICON-Reforger/docs/req/REQ-channel-descriptor.md:8-94",
+    "MAP": "RICON-Reforger/docs/req/CT10-migration-map.md:24-49",
+    "SNAPSHOT": "RICON-Reforger/docs/req/REQ-core-contracts.md:243-318",
+    "PUBLICATION": "RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c:549-563",
+    "SEAM": "RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c:350-367"
+  },
+  "fixtures": {
+    "D0": {
+      "modelId": "FINITE_MULTIPATH_V1",
+      "profileId": "TEST_ONLY",
+      "profileVersion": 1,
+      "a": {"deviceId": 101, "transceiverIndex": 0},
+      "b": {"deviceId": 202, "transceiverIndex": 0},
+      "frequencyMHz": 150.0,
+      "bandwidthHz": 25000.0,
+      "environmentRevision": 1,
+      "anchorMs": 100,
+      "validFromMs": 100,
+      "validUntilMs": 1200,
+      "staticChannel": true,
+      "coverageComplete": true,
+      "resourceExhausted": false,
+      "components": [{"componentId": "direct", "powerWeight": 1.0, "phaseQ": 0, "dopplerQ": 0}]
+    },
+    "S0": {
+      "schemaVersion": 2,
+      "sessionEpoch": 7,
+      "linkId": 1,
+      "linkSeq": 1,
+      "ttlMs": 1000,
+      "routeId": 1,
+      "routeNodeCount": 2,
+      "talkerPlayerId": 1,
+      "listenerPlayerId": 2,
+      "state": "CLEAN",
+      "quality": 0.75,
+      "temporalDescriptorRef": "D0"
+    },
+    "P0": {
+      "sessionEpoch": 7,
+      "txPlayerId": 1,
+      "txDeviceId": 101,
+      "txTransceiverIndex": 0,
+      "rxPlayerId": 2,
+      "rxDeviceId": 202,
+      "rxTransceiverIndex": 0,
+      "leaseId": 11,
+      "state": "CLEAN",
+      "quality": 0.75,
+      "qualityDelta": 0.125,
+      "ttlMs": 1000,
+      "descriptorRef": "D0"
+    }
+  },
+  "eventConventions": {
+    "fixtureRef": "Resolve from fixtures and deep-copy before applying patches.",
+    "patches": "JSON Pointer paths; set replaces the value, remove deletes the field. A specialNumber marker is a host-only NaN/Infinity input, never a serialized JSON NaN.",
+    "expectSnapshotCount": "Counts emitted snapshots in this event, not accumulated history.",
+    "receiverReads": "Read-only inspections of retained state must not return mutable aliases.",
+    "rejection": "Rejected input cannot silently become scalar Q, CLEAN, LOST, permission to mute, or claimed audio success.",
+    "reset": "Invalid full resync clears the whole established identity and all slots, including old state; no valid prefix survives."
+  },
+  "cases": [
+    {
+      "id": "CT10-I01", "title": "Descriptor-only update is not filtered by unchanged quality", "requirements": ["CT09", "MAP:39"],
+      "events": [
+        {"op": "publish", "pairRef": "P0", "serverNowMs": 100, "expect": {"outcome": "PUBLISH", "expectSnapshotCount": 1, "linkId": 1, "linkSeq": 1, "descriptorRef": "D0"}},
+        {"op": "publish", "pairRef": "P0", "serverNowMs": 101, "descriptorPatches": [{"path": "/components/0/phaseQ", "set": 268435456}], "expect": {"outcome": "PUBLISH", "expectSnapshotCount": 1, "sequenceCalls": 1, "linkId": 1, "linkSeq": 2, "quality": 0.75, "state": "CLEAN", "descriptorPhaseQ": 268435456}},
+        {"op": "publish", "pairRef": "P0", "serverNowMs": 102, "descriptorPatches": [{"path": "/components/0/phaseQ", "set": 268435456}], "expect": {"outcome": "NO_PUBLICATION", "expectSnapshotCount": 0, "sequenceCalls": 0, "retainedLinkSeq": 2}}
+      ], "provenance": "Manual: changed descriptor independently triggers publication at 101 < 100+ceil(1000/2)."
+    },
+    {
+      "id": "CT10-I02", "title": "Canonical signed-zero equivalent produces no update", "requirements": ["CD03", "CT09"],
+      "events": [
+        {"op": "publish", "pairRef": "P0", "serverNowMs": 100, "descriptorPatches": [{"path": "/components/0/powerWeight", "set": 0.0}], "expect": {"outcome": "PUBLISH", "expectSnapshotCount": 1, "retainedPowerWeightSign": "positive_zero"}},
+        {"op": "publish", "pairRef": "P0", "serverNowMs": 101, "descriptorPatches": [{"path": "/components/0/powerWeight", "set": -0.0}], "expect": {"outcome": "NO_PUBLICATION", "expectSnapshotCount": 0, "sequenceCalls": 0, "canonicalRCFDBytesEqualPrevious": true}}
+      ], "provenance": "CD03 maps both zero signs to +0. This is representational equivalence, not a general promise that rebased descriptors have equal bytes."
+    },
+    {
+      "id": "CT10-I03", "title": "Keepalive does not extend physical validity", "requirements": ["CT06", "CT09", "MAP:41"],
+      "events": [
+        {"op": "publish_then_receive", "pairRef": "P0", "serverNowMs": 100, "localNowMs": 100, "expect": {"expectSnapshotCount": 1, "descriptorAnchorMs": 100, "descriptorValidUntilMs": 1200}},
+        {"op": "publish_then_receive", "pairRef": "P0", "serverNowMs": 600, "localNowMs": 600, "expect": {"expectSnapshotCount": 1, "linkSeq": 2, "descriptorAnchorMs": 100, "descriptorValidFromMs": 100, "descriptorValidUntilMs": 1200}},
+        {"op": "inspect_and_evaluate_explicit_server_time", "localNowMs": 1200, "serverNowMs": 1200, "subUs": 0, "expect": {"presentationVisible": true, "fadingCode": "STALE_DESCRIPTOR", "hasCoefficient": false, "fallbackToQuality": false, "muteAuthorized": false}},
+        {"op": "inspect_presentation", "localNowMs": 1600, "expect": {"presentationVisible": false}}
+      ], "provenance": "Physical interval is [100,1200); presentation from last accepted receipt 600 lasts until 1600, exclusive. Synthetic identity of clock values is test input, not measured clock mapping."
+    },
+    {
+      "id": "CT10-I04", "title": "Rebase preserves exact phase sequence and validity", "requirements": ["CF06", "CD06", "CT05"],
+      "descriptorRef": "D0", "descriptorPatches": [{"path": "/staticChannel", "set": false}, {"path": "/components/0/dopplerQ", "set": 1}],
+      "events": [
+        {"op": "rebase", "newAnchorMs": 101, "expect": {"codecCode": "OK", "anchorMs": 101, "validFromMs": 101, "validUntilMs": 1200, "phaseQ": 1000, "dopplerQ": 1}},
+        {"op": "evaluate_original_and_rebased", "serverNowMs": 110, "subUs": 123, "expect": {"originalPhasesQ": [10123], "rebasedPhasesQ": [10123], "coefficientsExactlyEqualUnderCF": true}},
+        {"op": "rebase_composition", "anchorsMs": [101, 110], "expect": {"equalsDirectRebaseToMs": 110, "phaseQ": 10000, "validUntilMs": 1200}},
+        {"op": "rebase", "newAnchorMs": 1200, "expect": {"codecCode": "INVALID_ANCHOR", "descriptorPresent": false}}
+      ], "provenance": "Manual integer arithmetic: 1*(101-100)*1000=1000; 1*((110-100)*1000+123)=10123, below M. No oracle evaluated these expectations."
+    },
+    {
+      "id": "CT10-I05", "title": "PTT and network epoch do not re-seed a physical channel", "requirements": ["CT04", "CT05", "CF04"],
+      "descriptorRef": "D0", "descriptorPatches": [{"path": "/staticChannel", "set": false}, {"path": "/components/0/dopplerQ", "set": 1}],
+      "events": [
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "expect": {"phasesQ": [10000]}},
+        {"op": "ptt_stop_then_start_and_network_epoch_rotate", "newLeaseId": 99, "newLinkId": 20, "newSessionEpoch": 8, "expect": {"physicalDescriptorChanged": false, "descriptorAnchorMs": 100}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "expect": {"phasesQ": [10000]}}
+      ], "provenance": "Lease/link/epoch are absent from CF inputs. New network identity still requires a valid full resync before receiver use."
+    },
+    {
+      "id": "CT10-I06", "title": "Duplicate and out-of-order updates do not roll back phase or refresh TTL", "requirements": ["CT09", "SNAPSHOT:8.3", "SNAPSHOT:8.4"],
+      "events": [
+        {"op": "full_resync", "snapshotRef": "S0", "localNowMs": 0, "expect": {"decision": "ACCEPT_RESYNC", "slots": {"1": 1}}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 10, "snapshotPatches": [{"path": "/linkSeq", "set": 2}], "descriptorPatches": [{"path": "/components/0/phaseQ", "set": 268435456}], "expect": {"decision": "ACCEPT_NEWER", "retainedLinkSeq": 2, "retainedPhaseQ": 268435456, "receivedAtLocalMs": 10}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 20, "snapshotPatches": [{"path": "/linkSeq", "set": 2}], "descriptorPatches": [{"path": "/components/0/phaseQ", "set": 268435456}], "expect": {"decision": "STALE", "receivedAtLocalMs": 10}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 30, "expect": {"decision": "STALE", "retainedLinkSeq": 2, "retainedPhaseQ": 268435456, "receivedAtLocalMs": 10}},
+        {"op": "inspect_presentation", "localNowMs": 1010, "expect": {"presentationVisible": false}}
+      ]
+    },
+    {
+      "id": "CT10-I07", "title": "Publication and receiver retain independent nested values", "requirements": ["CT10", "CD03", "MAP:44"],
+      "events": [
+        {"op": "publish_then_full_resync", "pairRef": "P0", "serverNowMs": 100, "localNowMs": 100, "expect": {"expectSnapshotCount": 1, "retainedPhaseQ": 0, "retainedEndpointA": {"deviceId": 101, "transceiverIndex": 0}}},
+        {"op": "mutate_caller_descriptor", "patches": [{"path": "/a/deviceId", "set": 999}, {"path": "/components/0/phaseQ", "set": 42}], "expect": {"registryPhaseQ": 0, "receiverPhaseQ": 0, "registryEndpointADeviceId": 101, "receiverEndpointADeviceId": 101}},
+        {"op": "mutate_published_snapshot_descriptor", "patches": [{"path": "/components", "set": []}], "expect": {"registryComponentCount": 1, "receiverComponentCount": 1}},
+        {"op": "mutate_receiver_readback_copy", "patches": [{"path": "/b/transceiverIndex", "set": 7}], "expect": {"receiverEndpointBIndex": 0, "registryEndpointBIndex": 0}}
+      ], "provenance": "The adapter must observe actual state after mutation, not compare two aliases or two fresh reconstructions."
+    },
+    {
+      "id": "CT10-I08", "title": "Late invalid full-resync element rejects and clears everything", "requirements": ["CT10", "SNAPSHOT:8.3", "MAP:45"],
+      "events": [
+        {"op": "full_resync", "snapshotRef": "S0", "localNowMs": 0, "expect": {"decision": "ACCEPT_RESYNC", "hasIdentity": true, "slotCount": 1}},
+        {"op": "full_resync_batch", "localNowMs": 20, "sessionEpoch": 8, "schemaVersion": 2, "entries": [{"snapshotRef": "S0", "snapshotPatches": [{"path": "/sessionEpoch", "set": 8}]}, {"snapshotRef": "S0", "snapshotPatches": [{"path": "/sessionEpoch", "set": 8}, {"path": "/linkId", "set": 2}, {"path": "/routeId", "set": 2}, {"path": "/listenerPlayerId", "set": 3}], "descriptorPatches": [{"path": "/b/deviceId", "set": 203}, {"path": "/components/0/phaseQ", "set": 1073741824}]}], "expect": {"decision": "INVALID_RESYNC", "effects": ["REQUEST_RESYNC", "DIAGNOSTIC"], "hasIdentity": false, "slotCount": 0, "partialPrefixApplied": false}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 30, "expect": {"decision": "INVALID_IDENTITY", "effects": ["REQUEST_RESYNC"], "slotCount": 0}}
+      ]
+    },
+    {
+      "id": "CT10-I09", "title": "Late publication descriptor error has no allocator side effects", "requirements": ["CT10", "CD04", "MAP:33"],
+      "events": [
+        {"op": "publish_batch", "serverNowMs": 100, "entries": [{"pairRef": "P0"}, {"pairRef": "P0", "pairPatches": [{"path": "/rxDeviceId", "set": 203}, {"path": "/rxPlayerId", "set": 3}], "descriptorPatches": [{"path": "/b/deviceId", "set": 203}, {"path": "/components/0/phaseQ", "set": 1073741824}]}], "expect": {"outcome": "REJECT_INVALID_DESCRIPTOR", "expectSnapshotCount": 0, "sequenceCalls": 0, "epochReads": 0, "registryUnchanged": true, "inputUnchanged": true}}
+      ], "provenance": "Descriptor preflight must finish before sequence allocation, matching existing whole-call preflight discipline. This is not an allocator failure after side effects."
+    },
+    {
+      "id": "CT10-I10", "title": "Unsupported snapshot version cannot silently become v1 quality", "requirements": ["CT10", "SNAPSHOT:8.3"],
+      "events": [
+        {"op": "full_resync", "snapshotRef": "S0", "localNowMs": 0, "expect": {"decision": "ACCEPT_RESYNC"}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 10, "snapshotPatches": [{"path": "/schemaVersion", "set": 3}, {"path": "/linkSeq", "set": 2}], "expect": {"outcome": "REJECT_UNSUPPORTED_SCHEMA", "effects": ["REQUEST_RESYNC"], "retainedLinkSeq": 1, "fallbackToV1": false}},
+        {"op": "attempt_hidden_temporal_extension_on_v1", "snapshotRef": "S0", "snapshotPatches": [{"path": "/schemaVersion", "set": 1}], "expect": {"temporalSchema2Accepted": false, "v1MeaningChanged": false}}
+      ]
+    },
+    {
+      "id": "CT10-I11", "title": "Unsupported model has explicit rejection and no static fallback", "requirements": ["CD02", "CD04", "CT10"],
+      "events": [
+        {"op": "full_resync", "snapshotRef": "S0", "localNowMs": 0, "expect": {"decision": "ACCEPT_RESYNC", "retainedLinkSeq": 1}},
+        {"op": "descriptor_encode", "descriptorRef": "D0", "descriptorPatches": [{"path": "/modelId", "set": "OTHER_MODEL"}], "maxBytes": 5120, "expect": {"codecCode": "UNSUPPORTED_MODEL", "bytesPresent": false, "descriptorPresent": false}},
+        {"op": "receive", "snapshotRef": "S0", "localNowMs": 20, "snapshotPatches": [{"path": "/linkSeq", "set": 2}], "descriptorPatches": [{"path": "/modelId", "set": "OTHER_MODEL"}], "expect": {"outcome": "REJECT_UNSUPPORTED_MODEL", "requestResync": true, "retainedLinkSeq": 1, "fallbackToQuality": false, "muteAuthorized": false}}
+      ]
+    },
+    {
+      "id": "CT10-I12", "title": "RCFD unsupported version is rejected before body interpretation", "requirements": ["CD05", "CT10"],
+      "events": [
+        {"op": "descriptor_decode", "bytesSource": "MANUAL_VALID_RCFD1_OF_D0", "bytePatches": [{"index": 4, "set": 2}], "maxBytes": 5120, "expect": {"codecCode": "UNSUPPORTED_VERSION", "descriptorPresent": false, "fallbackToQuality": false}}
+      ], "provenance": "Only version byte changes; magic, header length and actual byte count remain valid. Descriptor wire version is distinct from snapshot schema."
+    },
+    {
+      "id": "CT10-I13", "title": "Exact standalone descriptor byte budget is inclusive", "requirements": ["CD04", "CD07"],
+      "events": [
+        {"op": "descriptor_encode", "descriptorRef": "D0", "maxBytes": 102, "expect": {"codecCode": "OK", "sizeBytes": 102}},
+        {"op": "descriptor_encode", "descriptorRef": "D0", "maxBytes": 101, "expect": {"codecCode": "RESOURCE_LIMIT", "bytesPresent": false, "descriptorPresent": false}},
+        {"op": "descriptor_decode", "bytesSource": "MANUAL_VALID_RCFD1_OF_D0", "maxBytes": 101, "expect": {"codecCode": "RESOURCE_LIMIT", "descriptorPresent": false}}
+      ], "provenance": "Manual CD07 count: 55+19+9+(13+6)=102 bytes, excluding any snapshot/RPC headers."
+    },
+    {
+      "id": "CT10-I14", "title": "Size rejection precedes scan, but cannot truncate accepted content", "requirements": ["CD05", "CD07"],
+      "events": [
+        {"op": "descriptor_decode", "bytes": [true, 999], "maxBytes": 1, "expect": {"codecCode": "RESOURCE_LIMIT", "descriptorPresent": false}},
+        {"op": "descriptor_decode", "bytes": [true, 999], "maxBytes": 5120, "expect": {"codecCode": "INVALID_FRAME", "descriptorPresent": false}},
+        {"op": "descriptor_decode", "bytesSource": "MANUAL_VALID_RCFD1_OF_D0", "appendBytes": [0], "maxBytes": 5120, "expect": {"codecCode": "INVALID_FRAME", "descriptorPresent": false, "trailingBytesIgnored": false}}
+      ]
+    },
+    {
+      "id": "CT10-I15", "title": "Missing/null/empty descriptor objects fail structure validation", "requirements": ["CF03", "CF04", "CT10"],
+      "variants": [{"descriptor": null}, {"descriptor": {}}, {"descriptor": []}, {"removeTemporalDescriptorField": true}],
+      "expectEach": {"outcome": "REJECT_INVALID_DESCRIPTOR", "acceptedAsTemporalSnapshot": false, "fallbackToQuality": false, "muteAuthorized": false},
+      "provenance": "These are missing/ill-typed descriptors, not valid descriptors with zero components."
+    },
+    {
+      "id": "CT10-I16", "title": "Valid empty components is transported and evaluated as EMPTY_MEDIUM", "requirements": ["CF04", "CF09", "CD02"],
+      "descriptorRef": "D0", "descriptorPatches": [{"path": "/components", "set": []}],
+      "events": [
+        {"op": "descriptor_encode_then_decode", "maxBytes": 5120, "expect": {"codecCode": "OK", "sizeBytes": 83, "componentCount": 0}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "expect": {"fadingCode": "EMPTY_MEDIUM", "hasCoefficient": true, "real": 0.0, "imag": 0.0, "hasGain": false, "muteAuthorized": false}}
+      ], "provenance": "Manual frame size without components: 55+19+9=83. Coefficient zero is not a voice transport policy."
+    },
+    {
+      "id": "CT10-I17", "title": "Strict host JSON integer and floating domains", "requirements": ["CF03", "CF04", "CD02"],
+      "descriptorRef": "D0",
+      "variants": [
+        {"patches": [{"path": "/a/deviceId", "set": true}]},
+        {"patches": [{"path": "/anchorMs", "set": 100.0}]},
+        {"patches": [{"path": "/validUntilMs", "set": 2147483648}]},
+        {"patches": [{"path": "/components/0/phaseQ", "set": -1}]},
+        {"patches": [{"path": "/frequencyMHz", "specialNumber": "NaN"}]},
+        {"patches": [{"path": "/components/0/powerWeight", "specialNumber": "Infinity"}]},
+        {"patches": [{"path": "/unexpected", "set": 1}]}
+      ], "expectEach": {"codecCode": "INVALID_DESCRIPTOR", "descriptorPresent": false, "bytesPresent": false},
+      "hostOnly": true, "provenance": "No coercion from bool/float/string to int32. Host-only structural rejection is not an Enforce runtime test."
+    },
+    {
+      "id": "CT10-I18", "title": "Component order and coverage/resource state keep their distinct meanings", "requirements": ["CF04", "CF08", "CD02"],
+      "events": [
+        {"op": "encode_then_server_evaluate", "descriptorRef": "D0", "descriptorPatches": [{"path": "/coverageComplete", "set": false}], "serverNowMs": 110, "subUs": 0, "expect": {"codecCode": "OK", "fadingCode": "INCOMPLETE_COVERAGE", "hasCoefficient": false, "fallbackToQuality": false}},
+        {"op": "encode_then_server_evaluate", "descriptorRef": "D0", "descriptorPatches": [{"path": "/resourceExhausted", "set": true}], "serverNowMs": 110, "subUs": 0, "expect": {"codecCode": "OK", "fadingCode": "RESOURCE_EXHAUSTED", "hasCoefficient": false, "muteAuthorized": false}},
+        {"op": "descriptor_encode", "descriptorRef": "D0", "descriptorPatches": [{"path": "/components", "set": [{"componentId": "z", "powerWeight": 1.0, "phaseQ": 0, "dopplerQ": 0}, {"componentId": "a", "powerWeight": 1.0, "phaseQ": 0, "dopplerQ": 0}]}], "maxBytes": 5120, "expect": {"codecCode": "INVALID_DESCRIPTOR", "silentlySorted": false}}
+      ]
+    },
+    {
+      "id": "CT10-I19", "title": "Local receipt time cannot invent clock mapping", "requirements": ["CT06", "MAP:34-35"],
+      "events": [
+        {"op": "full_resync", "snapshotRef": "S0", "localNowMs": 10000, "expect": {"decision": "ACCEPT_RESYNC", "descriptorAnchorMs": 100}},
+        {"op": "client_channel_view", "localNowMs": 10010, "clockMapping": {"status": "UNVERIFIED"}, "expect": {"presentationVisible": true, "channelStatus": "UNRESOLVED", "reason": "CLOCK_MAPPING_UNVERIFIED", "hasCoefficient": false, "fallbackToQuality": false, "muteAuthorized": false}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "expect": {"fadingCode": "OK", "phasesQ": [0], "productionClockMappingProven": false}}
+      ]
+    },
+    {
+      "id": "CT10-I20", "title": "Half-open validity boundaries remain separate from presentation visibility", "requirements": ["CF08", "CT06"],
+      "descriptorRef": "D0",
+      "events": [
+        {"op": "server_evaluate", "serverNowMs": 99, "subUs": 999, "expect": {"fadingCode": "STALE_DESCRIPTOR", "hasCoefficient": false}},
+        {"op": "server_evaluate", "serverNowMs": 100, "subUs": 0, "expect": {"fadingCode": "OK", "phasesQ": [0]}},
+        {"op": "server_evaluate", "serverNowMs": 1199, "subUs": 999, "expect": {"fadingCode": "OK", "phasesQ": [0]}},
+        {"op": "server_evaluate", "serverNowMs": 1200, "subUs": 0, "expect": {"fadingCode": "STALE_DESCRIPTOR", "hasCoefficient": false, "fallbackToQuality": false}}
+      ]
+    },
+    {
+      "id": "CT10-I21", "title": "Reciprocal physical channel is separate from directional quality", "requirements": ["CT04", "CF05"],
+      "descriptorRef": "D0",
+      "events": [
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "tx": {"deviceId": 101, "transceiverIndex": 0}, "rx": {"deviceId": 202, "transceiverIndex": 0}, "expect": {"fadingCode": "OK", "phasesQ": [0]}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "tx": {"deviceId": 202, "transceiverIndex": 0}, "rx": {"deviceId": 101, "transceiverIndex": 0}, "expect": {"fadingCode": "OK", "phasesQ": [0], "coefficientEqualPrevious": true, "equalDirectionalQualityRequired": false}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "tx": {"deviceId": 101, "transceiverIndex": 0}, "rx": {"deviceId": 203, "transceiverIndex": 0}, "expect": {"fadingCode": "CONTEXT_MISMATCH", "hasCoefficient": false}}
+      ]
+    },
+    {
+      "id": "CT10-I22", "title": "ZERO_AT_SAMPLE does not remove future nonzero channel state", "requirements": ["CT07", "CT08", "CF09"],
+      "descriptorRef": "D0", "descriptorPatches": [{"path": "/staticChannel", "set": false}, {"path": "/components", "set": [{"componentId": "a", "powerWeight": 1.0, "phaseQ": 0, "dopplerQ": 0}, {"componentId": "b", "powerWeight": 1.0, "phaseQ": 536870912, "dopplerQ": 268435456}]}],
+      "events": [
+        {"op": "server_evaluate", "serverNowMs": 100, "subUs": 0, "expect": {"fadingCode": "ZERO_AT_SAMPLE", "phasesQ": [0, 536870912], "hasCoefficient": true, "descriptorDeleted": false, "muteAuthorized": false}},
+        {"op": "server_evaluate", "serverNowMs": 100, "subUs": 1, "expect": {"fadingCode": "OK", "phasesQ": [0, 805306368], "hasCoefficient": true, "gainPresent": true, "speechContentDeliveryProven": false}}
+      ], "provenance": "Manual quarter-turn progression at 1 us makes the two unit-weight paths non-opposite. This is a synthetic boundary test, not calibrated Doppler or game speech evidence."
+    },
+    {
+      "id": "CT10-I23", "title": "Valid temporal snapshot still cannot claim a voice actuator", "requirements": ["CT08", "CT10", "SEAM"],
+      "events": [
+        {"op": "apply_synthetic_seam", "snapshotRef": "S0", "upstreamDecision": "ACCEPT_NEWER", "bindingMatchesIdentityAndPhysicalPair": true, "expect": {"seamDecision": "BLOCKED_NO_ACTUATOR", "audioPass": false, "gameAcceptanceProven": false}}
+      ]
+    },
+    {
+      "id": "CT10-I24", "title": "RF context mismatch cannot be repaired with matching link identity", "requirements": ["CT04", "CT05", "CF05", "MAP:28"],
+      "descriptorRef": "D0",
+      "variants": [{"queryPatches": [{"path": "/frequencyMHz", "set": 151.0}]}, {"queryPatches": [{"path": "/bandwidthHz", "set": 12500.0}]}, {"queryPatches": [{"path": "/profileVersion", "set": 2}]}, {"queryPatches": [{"path": "/environmentRevision", "set": 2}]}],
+      "expectEach": {"fadingCode": "CONTEXT_MISMATCH", "hasCoefficient": false, "fallbackToQuality": false},
+      "provenance": "Use valid query structure, explicit serverNowMs110/subUs0 and all other fields matching D0; snapshot epoch/linkSeq remain valid."
+    },
+    {
+      "id": "CT10-I25", "title": "Snapshot and descriptor frame versions and rejection precedence are independent", "requirements": ["CD05", "CT10"],
+      "events": [
+        {"op": "descriptor_decode", "bytesSource": "MANUAL_VALID_RCFD1_OF_D0", "bytePatches": [{"index": 4, "set": 2}], "appendBytes": [0], "maxBytes": 5120, "expect": {"codecCode": "INVALID_FRAME", "descriptorPresent": false}},
+        {"op": "descriptor_decode", "bytesSource": "MANUAL_VALID_RCFD1_OF_D0", "bytePatches": [{"index": 4, "set": 2}], "maxBytes": 101, "expect": {"codecCode": "RESOURCE_LIMIT", "descriptorPresent": false}}
+      ], "provenance": "Length integrity precedes unsupported-version handling; resource budget precedes element/body scan. A wrapper must not flatten all three causes into STALE or LOST."
+    },
+    {
+      "id": "CT10-I26", "title": "Two directed publication links can share one canonical medium", "requirements": ["CT04", "CT09", "MAP:43"],
+      "events": [
+        {"op": "publish_batch", "serverNowMs": 100, "entries": [{"pairRef": "P0"}, {"pairRef": "P0", "pairPatches": [{"path": "/leaseId", "set": 12}, {"path": "/txPlayerId", "set": 2}, {"path": "/rxPlayerId", "set": 1}, {"path": "/txDeviceId", "set": 202}, {"path": "/rxDeviceId", "set": 101}, {"path": "/quality", "set": 0.5}]}], "expect": {"outcome": "PUBLISH", "expectSnapshotCount": 2, "sequenceCalls": 2, "directedPairs": [[1, 2], [2, 1]], "qualitiesInDirectedOrder": [0.75, 0.5], "bothCanonicalPhysicalKeys": [[101, 0, 202, 0, 150.0, 25000.0], [101, 0, 202, 0, 150.0, 25000.0]], "bothDescriptorAnchorsMs": [100, 100], "duplicatePhysicalMediumIsNotDuplicateDirectedLink": true}}
+      ], "provenance": "One reciprocal physical process is legal for two distinct directed talker/listener links; do not reject or overwrite the second publication just because its canonical medium key already exists."
+    },
+    {
+      "id": "CT10-I27", "title": "LOST and Q0 keep valid temporal data and do not authorize voice denial", "requirements": ["CT01", "CT08", "CT09", "CT10"],
+      "events": [
+        {"op": "publish_then_full_resync", "pairRef": "P0", "pairPatches": [{"path": "/state", "set": "LOST"}, {"path": "/quality", "set": 0.0}], "serverNowMs": 100, "localNowMs": 100, "expect": {"expectSnapshotCount": 1, "temporalDescriptorPresent": true, "descriptorAnchorMs": 100, "descriptorValidUntilMs": 1200, "snapshotValid": true}},
+        {"op": "server_evaluate_retained_descriptor", "serverNowMs": 110, "subUs": 0, "expect": {"fadingCode": "OK", "phasesQ": [0], "hasCoefficient": true, "descriptorDeleted": false, "muteAuthorized": false, "payloadDenialAuthorized": false}}
+      ], "provenance": "Legacy diagnostic LOST/Q0 must not erase temporal state or manufacture a server-delivery decision. This does not claim actual payload is available."
+    },
+    {
+      "id": "CT10-I28", "title": "Same device with two different transceivers exposes the CF versus seam boundary", "requirements": ["CF03", "CF05", "MAP:14", "SEAM"],
+      "descriptorRef": "D0", "descriptorPatches": [{"path": "/b/deviceId", "set": 101}, {"path": "/b/transceiverIndex", "set": 1}],
+      "events": [
+        {"op": "descriptor_encode_then_decode", "maxBytes": 5120, "expect": {"codecCode": "OK", "canonicalEndpointA": {"deviceId": 101, "transceiverIndex": 0}, "canonicalEndpointB": {"deviceId": 101, "transceiverIndex": 1}}},
+        {"op": "server_evaluate", "serverNowMs": 110, "subUs": 0, "tx": {"deviceId": 101, "transceiverIndex": 0}, "rx": {"deviceId": 101, "transceiverIndex": 1}, "expect": {"fadingCode": "OK", "phasesQ": [0]}},
+        {"op": "apply_existing_seam_binding", "talkerDeviceId": 101, "listenerDeviceId": 101, "talkerTransceiverIndex": 0, "listenerTransceiverIndex": 1, "otherwiseValidDifferentPlayerIdentities": true, "expect": {"seamDecision": "INVALID_BINDING", "nativeActuationAllowed": false}}
+      ], "provenance": "CF EndpointKey distinguishes the index; current NetworkContracts binding forbids equal device IDs. Preserve this boundary explicitly; do not broaden seam validity incidentally in CT10."
+    }
+  ],
+  "negativeControlsRequired": [
+    {"id": "NC01", "mutation": "Disable descriptor-only publication trigger", "mustBeCaughtBy": ["CT10-I01"]},
+    {"id": "NC02", "mutation": "Compare uncanonicalized signed-zero representations", "mustBeCaughtBy": ["CT10-I02"]},
+    {"id": "NC03", "mutation": "Extend descriptor validity or reset anchor on keepalive", "mustBeCaughtBy": ["CT10-I03"]},
+    {"id": "NC04", "mutation": "Reset phase to zero during rebase", "mustBeCaughtBy": ["CT10-I04"]},
+    {"id": "NC05", "mutation": "Refresh receipt timestamp on STALE", "mustBeCaughtBy": ["CT10-I06"]},
+    {"id": "NC06", "mutation": "Shallow-copy endpoint/components or return receiver-owned mutable data", "mustBeCaughtBy": ["CT10-I07"]},
+    {"id": "NC07", "mutation": "Apply valid prefix of invalid full resync, or retain old identity", "mustBeCaughtBy": ["CT10-I08"]},
+    {"id": "NC08", "mutation": "Allocate sequence before validating the last descriptor", "mustBeCaughtBy": ["CT10-I09"]},
+    {"id": "NC09", "mutation": "Reject valid components=[] as malformed descriptor", "mustBeCaughtBy": ["CT10-I16"]},
+    {"id": "NC10", "mutation": "Invent server time from local receipt without verified mapping", "mustBeCaughtBy": ["CT10-I19"]},
+    {"id": "NC11", "mutation": "Deduplicate directed publication links by canonical physical pair alone", "mustBeCaughtBy": ["CT10-I26"]},
+    {"id": "NC12", "mutation": "Drop temporal data when legacy quality is zero or state LOST", "mustBeCaughtBy": ["CT10-I27"]}
+  ],
+  "notClaimed": ["Executable temporal oracle exists", "Wire/RPC delivery", "Snapshot v1 migration completed", "Production builder or RF calibration", "Verified Reforger clock mapping", "Native compile or runtime", "Voice actuator", "DSP/audio/content acceptance", "Full Goal completion"]
+}

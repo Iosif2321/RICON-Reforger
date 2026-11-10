@@ -1,0 +1,30 @@
+{
+  "schema": "ricon.blind.fixed-rule.v1",
+  "rule": {
+    "schema": "ricon.blind.rule.v1",
+    "tap": "ownB",
+    "localPlayer": 2,
+    "sourceOwnerPlayer": 2,
+    "sender": 1,
+    "catalogIndex": 0,
+    "nativeIndex": 0,
+    "frequencyKHz": 32000,
+    "minimumDistinctTicks": 3,
+    "shortMinMs": 200,
+    "shortMaxMs": 600,
+    "longMinMs": 800,
+    "longMaxMs": 1050,
+    "else": "INVALID",
+    "foreignNullBadContextGapMalformed": "INVALID",
+    "zeroRx": "INVALID"
+  },
+  "window": {
+    "schema": "ricon.blind.window.v1",
+    "anchor": "FIRST_EXACT_OWN_B_RX",
+    "endOffsetMs": 1100,
+    "requireOwnObservationThroughEnd": true,
+    "anyQualifyingRxAfterEnd": "INVALID",
+    "clock": "ONE_B_LOCAL_NRX_BINDING",
+    "rawPreserved": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "range": [
+    "0x141207ed0",
+    "0x141207f43"
+  ],
+  "exact_pdata": "d07e2001437f20012013fe01",
+  "raw_hex": "40574883ec20488b4208488bf94885c075064883c4205fc348895c2430488b1a4889742438488d34c3483bde741966904533c0488bd3488bcfe8420000004883c308483bde75e9488d4f28e8a01f0000488bcfe8e8090000488b07488bcfff5020488b742438b001488b5c24304883c4205fc3",
+  "raw_sha256": "8d3599cdd80b35c949fa25d6df552d5fd165004708ae16f97110f80bd8da7072",
+  "asm_sha256": "2c3cce9f978752f7368a0194df29f834f3c1b8d0320fff2d73b9ab39dac81823",
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x141207ED0,0x141207F42",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "decoded_bytes_verified_against_raw": 115,
+  "image_sha256_from_current_lookup": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "source_stat_unchanged": true,
+  "exit_code": 0
+}

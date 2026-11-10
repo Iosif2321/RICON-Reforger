@@ -1,0 +1,19 @@
+{
+  "range": [
+    "0x1401645e0",
+    "0x1401645e3"
+  ],
+  "provenance": "Direct runtime IOPItemInput primary vtable+90; no pdata entry; exact XOR AL,AL + RET leaf, following bytes CC padding; no broader code read",
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x1401645E0,0x1401645E2",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "raw_hex": "32c0c3",
+  "raw_sha256": "01cb47d078b4841b8408ec4fe278efa83115c6f6e101972987507d2b2b57dcf0",
+  "asm_sha256": "df8f74fb89f2c676a664876d11ca80c81b09e41630818a982ecedf86e6d46eb3",
+  "decoded_bytes_verified_against_raw": 3,
+  "exit_code": 0
+}

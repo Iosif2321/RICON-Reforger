@@ -1,0 +1,22 @@
+[
+  {
+    "path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\EnfusionScriptAPI\\html\\interfaceAudioSystem.html",
+    "size": 76650,
+    "sha256": "589781e652cdb921ffe92558a9852df8a13cd8d5634bc8b4e0dcfba6313b5b84"
+  },
+  {
+    "path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\EnfusionScriptAPI\\html\\interfaceBaseSoundComponent.html",
+    "size": 58388,
+    "sha256": "e48c2c0d22c8807e23a0db9d91c9d2b11b838e5e677d4ed6a7f452893d21865e"
+  },
+  {
+    "path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceVoNComponent.html",
+    "size": 31135,
+    "sha256": "5b04e19f815b5a1d50a52696f42470bc6bd9cf6228af69487843c02689d4a212"
+  },
+  {
+    "path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\docs\\ArmaReforgerScriptAPIPublic\\html\\interfaceSignalsManagerComponent.html",
+    "size": 17975,
+    "sha256": "fe225d6f7eb8cf1b678b4083af4ce40580a9641d66cf91da4033a4b38d1210e9"
+  }
+]

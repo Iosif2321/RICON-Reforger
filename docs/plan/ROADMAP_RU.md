@@ -1,9 +1,147 @@
 # RICON-Reforger — план дальнейшей работы простыми словами
 
+<!-- RICON_FULL_DETAILED_PLAN_20261106 -->
+**Действующая подробная детализация очереди 0–8:** [полный план RICON и штатной связи](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md), редакция 2026-11-06. Он объединяет принципы канала/приёмника, слышимость и информативность, замирания, RECEIVER/SERVER, зависимости и критерии приёмки. Нумерация программы сохранена; эта запись не является runtime PASS или новым допуском на Play/сервер/аудио. Датированные срезы ниже читаются вместе с текущим STATUS.
+
+<!-- RICON_NATIVE_WRITER_COVERAGE_20261104_BEGIN -->
+**Уточнение следующего шага native-доступа:** [writer/catalog и envelope proof](../evidence/native-von-access-20261104/RESULT_RU.md). Квалифицировать exact private VoN T membership/attachment или адресуемый writer до адаптера. Delivery envelope не подменяет RF-профиль, неизвестные bounds/stock q/Direct/cache и нагрузка остаются обязательствами. Не включать Rmax вслепую; будущая разрешённая проверка использует минимальный обоснованный радиус. Полная временная цель и критерии приёмки остаются незавершёнными.
+<!-- RICON_NATIVE_WRITER_COVERAGE_20261104_END -->
+
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_BEGIN -->
+**Актуальная очередь после поправки владельца, 2026-11-04:** [план двух режимов](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md), [Goal](GOAL_RICON_TEMPORAL_RU.md). Квалифицировать покрытие штатной доставки возможных фрагментов и управление конкретной Radio-ветвью; согласовать временной signal/noise/interference и receiver-control контракт, затем мигрировать существующие producer/codec/receiver/seam и проверки. Физическая разборчивость0/legacy LOST не команда выключения. PCM/DSP выполняются у слушателя в обоих режимах; разрешения на Play/server/capture не расширялись.
+<!-- RICON_TEMPORAL_VON_AMENDMENT_20261104_END -->
+
+<!-- RICON_SCRIPTEDITOR_COMPILE_20261104_BEGIN -->
+**Уточнение после компиляции, 2026-11-04:** три исходника уже внесены, их Enforce-модули обработаны компилятором; не повторять apply/compile без нового изменения. Platform startup failed после компиляции, runtime остаётся незакрытым. Следующий функциональный пробел — поддерживаемый server population/final-q порт; [узкий DSP provider probe](../analysis/VON_RADIO_DSP_BINDING_RU.md) не квалифицировал custom sender binding. Разрешение владельца ограничено Script Editor; Play/server/capture не входят в него.
+<!-- RICON_SCRIPTEDITOR_COMPILE_20261104_END -->
+
+<!-- RICON_NATIVE_SOURCE_APPLIED_20261104_BEGIN -->
+**Реализация интеграционного среза, 2026-11-04:** [shadow и generic source применены](../evidence/E-native-ricon-integration-20261104.md), их повторный перенос больше не следующий шаг. Для полной голосовой цели требуется поддерживаемый server population/final-q порт; отдельный DSP binding исследуется параллельно. Компиляция и native приёмка внесённого кода не пройдены при действующем no-engine ограничении. Baseline/per-pair/мир/lifecycle/нагрузка остаются открытыми.
+<!-- RICON_NATIVE_SOURCE_APPLIED_20261104_END -->
+
+<!-- RICON_NATIVE_INTEGRATION_DESIGN_20261104_BEGIN -->
+**Уточнение интеграции, 2026-11-04:** [план переиспользования VoN/Radio](native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md) сохраняет общий утверждённый порядок. Ближайшая неизвестность — поддерживаемый доступ к server radio population и конечному q; custom-signal DSP проверяется отдельно и не заменяет серверный контроль. Продолжается уже подготовленный shadow bridge. Runtime baseline, фактическое воздействие, мир, lifecycle и нагрузка остаются отдельными незакрытыми этапами; действующее ограничение без запуска движка сохранено.
+<!-- RICON_NATIVE_INTEGRATION_DESIGN_20261104_END -->
+
+<!-- VON_NATIVE_CODE_REVIEW_20261104_BEGIN -->
+## Кодовый разбор завершён — 2026-11-04
+
+Пункт 1 утверждённого порядка закрыт статически для закреплённой версии и описанных внешних границ. Результат включает радио и входящее/исходящее окружение: [HTML-граф](../analysis/VON_RADIO_DATAFLOW_RU.html), [детальный Markdown](../analysis/VON_RADIO_DATAFLOW_RU.md). Последующая очередь сохраняется: воспроизводимый обычный VoN baseline, точность воздействия, интеграция RICON, испытания мира, жизненного цикла и нагрузки. Сведения ниже остаются датированной историей и планом этих следующих этапов.
+<!-- VON_NATIVE_CODE_REVIEW_20261104_END -->
+
+Актуальный порядок утверждён владельцем 2026-11-03 (Agora #6582). [Статус](STATUS_RU.md)
+содержит текущие результаты, [индекс документов](../INDEX_RU.md) — навигацию, а
+[PLAN_RU.md](PLAN_RU.md) сохраняет проектирование v5 и датированные поправки. Детали не считаются
+реализованными по наличию плана: доказательства — в [evidence-срезе 2–3 ноября](../evidence/E-agora-radio-native-20261103.md).
+
+## Текущий порядок работ
+
+| Порядок | Работа | Проверяемый выход |
+|---|---|---|
+| 0 | Нормализовать документацию | Один понятный текущий вход, очередь и статус; история/frozen evidence сохранены |
+| 1 | Полностью разобрать цепочку штатного VoN | Capture/input → server recipient/routing → transport → decode/ACP → output; для каждого звена источник, доступный контроль, неизвестность и проверка |
+| 2 | Полностью разобрать радиопередачу VoN | PTT/TX selection, устройства/трансиверы, frequency/key/power/mute/range, native routing и lifecycle; отличить AI/generic message от player voice |
+| Далее 1 | Квалифицировать native baseline | Exact B receiver и независимый здоровый output, positive/negative/recovery; proxy callback не заменяет B-radio RX |
+| Далее 2 | Выбрать и проверить actuator | Явный radio-only scope, ownership, own restore, DIRECT и соседние пути сохранены; per-pair capability отдельно от transceiver/global gate |
+| Далее 3 | Соединить существующее ядро RICON с native трактом | Accepted-origin/lease/device/generation, DESIRED → APPLIED → OBSERVED и expiry без смешения MODEL_LOST с technical failure |
+| Далее 4 | Подключить данные мира и физику | Реальные antenna/terrain/object/material inputs, domains/calibration; fading/world/weather пробелы закрываются evidence, не нулевыми defaults |
+| Далее 5 | Проверить lifecycle и multiplayer | JIP, respawn, disconnect/rebind, authority, stale epoch/seq/lease, cleanup |
+| Далее 6 | Измерить нагрузку и готовность поставки | Воспроизводимые budgets/concurrency; выпуск только после своих критериев и действующих разрешений |
+
+Полный разбор означает покрытие всех звеньев и явный реестр проверяемых пробелов, а не обещание
+раскрыть закрытый native алгоритм по одному public API. Независимые source-исследования могут идти
+параллельно; следующий runtime/integration gate не закрывается их назначением или общим test PASS.
+
+На старте этой фазы уже были реальные Workbench/Play/server/client опыты: discrete I0 mapping,
+same-world generic radio + RICON TX admission и native AI input. Player-voice content/playback,
+exact B VoN RX и directed VoN actuator остаются не подтверждены. Последний proxy callback пережил
+расстройку всех обнаруженных B transceivers и поэтому отвергнут как доказательство radio delivery.
+
+Текущий шаг baseline получил только пассивную NRX metadata/lifecycle fixture: A/B bind/catalog и
+terminals наблюдались без capture/PTT; compile attempt 4 дал synthetic 39/39 PASS. Реальный player RX,
+source/sink/content/audio и external capture guard ещё не квалифицированы. Meter дал 44/44 PASS_PURE_ONLY,
+но runtime упал до B bind, а flag-off контроль также завершился failed/incomplete; причина UNKNOWN.
+InspectOnly с обоими localhost Off остаётся INCOMPLETE из-за собственного scratch profile digest.
+Последний script-policy run достиг PREPARED по observed ADMIN при faction UNKNOWN, но оставался
+unarmed/capture NOT_REQUESTED; policy source прошёл 52/52 synthetic checks. Own Low config сохранён,
+но measured memory savings нет. Pagefile включать/расширять/перенастраивать как решение запрещено.
+Armed coordinator применён, но actual arm не получен: проверенные UI Plugins в Play и held-READ
+file bridge пути закрыты. Первый solo REST timeout сохранён; новый native callback служебного токена
+за 684 ms квалифицирован только как CONTROL_NATIVE_TOKEN_CALLBACK_SINGLE_HOST, не media/arm PASS.
+NoPlay подтвердил typed own cutoff и свежий Off, но worker INCOMPLETE и restorative setter UNKNOWN;
+1748,732 ms не hard1500/nativeRelease. Предыдущий DryRun был без Game и получил memory отказ;
+тогдашний запас commit 4,76 GiB/available 7,74 GiB был недостаточен. Все пять Overlay живы после normal-close,
+нового close/force/других приложений/pagefile изменений не было. Отдельный Play ради ручного Restore
+не нужен. Последующий actual pair прошёл guarded control-only rehearsal с capture=0; local audio
+подтвердила только одну последовательность PAIN_RELIEVE, не energy/playback/B sink. Оператор сообщил
+headroom 9,66/available 8,29 GiB при неизменном 8/6; ресурсный blocker запуска снялся без закрытия приложений
+или изменения pagefile. Для host-backend штатно запущен Steam без credentials после startup setup-ошибки.
+После read-only подготовки первая capture/RX проба дала только native ingress/B local-catalog metadata
+candidate; отдельное no-send окно 1002 ms с пропущенными capture calls не записало raw callbacks.
+Это finite control, не RF/audio/global microphone-off. Последующая серия завершена: Wrong A 74 / B 70
+(69 null + 1 receiver с tuning UNKNOWN в transition), fresh Matched A 80 / B 77 (null0, 39 snapshots).
+Это metadata pattern, не RF_PASS/falsifier/content/audio/per-pair. Radio-owner≈1 m не доказывает
+character distance или отключённый proximity; null не DIRECT. Bounded parent text chain дошла до
+Core/Character_Base; VoN block содержит только Filename, descendant overrides и effective range UNKNOWN.
+Последующий fixed-prefab SourceContainer lookup дал INCOMPLETE: field types есть, numericRead = 0,
+значения NOT_READ; это не Speaking Range = 0/невозможность доступа. Existing MpTest text read нашёл
+кандидат, но FileIO open failed/lines0 — не TerrainAbsent. Поздний Edit WorldList перечислил 25 сущностей
+и terrain entity; прочитаны границы объекта мира редактора и пять высот, не live collision/standing safety
+или Speaking Range. Парная пассивная placement-проба отказала на CONFIG_OR_WORLD до setter на A/B;
+перемещения, landing и capture не было. NRX отдельно завершил пассивные окна, recovery остался
+INCOMPLETE из-за worker profile metadata. Поздняя диагностика установила WORLD_NOT_ALLOWED на public-root
+представлении MpTest; точечное исправление literal сохранило отказ произвольных aliases. Исправленная
+пассивная проба дала A восемь samples на 100 m; B первый около 1 m, затем семь на 100 m, один setter.
+Actual Game landing/helper и owner guards наблюдались, full standing/physics и voice radius не приняты.
+Поздняя отдельная CaptureSeparatedPair серия завершена на свежих 100 m и одинаковых frozen inputs:
+Positive A/B 96/74 → Wrong 98/1 → fresh Matched 97/88. Wrong RX единственный, post-false, B tuning UNKNOWN
+в getter gap 203/298 ms. Это metadata pattern, не packets/loss, latency, causal RF/Q или audio quality.
+Пассивный no-Pulse путь, budget 8/6 и guard 400/1500/2000 сохранены; recovery INCOMPLETE/profile metadata.
+Один известный short400 pilot дал A request/return 409 ms и B callback span 392 ms, 33 receiver rows;
+B metadata продолжалась 1048 ms после последнего RX. Исключён selected-stop process cutoff, но
+VAD/queue/другие truncation причины и continuous pose внутри окна UNKNOWN. Это не blind/chosen information
+или content PASS. Новое known-LONG окно B квалифицировано; исходный SDK INCOMPLETE и postparse того же
+log сохранены раздельно, rerun не было. Один blind trial совпал LONG: A actual 1005 ms, B span 1000 ms,
+decision seal до reveal; вероятность случайного совпадения при независимом равномерном бинарном null = 1/2.
+Это не information transmission/reliability PASS. Первый sound опыт INVALID до release, не callback
+negative. Исправленный ordinary SQUAD опыт на 100 m дал A 92 / B 86 exact metadata при ownB/A-proxy
+14 READY rows/hooks 2+2, started/finished = 0 в конечном окне. Native stream absence/silence/DIRECT positive/
+joint token/actuator не квалифицированы. Recovery 60ea stale-parent без menu proof, отдельный a142
+InspectOnly и исправленный ee7b typed recovery учитываются раздельно; full restore не принят.
+Power outcomes разделены: первый B APPLIED_UNKNOWN/немедленный ON getter OFF и отдельный A mirror;
+новый B LOCAL_STATE_CYCLE_OBSERVED со своевременным getter ON 14193 до deadline 15142.
+Поздний endpoint 15192 не использован для qualification. Это local whole-device state property,
+без capture/RX, RADIO/DIRECT/voice effect, authority/replication/per-pair/Core actuator PASS.
+Поздний controlled OFF дал A 94 / B RX 0 при actual OFF getters и finite healthy observer trace;
+fresh ON на том же коде, только без PowerOff flag, дал A 91 / B 81 exact receiver rows и native B getter ON.
+Это metadata association, не RF-block/DIRECT/audio/per-pair или restore старого OFF объекта.
+Editor recoveries profile-only INCOMPLETE отдельно от radio restore. DIRECT prerelease INVALID был
+producer field omission до release/route/capture, не DIRECT negative. Corrected actual getter DIRECT
+до true, A 86 TX-null/direct1 и B 80 own-B sender-A receiver-null rows дают combined metadata candidate;
+null сам по себе и raw direct UNQUALIFIED не переписаны как DIRECT proof. Near примерно 1 m,
+ранние A eligible rows до 1.73208 m, не Speaking Range. Следующий шаг — короткий counter и один
+same-DIRECT + whole-B power OFF preservation control near, без третьего flag/framework и standalone repeat.
+Не повторять power/callback probes или framework без новой неизвестности; Core BLOCKED_NO_ACTUATOR.
+RF/radio-only/content/output/per-pair, полный native voice baseline и полная цель пока не квалифицированы.
+I0/source-sink/Core/32 влияния/physics/lifecycle/load и полная цель остаются открытыми. Квитанции и пределы —
+в [текущем статусе](STATUS_RU.md); этапы 3–8 этим не закрываются.
+
+Детализация текущей очереди: [VON_PIPELINE_RU](../analysis/VON_PIPELINE_RU.md),
+[VON_RADIO_MECHANISMS_RU](../analysis/VON_RADIO_MECHANISMS_RU.md) и
+[PLAN_NATIVE_VON_RU](PLAN_NATIVE_VON_RU.md). Статус: SOURCE_COVERAGE_REVIEWED (Agora #6740/#6741).
+Native UNKNOWN и этапы3–8 остаются открытыми; следующий исполнимый шаг определяется acceptance плана,
+а не текстом исторической части.
+
+## Историческая детализация плана 2026-10-19–23
+
+Ниже текст прежней редакции сохранён для трассируемости решений, ссылок и этапов. Его «сейчас»,
+«ни разу не запускали» и ожидания разрешений описывают тот момент; текущий порядок задан выше.
+Числа и формулировки старой приёмки не повышаются до новых runtime гарантий.
+
 Черновик 2026-10-19, обновлён 2026-10-23 (claude/codex; самостоятельное продолжение codex ожидает окончательного ревью). Подробный план с обоснованиями — `PLAN_RU.md`, текущий ход работ —
 `STATUS_RU.md`. Этот документ их не заменяет: он объясняет, что дальше и что нужно от вас.
 
-## Где мы сейчас
+## Где находился проект на дату прежней редакции
 
 - Готовы расчёт связи (дойдёт ли сигнал от рации до рации и насколько чисто), правила прохождения сигнала через
   несколько звеньев и формат, в котором результат будут получать игроки. Саму доставку результата игрокам
@@ -16,7 +154,7 @@
 - Главное ограничение: пока игру не запускаем, всё проверяется на ПК — эталоном и исполнением кода в Workbench
   без мира, Play и сервера. Как это звучит и работает ли по сети, станет ясно только после запуска.
 
-## Сейчас: ядро и оболочки (S1–S5)
+## Исторический этап: ядро и оболочки (S1–S5)
 
 После 30 спринтов работа идёт по просьбе владельца «ядро и оболочки для работоспособности» (agora #2937).
 Этапы без запуска игры, у каждого — требования и эталон от одного агента, код от другого, взаимное ревью:
@@ -168,7 +306,7 @@
 
 **13. Сотовая связь: звонки (M3b).** Голосовой вызов и переход между вышками на ходу.
 
-## Где понадобятся ваши решения
+## Решения, запрошенные в прежнем плане
 
 | Когда | Решение |
 |---|---|

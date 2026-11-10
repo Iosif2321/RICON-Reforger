@@ -1,5 +1,9 @@
 # CT10 — карта миграции временного дескриптора
 
+**Последующий observation-срез 2026-11-10:** [контракт физических наблюдений](REQ-physical-observation.md) и [actual285/2065 pure evidence](../evidence/E-ct10-physical-observation-20261110.md). Read-only public adapter скомпилирован, stateless sampler проверен на явном source DOUBLE. Он не строит descriptor и не доказывает actual world/RF/profile/clock completeness; production physical builder и native world qualification остаются отдельными шагами. Schema1/RCFD1 и физическая validity не расширены.
+
+**Датированное дополнение 2026-11-10:** исходная карта23Oct ниже сохранена как история. Explicit schema2 DTO/Clock/raw+ordered receiver/capture и новый producer/owner реализованы отдельными API без скрытого расширения v1/RCFD1; [контракт producer](REQ-temporal-producer.md) и [фактический SDK1780/legacy106 evidence](../evidence/E-ct10-producer-owner-20261110.md). Manager имеет opt-in source entrypoint с actual PairService и одним private owner, но реальный complete world/exporter, temporal physical builder, калибровка/Receiver orchestration, native manager authority/RPC/seam/audio/load ещё не квалифицированы. Старые таблицы не читать как текущее отсутствие всех v2 классов; полную готовность миграции этот срез не устанавливает.
+
 2026-10-23, codex. **DRAFT / READ_ONLY_INTAKE**, не новый утверждённый контракт.
 Основание: `REQ-channel-time.md` v0.2 CT04–CT10 и закрытый kernel `REQ-channel-fading.md` v0.2.
 Карта составлена после чтения текущих исходников; Game-код и snapshot v1 не изменены.

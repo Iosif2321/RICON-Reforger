@@ -1,0 +1,72 @@
+{
+  "binarySha256": "1D221A990FA16C78FE02F685A7BA1330BE115CA93CD3B641E67E5D3F1B40D9C9",
+  "ranges": [
+    [
+      "global_lookup_wrapper",
+      "0x140846FC0,0x140846FE1"
+    ],
+    [
+      "global_id_slot_lookup",
+      "0x140DAA9B0,0x140DAA9E9"
+    ],
+    [
+      "context_inject",
+      "0x14029FF60,0x14029FF6D"
+    ],
+    [
+      "raw_memory_transfer",
+      "0x1408AE0C0,0x1408AE15A"
+    ],
+    [
+      "raw_memory_read",
+      "0x1408ADEF0,0x1408ADF3A"
+    ],
+    [
+      "raw_memory_write",
+      "0x1408AE180,0x1408AE1EC"
+    ],
+    [
+      "raw_bit_dispatch",
+      "0x1408AEAF0,0x1408AEB04"
+    ],
+    [
+      "raw_bit_reader",
+      "0x140192690,0x140192854"
+    ]
+  ],
+  "method": "bounded dumpbin static no launch",
+  "artifacts": [
+    {
+      "sha256": "1630A556311BEBACBB49A0879C762DA2A292E79328942E1061F972A9D55D11AC",
+      "name": "context_inject.asm"
+    },
+    {
+      "sha256": "4685EF365C2BA372A88A17AFED2670F2B4C5EB3787D339DCC9FD7E021B350C68",
+      "name": "global_id_slot_lookup.asm"
+    },
+    {
+      "sha256": "84B0DDA485F7536C5F6EF2E84168789444B41229FCE9EF32B80BC7D5E9A038F7",
+      "name": "global_lookup_wrapper.asm"
+    },
+    {
+      "sha256": "0F9E21E4D44413C1A9820FD3A3D09C23E31032E67FB82862083D001B43B2799E",
+      "name": "raw_bit_dispatch.asm"
+    },
+    {
+      "sha256": "E25E4ECF25CCB14649A4DBEA003FA0FB5E8D7B88E1DCDB3434372FCAC95F922E",
+      "name": "raw_bit_reader.asm"
+    },
+    {
+      "sha256": "2D4F7CB11CA7087E421BB668D43F8118856EAFB67DD4F1ED9125D20C8C40FD41",
+      "name": "raw_memory_read.asm"
+    },
+    {
+      "sha256": "A47174353995AFFFC9D8A8355AA47B215CCD29060095F451CBC3BC63F8D55EF1",
+      "name": "raw_memory_transfer.asm"
+    },
+    {
+      "sha256": "2F4D7AC65F2006470F4C181689DBDC86E48DBF44CE363C464AD3DC1FF7D533AE",
+      "name": "raw_memory_write.asm"
+    }
+  ]
+}

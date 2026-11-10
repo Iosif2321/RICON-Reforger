@@ -1,0 +1,248 @@
+{
+  "status": "ACCEPT_METADATA_AND_BOUNDED_NATIVE_FINDINGS_NO_RUNTIME_OR_VON_PORT_ACCEPTANCE",
+  "goal_files": [
+    {
+      "canonical": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\.opencode\\goal\\state.json",
+      "base_sha256": "5f746062d0c201384080ddea67889db862352d26f60494d3c6f9a8979226c22c",
+      "staged": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-access-20261104\\goal\\state.json",
+      "staged_sha256": "061eef1671ef15632c966851384e1f29713b824e981d76eafdeaceeba6c6a70d",
+      "prefix_preserved": null
+    },
+    {
+      "canonical": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\.opencode\\goal\\plan.md",
+      "base_sha256": "24f74895ce51bb47c0add19a0fcdfa633615d3db52b6a71b184d38811423673e",
+      "staged": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-access-20261104\\goal\\plan.md",
+      "staged_sha256": "1625df072982e67c975fa3793741a07e93397e969014e396cf94bb99ab5d914c",
+      "prefix_preserved": true
+    },
+    {
+      "canonical": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\.opencode\\goal\\log.md",
+      "base_sha256": "f9b067562908bdb36f5289b1afd0ca2c7b780eaa7acc3e9ee96460daa6d7e9cc",
+      "staged": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-access-20261104\\goal\\log.md",
+      "staged_sha256": "3e984f9397a3e22302387fa64e53d1801b87fcd31802170d21d1148428d12ddc",
+      "prefix_preserved": true
+    }
+  ],
+  "objective_attachment": {
+    "path": "C:\\Users\\Ded\\.codex\\attachments\\e7fc704c-acd3-4d37-bbaf-aa86f22b0e92\\goal-objective.md",
+    "sha256": "9a1ab8001315126d1d9a85062f009e83d19612d9c79040e722af63f363282ce4",
+    "bytes": 13339,
+    "lines": 91,
+    "exact_text_copied": true
+  },
+  "machine_snapshot_active": true,
+  "file_pointer_not_completion": true,
+  "semantic_diff": [
+    {
+      "path": "activePhase",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.blockedAudit.currentRunInterpretation",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.blockedAudit.supersededBy",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.currentGoalRun",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentOwnerAmendment.currentContinuationReference",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentOwnerAmendment.machineGoal.historicalAsOf",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentOwnerAmendment.machineGoal.interpretation",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentOwnerAmendment.machineGoal.supersededBy",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentOwnerAmendment.temporalSemanticsStillAuthoritative",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentThreadGoal.currentRunInterpretation",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.currentThreadGoal.supersededBy",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.externalAccessQualification.currentRunInterpretation",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.externalAccessQualification.supersededBy",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.historyInterpretation.currentAuthority",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.machineGoal.currentRunInterpretation",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.machineGoal.historicalAsOf",
+      "kind": "added"
+    },
+    {
+      "path": "currentCodexIntegration.machineGoal.supersededBy",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.nextSteps",
+      "kind": "changed"
+    },
+    {
+      "path": "currentCodexIntegration.phase",
+      "kind": "changed"
+    },
+    {
+      "path": "currentObjective",
+      "kind": "changed"
+    }
+  ],
+  "all_deltas_allowed": true,
+  "original_approvals_constraints_implementation_progress_preserved": true,
+  "coverage_files": [
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_SetRange.asm",
+      "sha256": "3f5355f7bab52dc21eb7fea21c3d350642d3a32d8785ada21fbf5ead166a4ff4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_ConcreteSlot6.asm",
+      "sha256": "bce0fe736b14bd24efa4f9dd6882482825181549883d4723cedbb72c9ced36d4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_GraphCandidate.asm",
+      "sha256": "d16dcce2efdebfe3420b5a0eab1263ad311a6c0bf318e852f2dd1e3e1d9d723a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\VoN_RadioGraphCaller.asm",
+      "sha256": "a07b397ae4a2fb369b2a50eefa8b0ce91f744689b34495f55b30110a18a7fd5a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\World_CellEnumerator.asm",
+      "sha256": "0e57d68843f73457e03f6b7c71693255e7716de5639daf529139d9de2c71276b"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch03\\export\\next_body_17.asm",
+      "sha256": "9fe23e83cb926ecfe263fe13ea2f92ef13385aa60c3240b98b1b451694e01279"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch08\\export\\Radio_Serialize.asm",
+      "sha256": "53f0fd7ca86efee03001e92918bfe2a11afd2bb32f7515a5c115b501f1f14061"
+    }
+  ],
+  "coverage_report_sha256": "5b03789b7a115407ba46e51cb397debabdc65d0545b9720491c3be51ea912f4e",
+  "math": {
+    "q10km": 0.976716225075614,
+    "q60km": 0.16178410272210098,
+    "cell_coordinates_per_axis": [
+      2622,
+      2623
+    ],
+    "candidate_coordinate_pairs": [
+      6874884,
+      6880129
+    ],
+    "meaning": "Coordinate enumeration work/candidates, not radios or actual lookup/latency benchmark"
+  },
+  "native_binary_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "current_constants": {
+    "0x141879964": 50.0,
+    "0x1419417a4": 65535.0,
+    "0x14186dce8": 1.0,
+    "0x14186dcdc": 0.05000000074505806
+  },
+  "bounded_byte_observations": [
+    {
+      "va": "0x1407ce16f",
+      "bytes": "891cc8ffc344897cc8"
+    },
+    {
+      "va": "0x1407ce179",
+      "bytes": "ff470c413bdc0f8e"
+    },
+    {
+      "va": "0x1407ce18c",
+      "bytes": "41ffc7443bf80f8e"
+    },
+    {
+      "va": "0x1402a0e6a",
+      "bytes": "f30f104240f30f590565ce5c01f30f101d71fe5c01f30f5fd8f3"
+    },
+    {
+      "va": "0x1405e25bf",
+      "bytes": "f3410f104f40f30f59d2f30f59c0f30f58d0f30f59dbf30f58d3f30f59c90f2fd177"
+    }
+  ],
+  "writer_scope": "Concrete SndComponent catalog fanout into A1B690 proved; D==specificsenderprivateVoNT not proved or disproved; optional hook not publicaccess; BaseSound unwrap not blanketAPInoop",
+  "actions": "Only review artifacts written; no canonical/SDK/Ghidra/engine/app/DLL/pagefile actions",
+  "writer_report_sha256": "6405135bf7f5aefdfe08e6ada15a432291ca5841d6d61942fc9817e45103e6d9",
+  "writer_verified_spans": [
+    {
+      "name": "basesound-registration",
+      "start": "0x141362bf0",
+      "end_exclusive": "0x141362e45",
+      "bytes": 597,
+      "raw_sha256": "9ff3b783ee81acda39a190eefad15409eebf2acfa0bbd1e468c1874b9e2890fa",
+      "asm_sha256": "dc784296d7f2b8605f84107fbfd74ec0ddcb548ca15d45e2e4f54e2d2c0c6519"
+    },
+    {
+      "name": "public-writer-wrapper",
+      "start": "0x14027ac60",
+      "end_exclusive": "0x14027ac83",
+      "bytes": 35,
+      "raw_sha256": "b0e9c464a3d6a99ec9138d76da51d9993000d0f6142487fe052f4f7267388729",
+      "asm_sha256": "120afbc708d7821a099aecc2d97a5eea7be3e7f8399e62f9eeea569083ab9555"
+    },
+    {
+      "name": "native-object-unwrap-full",
+      "start": "0x14088ccb0",
+      "end_exclusive": "0x14088cd3e",
+      "bytes": 142,
+      "raw_sha256": "cd0c04dba081473663a58ad29580318e21dca0c00c564ad8147f3aee7b604142",
+      "asm_sha256": "adf6c98004aaf70628bcbdbee83a6ea8afbdb81661cf719437e895813bc481f6"
+    },
+    {
+      "name": "snd-set-signal-value",
+      "start": "0x14120d7a0",
+      "end_exclusive": "0x14120d7de",
+      "bytes": 62,
+      "raw_sha256": "7bb441ed02bbc71a3da09a61489f42603194c534b586d47ebfa0f6d5bac5aeaa",
+      "asm_sha256": "6879744a880e474465c4e404e0ed03f37349aa4ea7f8e7e2538c8dc58b079288"
+    },
+    {
+      "name": "snd-set-signal-value-str",
+      "start": "0x14120d7e0",
+      "end_exclusive": "0x14120d83e",
+      "bytes": 94,
+      "raw_sha256": "93e7d139c157fd925e0d3218aa3d780b9f24193a83f911489a1e7707e85e60bc",
+      "asm_sha256": "c6547ebe3cc23e44f4ab8df7d942f3772d2a9f463a106529a4231fb96cdef4ac"
+    },
+    {
+      "name": "snd-owned-signal-write",
+      "start": "0x141209970",
+      "end_exclusive": "0x141209a0b",
+      "bytes": 155,
+      "raw_sha256": "a8d0653c544ed96bb6970805826c4003c3e140455b4cb57507e63a4e7b7e6690",
+      "asm_sha256": "b14408fe9b0e23cd6f55071f63264452b59a54fb9c045bd789c9b3618057115e"
+    }
+  ],
+  "coverage_passed_worker_checks": 24,
+  "coverage_cell_query_note": "Existing CellEnumerator unconditionally appends inclusive coordinates; queryCE3E8 calls lookup for each pair before empty/no-radio skip. Counts remain static work if enumeration completes, not latency/radio/runtime qualification",
+  "coverage_future_test_delta": "B outside qualifiedDIRECT reach and source-specific Radio control retained; future permission only, no test run"
+}

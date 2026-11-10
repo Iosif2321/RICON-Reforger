@@ -59,6 +59,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	static const int PHASE_DONE = 6;
 
 	protected ref RICON_LiveJournal m_Journal;
+	protected ref RICON_LiveGenericRadioProbe m_GenericRadio;
 	protected ref array<string> m_aPrefabs;
 	protected ref array<IEntity> m_aRadios = {};       //!< слабые ссылки на свои рации
 	protected ref array<int> m_aTargets = {};          //!< целевая сырая частота трансивера 0 после шага или −1
@@ -219,6 +220,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	static const string MODE_PLAYERMENU = "playermenu"; //!< A1-P2: player + путь меню на одной radio-entry игрока
 	static const string MODE_PLAYERSCREEN = "playerscreen"; //!< A1-S1: player + одно Open радиального меню и чтение виджетов
 	static const string MODE_PLAYERSCREENSTEP = "playerscreenstep"; //!< A1-S2: S1 + один шаг частоты P2 на экране
+	static const string MODE_GENERICRADIO = "genericradio";
 	static const string MODE_RADIOMUTE = "radiomute"; //!< A0-M: локальный Q-M на своих рациях (mute, частота, питание)
 	static const string MODE_INVALID = "INVALID";
 	static const int PLAYER_SAMPLES = 30;
@@ -237,7 +239,7 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!System.GetCLIParam("riconBenchMode", value))
 			return MODE_RADIO;
 		if (value == MODE_RADIO || value == MODE_PLAYER || value == MODE_PLAYERMENU || value == MODE_PLAYERSCREEN
-			|| value == MODE_PLAYERSCREENSTEP || value == MODE_RADIOMUTE)
+			|| value == MODE_PLAYERSCREENSTEP || value == MODE_RADIOMUTE || value == MODE_GENERICRADIO)
 			return value;
 		return MODE_INVALID;
 	}
@@ -1561,6 +1563,8 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 	//! RplComponent.DeleteRplEntity, codex #4108). BENCH_DONE — лишь после всех фаз; иначе BENCH_ABORTED с фазой.
 	protected void Finish(bool complete)
 	{
+		if (m_GenericRadio) m_GenericRadio.Stop();
+		m_GenericRadio = null;
 		// codex #4180: очередь снимается до удаления своих раций.
 		StopHeartbeat("FINISH");
 		// A1-E: свои entry держат трансивер — освобождаются до удаления раций.
@@ -1600,6 +1604,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 			else
 				Note("BENCH_ABORTED", m_iSamples, "level=" + level + ",notReady=" + Bit(m_bScreenNotReady) + ",stopped=" + Bit(m_bActStopped) + ",samples=" + m_iSamples.ToString());
 		}
+		else if (Mode() == MODE_GENERICRADIO)
+		{
+			if (complete) Note("BENCH_DONE", m_iPhase, "level=RICON_MODEL_NATIVE_RADIO_FIXTURE,not=VON|AUDIO|CROSSPROCESS_PAYLOAD|AUTHORITY|RX_SUPPRESSION");
+			else Note("BENCH_ABORTED", m_iPhase, "level=RICON_MODEL_NATIVE_RADIO_FIXTURE");
+		}
 		else if (Mode() == MODE_RADIOMUTE)
 		{
 			if (complete)
@@ -1624,6 +1633,40 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		m_bRunning = false;
 	}
 
+	//! TOOL_ONLY same-world A/B radios; existing Finish deletes only these spawned fixtures.
+	protected void StepGenericRadio(IEntity owner)
+	{
+		if (m_iPhase == PHASE_IDLE)
+		{
+			if (m_fElapsed < 1) return;
+			if (!HasRadioManager(owner) || !ManagerReady(owner))
+			{
+				Finish(false);
+				return;
+			}
+			array<string> prefabs = BenchPrefabs();
+			m_aPrefabs.Clear();
+			m_aPrefabs.Insert(prefabs[0]);
+			m_aPrefabs.Insert(prefabs[0]);
+			Spawn();
+			m_GenericRadio = new RICON_LiveGenericRadioProbe();
+			if (!m_GenericRadio.Start(RadioOf(0), RadioOf(1), m_fElapsed))
+			{
+				Finish(false);
+				return;
+			}
+			m_iPhase = PHASE_SPAWNED;
+			return;
+		}
+		if (!m_GenericRadio)
+		{
+			Finish(false);
+			return;
+		}
+		int result = m_GenericRadio.Step(m_fElapsed);
+		if (result != 0) Finish(result > 0);
+	}
+
 	override void EOnFrame(IEntity owner, float timeSlice)
 	{
 		m_iFrames++;
@@ -1636,6 +1679,11 @@ class RICON_LiveRadioBenchComponent : ScriptComponent
 		if (!m_bRunning || timeSlice <= 0)
 			return;
 		m_fElapsed += timeSlice;
+		if (Mode() == MODE_GENERICRADIO)
+		{
+			StepGenericRadio(owner);
+			return;
+		}
 		if (Mode() == MODE_RADIOMUTE)
 		{
 			StepRadioMute(owner);

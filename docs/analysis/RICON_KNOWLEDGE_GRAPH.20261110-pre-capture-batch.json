@@ -1,0 +1,4689 @@
+{
+  "schema_version": 1,
+  "title": "RICON: граф логики, кода и доказательств",
+  "snapshot_date": "2026-11-09",
+  "generated_utc": "2026-11-09T18:18:53.682122+00:00",
+  "purpose": "Навигация и выбор следующей проверки; граф не является runtime-приёмкой или разрешением.",
+  "roots": {
+    "repo": "../..",
+    "evidence": "../../../Cellular System/output/ricon-goal-plan-20261106"
+  },
+  "nodes": [
+    {
+      "id": "C_MANAGER",
+      "title": "Core: authority и реестры моделей",
+      "layer": "core",
+      "summary": "CommsManager хранит модели, диапазоны и политики. RegisterBand разрешает зависимости и создаёт evaluator; mutation требует authority сервера, после freeze запрещена.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 59,
+          "symbol": "RICON_CommsManagerComponent",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 160,
+          "symbol": "RegisterBand",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 316,
+          "symbol": "CanMutateRegistries",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_SEQUENCE",
+      "title": "Session epoch и link sequence",
+      "layer": "core",
+      "summary": "Менеджер выдаёт per-link sequence и ротирует epoch до переполнения. Это сетевые поколения, не физическое время канала.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 272,
+          "symbol": "GetSessionEpoch",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 291,
+          "symbol": "NextLinkSequence",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 42,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_OBSERVATION",
+      "title": "Наблюдение native radio только для чтения",
+      "layer": "adapter",
+      "summary": "BaseRadioObservationReader.TryRead проверяет authority и binding, читает power, opaque tuning и key. deviceId и antennaPos получает извне. Getters последовательные, атомарности нет.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 170,
+          "symbol": "RICON_BaseRadioObservationReader",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 174,
+          "symbol": "TryRead",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 191,
+          "symbol": "native getters",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_RF_PROFILE",
+      "title": "RF-профиль устройства",
+      "layer": "model",
+      "summary": "RadioRfProfile задаёт разные TX/RX параметры и явные единицы; текущая валидация принимает только TEST_ONLY или ASSUMED provenance. Native tuning не отождествляется с MHz.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 25,
+          "symbol": "m_iTuningValue",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 31,
+          "symbol": "RICON_RadioRfProfile",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 77,
+          "symbol": "IsValidProfile",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_QUERY",
+      "title": "Направленный RadioQueryBuilder",
+      "layer": "adapter",
+      "summary": "Чистый Build проверяет observation/profile/context, identity, power, tuning, частоту и равенство opaque key. TX-поля берёт у TX, RX-поля у RX; при отказе query=null.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 114,
+          "symbol": "RICON_RadioQueryBuilder.Build",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 140,
+          "symbol": "RICON_LinkQuery construction",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_DEVICE_CATALOG",
+      "title": "Каталог устройств и права",
+      "layer": "core",
+      "summary": "LifecycleDevice содержит carried/world тип, owner, power, access и допустимые network/channel пары. PairService проверяет CanAccess/Allows до вычисления.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 163,
+          "symbol": "RICON_LifecycleDevice",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 201,
+          "symbol": "CanAccess",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 208,
+          "symbol": "Allows",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_LIFECYCLE",
+      "title": "Чистая машина lifecycle, PTT и lease",
+      "layer": "core",
+      "summary": "LifecycleStateMachine хранит поколения игроков и lease, принимает явное nowMs, возвращает ordered effects. Sweep прекращает просроченные lease. VON_EXPIRY_INTENDED и FULL_RESYNC_REQUIRED являются намерениями, не выполненным native действием.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 421,
+          "symbol": "RICON_LifecycleStateMachine",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 949,
+          "symbol": "ObserveAndSweep",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 1379,
+          "symbol": "AddVonExpiryEffect",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_TRANSMISSION",
+      "title": "TransmissionBinding и входы слушателей",
+      "layer": "core",
+      "summary": "Binding связывает lease, epoch, player generation, device/transceiver, network/channel и TTL. PairListener, PairPlayer и PairEndpoint передаются явным входом S3.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 26,
+          "symbol": "RICON_TransmissionBinding",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 73,
+          "symbol": "RICON_PairServiceInput",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_PAIR",
+      "title": "S3 PairService",
+      "layer": "core",
+      "summary": "Evaluate валидирует весь вход, сортирует lease/listener и вычисляет направленные пары. EvaluatePair проверяет lease TTL, поколение, доступ и согласованность power, затем вызывает S2 и общий evaluator. Результат хранит значения без ссылок на budget.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 274,
+          "symbol": "EvaluatePair",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 336,
+          "symbol": "Evaluate",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_EVALUATOR",
+      "title": "WirelessLinkEvaluator",
+      "layer": "model",
+      "summary": "Чистая цепочка: слои потерь, RX power, thermal/environment noise плюс interference, SINR, legacy sensitivity/Q/state. LOST ниже sensitivity является текущей диагностической семантикой, не разрешением live mute.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 43,
+          "symbol": "RICON_WirelessLinkEvaluator.Evaluate",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 97,
+          "symbol": "AppendLosses",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 145,
+          "symbol": "legacy sensitivity branch",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 17,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_PROPAGATION",
+      "title": "Контракт потерь и free-space",
+      "layer": "model",
+      "summary": "PropagationModel.AppendLosses возвращает именованные слои. FreeSpaceModel вычисляет FSPL с нижней границей расстояния в одну длину волны. Модель выбирается через registry.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c",
+          "line": 5,
+          "symbol": "RICON_PropagationModel",
+          "sha256": "27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c",
+          "line": 57,
+          "symbol": "RICON_FreeSpaceModel.AppendLosses",
+          "sha256": "27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c",
+          "line": 75,
+          "symbol": "LossDb",
+          "sha256": "27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_NOISE_Q",
+      "title": "Шум и диагностическая разборчивость",
+      "layer": "model",
+      "summary": "Evaluator соединяет noise model и intelligibility model; мощности noise/interference суммируются через TryPowerSumDbm. LinearTestIntelligibility явно TEST_ONLY и не является моделью речи.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 117,
+          "symbol": "noise/SINR calculation",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_IntelligibilityModel.c",
+          "line": 32,
+          "symbol": "RICON_LinearTestIntelligibility",
+          "sha256": "90e7d6ad589f231f38f7c5438c4f2fc7669e620c8002bc216ff6918a9e4d7676"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_NoiseModel.c",
+          "line": 13,
+          "symbol": "RICON_NoiseModel",
+          "sha256": "8eb1f8c2a19356f93cd5b78c3b98056e1d06d620231c956d9a8edd42997ef5ce"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_WORLD_TERRAIN",
+      "title": "Мировой профиль и дифракция рельефа",
+      "layer": "adapter",
+      "summary": "BaseWorldHeightSource читает GetSurfaceY с проверкой finite; WorldProfileProvider реализует TerrainProfileProvider. TerrainDiffractionModel расширяет PropagationModel. Наличие механизма не доказывает полноту всей среды.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+          "line": 12,
+          "symbol": "RICON_BaseWorldHeightSource",
+          "sha256": "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+          "line": 26,
+          "symbol": "GetSurfaceY",
+          "sha256": "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+          "line": 36,
+          "symbol": "RICON_WorldProfileProvider",
+          "sha256": "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_TerrainDiffractionModel.c",
+          "line": 763,
+          "symbol": "RICON_TerrainDiffractionModel",
+          "sha256": "a8996f6d7e7859b9644ef1e13b631d17ea4ad786e9663ca8a9df41ebbd4aaf51"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_SNAPSHOT",
+      "title": "LinkSnapshot v1",
+      "layer": "core",
+      "summary": "Контракт содержит schema, epoch, link, seq, TTL, route, players, state и Q; CloneSnapshot копирует значения. Temporal descriptor, RX-control и физического окна в v1 нет.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 32,
+          "symbol": "RICON_LinkSnapshot",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 87,
+          "symbol": "CloneSnapshot",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_PUBLICATION",
+      "title": "S3b LinkPublication и registry",
+      "layer": "core",
+      "summary": "Чистый Publish строит snapshots и новый registry из S3 result и bindings. Нет RPC, отправки, таймеров, мира или звука. NeedSnapshot учитывает state, TTL, qualityDelta и обновление через половину TTL.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 1,
+          "symbol": "pure scope",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 28,
+          "symbol": "RICON_LinkPublicationInput",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 549,
+          "symbol": "NeedSnapshot",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 566,
+          "symbol": "Publish",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_RECEIVER",
+      "title": "SnapshotReceiver: ordering, TTL и full resync",
+      "layer": "core",
+      "summary": "Receive проверяет schema/epoch/linkSeq и копирует снимки. TTL отсчитывает от местного nowMs при получении. FullResync проверяет всю партию до замены состояния; неверная партия сбрасывает identity.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 106,
+          "symbol": "RICON_LinkSnapshotReceiver",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 120,
+          "symbol": "ApplyFullResync",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 161,
+          "symbol": "Receive",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 187,
+          "symbol": "IsVisible",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_ROUTE",
+      "title": "Расширяемые routing и call контракты",
+      "layer": "core",
+      "summary": "Route.Evaluate проверяет маршрут целиком, endpoints, budgets, continuity и cycles; агрегирует минимум quality/state. RoutingPolicy и CallSessionFactory являются расширениями, не готовой сотовой или relay сетью.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 119,
+          "symbol": "RICON_Route.Evaluate",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 174,
+          "symbol": "route aggregate",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 249,
+          "symbol": "RICON_RoutingPolicy",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 289,
+          "symbol": "RICON_CallSessionFactory",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_VON_BINDING",
+      "title": "Pure привязка VoN identity",
+      "layer": "adapter",
+      "summary": "VoNDeviceBinding содержит epoch/link/player/device/lease/transceiver индексы и проверяет различимость концов. Не владеет engine handle и не связывает private audio instance.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 323,
+          "symbol": "RICON_VoNDeviceBinding",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 336,
+          "symbol": "IsValid",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_VON_SEAM",
+      "title": "VoNIntegration: проверка без actuator",
+      "layer": "adapter",
+      "summary": "ApplySnapshot проверяет snapshot, upstream decision, binding и identity. Любой допустимый вызов завершается BLOCKED_NO_ACTUATOR. OnTransmitLeaseExpired также не выполняет native действие; APPLIED отсутствует.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 311,
+          "symbol": "RICON_EVoNSeamDecision",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 350,
+          "symbol": "ApplySnapshot",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 367,
+          "symbol": "BLOCKED_NO_ACTUATOR",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 370,
+          "symbol": "OnTransmitLeaseExpired",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_FADING",
+      "title": "FINITE_MULTIPATH_V1: временной полезный коэффициент",
+      "layer": "model",
+      "summary": "Чистое ядро получает descriptor/query/time извне, проверяет coverage/context/validity/domain, суммирует комплексные компоненты. EMPTY_MEDIUM, ZERO_AT_SAMPLE и NUMERIC_FAILURE разделены. Не знает PTT/epoch и не выдаёт LOST.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+          "line": 1,
+          "symbol": "scope",
+          "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+          "line": 311,
+          "symbol": "RICON_FiniteMultipath.Evaluate",
+          "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+          "line": 372,
+          "symbol": "Classify",
+          "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_DESCRIPTOR",
+      "title": "RCFD descriptor: codec, copy и rebase",
+      "layer": "model",
+      "summary": "DescriptorCodec проверяет модель, размер, версию и canonical representation, создаёт копии. Rebase переносит фазы и anchor внутри окна, не увеличивает validUntil. Это отдельный контракт, не поле snapshot v1.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 92,
+          "symbol": "RICON_DescriptorCodec",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 212,
+          "symbol": "Clone",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 298,
+          "symbol": "Encode",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 313,
+          "symbol": "Decode",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 389,
+          "symbol": "Rebase",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_CUTOFF",
+      "title": "Interval cutoff полезного вклада",
+      "layer": "model",
+      "summary": "Assess требует полные пути, coverage, revisions, интервал и numerical guard. Амплитудная верхняя граница суммирует слабые пути. Только strict U<tolerance даёт BOUNDED; равенство CONTINUE. Не отключает шум, другие источники или устройство; production calls не подключены.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+          "line": 1,
+          "symbol": "scope",
+          "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+          "line": 110,
+          "symbol": "Assess",
+          "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+          "line": 137,
+          "symbol": "amplitude bound",
+          "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+          "line": 147,
+          "symbol": "strict comparison",
+          "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 40,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Исходники; runtime и полная Goal этой картой не подтверждены."
+    },
+    {
+      "id": "C_SHARED_RX",
+      "title": "Общий RX и независимые output/device состояния",
+      "layer": "model",
+      "summary": "Целевая ступень 2 объединяет полезные и конкурирующие вклады в RX, шум, профиль, AGC, selectivity, squelch и локальный звук. Q0/LOST не являются mute. Фон открытого RX требует квалифицированного native пути.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 17,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 26,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 34,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование полной Goal; реализация и native-квалификация здесь не установлены."
+    },
+    {
+      "id": "C_CALC_MODES",
+      "title": "RECEIVER/SERVER: общая модель и физические часы",
+      "layer": "core",
+      "summary": "Оба места расчёта должны использовать одинаковые доверенные inputs/profile/state/time и давать согласованный результат. PCM остаётся у слушателя. Clock mapping и CT10 требуют согласованной миграции контрактов.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 20,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 42,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 48,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование полной Goal; реализация и native-квалификация здесь не установлены."
+    },
+    {
+      "id": "C_FIXTURES",
+      "title": "Проверки Core и отдельных ядер",
+      "layer": "core",
+      "summary": "CoreTests содержит lifecycle, snapshot, device, pair, publication, seam и channel fixtures. Support сравнивает результаты и неизменность входов. Runner декларирует ENFORCE_PARITY без Play/репликации/VoN. В этом поручении тесты не запускались.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "tools/RICON_TestRunner/README.md",
+          "line": 10,
+          "symbol": "evidence level",
+          "sha256": "77576052eaf4407bf05eeb14b84b8468818710edc6f1c3715ba525c945b36c73"
+        },
+        {
+          "root": "repo",
+          "path": "tools/RICON_TestRunner/README.md",
+          "line": 17,
+          "symbol": "suites",
+          "sha256": "77576052eaf4407bf05eeb14b84b8468818710edc6f1c3715ba525c945b36c73"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtureSupport.c",
+          "line": 46,
+          "symbol": "seam call/assertions",
+          "sha256": "5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PairServiceFixtureSupport.c",
+          "line": 248,
+          "symbol": "negative controls",
+          "sha256": "4f7d210b5e53b9405363625f81ac484636913cb8a85ee106c43cd047e06c780e"
+        }
+      ],
+      "scope": "Карта существующих проверок; не новый PASS и не native runtime."
+    },
+    {
+      "id": "G_RT_OWNER_CONTINUE",
+      "title": "Проектная работа продолжается по поручению владельца",
+      "layer": "governance",
+      "summary": "Команды продолжать действуют; полный native RICON Goal не завершён. Это отдельная ось от состояния системной machine-card.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/STATUS_RU.md",
+          "line": 3,
+          "symbol": "owner continuation / machine-status correction",
+          "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+        }
+      ],
+      "scope": "Разрешение и цель проекта; не утверждение active у machine-card."
+    },
+    {
+      "id": "G_RT_MACHINE_CARD",
+      "title": "Последняя machine-card: blocked, причина неизвестна",
+      "layer": "governance",
+      "summary": "Сохранённый get_goal от 2026-11-06 20:35 UTC: blocked, updatedAt 17:11:38 UTC, cause UNKNOWN. Владелец просил продолжать; projectWorkCanContinue=true, fullObjectiveComplete=false.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "latest-machine-goal-observation.json",
+          "line": 5,
+          "symbol": "status / updatedAtUtc / cause",
+          "sha256": "107fadf38516d26079955d219ab931bfe4f441f2d322e976147622e66fad6c0f"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/STATUS_RU.md",
+          "line": 3,
+          "symbol": "machine-card status correction",
+          "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+        }
+      ],
+      "scope": "Датированная карточка, не свежий tool query; active/resume не приписывается."
+    },
+    {
+      "id": "G_RT_ACCEPTANCE_OPEN",
+      "title": "Writer, DSP, содержание, DIRECT и 32 пользователя открыты",
+      "layer": "acceptance",
+      "summary": "Нужен supported per-source/listener native Radio actuator с сохранением DIRECT/других потоков/user state; затем независимая content/audio/lifecycle/load приёмка. Numeric cache и SDK compile не заменяют эти gates.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 34,
+          "symbol": "B — адресное управление Radio",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 60,
+          "symbol": "сценарий 32 пользователей",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 996,
+          "symbol": "qualification",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "Полная цель сохранена; Graph/DSP/content PASS не объявлены."
+    },
+    {
+      "id": "G_RT_WATCH_GUARDS",
+      "title": "Read-only observer: identity, bounds, race guards",
+      "layer": "guards",
+      "summary": "Held own-process identity/image/module checks, C/V/T/resource signatures, bounded counts/bytes, double reads, no heap scan/write/native invocation. F7 исправляет manifest-before-status.b publication race: b=null ожидается, не считается target identity.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer/own_process_reader.py",
+          "line": 150,
+          "symbol": "OwnProcessReader",
+          "sha256": "1005209efb3a60509837f2030cff927c6fcfb0d776e7073130e96f452f43cdf0"
+        },
+        {
+          "root": "evidence",
+          "path": "native-von-ref-probe/watch-stream.py",
+          "line": 259,
+          "symbol": "if b is None",
+          "sha256": "f7f11df0b4a09fa04ce74b5bc68bb9d15f035f7ab613cd94caf22e4dd273d1e2"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/watch-outputs.py",
+          "line": 70,
+          "symbol": "wrap_snapshot / output budget",
+          "sha256": "381eb4291ade219c5eb8037c97c86788862f8477763923d4f332418a23e9af6f"
+        }
+      ],
+      "scope": "F7→60→55→DD13→381 pinned chain; non-atomic/lifetime/ABA и timing ограничения сохраняются."
+    },
+    {
+      "id": "G_RT_PREREG_GATES",
+      "title": "A6 preregistration и B505 release gates",
+      "layer": "guards",
+      "summary": "B-only MpTest opt-in делает AddOrFindSignal(name,1) после exact preFind=-1 и callbacks=0; повторно только читает manager/index/value1. READY→HEARTBEAT проверяется до coordinator и после ARM перед release. Creation/ownership остаются UNQUALIFIED.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveNativeRxProbe.c",
+          "line": 800,
+          "symbol": "SourceSignalReady",
+          "sha256": "a6ab7e261c97edd7b601ae50c4d77642d545cd0b96040140a252eab93f4f5ed4"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/gate.ps1",
+          "line": 2,
+          "symbol": "Get-CliSourceSignalReady",
+          "sha256": "9e2246d5ab91ee438d4b561eb2f8fc4e58170f133d6dad0944ab5c278904dc1e"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/run-source-preregister-capture.ps1",
+          "line": 215,
+          "symbol": "Assert-CliSourceSignalReady injection",
+          "sha256": "b505a91ac11db48e521cead700b27b0b59db576b8c419e443415e51e6c494715"
+        }
+      ],
+      "scope": "Source A6AB, runner B505, gate9E22; без .25 challenge, SetSignalValue/restore/remove."
+    },
+    {
+      "id": "E_RT_CAPTURE10",
+      "title": "Capture10: пять дискретных numeric cache наблюдений",
+      "layer": "evidence",
+      "summary": "Независимый review принял одну fresh A/B fixture: source1 до release/RX, одна цепочка T/R/state во всех пяти точках; parent elapsed≈0/103.6031/312.8568/601.5514/912.5764 ms. A capture31/used30, B RX30 — callback metadata, не packets или содержание.",
+      "status": "runtime_cache",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 3,
+          "symbol": "independent outcome verdict",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 751,
+          "symbol": "timing_interpretation",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "У snapshot есть отдельные OUTPUT timestamps; не continuous trace/hard realtime/native evaluation time."
+    },
+    {
+      "id": "N_RT_C",
+      "title": "C: actual ownB native VoNComponent",
+      "layer": "runtime_identity",
+      "summary": "Known current C сопоставлен с B script reference и RX context; пять expected vptr signatures. Внутренний bounded vector C+80 содержит запись sender key1; C creation resource+78 не заменяет current T+28 resource.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer-locators/component-c-locators.json",
+          "line": 13,
+          "symbol": "native_type / five vptrs",
+          "sha256": "c187427f21f1b223c171dc3d9b2086b984cbd62cd3c4b491934e099d7612cbce"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "Own process/run/generation correlation; не atomic lifetime или public accessor."
+    },
+    {
+      "id": "N_RT_V",
+      "title": "V: sender-key1 native VonStream",
+      "layer": "runtime_identity",
+      "summary": "V выбран только через C vector и key1, с expected native VonStream signatures. T берётся из V+20. Callback RX коррелирует эту цепочку с A→B fixture.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer-locators/component-c-locators.json",
+          "line": 61,
+          "symbol": "fields.lookup / next_links",
+          "sha256": "c187427f21f1b223c171dc3d9b2086b984cbd62cd3c4b491934e099d7612cbce"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R.key / vptr checks",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "Метаданные selected native stream; не доказательство содержимого PCM."
+    },
+    {
+      "id": "N_RT_T",
+      "title": "T: private AudioSourceTemplate данного stream",
+      "layer": "runtime_identity",
+      "summary": "Текущий T связан с V+20; private manager M=T+10, selected-state array qword[T+18], count u32[T+24]. Same T/R во всех пяти input/output snapshots.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer-locators/game19-locators.json",
+          "line": 197,
+          "symbol": "T",
+          "sha256": "7c2f01d010677af44c9060055250a80c4a5aa9c33146e6aec1eb1f1279674ec6"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "all_five_saved_typed_chains_equal",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "Raw private identity не превращается в script handle/writer; offsets привязаны к владельцу."
+    },
+    {
+      "id": "N_RT_R",
+      "title": "R: current own ACP resource",
+      "layer": "runtime_identity",
+      "summary": "R=qword[T+28] прошёл resource type/GUID checks; own ACP GUID63C2132413FE4337. Source ACP/SIG pins согласуются с проверенной fixture; compiled-cache identity не устанавливает Bus descriptor mapping.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R.GUID / initial_name_metadata",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/radio-output-mapping.json",
+          "line": 6,
+          "symbol": "pins",
+          "sha256": "4a479a3a1440eb34317a2d6fd5e3603e0a7456d2edae0a61c08ea3eda807c9fb"
+        }
+      ],
+      "scope": "GUID/source selection; не именованная native connection/consumer qualification."
+    },
+    {
+      "id": "N_RT_SOURCE_SGM",
+      "title": "Source proxy SGM: local index75, readback1",
+      "layer": "script_state",
+      "summary": "B sourceAproxy получил READY и fresh heartbeat до first RX; SDK local signal index75 стабильно читался как1. Exact preFind=-1 — отрицательное наблюдение, а не доказательство создания/владения.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 50,
+          "symbol": "source1_and_release",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveNativeRxProbe.c",
+          "line": 800,
+          "symbol": "SourceSignalReady",
+          "sha256": "a6ab7e261c97edd7b601ae50c4d77642d545cd0b96040140a252eab93f4f5ed4"
+        }
+      ],
+      "scope": "Machine-local SGM namespace; не private native parameter k и не supported DSP actuator."
+    },
+    {
+      "id": "N_RT_INPUT_MAP",
+      "title": "Native parameter k → packed state/record mapping",
+      "layer": "native_mapping",
+      "summary": "В actual R exact gain name имеет native k1; packed9216 даёт low9 state0 и high22 input record18. Quality k0/packed512 даёт state0/record1. Source SGM index75, k1, record18 и output12 различны.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 796,
+          "symbol": "input_control.gain_mapping",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "current-scalar-store/final-item/caller-binding.json",
+          "line": 1,
+          "symbol": "resource_mapping / packed split",
+          "sha256": "b7a44019d39f90a82e1f16fa94936c36718b0be69678dba56459ffbdfd0dbcb8"
+        }
+      ],
+      "scope": "Точный INPUT mapping; source source-class30733 или output selector12 из него не следуют."
+    },
+    {
+      "id": "N_RT_INPUT_CACHE",
+      "title": "INPUT cache: q≈0.9999994, gain0",
+      "layer": "runtime_cache",
+      "summary": "В пяти точках state0 input record1 содержит q=0.9999994039535522, record18 gain=0, guard0. INPUT vector — I+8/countI+14, record float e+18; local source readback1 не дал observed stored-input1 в этих точках.",
+      "status": "runtime_cache",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 796,
+          "symbol": "input_control",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "current-scalar-store/final-item/final-item.asm",
+          "line": 2,
+          "symbol": "A1DC20 scalar record writer",
+          "sha256": "7f7cd03bfe34f1c5a0100b94adfe8de9ab48f1ae0c914c9a4e2a06468f62c1c2"
+        }
+      ],
+      "scope": "Bounded discrete stored values, не universal no-binding/provider impossibility или consumed gain0."
+    },
+    {
+      "id": "N_RT_OUTPUT_CACHE",
+      "title": "OUTPUT cache: IDs5/8 ненулевые, ID12 present-zero",
+      "layer": "runtime_cache",
+      "summary": "Во всех пяти точках selected state0/output count3: ID5=0.20000040531158447; ID8=0.0010000000474974513; ID12 присутствует и равен0. Dirty mask0. Quality_W/Noise_V/Radio_V — только source hints, mappingQualified=false.",
+      "status": "runtime_cache",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 138,
+          "symbol": "output_cache",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/watch-outputs.py",
+          "line": 28,
+          "symbol": "cache_pass",
+          "sha256": "381eb4291ade219c5eb8037c97c86788862f8477763923d4f332418a23e9af6f"
+        }
+      ],
+      "scope": "OUTPUT vector I+18/countI+24 отдельно от INPUT. Present-zero не fallback absence; readiness/actual consumption/DSP не квалифицированы."
+    },
+    {
+      "id": "N_RT_AUTHORED_GRAPH",
+      "title": "Authored own ACP/SIG: 30733:12 → Radio_V",
+      "layer": "source_graph",
+      "summary": "ACP SignalClass30733 использует own SIG181E1B71C9410BEF; Bus50183 'Bus Voice + Noise' con0→30733:12. SIG output12 Radio_V получает mul19 с gain input18. VON_RADIO содержит Direct и Radio paths.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Sounds/RICON_VoNProbe/RICON_VoNProbe.acp",
+          "line": 3,
+          "symbol": "SignalClass30733",
+          "sha256": "9e396d6432a25a1f519c43414faea1f69316d6a416d4a071fd22d90854ca0573"
+        },
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Sounds/RICON_VoNProbe/RICON_VoNProbe.acp",
+          "line": 411,
+          "symbol": "BusClass50183 con0",
+          "sha256": "9e396d6432a25a1f519c43414faea1f69316d6a416d4a071fd22d90854ca0573"
+        },
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Sounds/RICON_VoNProbe/RICON_VoNProbe.sig",
+          "line": 159,
+          "symbol": "IOPItemOutputClass id12 Radio_V",
+          "sha256": "7d02acb201f83cb89048cbb721a84387ec4b21c1fbb3ae3e992008fe95916707"
+        }
+      ],
+      "scope": "Source class/node/port namespaces; не автоматически native descriptor pair(state0,selector12)."
+    },
+    {
+      "id": "N_RT_CONTROL_DESCRIPTOR",
+      "title": "Actual Radio control descriptor ещё не связан",
+      "layer": "native_mapping",
+      "summary": "Current A3CA00 понимает signed16 index/selector; scaler E737F0 передаёт qword[object+68] и descriptor, multiply/MAXSS либо -1 bypass. Actual Bus object/P и его привязка к Radio, same T и source30733:12 остаются открытыми.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-reader.asm",
+          "line": 6,
+          "symbol": "A3CA00",
+          "sha256": "efa14732bef29b07136dd19567e26775d2eeedcfab22d1ba9667a1ffc1a47caa"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/gain-evaluate-current.asm",
+          "line": 6,
+          "symbol": "E737F0",
+          "sha256": "821705d479e5f7263ad8f6310c20e32f4fec75adba129c42b3a207b6c597e664"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/radio-output-mapping.json",
+          "line": 53,
+          "symbol": "exactMissingQualification",
+          "sha256": "4a479a3a1440eb34317a2d6fd5e3603e0a7456d2edae0a61c08ea3eda807c9fb"
+        }
+      ],
+      "scope": "Descriptor может выбирать graph либо -2/-4/-8 literal/provider paths; actual Radio instance не предъявлен."
+    },
+    {
+      "id": "N_RT_PROJECT_READERS",
+      "title": "Два current entry readers: 150 и 280 байт",
+      "layer": "native_source",
+      "summary": "A3CB20(150) и A3CA00(280) — разные entry paths, а не последовательность150→280. Оба передают graph context в A39D70 и затем вызывают ED1FC0; mutable index перечитывается после prepare.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/current-project-reader.asm",
+          "line": 6,
+          "symbol": "A3CB20",
+          "sha256": "c23db38ecbae72d64cb25b8289e3ceb17936db1c1e1374d2cbc6ca3388c55c17"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-reader.asm",
+          "line": 6,
+          "symbol": "A3CA00",
+          "sha256": "efa14732bef29b07136dd19567e26775d2eeedcfab22d1ba9667a1ffc1a47caa"
+        }
+      ],
+      "scope": "Current source dataflow; actual runtime invocation конкретного Radio control не наблюдалось."
+    },
+    {
+      "id": "N_RT_OUTPUT_GETTER",
+      "title": "Current output reader54 → leaf49",
+      "layer": "native_source",
+      "summary": "ED1FC0(54) выбирает selected I, вызывает A1DF90(I), затем tail-calls A1DAF0(49). Leaf ищет EDX ID в OUTPUT I+18/countI+24, descriptor+8; найденный float возвращается из e+18, no-match тоже возвращает0.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/output-reader.asm",
+          "line": 6,
+          "symbol": "ED1FC0",
+          "sha256": "5179021a26dabfa4812b7733a2c5684b4d55379569ae6b82eaf5a84704561d48"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/final-output-getter.asm",
+          "line": 6,
+          "symbol": "A1DAF0",
+          "sha256": "0b7525d9829e6e8df3c4641707cc15670314b8ba6cfa61d0dd6fea883461fcc6"
+        }
+      ],
+      "scope": "Leaf49 read-only, whole reader вызывает unread update. Passive cache mirror не является native fresh return."
+    },
+    {
+      "id": "N_RT_EVAL_BOUNDARY",
+      "title": "A39D70/A1DF90: hydration и evaluation effects открыты",
+      "layer": "native_source",
+      "summary": "Current caller bodies передают контекст/selected I в A39D70 и A1DF90, но их owning bodies в принятых evidence не прочитаны. Из input/output stored values нельзя вывести default policy или актуальный native evaluation result.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/current-project-reader.asm",
+          "line": 37,
+          "symbol": "CALL A39D70",
+          "sha256": "c23db38ecbae72d64cb25b8289e3ceb17936db1c1e1374d2cbc6ca3388c55c17"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/output-reader.asm",
+          "line": 15,
+          "symbol": "CALL A1DF90",
+          "sha256": "5179021a26dabfa4812b7733a2c5684b4d55379569ae6b82eaf5a84704561d48"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/output-reader-review.json",
+          "line": 110,
+          "symbol": "reader54_dataflow limits",
+          "sha256": "21d6d9f77f77b00ee84034bcec7acb15a2261d6b811dbf6b39c446598f5aa546"
+        }
+      ],
+      "scope": "Observer эти функции не вызывает; lifetime/ABA и свежесть graph evaluation не квалифицированы."
+    },
+    {
+      "id": "N_RT_PUBLIC_WRITER",
+      "title": "Supported private-T writer/accessor ещё не найден",
+      "layer": "native_mapping",
+      "summary": "Source SGM API и generic Snd component surface не дают доказанного same-T writer. Current C RTTI не предъявил sound base для нового Script cast route; SoundEventPriority contract относится к AI event, не human control-only port.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/von-base-hierarchy.json",
+          "line": 67,
+          "symbol": "accessorVerdict",
+          "sha256": "5067df96a7736ba36ba19c5492b9a0298738ca38a06e9898645b165fa453bfd3"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/soundevent-feasibility.json",
+          "line": 2,
+          "symbol": "AI contract feasibility",
+          "sha256": "4b01df787ab4189c1f17d87b070528590c8447c9c3f7fc5e5853ae890dac6b7f"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 996,
+          "symbol": "qualification.actual_consumer_private_writer",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ],
+      "scope": "Scoped gaps не доказывают универсальную невозможность; private pointer/DLL/type-punning не являются Workshop API."
+    },
+    {
+      "id": "E_RT_HISTORICAL18",
+      "title": "Исторические 1.8 DSP/VoN исследования",
+      "layer": "historical",
+      "summary": "Старые transport/DSP/helper исследования служат навигацией и вопросами. Current1.9 адреса, ABI, reader semantics и runtime acceptance требуют отдельных evidence; historical PASS не переносится.",
+      "status": "historical",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/analysis/VON_RADIO_DSP_BINDING_RU.md",
+          "line": 3,
+          "symbol": "historical1.8 snapshot warning",
+          "sha256": "b5c5c3e3a8396d38491271662a36ca687ae275b5ddd92dfdc671d04b329c233f"
+        }
+      ],
+      "scope": "Строго отделено от current e877/Game1.9 graph."
+    },
+    {
+      "id": "N_ARCH_CAPTURE",
+      "title": "Штатные PTT и capture",
+      "layer": "required_path",
+      "status": "required_open",
+      "summary": "Элемент штатного голосового пути требуется сохранить. Capture10 не квалифицирует содержание/полный media path.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование текущей Goal; подробный native-разбор 1.8 остаётся историческим."
+    },
+    {
+      "id": "N_ARCH_OPUS",
+      "title": "Штатное кодирование Opus",
+      "layer": "required_path",
+      "status": "required_open",
+      "summary": "Элемент штатного голосового пути требуется сохранить. Capture10 не квалифицирует содержание/полный media path.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование текущей Goal; подробный native-разбор 1.8 остаётся историческим."
+    },
+    {
+      "id": "N_ARCH_DELIVERY",
+      "title": "Штатная сеть, recipients и native Radio",
+      "layer": "required_path",
+      "status": "required_open",
+      "summary": "Элемент штатного голосового пути требуется сохранить. Capture10 не квалифицирует содержание/полный media path.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование текущей Goal; подробный native-разбор 1.8 остаётся историческим."
+    },
+    {
+      "id": "N_ARCH_DECODE",
+      "title": "Штатные decode и audio output",
+      "layer": "required_path",
+      "status": "required_open",
+      "summary": "Элемент штатного голосового пути требуется сохранить. Capture10 не квалифицирует содержание/полный media path.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ],
+      "scope": "Требование текущей Goal; подробный native-разбор 1.8 остаётся историческим."
+    },
+    {
+      "id": "N_RT_PLAYBACK_SUBMISSION",
+      "title": "Same-T: source307 подготавливает array-like submission",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Current V+20 T передаётся в 908C40 и далее A3A830(T, params, local array-like). 909100 получает opaque service, тот же local array и caller out aggregate. Только при nonzero AL caller переносит первый DWORD результата в V+38.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 45,
+          "symbol": "frozen_caller_anchor",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 94,
+          "symbol": "same_T_and_submission",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/playback-owner.asm",
+          "line": 59,
+          "symbol": "same T -> A3A830",
+          "sha256": "b2866a4706d39af67301bc00b4328b5ce610c59edeca757a6e2026d1a37af73d"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/receipt.json",
+          "line": 2,
+          "symbol": "current image e8774b04 / 307 bytes",
+          "sha256": "ef5a3073417a6a7e883e7427bb1bbaab299efe4f8375858721c2ca7e74164a34"
+        }
+      ],
+      "scope": "Pinned current image e8774b04, owning body307 bytes. Тип service, array element, V+38 и actual Radio control owner не установлены; source forwarding не доказывает runtime invocation, playback или DSP."
+    },
+    {
+      "id": "N_RT_T_CONSTRUCTION",
+      "title": "Same-T source519: event record, construction и registration args",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "A3A830 читает R=T+28 и bounded event record из R+218/count R+224. Поле record+18 выбирает R12 через R+178 table; record+1A идёт в E72090 R8D. E72090 получает same T в RDX, byte[T+80] в R9D, arg5=16; запрос allocation0x98=152 байта. A39930 получает same T/R12/constructor result/original array.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/review.json",
+          "line": 64,
+          "symbol": "construction_and_registration",
+          "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/review.json",
+          "line": 49,
+          "symbol": "guards_and_event_lookup",
+          "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/same-t-construction.asm",
+          "line": 72,
+          "symbol": "same T -> E72090",
+          "sha256": "707f98ffb72d7826a93316f89e8384ffb922adaf7900b6747f43d317578eeb35"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/receipt.json",
+          "line": 2,
+          "symbol": "current image / 519 bytes",
+          "sha256": "540e4d5da66d42b52fdcc0fd0e75fb78fd1f3c57c17ac527a3e4c34d455dce10"
+        }
+      ],
+      "scope": "Current519 source, не runtime. Для selector record+18 отдельный local range check не показан: MOVSX в ECX затем zero-extends RCX. R12 не назван RadioBus; A39930 retain/store/null-handling и units float gate неизвестны. Outer307 не проверяет return A3A830."
+    },
+    {
+      "id": "N_RT_CONSTRUCTED_P",
+      "title": "Constructed P: explicit same T в P+68 и original P return",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Current E72090 сохраняет entry same T в qword[P+68], устанавливает vtable141B37CC8 и возвращает original allocation P без this adjustment. Поэтому result, переданный source519 в A39930, имеет P+68=same T. Из signed record+1A в P+96 сохраняются только low8; byte[T+80] попадает в P+95.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/review.json",
+          "line": 35,
+          "symbol": "constructor_join",
+          "sha256": "f4186d1a05134d6752d3f0f28d82d4e8e293ee1dc75078423ef4b80454e4bda0"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/review.json",
+          "line": 48,
+          "symbol": "argument_and_constant_fields",
+          "sha256": "f4186d1a05134d6752d3f0f28d82d4e8e293ee1dc75078423ef4b80454e4bda0"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/same-t-construction.asm",
+          "line": 48,
+          "symbol": "P+68 = entry same T",
+          "sha256": "beefc5f6db38843bb061ff88ab1f6c298e44cf10035969d2b4a386c11b199d62"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/receipt.json",
+          "line": 2,
+          "symbol": "current image / 346 bytes",
+          "sha256": "6dc0104f6d7714a68aaf08271a2395cb9f1cff401dff0dbc238cee01b28dac0c"
+        }
+      ],
+      "scope": "Current346 source, без live invocation. Точный native class/RadioBus и signed control descriptor не установлены. P+96 low8 не является квалифицированным control selector; ref-like mechanics не дают полного lifetime contract."
+    },
+    {
+      "id": "N_RT_P_CONTROL_CONSUMER",
+      "title": "Same P: generic E737C0 consumer и collector insertion",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Исторический source1084-срез7Nov: слово unread ниже относится к тому срезу. Дополнение9Nov раскрывает A3AA40→A3B6D0→E73830 в N_RT_MUTABLE_INITIALIZER_HANDOFF/N_RT_MUTABLE_DELEGATE_STATE/N_RT_P_ITEM_LOOKUP_CFG; full same-T/Radio join всё ещё открыт. Исторический текст: A39930 сначала вызывает unread A3AA40(&ctx{T,P}, resourceItem). Только zero-status путь передаёт same returned P в E737C0 с descriptor=resourceItem+80 и initialized floatOut0. При descriptor!=-1 helper читает current[P+68] и вызывает A3CA00; иначе возвращает false без чтения. Caller не проверяет AL: floatOut конвертируется в integer, складывается с item+12A, clamp/lowbyte→P+94. На поздней успешной ветке same P вставляется в original collector, затем same T/item/P/collector передаются A3B2E0.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 59,
+          "symbol": "concrete_control_consumer",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 49,
+          "symbol": "first_unread_preparation_gate",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 79,
+          "symbol": "collector_and_handoff",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/same-t-nodes.asm",
+          "line": 82,
+          "symbol": "same P -> E737C0(item+80, floatOut)",
+          "sha256": "9792a0721987e7578912682de16339b06327083eba466d1b307c31a1e21e345d"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/receipt.json",
+          "line": 2,
+          "symbol": "current image / 1084 bytes",
+          "sha256": "b308971b6772b4e73f75cc4e920fbbaf0c822629e221750f2455e07416950c46"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-caller-44.asm",
+          "line": 15,
+          "symbol": "conditional current[P+68] -> A3CA00",
+          "sha256": "35e9a1823b3c4052edfcda1d68ddd4b69d5b6f3779a5e1048e3160c61dfe88d5"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-gain-review.json",
+          "line": 50,
+          "symbol": "neighbor44",
+          "sha256": "519afac89950d91168f1adbced3cecade07d3cb909084d7b8d1fc5c0a41e2fd3"
+        }
+      ],
+      "scope": "Current1084 и frozen44 source, не runtime. Mutable initializer A3AA40 находится между constructor P68=T и consumer, поэтому current[P68]==same T к чтению ещё не доказано. Это E737C0, не E737F0 gain/scaling; P94 и generic item+80 не квалифицированы как Radio_V/actual RadioBus. A3B2E0 остаётся parked."
+    },
+    {
+      "id": "N_RT_MUTABLE_INITIALIZER_HANDOFF",
+      "title": "A3AA40 source2207: mutable ctx/item/T-P handoff",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Current e877/Game1.9.0.37 A3AA40 [A3AA40,A3B2DF), 2207 bytes/588 instructions, сохраняет entry ctx/item и копирует ctx.T/P в local bundle. На A3AEAB RCX=original mutable ctx, RDX=effective item/node с fallback на original item, R8=&bundle передаются A3B6D0. EAX delegate возвращается после cleanup.",
+      "scope": "Bounded source-only .pdata range, не runtime/EH/funclet/lifetime. R15 переиспользуется для selected node: [r15+68] не доказанный P68. Нет предъявленного fixed P68 direct store/read, но mutable aliases/opaque calls не позволяют объявить P68 неизменным. Actual Radio/item80/writer/DSP/content/DIRECT/sharedRX/full Goal не квалифицированы.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/review.json",
+          "line": 5,
+          "symbol": "Accepted bounded source2207",
+          "sha256": "1fe75771c3d44f91864e179e7fe9b754edb146dc51ba3c757647b2058a3eb1b4"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/SOURCE_FINDINGS_RU.md",
+          "line": 23,
+          "symbol": "Local T/P bundle and mutable handoff",
+          "sha256": "9a42dcb82710f2d2fe64fb73ac4c669f32f42bf037b310350bd1fde700bf8536"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/body.asm",
+          "line": 330,
+          "symbol": "A3AEAB ctx/item/bundle handoff",
+          "sha256": "947d593285ed25e739088f6ad813ef9bfc46ea1ad2eb11e7e2971cac9034d026"
+        }
+      ]
+    },
+    {
+      "id": "N_RT_MUTABLE_DELEGATE_STATE",
+      "title": "A3B6D0 source838: mutable hooks, recursion и P-linked bitmap",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Current A3B6D0 [A3B6D0,A3BA16), 838 bytes/246 instructions, использует map-like states0/1/2, virtual+C0/C8 с RCX=effective item/RDX=mutable bundle и self-recursion. После successful recursive return явно читает/BTS/пишет P-linked bitmap. Cached state1/flagbit0 clear вызывает E73830(current bundle.P,item), сохраняет EAX в bundle+20 и возвращает0 без проверки returned index.",
+      "scope": "Source-only, не simply-delegation и не P-immutability. Child bundle+10 — pointer value parent+10, не address-of-slot; child index+20 и parent index+24 различны. Fixed P68/same-T/Radio/public writer/runtime/DSP/EH/lifetime не квалифицированы; hooks/helpers/aliases mutable. C8/E74350/A3B2E0 parked, не выданы за прочитанные bodies. Field offsets hex.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/review.json",
+          "line": 13,
+          "symbol": "Accepted states/hooks/recursion/bitmap/index",
+          "sha256": "d4ac136491938adb334a5e530fd15f9bebfda198a3b95aa50f9bc4da89d76cf6"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/SOURCE_FINDINGS_RU.md",
+          "line": 27,
+          "symbol": "Concrete P-linked effects; mutable scope",
+          "sha256": "9458680d59384c40fcb6c9daa740493a8868ad1192c08ad56a49090a882ee6d7"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/body.asm",
+          "line": 121,
+          "symbol": "P-linked bitmap read/BTS/write",
+          "sha256": "006ca8d469724e1968e76783597e5ada2f0ae3461070bd57c2235ee1fa24a766"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/body.asm",
+          "line": 44,
+          "symbol": "A3B746 virtual slot C0 ABI",
+          "sha256": "006ca8d469724e1968e76783597e5ada2f0ae3461070bd57c2235ee1fa24a766"
+        }
+      ]
+    },
+    {
+      "id": "N_RT_P_ITEM_LOOKUP_CFG",
+      "title": "E73830 closed entry-CFG66: P-table ordinal, не Radio selector",
+      "layer": "native_source",
+      "status": "source",
+      "summary": "Current closed contiguous reachable CFG [E73830,E73872), 66 bytes/21 instructions/23 internal edges/2 RET: data=qword[P+18], count=u32[P+24], stride50h. Первая запись с qword[record+38]==item и clear bit20h byte[record+4B] возвращает ordinal, иначе FFFFFFFF. Item только pointer-compare. В выбранном CFG нет heap stores/calls/fixed P68 access. Source-compatible count0→lookupFFFFFFFF→bundle indexFFFFFFFF→outer838 return0: status0 не APPLIED.",
+      "scope": "Source-only selected CFG, pdata exact/containing0/0 и metadata end/bytes NULL сохраняются. Не semantic function/funclets/EH/termination/runtime leaf/lifetime/ownership/races; fence80 — span budget, не extent/cumulative I/O, prefetch мог включать unreachable bytes. Ordinal не native k/input18/output12/source30733/SGM75/Radio; read-only CFG не отменяет mutable effects838. Counter не runtime опыт. Field offsets hex.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/review.json",
+          "line": 13,
+          "symbol": "Closed CFG66, pdata UNKNOWN and limits",
+          "sha256": "47e0aca20a7178e6623fab549d41c9b7bfe0a0b7570da5a7f94d0bebc6a6bb23"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/SOURCE_FINDINGS_RU.md",
+          "line": 27,
+          "symbol": "Stride50 first pointer/clear-bit lookup",
+          "sha256": "1eda25f78fe4f73e88f1d15cebe3e247378fe8302b9a7eb358b86ac370a364a3"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/leaf-cfg.json",
+          "line": 312,
+          "symbol": "Closed CFG, not function/runtime extent",
+          "sha256": "e0fdad38b3dd92a179a12130cdb34c7347b75a3962c8a13b432b922cdd5dd621"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/leaf-cfg.asm",
+          "line": 1,
+          "symbol": "Selected 21 instructions",
+          "sha256": "92dcc99a6a240bd9778cfc690e2bc966b290b072b04e63e7f9ebfbe3797eddb8"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/SOURCE_FINDINGS_RU.md",
+          "line": 39,
+          "symbol": "Count0 to FFFFFFFF to outer0 source counter",
+          "sha256": "1eda25f78fe4f73e88f1d15cebe3e247378fe8302b9a7eb358b86ac370a364a3"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "C_E_MANAGER_EVAL",
+      "from": "C_MANAGER",
+      "to": "C_EVALUATOR",
+      "relation": "constructs",
+      "summary": "RegisterBand разрешает зарегистрированные модели и создаёт evaluator диапазона.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 169,
+          "symbol": "RegisterBand",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        }
+      ]
+    },
+    {
+      "id": "C_E_MANAGER_SEQUENCE",
+      "from": "C_MANAGER",
+      "to": "C_SEQUENCE",
+      "relation": "owns",
+      "summary": "Менеджер хранит session epoch и последовательности связей.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 64,
+          "symbol": "m_iSessionEpoch",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 76,
+          "symbol": "m_mLinkSeqById",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        }
+      ]
+    },
+    {
+      "id": "C_E_OBS_QUERY",
+      "from": "C_OBSERVATION",
+      "to": "C_QUERY",
+      "relation": "contract_input",
+      "summary": "Build принимает наблюдения TX/RX. Автоматическое чтение мира здесь не выполняется.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 114,
+          "symbol": "Build",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PROFILE_QUERY",
+      "from": "C_RF_PROFILE",
+      "to": "C_QUERY",
+      "relation": "contract_input",
+      "summary": "Build принимает отдельные TX/RX profiles.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 114,
+          "symbol": "Build",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+          "line": 143,
+          "symbol": "profile fields",
+          "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+        }
+      ]
+    },
+    {
+      "id": "C_E_DEVICE_PAIR",
+      "from": "C_DEVICE_CATALOG",
+      "to": "C_PAIR",
+      "relation": "checks",
+      "summary": "EvaluatePair использует CanAccess/Allows и проверяет согласованность power.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 262,
+          "symbol": "HasAccess",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 312,
+          "symbol": "power consistency",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ]
+    },
+    {
+      "id": "C_E_TX_PAIR",
+      "from": "C_TRANSMISSION",
+      "to": "C_PAIR",
+      "relation": "contract_input",
+      "summary": "S3 проверяет активность, epoch, lease TTL и поколения binding/listener.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 284,
+          "symbol": "EvaluatePair",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PAIR_QUERY",
+      "from": "C_PAIR",
+      "to": "C_QUERY",
+      "relation": "calls",
+      "summary": "BuildQuery вызывает общий RadioQueryBuilder.Build.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 268,
+          "symbol": "BuildQuery",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PAIR_EVAL",
+      "from": "C_PAIR",
+      "to": "C_EVALUATOR",
+      "relation": "calls",
+      "summary": "Только READY из S2 приводит к evaluator.Evaluate(query).",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 318,
+          "symbol": "EvaluatePair",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 322,
+          "symbol": "Evaluate",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ]
+    },
+    {
+      "id": "C_E_EVAL_PROP",
+      "from": "C_EVALUATOR",
+      "to": "C_PROPAGATION",
+      "relation": "calls",
+      "summary": "Evaluator вызывает выбранную модель AppendLosses и суммирует layers.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 97,
+          "symbol": "AppendLosses",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        }
+      ]
+    },
+    {
+      "id": "C_E_EVAL_NOISE",
+      "from": "C_EVALUATOR",
+      "to": "C_NOISE_Q",
+      "relation": "calls",
+      "summary": "Шум, interference и intelligibility вычисляются через общие модели.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 120,
+          "symbol": "Estimate",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+          "line": 152,
+          "symbol": "Intelligibility",
+          "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+        }
+      ]
+    },
+    {
+      "id": "C_E_WORLD_PROP",
+      "from": "C_WORLD_TERRAIN",
+      "to": "C_PROPAGATION",
+      "relation": "implements",
+      "summary": "TerrainDiffractionModel расширяет PropagationModel; world profile имеет отдельный reader.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_TerrainDiffractionModel.c",
+          "line": 763,
+          "symbol": "RICON_TerrainDiffractionModel",
+          "sha256": "a8996f6d7e7859b9644ef1e13b631d17ea4ad786e9663ca8a9df41ebbd4aaf51"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+          "line": 36,
+          "symbol": "RICON_WorldProfileProvider",
+          "sha256": "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PAIR_PUB",
+      "from": "C_PAIR",
+      "to": "C_PUBLICATION",
+      "relation": "contract_input",
+      "summary": "LinkPublicationInput содержит PairServiceResult. Реальная отправка остаётся задачей caller.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 36,
+          "symbol": "m_PairResult",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 2,
+          "symbol": "scope",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PUB_SEQ",
+      "from": "C_PUBLICATION",
+      "to": "C_SEQUENCE",
+      "relation": "calls",
+      "summary": "Production sequence adapter делегирует менеджеру; Publish запрашивает следующий seq.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 148,
+          "symbol": "RICON_ManagerLinkSequenceSource.NextLinkSequence",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 607,
+          "symbol": "Publish",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        }
+      ]
+    },
+    {
+      "id": "C_E_PUB_SNAPSHOT",
+      "from": "C_PUBLICATION",
+      "to": "C_SNAPSHOT",
+      "relation": "produces",
+      "summary": "Publish создаёт snapshot v1 с identity/state/quality.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 635,
+          "symbol": "Publish",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        }
+      ]
+    },
+    {
+      "id": "C_E_SNAPSHOT_RECEIVER",
+      "from": "C_SNAPSHOT",
+      "to": "C_RECEIVER",
+      "relation": "contract_input",
+      "summary": "Receive/ApplyFullResync принимают снимки и устанавливают копии. Это контракт, не доказанный сетевой путь.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 120,
+          "symbol": "ApplyFullResync",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 161,
+          "symbol": "Receive",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        }
+      ]
+    },
+    {
+      "id": "C_E_RECEIVER_SEAM",
+      "from": "C_RECEIVER",
+      "to": "C_VON_SEAM",
+      "relation": "planned_adapter",
+      "summary": "ApplySnapshot требует accepted decision. Runtime dispatcher между receiver и seam здесь не установлен.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 350,
+          "symbol": "ApplySnapshot",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 396,
+          "symbol": "IsAcceptedDecision",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ]
+    },
+    {
+      "id": "C_E_BINDING_SEAM",
+      "from": "C_VON_BINDING",
+      "to": "C_VON_SEAM",
+      "relation": "checks",
+      "summary": "ApplySnapshot валидирует binding и совпадение epoch/link/player identity.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 361,
+          "symbol": "ApplySnapshot",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ]
+    },
+    {
+      "id": "C_E_LIFECYCLE_SEAM",
+      "from": "C_LIFECYCLE",
+      "to": "C_VON_SEAM",
+      "relation": "planned_adapter",
+      "summary": "VON_EXPIRY_INTENDED содержит lease identity; внешний caller должен передать expiry в seam. Effect не равен выполненному native действию.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 1379,
+          "symbol": "AddVonExpiryEffect",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 370,
+          "symbol": "OnTransmitLeaseExpired",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ]
+    },
+    {
+      "id": "C_E_LIFECYCLE_TX",
+      "from": "C_LIFECYCLE",
+      "to": "C_TRANSMISSION",
+      "relation": "planned_adapter",
+      "summary": "Lifecycle lease/effects и TransmissionBinding требуют внешнего согласованного projection. Production mapper не подтверждён.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+          "line": 1027,
+          "symbol": "TerminateLease",
+          "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+          "line": 26,
+          "symbol": "RICON_TransmissionBinding",
+          "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+        }
+      ]
+    },
+    {
+      "id": "C_E_MANAGER_ROUTE",
+      "from": "C_MANAGER",
+      "to": "C_ROUTE",
+      "relation": "registers",
+      "summary": "RegisterNetworkType сохраняет policy и необязательную call factory.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+          "line": 193,
+          "symbol": "RegisterNetworkType",
+          "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+        }
+      ]
+    },
+    {
+      "id": "C_E_EVAL_ROUTE",
+      "from": "C_EVALUATOR",
+      "to": "C_ROUTE",
+      "relation": "contract_input",
+      "summary": "Route legs содержат бюджеты evaluator; Route проверяет budgets целиком.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 72,
+          "symbol": "RICON_RouteLeg",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+          "line": 147,
+          "symbol": "Route.Evaluate",
+          "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+        }
+      ]
+    },
+    {
+      "id": "C_E_DESCRIPTOR_FADING",
+      "from": "C_DESCRIPTOR",
+      "to": "C_FADING",
+      "relation": "calls",
+      "summary": "Codec использует ValidDescriptor и PhaseAt ядра; descriptor передаётся в Evaluate.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 302,
+          "symbol": "Encode",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+          "line": 406,
+          "symbol": "Rebase",
+          "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+          "line": 311,
+          "symbol": "Evaluate",
+          "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+        }
+      ]
+    },
+    {
+      "id": "C_E_FADING_CUTOFF",
+      "from": "C_FADING",
+      "to": "C_CUTOFF",
+      "relation": "separate_contracts",
+      "summary": "Sample coefficient и interval upper bound являются разными оценками. ZERO_AT_SAMPLE не доказывает cutoff; прямого вызова между ними нет.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+          "line": 372,
+          "symbol": "Classify",
+          "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+          "line": 110,
+          "symbol": "Assess",
+          "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 40,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "C_E_DESCRIPTOR_PUB",
+      "from": "C_DESCRIPTOR",
+      "to": "C_PUBLICATION",
+      "relation": "planned_migration",
+      "summary": "CT10 требует descriptor producer/codec, publication/copy и receiver/resync. Snapshot v1 пока хранит state/Q.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 48,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+          "line": 32,
+          "symbol": "RICON_LinkSnapshot",
+          "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+        },
+        {
+          "root": "repo",
+          "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+          "line": 549,
+          "symbol": "NeedSnapshot",
+          "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+        }
+      ]
+    },
+    {
+      "id": "C_E_MODES_PAIR",
+      "from": "C_CALC_MODES",
+      "to": "C_PAIR",
+      "relation": "planned_reuse",
+      "summary": "Goal требует переиспользовать PairService и согласовать прежние authority контракты с двумя местами расчёта.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 46,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 48,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "C_E_FADING_RX",
+      "from": "C_FADING",
+      "to": "C_SHARED_RX",
+      "relation": "planned_channel_input",
+      "summary": "Временной полезный коэффициент должен входить в общий RX вместе с шумом и конкурентами. Ядро не является готовым RX.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 24,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 26,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "C_E_RX_SEAM",
+      "from": "C_SHARED_RX",
+      "to": "C_VON_SEAM",
+      "relation": "planned_native_port",
+      "summary": "Общий RX/control требует квалифицированной адресной Radio-ветви. Native A/B открыты.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 34,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        },
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 36,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "C_E_MODES_RX",
+      "from": "C_CALC_MODES",
+      "to": "C_SHARED_RX",
+      "relation": "planned_local_audio",
+      "summary": "PCM и зависящий от аудио RX остаются локальными у слушателя в обоих режимах.",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 20,
+          "symbol": "Full Goal",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "C_E_FIXTURES_SEAM",
+      "from": "C_FIXTURES",
+      "to": "C_VON_SEAM",
+      "relation": "test_calls",
+      "summary": "FixtureSupport вызывает ApplySnapshot и сравнивает decision и неизменность snapshot/binding.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtureSupport.c",
+          "line": 46,
+          "symbol": "Apply",
+          "sha256": "5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d"
+        }
+      ]
+    },
+    {
+      "id": "C_E_FIXTURES_PAIR",
+      "from": "C_FIXTURES",
+      "to": "C_PAIR",
+      "relation": "test_contract",
+      "summary": "Pair support содержит отрицательные контроли порядка и числа пар, счётчиков S2/evaluator.",
+      "status": "source_implemented",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PairServiceFixtureSupport.c",
+          "line": 248,
+          "symbol": "negative controls",
+          "sha256": "4f7d210b5e53b9405363625f81ac484636913cb8a85ee106c43cd047e06c780e"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_OWNER_GOAL",
+      "from": "G_RT_OWNER_CONTINUE",
+      "to": "G_RT_ACCEPTANCE_OPEN",
+      "relation": "requires_full_goal",
+      "summary": "Продолжение сохраняет весь план, а не только чтение кеша.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 12,
+          "symbol": "требуемый конечный результат",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_MACHINE_OWNER_SEPARATE",
+      "from": "G_RT_MACHINE_CARD",
+      "to": "G_RT_OWNER_CONTINUE",
+      "relation": "separate_status_axes",
+      "summary": "Last blocked machine-card не отменяет owner continuation и не переименовывается в active.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "latest-machine-goal-observation.json",
+          "line": 5,
+          "symbol": "status / projectWorkCanContinue",
+          "sha256": "107fadf38516d26079955d219ab931bfe4f441f2d322e976147622e66fad6c0f"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_WATCH_CAPTURE",
+      "from": "G_RT_WATCH_GUARDS",
+      "to": "E_RT_CAPTURE10",
+      "relation": "bounds_observation",
+      "summary": "Pinned reader/observer guards ограничивают scope снимков; не обеспечивают atomicity или hard realtime.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/output-probe-review.json",
+          "line": 1,
+          "symbol": "wrapper_flow / truthful flags",
+          "sha256": "fe5187ff43f56d7ebec842eb89e290832ee96a7e491404842786fb11b51932dc"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_PREREG_SGM",
+      "from": "G_RT_PREREG_GATES",
+      "to": "N_RT_SOURCE_SGM",
+      "relation": "registers_and_checks_local_signal",
+      "summary": "A6 делает один AddOrFindSignal(name,1), далее только readback/identity checks.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveNativeRxProbe.c",
+          "line": 800,
+          "symbol": "SourceSignalReady",
+          "sha256": "a6ab7e261c97edd7b601ae50c4d77642d545cd0b96040140a252eab93f4f5ed4"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_PREREG_CAPTURE",
+      "from": "G_RT_PREREG_GATES",
+      "to": "E_RT_CAPTURE10",
+      "relation": "admitted_before_release",
+      "summary": "Reviewed READY и fresh heartbeat предшествовали release/первому RX; marker не native DSP proof.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 50,
+          "symbol": "source1_and_release",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_CAPTURE_C",
+      "from": "E_RT_CAPTURE10",
+      "to": "N_RT_C",
+      "relation": "observes_typed_chain",
+      "summary": "Review принял C5/V3/T2 signatures и current run/source correlation.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_C_V",
+      "from": "N_RT_C",
+      "to": "N_RT_V",
+      "relation": "sender_key_lookup",
+      "summary": "Bounded C+80 vector выбирает только sender key1; не heap scan.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer-locators/component-c-locators.json",
+          "line": 61,
+          "symbol": "fields.lookup",
+          "sha256": "c187427f21f1b223c171dc3d9b2086b984cbd62cd3c4b491934e099d7612cbce"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_V_T",
+      "from": "N_RT_V",
+      "to": "N_RT_T",
+      "relation": "owns_private_template",
+      "summary": "T=qword[V+20] с текущими type/identity gates.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_T_R",
+      "from": "N_RT_T",
+      "to": "N_RT_R",
+      "relation": "current_resource_pointer",
+      "summary": "R=qword[T+28], а не предположение по C creation resource.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-observer-locators/game19-locators.json",
+          "line": 197,
+          "symbol": "T.resource_pointer",
+          "sha256": "7c2f01d010677af44c9060055250a80c4a5aa9c33146e6aec1eb1f1279674ec6"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_R_AUTHORED",
+      "from": "N_RT_R",
+      "to": "N_RT_AUTHORED_GRAPH",
+      "relation": "own_resource_guid_match",
+      "summary": "Current own ACP GUID/source pins приняты; compiled connection semantics отдельно открыты.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "typed_T_R.GUID",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_CAPTURE_INPUT",
+      "from": "E_RT_CAPTURE10",
+      "to": "N_RT_INPUT_CACHE",
+      "relation": "observes_input_records",
+      "summary": "Пять дискретных input q/gain readbacks на same T/R/state.",
+      "status": "runtime_cache",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 796,
+          "symbol": "input_control",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_CAPTURE_OUTPUT",
+      "from": "E_RT_CAPTURE10",
+      "to": "N_RT_OUTPUT_CACHE",
+      "relation": "observes_output_records",
+      "summary": "Пять unique-present finite OUTPUT-ID наблюдений; не absence fallback.",
+      "status": "runtime_cache",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 138,
+          "symbol": "output_cache",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_SGM_INPUT_OPEN",
+      "from": "N_RT_SOURCE_SGM",
+      "to": "N_RT_INPUT_CACHE",
+      "relation": "stored_propagation_unqualified",
+      "summary": "Source readback1 и private input0 сосуществуют; только bounded отсутствие observed stored-input1, без universal provider вывода.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 50,
+          "symbol": "source1_and_release",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 796,
+          "symbol": "input_control",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_R_INPUT_MAP",
+      "from": "N_RT_R",
+      "to": "N_RT_INPUT_MAP",
+      "relation": "name_to_native_input_k",
+      "summary": "Exact metadata name lookup квалифицирует k, отдельно от script SGM index.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 98,
+          "symbol": "initial_name_metadata",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_MAP_INPUT",
+      "from": "N_RT_INPUT_MAP",
+      "to": "N_RT_INPUT_CACHE",
+      "relation": "selects_input_record",
+      "summary": "Packed split даёт selected state0 и input record18; offset e+18 читается в INPUT vector.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "current-scalar-store/final-item/caller-binding.json",
+          "line": 1,
+          "symbol": "selected_state / record_match",
+          "sha256": "b7a44019d39f90a82e1f16fa94936c36718b0be69678dba56459ffbdfd0dbcb8"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_MAP_OUTPUT_STATE",
+      "from": "N_RT_INPUT_MAP",
+      "to": "N_RT_OUTPUT_CACHE",
+      "relation": "anchors_selected_state_only",
+      "summary": "Output state index выведен из unique gain input state; это не причинная связь input0→output0.",
+      "status": "runtime_metadata",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/watch-outputs.py",
+          "line": 70,
+          "symbol": "gain records unique state admission",
+          "sha256": "381eb4291ade219c5eb8037c97c86788862f8477763923d4f332418a23e9af6f"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_AUTHORED_DESCRIPTOR_CANDIDATE",
+      "from": "N_RT_AUTHORED_GRAPH",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "suggests_compiled_connection",
+      "summary": "Authored30733:12 только кандидат native(state0,selector12); serializer/actual P ещё не связан.",
+      "status": "candidate",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/radio-output-mapping.json",
+          "line": 53,
+          "symbol": "exactMissingQualification",
+          "sha256": "4a479a3a1440eb34317a2d6fd5e3603e0a7456d2edae0a61c08ea3eda807c9fb"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_AUTHORED_OUTPUT_HINTS",
+      "from": "N_RT_AUTHORED_GRAPH",
+      "to": "N_RT_OUTPUT_CACHE",
+      "relation": "source_hint_only",
+      "summary": "Названия Quality_W/Noise_V/Radio_V не квалифицируют numeric IDs как actual native Radio controls.",
+      "status": "candidate",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 138,
+          "symbol": "source_hints_only",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_DESCRIPTOR_READERS",
+      "from": "N_RT_CONTROL_DESCRIPTOR",
+      "to": "N_RT_PROJECT_READERS",
+      "relation": "decoded_selector_contract",
+      "summary": "Current280 имеет nonnegative graph и negative literal/provider branches; это generic source contract без actual Radio instance.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-reader.asm",
+          "line": 6,
+          "symbol": "A3CA00 selector branches",
+          "sha256": "efa14732bef29b07136dd19567e26775d2eeedcfab22d1ba9667a1ffc1a47caa"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_T_READERS",
+      "from": "N_RT_T",
+      "to": "N_RT_PROJECT_READERS",
+      "relation": "interface_provenance",
+      "summary": "T+10 secondary vtable slot+8 даёт current150 interface target; runtime Radio invocation не наблюдалась.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/consumer-current-analysis.json",
+          "line": 1,
+          "symbol": "currentDataflow / provenance",
+          "sha256": "a84963cd3b7798dfa548511e2776b3fe8a3dd0a8e1ad246831d19ef875b5cdda"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_READERS_PREPARE",
+      "from": "N_RT_PROJECT_READERS",
+      "to": "N_RT_EVAL_BOUNDARY",
+      "relation": "calls_prepare",
+      "summary": "150/280 вызывают A39D70 с referenced S/R/index и T; их effects пока неизвестны.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/current-project-reader.asm",
+          "line": 37,
+          "symbol": "CALL A39D70",
+          "sha256": "c23db38ecbae72d64cb25b8289e3ceb17936db1c1e1374d2cbc6ca3388c55c17"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_READERS_OUTPUT_GETTER",
+      "from": "N_RT_PROJECT_READERS",
+      "to": "N_RT_OUTPUT_GETTER",
+      "relation": "calls_output_reader",
+      "summary": "Оба entry readers делегируют in-bounds output в ED1FC0.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-reader.asm",
+          "line": 44,
+          "symbol": "CALL ED1FC0",
+          "sha256": "efa14732bef29b07136dd19567e26775d2eeedcfab22d1ba9667a1ffc1a47caa"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_GETTER_EVAL",
+      "from": "N_RT_OUTPUT_GETTER",
+      "to": "N_RT_EVAL_BOUNDARY",
+      "relation": "calls_update_before_leaf",
+      "summary": "ED1FC0 вызывает unread A1DF90 перед final output lookup.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/output-reader.asm",
+          "line": 15,
+          "symbol": "CALL A1DF90",
+          "sha256": "5179021a26dabfa4812b7733a2c5684b4d55379569ae6b82eaf5a84704561d48"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_GETTER_CACHE_LAYOUT",
+      "from": "N_RT_OUTPUT_GETTER",
+      "to": "N_RT_OUTPUT_CACHE",
+      "relation": "defines_output_vector_layout",
+      "summary": "Leaf49 обосновывает offset/ID matching для passive OUTPUT mirror, а не actual native return времени capture.",
+      "status": "source",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/final-output-getter.asm",
+          "line": 6,
+          "symbol": "A1DAF0",
+          "sha256": "0b7525d9829e6e8df3c4641707cc15670314b8ba6cfa61d0dd6fea883461fcc6"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_EVAL_CACHE_OPEN",
+      "from": "N_RT_EVAL_BOUNDARY",
+      "to": "N_RT_OUTPUT_CACHE",
+      "relation": "freshness_unqualified",
+      "summary": "Dirty0 и ненулевые соседние outputs не доказывают актуальность/evaluation/cache readiness.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 996,
+          "symbol": "cache_readiness_or_initialization_proof=false",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_WRITER_T_OPEN",
+      "from": "N_RT_PUBLIC_WRITER",
+      "to": "N_RT_T",
+      "relation": "requires_supported_same_instance_join",
+      "summary": "Нет квалифицированного публичного writer handle/catalog membership для этого T; raw address не становится API.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "source-preregister/von-base-hierarchy.json",
+          "line": 67,
+          "symbol": "accessorVerdict",
+          "sha256": "5067df96a7736ba36ba19c5492b9a0298738ca38a06e9898645b165fa453bfd3"
+        },
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 996,
+          "symbol": "actual_consumer_private_writer=false",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_WRITER_ACCEPTANCE",
+      "from": "N_RT_PUBLIC_WRITER",
+      "to": "G_RT_ACCEPTANCE_OPEN",
+      "relation": "blocks_actuation_acceptance",
+      "summary": "Общий числовой setter/Input name или successful SDK call не закрывают deployment writer/DSP gate.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 34,
+          "symbol": "B — адресное управление Radio",
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_OUTPUT_ACCEPTANCE",
+      "from": "N_RT_OUTPUT_CACHE",
+      "to": "G_RT_ACCEPTANCE_OPEN",
+      "relation": "does_not_prove_audio_acceptance",
+      "summary": "Numeric output cache не является content/DIRECT/sharedRX/DSP приёмкой.",
+      "status": "open",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "guarded-cli-capture/capture10/review.json",
+          "line": 996,
+          "symbol": "DSP_mute_content_DIRECT_sharedRX=false",
+          "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_HISTORY_NAVIGATION",
+      "from": "E_RT_HISTORICAL18",
+      "to": "N_RT_PROJECT_READERS",
+      "relation": "navigation_only",
+      "summary": "Старые имена/ordinals служили вопросами; current addresses/ABI перечитаны отдельно.",
+      "status": "historical",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/analysis/VON_RADIO_DSP_BINDING_RU.md",
+          "line": 3,
+          "symbol": "1.8 snapshot warning",
+          "sha256": "b5c5c3e3a8396d38491271662a36ca687ae275b5ddd92dfdc671d04b329c233f"
+        }
+      ]
+    },
+    {
+      "id": "X_CAPTURE_OPUS",
+      "from": "N_ARCH_CAPTURE",
+      "to": "N_ARCH_OPUS",
+      "relation": "required_preserve",
+      "summary": "Штатный захват должен остаться источником Opus",
+      "status": "required_open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_OPUS_NETWORK",
+      "from": "N_ARCH_OPUS",
+      "to": "N_ARCH_DELIVERY",
+      "relation": "required_preserve",
+      "summary": "Передача штатным транспортом",
+      "status": "required_open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_NETWORK_C",
+      "from": "N_ARCH_DELIVERY",
+      "to": "N_RT_C",
+      "relation": "required_preserve",
+      "summary": "Current callback/identity наблюдались, содержание остаётся открытым",
+      "status": "required_open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_T_DECODE",
+      "from": "N_RT_T",
+      "to": "N_ARCH_DECODE",
+      "relation": "required_preserve",
+      "summary": "Private T и numeric cache не доказывают слышимый выход",
+      "status": "required_open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_SEAM_WRITER",
+      "from": "C_VON_SEAM",
+      "to": "N_RT_PUBLIC_WRITER",
+      "relation": "requires",
+      "summary": "ApplySnapshot требует квалифицированного адресного actuator",
+      "status": "open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_SNAPSHOT_MODES",
+      "from": "C_DESCRIPTOR",
+      "to": "C_CALC_MODES",
+      "relation": "requires",
+      "summary": "CT10 и оба режима требуют согласованного временного контракта",
+      "status": "planned",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_SHARED_DSP",
+      "from": "C_SHARED_RX",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "requires",
+      "summary": "Общий RX должен управлять реальным Radio DSP, не только scalar Q",
+      "status": "open",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "X_FIXTURE_CAPTURE",
+      "from": "C_FIXTURES",
+      "to": "E_RT_CAPTURE10",
+      "relation": "different_evidence_scope",
+      "summary": "Source fixtures и native cache — разные уровни доказательства",
+      "status": "source",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+          "line": 6,
+          "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_T_SUBMISSION_SOURCE",
+      "from": "N_RT_T",
+      "to": "N_RT_PLAYBACK_SUBMISSION",
+      "relation": "same_T_source_forwarding",
+      "status": "source",
+      "summary": "Frozen current caller повторно читает V+20 и передаёт same T в 908C40; source path, не доказанный runtime вызов.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 45,
+          "symbol": "frozen_caller_anchor",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 94,
+          "symbol": "same_T_and_submission",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_SUBMISSION_T_CONSTRUCTION",
+      "from": "N_RT_PLAYBACK_SUBMISSION",
+      "to": "N_RT_T_CONSTRUCTION",
+      "relation": "calls_with_T_params_array",
+      "status": "source",
+      "summary": "908D0E -> A3A830: RCX=same T, RDX=params, R8=local array-like.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/playback-owner.asm",
+          "line": 59,
+          "symbol": "same T -> A3A830",
+          "sha256": "b2866a4706d39af67301bc00b4328b5ce610c59edeca757a6e2026d1a37af73d"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 94,
+          "symbol": "same_T_and_submission",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_SUBMISSION_CONTROL_JOIN_OPEN",
+      "from": "N_RT_PLAYBACK_SUBMISSION",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "actual_Radio_control_join_open",
+      "status": "open",
+      "summary": "Local array и propagated AL не идентифицируют actual Radio bus/descriptor либо supported port.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 94,
+          "symbol": "same_T_and_submission",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_SUBMISSION_NOT_AUDIO_PASS",
+      "from": "N_RT_PLAYBACK_SUBMISSION",
+      "to": "G_RT_ACCEPTANCE_OPEN",
+      "relation": "does_not_prove_runtime_audio",
+      "status": "open",
+      "summary": "Source submission dataflow не квалифицирует runtime playback, DSP/content, DIRECT, shared RX или полный Goal.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/review.json",
+          "line": 94,
+          "symbol": "same_T_and_submission",
+          "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_CONSTRUCTION_CALLS_P",
+      "from": "N_RT_T_CONSTRUCTION",
+      "to": "N_RT_CONSTRUCTED_P",
+      "relation": "calls_constructor_with_same_T",
+      "status": "source",
+      "summary": "A3A921/A3A9B7 ->E72090: same T в RDX, s16 record+1A в R8D, byte T+80 в R9D, arg5=16.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/review.json",
+          "line": 64,
+          "symbol": "construction_and_registration",
+          "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/same-t-construction.asm",
+          "line": 72,
+          "symbol": "same T -> E72090",
+          "sha256": "707f98ffb72d7826a93316f89e8384ffb922adaf7900b6747f43d317578eeb35"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_REGISTRATION_ARGUMENTS",
+      "from": "N_RT_CONSTRUCTED_P",
+      "to": "N_RT_T_CONSTRUCTION",
+      "relation": "result_passed_to_registration",
+      "status": "source",
+      "summary": "E72090 result ->A39930 R8 вместе с same T/R12/original array; null allocation также допускает A39930(R8=0). Это не доказанный retain/store contract.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/review.json",
+          "line": 64,
+          "symbol": "construction_and_registration",
+          "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_ACTUAL_CONTROL_OPEN",
+      "from": "N_RT_CONSTRUCTED_P",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "actual_Radio_owner_unqualified",
+      "status": "open",
+      "summary": "Constructor argument T и resource table selector не устанавливают actual RadioBus/control descriptor или E737F0 consumer.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-construction/review.json",
+          "line": 64,
+          "symbol": "construction_and_registration",
+          "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_STORES_SAME_T",
+      "from": "N_RT_CONSTRUCTED_P",
+      "to": "N_RT_T",
+      "relation": "stores_same_T_at_68",
+      "status": "source",
+      "summary": "E72126 записывает entry RDX same T в P+68; E721CE возвращает original P. Это static pointer join, не capture invocation.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/review.json",
+          "line": 35,
+          "symbol": "constructor_join",
+          "sha256": "f4186d1a05134d6752d3f0f28d82d4e8e293ee1dc75078423ef4b80454e4bda0"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/same-t-construction.asm",
+          "line": 48,
+          "symbol": "P+68 = entry same T",
+          "sha256": "beefc5f6db38843bb061ff88ab1f6c298e44cf10035969d2b4a386c11b199d62"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_CONCRETE_CONSUMER",
+      "from": "N_RT_CONSTRUCTED_P",
+      "to": "N_RT_P_CONTROL_CONSUMER",
+      "relation": "same_P_passed_to_E737C0",
+      "status": "source",
+      "summary": "После zero return A3AA40 same returned P из nonvolatile R14 передаётся E737C0; сохранность содержимого P после initializer не предполагается.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 59,
+          "symbol": "concrete_control_consumer",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 49,
+          "symbol": "first_unread_preparation_gate",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/same-t-nodes.asm",
+          "line": 82,
+          "symbol": "same P -> E737C0(item+80, floatOut)",
+          "sha256": "9792a0721987e7578912682de16339b06327083eba466d1b307c31a1e21e345d"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_CONDITIONAL_READER",
+      "from": "N_RT_P_CONTROL_CONSUMER",
+      "to": "N_RT_PROJECT_READERS",
+      "relation": "conditional_current_P68_control_read",
+      "status": "source",
+      "summary": "Generic descriptor item+80: только firstword!=-1 ведёт E737C0 к A3CA00 с CURRENT[P68]; иначе outfloat остаётся initial0. Actual descriptor value/branch не наблюдался.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 59,
+          "symbol": "concrete_control_consumer",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-caller-44.asm",
+          "line": 15,
+          "symbol": "conditional current[P+68] -> A3CA00",
+          "sha256": "35e9a1823b3c4052edfcda1d68ddd4b69d5b6f3779a5e1048e3160c61dfe88d5"
+        },
+        {
+          "root": "evidence",
+          "path": "source-preregister/control-gain-review.json",
+          "line": 50,
+          "symbol": "neighbor44",
+          "sha256": "519afac89950d91168f1adbced3cecade07d3cb909084d7b8d1fc5c0a41e2fd3"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_POST_INIT_T_OPEN",
+      "from": "N_RT_P_CONTROL_CONSUMER",
+      "to": "N_RT_T",
+      "relation": "same_T_after_initializer_unqualified",
+      "status": "open",
+      "summary": "Историческое объяснение gap7Nov; unread относится к моменту source1084. После accepted2207/838/CFG66 gap сохраняется из-за mutable hooks/helpers/aliases, а не отсутствия этих трёх срезов. Исторический текст: Constructor store P68=T доказан отдельно. Unread A3AA40 получает mutable ctx{T,P}; сквозной same-T evaluation join к consumer открыт.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 49,
+          "symbol": "first_unread_preparation_gate",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        },
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-object/review.json",
+          "line": 35,
+          "symbol": "constructor_join",
+          "sha256": "f4186d1a05134d6752d3f0f28d82d4e8e293ee1dc75078423ef4b80454e4bda0"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_CONSUMER_RADIO_OPEN",
+      "from": "N_RT_P_CONTROL_CONSUMER",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "authored_Radio_mapping_open",
+      "status": "open",
+      "summary": "Конкретный generic control-helper call и numeric P94 не связывают resource item+80 с authored Radio/30733:12 или actual gain/DSP.",
+      "sources": [
+        {
+          "root": "evidence",
+          "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+          "line": 59,
+          "symbol": "concrete_control_consumer",
+          "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_P_INITIALIZER_SOURCE",
+      "from": "N_RT_P_CONTROL_CONSUMER",
+      "to": "N_RT_MUTABLE_INITIALIZER_HANDOFF",
+      "relation": "pre_consumer_mutable_initializer",
+      "status": "source",
+      "summary": "A39930 перед generic E737C0 вызывает A3AA40 по A399C0 с mutable ctx{T,P}/resource item. Новый source2207 раскрывает исторически unread gate; source-порядок, не runtime invocation/P68 preservation.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/review.json",
+          "line": 5,
+          "symbol": "Accepted bounded source2207",
+          "sha256": "1fe75771c3d44f91864e179e7fe9b754edb146dc51ba3c757647b2058a3eb1b4"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/SOURCE_FINDINGS_RU.md",
+          "line": 14,
+          "symbol": "A399C0 caller",
+          "sha256": "9a42dcb82710f2d2fe64fb73ac4c669f32f42bf037b310350bd1fde700bf8536"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_INITIALIZER_DELEGATE",
+      "from": "N_RT_MUTABLE_INITIALIZER_HANDOFF",
+      "to": "N_RT_MUTABLE_DELEGATE_STATE",
+      "relation": "mutable_ctx_item_bundle_handoff",
+      "status": "source",
+      "summary": "A3AEAB→A3B6D0: original mutable ctx/effective item/local T-P bundle. Normal return propagates EAX; alias preservation не предполагается.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/review.json",
+          "line": 5,
+          "symbol": "Accepted bounded source2207",
+          "sha256": "1fe75771c3d44f91864e179e7fe9b754edb146dc51ba3c757647b2058a3eb1b4"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-initializer/body.asm",
+          "line": 330,
+          "symbol": "A3AEAB ctx/item/bundle handoff",
+          "sha256": "947d593285ed25e739088f6ad813ef9bfc46ea1ad2eb11e7e2971cac9034d026"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_DELEGATE_LOOKUP",
+      "from": "N_RT_MUTABLE_DELEGATE_STATE",
+      "to": "N_RT_P_ITEM_LOOKUP_CFG",
+      "relation": "conditional_pointer_key_lookup",
+      "status": "source",
+      "summary": "Только cached state1/flagbit0 clear: A3B730 E73830(P,item), unchecked EAX→bundle20, outer0. Live выбор ветви не наблюдался.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/body.asm",
+          "line": 38,
+          "symbol": "Conditional unchecked lookup index",
+          "sha256": "006ca8d469724e1968e76783597e5ada2f0ae3461070bd57c2235ee1fa24a766"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/review.json",
+          "line": 13,
+          "symbol": "Closed CFG66, pdata UNKNOWN and limits",
+          "sha256": "47e0aca20a7178e6623fab549d41c9b7bfe0a0b7570da5a7f94d0bebc6a6bb23"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/SOURCE_FINDINGS_RU.md",
+          "line": 27,
+          "symbol": "Stride50 first pointer/clear-bit lookup",
+          "sha256": "1eda25f78fe4f73e88f1d15cebe3e247378fe8302b9a7eb358b86ac370a364a3"
+        }
+      ]
+    },
+    {
+      "id": "E_RT_DELEGATE_C0_OPEN",
+      "from": "N_RT_MUTABLE_DELEGATE_STATE",
+      "to": "N_RT_CONTROL_DESCRIPTOR",
+      "relation": "requires_exact_same_item_C0_provenance",
+      "status": "open",
+      "summary": "A3B746 предъявляет virtual+C0 call на том же effective item, но exact owning type/vptr/absolute cell/target и actual Radio не установлены. Открытая предпосылка, не resolved target/Radio call edge.",
+      "sources": [
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/same-t-delegate/body.asm",
+          "line": 44,
+          "symbol": "A3B746 virtual slot C0 ABI",
+          "sha256": "006ca8d469724e1968e76783597e5ada2f0ae3461070bd57c2235ee1fa24a766"
+        },
+        {
+          "root": "repo",
+          "path": "output/native-resume-20261109/p-item-lookup/review.json",
+          "line": 25,
+          "symbol": "Next same-item C0 provenance; cell/target NULL",
+          "sha256": "47e0aca20a7178e6623fab549d41c9b7bfe0a0b7570da5a7f94d0bebc6a6bb23"
+        }
+      ]
+    }
+  ],
+  "problems": [
+    {
+      "id": "C_P_ACTUATOR",
+      "title": "Native actuator остаётся открытым",
+      "node_ids": [
+        "C_VON_SEAM",
+        "C_VON_BINDING",
+        "C_SHARED_RX"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c:367 — допустимый ApplySnapshot возвращает BLOCKED_NO_ACTUATOR.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:32-36 — A и B необходимы обоим режимам."
+      ],
+      "impact": "Проверка identity и native metadata не доказывают адресное изменение Radio или сохранность DIRECT.",
+      "next_fact": "Один квалифицированный private-stream Radio writer с actual native эффектом и отрицательными контролями A/B."
+    },
+    {
+      "id": "C_P_CT10",
+      "title": "Temporal descriptor не проходит через snapshot v1",
+      "node_ids": [
+        "C_DESCRIPTOR",
+        "C_FADING",
+        "C_SNAPSHOT",
+        "C_PUBLICATION",
+        "C_RECEIVER"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c:34-46 — schema 1 и scalar Q/state, temporal descriptor отсутствует.",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c:549-563 — triggers: state, TTL, Q, half-TTL.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:44-48 — descriptor changes и CT10 migration обязательны."
+      ],
+      "impact": "Отдельные fading/codec не являются готовой интеграцией. Изменение descriptor при прежнем Q может потеряться при скрытом расширении.",
+      "next_fact": "Явная версия CT10 и независимые vectors: producer/copy/codec/publication/full receiver/port; атомарный отказ при позднем дефекте партии."
+    },
+    {
+      "id": "C_P_LEGACY_LOST",
+      "title": "Legacy LOST нельзя переносить в live mute",
+      "node_ids": [
+        "C_EVALUATOR",
+        "C_SNAPSHOT",
+        "C_ROUTE",
+        "C_SHARED_RX",
+        "C_CUTOFF"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c:145-148 — sensitivity задаёт Q0/LOST.",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c:61 — LOST требует quality 0.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:17 — LOWQ/LOST/Q0 сами не mute и не запрет доставки.",
+        "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c:147 — только strict interval U<tolerance."
+      ],
+      "impact": "Нужна явная миграция diagnostic state отдельно от power/user mute/squelch/технического отказа; иначе исчезнут шум и будущие просветы.",
+      "next_fact": "Typed channel/RX/device/output причины и контроли Q0 с открытым шумом, физического нуля, stale/unknown и непрерывной доставки."
+    },
+    {
+      "id": "C_P_CLOCKS",
+      "title": "Физическое время и сетевые lease/TTL требуют mapping",
+      "node_ids": [
+        "C_LIFECYCLE",
+        "C_SEQUENCE",
+        "C_RECEIVER",
+        "C_FADING",
+        "C_DESCRIPTOR",
+        "C_CALC_MODES"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c:81-84 — TTL использует elapsed local receiver time.",
+        "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c:323-346 — explicit validity и anchor-based time.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:42 — clock mapping должна быть квалифицирована."
+      ],
+      "impact": "Keepalive/epoch/resync нельзя использовать для продления physical validity или перезапуска фаз. Реальная mapping этим source-обзором не доказана.",
+      "next_fact": "Mapping model/source/receive/native frames с anchor/window и границами задержек; parity при разных call steps и PTT без сброса фаз."
+    },
+    {
+      "id": "C_P_ORCHESTRATION",
+      "title": "Source-компоненты не равны общей runtime цепочке",
+      "node_ids": [
+        "C_MANAGER",
+        "C_LIFECYCLE",
+        "C_TRANSMISSION",
+        "C_PAIR",
+        "C_PUBLICATION",
+        "C_RECEIVER",
+        "C_VON_SEAM"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c:1-2 — чистая функция без RPC/таймеров/звука.",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c:1379-1387 — effect только VON_EXPIRY_INTENDED.",
+        "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LivePairShadow.c:48 — TEST_ONLY_SHADOW; authority и nativeEffect NONE."
+      ],
+      "impact": "Рёбра contract_input показывают совместимость данных. Нельзя выдавать их за уже работающий production control plane.",
+      "next_fact": "Owning dispatcher/callers, transport и binding/lifetime adapters; исполняемая цепочка действительный TX → accepted snapshot → native port."
+    },
+    {
+      "id": "C_P_CALIBRATION",
+      "title": "RF/RX profiles и разборчивость требуют калибровки",
+      "node_ids": [
+        "C_RF_PROFILE",
+        "C_NOISE_Q",
+        "C_WORLD_TERRAIN",
+        "C_SHARED_RX"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c:82-84 — допустимы TEST_ONLY/ASSUMED profiles.",
+        "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_IntelligibilityModel.c:32 — LinearTestIntelligibility не speech model.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:16,28 — реальные profiles и достоверные inputs обязательны."
+      ],
+      "impact": "Synthetic RF/Q не подтверждают реальную слышимость, понятые слова, полноту геометрии или общий RX.",
+      "next_fact": "Подтверждённые RF/RX profiles с единицами/областью и реальные world sources; независимые RF/слуховые vectors, общий RX двух источников."
+    },
+    {
+      "id": "C_P_RECEIVER_MODE",
+      "title": "Server authority не доказывает RECEIVER mode",
+      "node_ids": [
+        "C_MANAGER",
+        "C_OBSERVATION",
+        "C_PAIR",
+        "C_CALC_MODES"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c:115-117 — authority равна Replication.IsServer.",
+        "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c:178-179 — reader требует authority.",
+        "docs/plan/GOAL_RICON_TEMPORAL_RU.md:20,48 — два места расчёта, согласование CT05/CT08/CC03."
+      ],
+      "impact": "Нужны доверенные devices/права и общая модель без превращения клиента в authority. Missing geometry не равна свободному пути.",
+      "next_fact": "Новые явные execution-location/trusted-input contracts и parity vectors с unknown geometry при одинаковых profile/state/time."
+    },
+    {
+      "id": "C_P_ATOMIC_OBSERVATION",
+      "title": "Последовательные radio getters не атомарный снимок",
+      "node_ids": [
+        "C_OBSERVATION",
+        "C_QUERY",
+        "C_PAIR"
+      ],
+      "evidence": [
+        "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c:171 — shortcut: атомарного снимка нет.",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c:312 — проверяется power consistency, не единая revision всех getters."
+      ],
+      "impact": "Смена частоты, power или binding во время чтения может дать смешанный input. Граница указана в коде, runtime квалификация здесь отсутствует.",
+      "next_fact": "Reader/binding generation/window и явный отказ при изменении во время observation; целевой сценарий churn."
+    },
+    {
+      "id": "P_RT_SUPPORTED_WRITER",
+      "title": "Нет qualified supported writer к actual private T",
+      "node_ids": [
+        "N_RT_PUBLIC_WRITER",
+        "N_RT_SOURCE_SGM",
+        "N_RT_INPUT_CACHE",
+        "N_RT_T"
+      ],
+      "evidence": "Capture10: source SGM index75/value1, private k1/input18=value0 в пяти точках; C RTTI не даёт sound-base cast candidate, AI SoundEvent contract не human control-only port.",
+      "impact": "Нельзя подключить product actuator, объявить APPLIED или выдать public call/readback за native DSP изменение.",
+      "next_fact": "Положительный current supported handle/catalog/attachment contract, который выбирает тот же T для заданных sender/listener/generation и даёт наблюдаемое адресное воздействие."
+    },
+    {
+      "id": "P_RT_RADIO_DESCRIPTOR",
+      "title": "Source30733:12 не связан с actual native Radio descriptor",
+      "node_ids": [
+        "N_RT_AUTHORED_GRAPH",
+        "N_RT_CONTROL_DESCRIPTOR",
+        "N_RT_OUTPUT_CACHE",
+        "N_RT_PLAYBACK_SUBMISSION",
+        "N_RT_T_CONSTRUCTION",
+        "N_RT_CONSTRUCTED_P",
+        "N_RT_P_CONTROL_CONSUMER",
+        "N_RT_MUTABLE_INITIALIZER_HANDOFF",
+        "N_RT_MUTABLE_DELEGATE_STATE",
+        "N_RT_P_ITEM_LOOKUP_CFG"
+      ],
+      "evidence": "Исторические scoped результаты до7Nov (unread относится к тому срезу): Authored bus connection и numeric output12 существуют, но capture10 mappingQualified=false; current280 допускает graph и negative branches. Review307 подтвердил same T -> A3A830/local array-like ->909100 и conditional caller first DWORD ->V+38; actual Radio control owner остаётся открыт. Review519 связал same T с E72090 constructor args и returned object с A39930 args; registration internals и actual Radio mapping открыты. Review346 подтвердил explicit constructed P+68=same T и original P return; связь с конкретным consumer/Radio descriptor ещё отдельно открыта. Review1084 связал same P с E737C0(item+80), numeric P94 и collector insertion. Descriptor!=-1 и current[P68] к consumer не наблюдались; между constructor и consumer лежит unread mutable initializer A3AA40. Дополнение9Nov: accepted2207 предъявляет mutable ctx/effective item/T-P bundle handoff в A3B6D0; accepted838 содержит mutable C0/C8/self-recursion и concrete P-linked bitmap write, не immutability. Accepted closed entry-CFG66 — pointer-key/bit20h P-table first ordinal либо FFFFFFFF; pdata-owner/function extent не установлен. Count0→FFFFFFFF→outer0 — source counter к status0=APPLIED. Same-T после aliases, actual Radio mapping и supported writer/DSP/content остаются открытыми.",
+      "impact": "Найденный output12=value0 нельзя назвать consumed Radio_V=0, mute или PCM/DSP результатом.",
+      "next_fact": "Один exact current owning-type/vtable provenance факт того же effective resource item на source838 callsite0x140A3B746, RCX=item/RDX=mutable bundle, virtual slot+0xC0. Absolute vtable cell/target UNKNOWN: сначала frozen provenance, затем только при exact identity отдельная qualification одной cell/target. Не угадывать тип по shape/соседству/1.8 и не сканировать все hooks; C8/E74350/A3B2E0 parked. Same-T/actual Radio/supported writer/A/B/DSP/content/full Goal — отдельные открытые gates."
+    },
+    {
+      "id": "P_RT_EVALUATION_FRESHNESS",
+      "title": "Evaluation/default policy и cache freshness не установлены",
+      "node_ids": [
+        "N_RT_PROJECT_READERS",
+        "N_RT_OUTPUT_GETTER",
+        "N_RT_EVAL_BOUNDARY",
+        "N_RT_OUTPUT_CACHE"
+      ],
+      "evidence": "150/280 передают mutable context в A39D70;54 вызывает A1DF90 перед49. Observer только читает кеш и не выполняет эти functions.",
+      "impact": "Нельзя свести Input0 к returned graph output0 или принять dirty0/ненулевые соседние outputs за initialized/fresh consumer state.",
+      "next_fact": "Current owning-body qualification A1DF90 по direct callsite ED1FDD: какое условие обновляет selected OUTPUT state и какой проверяемый freshness contract из этого следует. A39D70 при этом остаётся отдельной открытой prepare boundary."
+    },
+    {
+      "id": "P_RT_AUDIO_CONTENT_DIRECT",
+      "title": "Содержание, DIRECT и другие потоки ещё не приняты",
+      "node_ids": [
+        "E_RT_CAPTURE10",
+        "N_RT_AUTHORED_GRAPH",
+        "G_RT_ACCEPTANCE_OPEN"
+      ],
+      "evidence": "31/30/30 — callbacks; known-source content/PCM/слепая приёмка не выполнены. VON_RADIO source содержит Direct и Radio paths; whole-event управление меняет scope.",
+      "impact": "Нельзя объявлять player-voice transformation, intelligibility/content reliability, DIRECT preservation или shared-RX isolation.",
+      "next_fact": "После квалификации actuator — независимый native A→B content test с известным исходником, отдельными Direct/другой sender/listener controls и lifecycle generation checks."
+    },
+    {
+      "id": "P_RT_TIMING_BOUNDARIES",
+      "title": "Дискретный observer и 1500/2000 ms guard boundary различны",
+      "node_ids": [
+        "G_RT_WATCH_GUARDS",
+        "G_RT_PREREG_GATES",
+        "E_RT_CAPTURE10"
+      ],
+      "evidence": "Capture10 reader:295 samples/139 period overruns, terminal PROCESS_ENDED_PARTIAL. Guard kill≈1505.9802ms/exit≈1706.8902ms; strict1500=false, within2000 validator=true, clean native shutdown/release UNKNOWN.",
+      "impact": "Нельзя обещать10ms continuous sampling, строгий1500ms cutoff, отсутствие всех пропущенных событий или штатное native release по alone valid receipt.",
+      "next_fact": "Явный согласованный timing contract и независимое измерение фактического native capture/release/owned cleanup в нужной среде; без расширения окна ради результата."
+    },
+    {
+      "id": "P_RT_SCALE32",
+      "title": "Нет runtime приёмки 32 пользователей",
+      "node_ids": [
+        "G_RT_ACCEPTANCE_OPEN",
+        "E_RT_CAPTURE10"
+      ],
+      "evidence": "Capture10 — одна A/B fixture; нет объявленного32-user сценария с долей говорящих, RX/device/candidate counts и раздельными CPU/network/audio/memory метриками.",
+      "impact": "Нельзя переносить bounded two-client cache evidence на нагрузку/latency/full delivery или production limits.",
+      "next_fact": "После functional native qualification — разрешённый нагрузочный сценарий32 пользователей с объявленными параметрами и независимыми раздельными метриками/cleanup."
+    },
+    {
+      "id": "P_RT_MACHINE_STATUS_AXIS",
+      "title": "Machine-card status нельзя подменять статусом проектной работы",
+      "node_ids": [
+        "G_RT_MACHINE_CARD",
+        "G_RT_OWNER_CONTINUE"
+      ],
+      "evidence": "Последняя сохранённая карточка blocked/17:11:38 UTC/cause UNKNOWN; STATUS_RU.md отдельно сохраняет owner continue и complete=false. Старый Goal header active не является свежим tool proof.",
+      "impact": "Нельзя отображать machine Goal как active либо считать user-authorized project continuation запрещённым из-за этой карточки.",
+      "next_fact": "Свежая подтверждённая системная запись после фактического resume/изменения карточки; проектную цель и права владельца при этом сохранять отдельно."
+    },
+    {
+      "id": "P_MEDIA_DELIVERY_A",
+      "title": "A: содержание и достаточная доставка фрагментов ещё не приняты",
+      "node_ids": [
+        "N_ARCH_CAPTURE",
+        "N_ARCH_OPUS",
+        "N_ARCH_DELIVERY",
+        "N_ARCH_DECODE",
+        "E_RT_CAPTURE10"
+      ],
+      "evidence": [
+        "Полная Goal: A и B обязательны; capture10 — callback/cache metadata, не содержание."
+      ],
+      "impact": "Без исходных полезных фрагментов listener DSP не может восстановить удалённое содержание.",
+      "next_fact": "Квалифицированный native player content path с раздельными метриками доставки, разборчивости и информативности."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "req.plan.01",
+      "title": "Адресное звучание штатного Radio для конкретного слушателя",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 11,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_VON_SEAM",
+        "N_RT_PUBLIC_WRITER",
+        "N_RT_T"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Реальный штатный player VoN: A→B и A→C звучат по своим каналам/RX; кодек, доставка и вывод остаются штатными."
+      ]
+    },
+    {
+      "id": "req.plan.02",
+      "title": "Физика, доставка, слышимость, разборчивость, информативность и состояния раздельны",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 21,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_EVALUATOR",
+        "C_SNAPSHOT",
+        "N_RT_INPUT_CACHE",
+        "N_RT_OUTPUT_CACHE"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Раздельные наблюдения физического канала, полноты входов, доставки, RX и выхода; callback/RMS/Q не заменяют содержание."
+      ]
+    },
+    {
+      "id": "req.plan.03",
+      "title": "Полезный вклад, шум, помехи и профиль RX вместо одного Q",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 38,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_NOISE_Q",
+        "C_SHARED_RX"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Контракты единиц/численных границ, независимые физические векторы и калибровка конкретного RF/RX-профиля; мощности суммируются корректно."
+      ]
+    },
+    {
+      "id": "req.plan.04",
+      "title": "LOST/Q0 не включают автоматический mute или запрет доставки",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 60,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_EVALUATOR",
+        "C_ROUTE",
+        "C_CUTOFF"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Открытый RX сохраняет квалифицированный шум при нулевой разборчивости, включая отсутствие активного VoN; power/mute/squelch/права/технический отказ имеют отдельные причины."
+      ]
+    },
+    {
+      "id": "req.plan.05",
+      "title": "Просветы сохраняют соответствующее исходное содержание",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 81,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "N_ARCH_DELIVERY",
+        "N_ARCH_DECODE"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Заранее заданные фразы/окна/контроли и независимая оценка цепочки исходный фрагмент→доставка→модель→выход→восстановленное содержание; измерена ложная информация."
+      ]
+    },
+    {
+      "id": "req.plan.06",
+      "title": "Временные замирания из физики без случайного спасения слов",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 112,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_FADING",
+        "C_DESCRIPTOR"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Независимые временные векторы, короткие окна между snapshot и статичный канал; PTT/lease/epoch/resync/порядок вызовов не пересоздают фазы."
+      ]
+    },
+    {
+      "id": "req.plan.07",
+      "title": "RECEIVER и SERVER используют одну физическую модель и время",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 135,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_CALC_MODES",
+        "C_MANAGER"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Согласованные результаты на одинаковых полных входах/profile/state/time с объявленным допуском; серверная authority прав сохранена, PCM/DSP остаётся у слушателя, потери не дублируются."
+      ]
+    },
+    {
+      "id": "req.plan.08",
+      "title": "Двухступенчатая модель канала и общего RX",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 176,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_FADING",
+        "C_SHARED_RX"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Раздельные channel descriptor и общий RX, совместный A/C→B, один фон RX, калиброванные AGC/селективность/захват; защищённая помеха учтена энергией без раскрытия речи."
+      ]
+    },
+    {
+      "id": "req.plan.09",
+      "title": "Действительные устройства, антенны, геометрия и профили среды",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 204,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_OBSERVATION",
+        "C_RF_PROFILE",
+        "C_WORLD_TERRAIN"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Проверенные world/profile входы с единицами, областью, независимыми векторами и UNKNOWN для отсутствующих данных; не реализованный эффект не равен нулю."
+      ]
+    },
+    {
+      "id": "req.plan.10",
+      "title": "Clock mapping, validity, identity и lifecycle",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 224,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_LIFECYCLE",
+        "C_SEQUENCE",
+        "C_RECEIVER",
+        "C_DESCRIPTOR"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Квалифицированная связь model/source/native clock и неопределённости; snapshot TTL отдельно от физической validity; generation/rebind/handle reuse/ordering/full resync исключают устаревшее воздействие."
+      ]
+    },
+    {
+      "id": "req.plan.11A",
+      "title": "A: достаточная доставка исходных фрагментов",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 242,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "N_ARCH_DELIVERY",
+        "N_ARCH_DECODE"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Происхождение, адресность, время и содержание фрагментов во всей подтверждённой области модели, включая будущие просветы при native range/discovery/q; recipient list и OnReceive недостаточны."
+      ]
+    },
+    {
+      "id": "req.plan.11B",
+      "title": "B: поддерживаемое адресное управление только Radio",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 248,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "N_RT_CONTROL_DESCRIPTOR",
+        "N_RT_PUBLIC_WRITER",
+        "C_VON_SEAM"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Поддерживаемый writer→actual private stream/Radio consumer и измеренный эффект по sender/receiver/device/index/generation/window; DIRECT, чужие потоки и user states сохраняются. Private pointer/таблица/PlayEvent/public setter сами не доказывают B."
+      ]
+    },
+    {
+      "id": "req.plan.12",
+      "title": "Отсечка только по строгой границе на весь интервал",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 264,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_CUTOFF"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Coverage/revisions/guard и U<tolerance по сумме путей на весь интервал; равенство продолжает расчёт, отсутствие доказательства даёт CONTINUE/UNRESOLVED и не удаляет шум/права."
+      ]
+    },
+    {
+      "id": "req.plan.13",
+      "title": "Состояние проекта отделено от исторического baseline",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 276,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "E_RT_HISTORICAL18",
+        "E_RT_CAPTURE10",
+        "G_RT_MACHINE_CARD"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Текущий STATUS и датированные immutable reviews связаны с конкретной версией/областью; исторические blocked/неустановленные Tools/config draft не объявлены актуальными автоматически."
+      ]
+    },
+    {
+      "id": "req.plan.14",
+      "title": "Полная программа 0–8 сохранена без второго roadmap",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 291,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_CALC_MODES",
+        "G_RT_ACCEPTANCE_OPEN"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "0: единые понятия, версии и честные статусы.",
+        "1: закреплённый штатный VoN dataflow и реальные входы/выходы.",
+        "2: native radio mechanics, devices/rights/range/route cache/lifecycle.",
+        "3: own configuration и квалифицированный player native baseline.",
+        "4: A/B, адресность, DIRECT, другие потоки и исходные фрагменты.",
+        "5: существующий Core/CT10, typed contracts и оба режима расчёта.",
+        "6: действительные world/profile входы, общий RX и калибровка.",
+        "7: совместная native/multiplayer/content/lifecycle приёмка и восстановление.",
+        "8: раздельная нагрузка 32 пользователей, API расширения, версии и поставка."
+      ]
+    },
+    {
+      "id": "req.plan.15",
+      "title": "Обязательная матрица положительных и отрицательных проверок",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 425,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_FIXTURES",
+        "G_RT_ACCEPTANCE_OPEN"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Чистая речь→маскировка→Q0 с шумом→исходные просветы; физический ноль, protected competitor, пары/общий RX/DIRECT; schema/size/copy/late resync/численные границы и восстановление. Допуски определены до испытания."
+      ]
+    },
+    {
+      "id": "req.plan.16",
+      "title": "Переиспользование Core и согласованная CT10 миграция",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 457,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_PAIR",
+        "C_DESCRIPTOR",
+        "C_PUBLICATION",
+        "C_RECEIVER",
+        "C_VON_SEAM"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Миграция producer→descriptor/codec→publication/copy→single/full receiver→seam/native→fixtures по новым требованиям/эталону; snapshot v1/RCFD/1 не получают скрытый смысл, второе ядро/транспорт не создаются."
+      ]
+    },
+    {
+      "id": "req.plan.17",
+      "title": "Раздельная наблюдаемость и воспроизводимые доказательства",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 476,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "E_RT_CAPTURE10",
+        "G_RT_WATCH_GUARDS"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Версия/hash, источник/профиль/адресность/window и реальные входы/выходы каждого опыта; source/pure/compile/cache/native effect/content/load различаются, latency/clock/CPU/network/audio/memory измеряются отдельно."
+      ]
+    },
+    {
+      "id": "req.plan.18",
+      "title": "Роли Agora, владение и независимый review",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 486,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "G_RT_OWNER_CONTINUE"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Durable assignment и ownership, root sole native operator, независимый reviewer и Goalkeeper на переходах; один ближайший факт, без повторов failure ради активности."
+      ]
+    },
+    {
+      "id": "req.plan.19",
+      "title": "Действующие допуски и ограничения не выводятся из графа",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 499,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "G_RT_PREREG_GATES"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Прямые актуальные инструкции владельца и узкий task scope имеют приоритет; no pagefile/чужие apps/DLL injection/binary patch/new backend, dirty сохранён. Документационная задача не запускает native опыт и не создаёт новую авторизацию."
+      ]
+    },
+    {
+      "id": "req.plan.20",
+      "title": "Полная Goal закрывается только совокупной native-приёмкой",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 512,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "G_RT_ACCEPTANCE_OPEN"
+      ],
+      "status": "required_open",
+      "acceptance_evidence_needed": [
+        "Одновременно A/B и рабочее применение RICON, все пять принципов, оба режима, профили/время/lifecycle/calibration и нагрузка32. Завершение документационного графа не требует реализации 0–8 и не закрывает Goal."
+      ]
+    },
+    {
+      "id": "req.plan.21",
+      "title": "Проверяемые указатели на основные owning sources и требования",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 528,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      },
+      "related_nodes": [
+        "C_PAIR",
+        "N_RT_CONTROL_DESCRIPTOR"
+      ],
+      "status": "source_partial",
+      "acceptance_evidence_needed": [
+        "Разрешимые repo/path/line указатели, связи к Goal/STATUS/REQ/CT10/Core/reviews, разделение исторических и текущих источников; отсутствие ссылки помечено пробелом, а не предположением."
+      ]
+    }
+  ],
+  "invariants": [
+    {
+      "id": "inv.goal_scope",
+      "statement": "Все 21 раздел основного плана и этапы0–8 остаются обязательными для полной Goal; документационный граф не является новым roadmap или runtime-приёмкой.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 6,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.no_lost_mute",
+      "statement": "LOST/LOWQ/Q0/нулевая разборчивость не создают mute, deny или запрет доставки; legacy scalar terminal state не переносится в live audio.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 17,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.parity_local_pcm",
+      "statement": "RECEIVER/SERVER используют одну модель с одинаковыми полными входами и временем; authority прав серверная, PCM/DSP у слушателя.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 20,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.direct_shared_rx",
+      "statement": "Radio-only воздействие сохраняет DIRECT, другие пары и user states; общий RX учитывает несколько источников и не умножает шум.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 26,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.no_reseed",
+      "statement": "PTT/lease/linkSeq/epoch/resync/частота вызовов не задают физические фазы; snapshot TTL не продлевает physical validity.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 42,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.cutoff_strict",
+      "statement": "Отсечка только при полной актуальной границе U<tolerance на весь интервал; равенство и отсутствие доказательства продолжают расчёт.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+        "line": 40,
+        "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+      }
+    },
+    {
+      "id": "inv.core_partial",
+      "statement": "FINITE_MULTIPATH_V1 — чистый полезный temporal kernel; текущий source прямо сообщает отсутствие builder/медленной тени/CT10/production вызовов. Это не полная RF/RX интеграция.",
+      "source": {
+        "root": "repo",
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+        "line": 1,
+        "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+      }
+    },
+    {
+      "id": "inv.schema_partial",
+      "statement": "Текущий snapshot schema1 содержит scalar quality/state; объявленная CT10 migration не считается уже доставленной temporal/RX схемой.",
+      "source": {
+        "root": "repo",
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+        "line": 34,
+        "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+      }
+    },
+    {
+      "id": "inv.no_actuator",
+      "statement": "В существующем VoN seam валидный ApplySnapshot заканчивается BLOCKED_NO_ACTUATOR; source/callback/cache наблюдения не дают APPLIED.",
+      "source": {
+        "root": "repo",
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+        "line": 367,
+        "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+      }
+    },
+    {
+      "id": "inv.capture10_boundary",
+      "statement": "Capture10: пять bounded numeric OUTPUT-cache точек, ID5/8 ненулевые и ID12 присутствует со значением0; имя Radio_V остаётся source hint. Не доказаны mapping/инициализация/актуальная evaluation/consumer/DSP/mute/content/DIRECT/sharedRX/lifetime.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/STATUS_RU.md",
+        "line": 5,
+        "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+      }
+    },
+    {
+      "id": "inv.input_output_distinct",
+      "statement": "Source API index, native parameter k, packed selection, INPUT record и cached OUTPUT ID — разные сущности. INPUT0 не означает AudioMute/LOST; present-zero отличается от отсутствия записи.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/STATUS_RU.md",
+        "line": 5,
+        "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+      }
+    },
+    {
+      "id": "inv.machine_goal_separate",
+      "statement": "Последнее наблюдение machine Goal: blocked, причина UNKNOWN; user continue сохраняется. Project-state/историческая формулировка active не заменяют системное состояние и не создают разрешений.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/STATUS_RU.md",
+        "line": 3,
+        "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+      }
+    },
+    {
+      "id": "inv.owner_and_scope",
+      "statement": "Baseline1 — условие probe, не запрос нового owner-допуска; положительный public source readback не доказывает propagation в private T.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/STATUS_RU.md",
+        "line": 9,
+        "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+      }
+    },
+    {
+      "id": "inv.graph_navigation",
+      "statement": "Узел/ребро — навигация по указанному source и его scope; граф не переопределяет AGENTS, память, owner instructions, Goal или доказательство приёмки. Процент готовности без методики не вычисляется.",
+      "source": {
+        "root": "repo",
+        "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+        "line": 304,
+        "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+      }
+    }
+  ],
+  "review_checks": [
+    {
+      "id": "gate.delivery_A",
+      "kind": "problem_gate",
+      "check": "A явно required/open: исходные фрагменты, адресность, время, содержимое и native range/q. Callback metadata не превращены в delivery/content PASS."
+    },
+    {
+      "id": "gate.radio_B",
+      "kind": "problem_gate",
+      "check": "B явно required/open: actual Radio descriptor/name→native port→sameT/consumer→поддерживаемый writer→измеренный эффект; numeric ID12 не назван Radio_V без join."
+    },
+    {
+      "id": "gate.direct_shared",
+      "kind": "problem_gate",
+      "check": "DIRECT, другие потоки/user states, A→B/A→C и A/C→B/shared RX остаются открытой отдельной приёмкой."
+    },
+    {
+      "id": "gate.parity_time",
+      "kind": "problem_gate",
+      "check": "RECEIVER/SERVER physical parity, общий clock mapping/неопределённость/validity и отсутствие двойного применения связаны с требованиями, а не объявлены результатом pure tests."
+    },
+    {
+      "id": "gate.lifecycle_calibration_load",
+      "kind": "problem_gate",
+      "check": "Generation/ordering/full resync/copy/cutoff/respawn/rebind, реальные world/profile входы, calibration и раздельная нагрузка32 сохранены required/open."
+    },
+    {
+      "id": "check.coverage",
+      "kind": "artifact_check",
+      "check": "Есть указатели на все21 раздел и явные этапы0–8; graph completion оценивается по документации и навигации, не по завершению native Goal."
+    },
+    {
+      "id": "check.source_truth",
+      "kind": "artifact_check",
+      "check": "Пути/строки существуют; node IDs уникальны; все related_nodes/edges разрешимы; существующие source calls отделены от planned/missing edges."
+    },
+    {
+      "id": "check.evidence_levels",
+      "kind": "artifact_check",
+      "check": "source/pure/compile/config/runtime-cache/native effect/content/load разделены; frozen capture10 не становится текущим live или universal negative."
+    },
+    {
+      "id": "check.status_precedence",
+      "kind": "artifact_check",
+      "check": "Machine blocked UNKNOWN, user continue и project status различены; исторические approval/gate/state записи не вводят повторные owner-церемонии и не расширяют текущий scope."
+    },
+    {
+      "id": "check.agent_context",
+      "kind": "artifact_check",
+      "check": "Анкета/agent context содержит owner role, точный scope, вопрос/гипотезу, owning sources, ожидаемый факт, проверку/стоп, evidence level и один следующий шаг; незнание допускается явно."
+    },
+    {
+      "id": "check.agora_workflow",
+      "kind": "artifact_check",
+      "check": "Agora protocol/topic/sender/round, durable ownership, независимый review и root sole native operator сохранены; read/post/ack не подменяют результат и не требуют бессмысленного polling."
+    },
+    {
+      "id": "check.authority_safety",
+      "kind": "artifact_check",
+      "check": "Граф/анкета не являются инструкцией ослабить guards, менять pagefile, запускать native, внедрять DLL или переопределять owner/memory/AGENTS; нет secrets и непроверенных процентов готовности."
+    }
+  ],
+  "agents": {
+    "topic": "ricon-reforger-plan",
+    "lead": "codex",
+    "core": "codex.graph.core",
+    "native": "codex.graph.native",
+    "review": "codex.graph.review",
+    "documentation": "codex.documentation",
+    "documentation_assignment_date": "2026-11-07",
+    "responsibilities": {
+      "documentation": "Назначенная Lead карта задач/решений, JSON графа, ссылки, анкета и документы; проверенные evidence с receipt и пределами; отдельный независимый review и canonical публикация Lead/root",
+      "native_operator": "Только Lead/root в пределах текущих допусков"
+    },
+    "host_reference": {
+      "documentation": {
+        "member_id": "member:35cd977b-25ba-453e-965e-3234da01739d",
+        "handle": "Картотека / Документация",
+        "kind": "external_persistent_role_reference",
+        "receipt": "Cellular System/output/ricon-documentation-recheck-20261107/roster-audit.json",
+        "host_session_activated": false,
+        "current_delegation_is_same_host_session": false,
+        "profile_model_history_changed": false
+      }
+    }
+  },
+  "legend": {
+    "source_implemented": "Реализация или контракт в исходнике; не runtime PASS",
+    "source": "Проверенная source-связь в указанном scope",
+    "runtime_metadata": "Наблюдались metadata/identity; не содержание или DSP",
+    "runtime_cache": "Дискретные cache-снимки; не fresh evaluation/звук",
+    "candidate": "Гипотеза с конкретным основанием; join ещё открыт",
+    "open": "Требуемое доказательство отсутствует",
+    "planned": "Требуется планом; реализация не заявлена",
+    "historical": "Историческая версия; перенос в текущую не разрешён автоматически",
+    "required_open": "Обязательная сохраняемая часть цели, приёмка открыта"
+  },
+  "source_snapshot": [
+    {
+      "root": "evidence",
+      "path": "current-scalar-store/final-item/caller-binding.json",
+      "sha256": "b7a44019d39f90a82e1f16fa94936c36718b0be69678dba56459ffbdfd0dbcb8"
+    },
+    {
+      "root": "evidence",
+      "path": "current-scalar-store/final-item/final-item.asm",
+      "sha256": "7f7cd03bfe34f1c5a0100b94adfe8de9ab48f1ae0c914c9a4e2a06468f62c1c2"
+    },
+    {
+      "root": "evidence",
+      "path": "guarded-cli-capture/capture10/review.json",
+      "sha256": "59b7d8eff86bd0601e48e25d53e671589355db55dfe7d8641376c1d56ce6b7f2"
+    },
+    {
+      "root": "evidence",
+      "path": "guarded-cli-capture/run-source-preregister-capture.ps1",
+      "sha256": "b505a91ac11db48e521cead700b27b0b59db576b8c419e443415e51e6c494715"
+    },
+    {
+      "root": "evidence",
+      "path": "latest-machine-goal-observation.json",
+      "sha256": "107fadf38516d26079955d219ab931bfe4f441f2d322e976147622e66fad6c0f"
+    },
+    {
+      "root": "evidence",
+      "path": "native-observer-locators/component-c-locators.json",
+      "sha256": "c187427f21f1b223c171dc3d9b2086b984cbd62cd3c4b491934e099d7612cbce"
+    },
+    {
+      "root": "evidence",
+      "path": "native-observer-locators/game19-locators.json",
+      "sha256": "7c2f01d010677af44c9060055250a80c4a5aa9c33146e6aec1eb1f1279674ec6"
+    },
+    {
+      "root": "evidence",
+      "path": "native-observer/own_process_reader.py",
+      "sha256": "1005209efb3a60509837f2030cff927c6fcfb0d776e7073130e96f452f43cdf0"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/playback-owner.asm",
+      "sha256": "b2866a4706d39af67301bc00b4328b5ce610c59edeca757a6e2026d1a37af73d"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/receipt.json",
+      "sha256": "ef5a3073417a6a7e883e7427bb1bbaab299efe4f8375858721c2ca7e74164a34"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/review.json",
+      "sha256": "489882f9a7a50e573b2a4cad6c1ad20d71737e25a0355adc4faf4a5590101978"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-construction/receipt.json",
+      "sha256": "540e4d5da66d42b52fdcc0fd0e75fb78fd1f3c57c17ac527a3e4c34d455dce10"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-construction/review.json",
+      "sha256": "8ae4152ad73f41dbfb0da3b8932408cb254767ac447dca28fe5d152c3e1ba7e1"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-construction/same-t-construction.asm",
+      "sha256": "707f98ffb72d7826a93316f89e8384ffb922adaf7900b6747f43d317578eeb35"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-nodes/receipt.json",
+      "sha256": "b308971b6772b4e73f75cc4e920fbbaf0c822629e221750f2455e07416950c46"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-nodes/review.json",
+      "sha256": "e879b6fcd9fb7fcff8d36d096b45cdbdf29af3f34f51bccdf099ba4a0d079890"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-nodes/same-t-nodes.asm",
+      "sha256": "9792a0721987e7578912682de16339b06327083eba466d1b307c31a1e21e345d"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-object/receipt.json",
+      "sha256": "6dc0104f6d7714a68aaf08271a2395cb9f1cff401dff0dbc238cee01b28dac0c"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-object/review.json",
+      "sha256": "f4186d1a05134d6752d3f0f28d82d4e8e293ee1dc75078423ef4b80454e4bda0"
+    },
+    {
+      "root": "evidence",
+      "path": "native-playback-owner-20261107/same-t-object/same-t-construction.asm",
+      "sha256": "beefc5f6db38843bb061ff88ab1f6c298e44cf10035969d2b4a386c11b199d62"
+    },
+    {
+      "root": "evidence",
+      "path": "native-von-ref-probe/watch-stream.py",
+      "sha256": "f7f11df0b4a09fa04ce74b5bc68bb9d15f035f7ab613cd94caf22e4dd273d1e2"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/consumer-current-analysis.json",
+      "sha256": "a84963cd3b7798dfa548511e2776b3fe8a3dd0a8e1ad246831d19ef875b5cdda"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/control-caller-44.asm",
+      "sha256": "35e9a1823b3c4052edfcda1d68ddd4b69d5b6f3779a5e1048e3160c61dfe88d5"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/control-gain-review.json",
+      "sha256": "519afac89950d91168f1adbced3cecade07d3cb909084d7b8d1fc5c0a41e2fd3"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/control-reader.asm",
+      "sha256": "efa14732bef29b07136dd19567e26775d2eeedcfab22d1ba9667a1ffc1a47caa"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/current-project-reader.asm",
+      "sha256": "c23db38ecbae72d64cb25b8289e3ceb17936db1c1e1374d2cbc6ca3388c55c17"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/final-output-getter.asm",
+      "sha256": "0b7525d9829e6e8df3c4641707cc15670314b8ba6cfa61d0dd6fea883461fcc6"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/gain-evaluate-current.asm",
+      "sha256": "821705d479e5f7263ad8f6310c20e32f4fec75adba129c42b3a207b6c597e664"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/gate.ps1",
+      "sha256": "9e2246d5ab91ee438d4b561eb2f8fc4e58170f133d6dad0944ab5c278904dc1e"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/output-probe-review.json",
+      "sha256": "fe5187ff43f56d7ebec842eb89e290832ee96a7e491404842786fb11b51932dc"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/output-reader-review.json",
+      "sha256": "21d6d9f77f77b00ee84034bcec7acb15a2261d6b811dbf6b39c446598f5aa546"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/output-reader.asm",
+      "sha256": "5179021a26dabfa4812b7733a2c5684b4d55379569ae6b82eaf5a84704561d48"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/radio-output-mapping.json",
+      "sha256": "4a479a3a1440eb34317a2d6fd5e3603e0a7456d2edae0a61c08ea3eda807c9fb"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/soundevent-feasibility.json",
+      "sha256": "4b01df787ab4189c1f17d87b070528590c8447c9c3f7fc5e5853ae890dac6b7f"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/von-base-hierarchy.json",
+      "sha256": "5067df96a7736ba36ba19c5492b9a0298738ca38a06e9898645b165fa453bfd3"
+    },
+    {
+      "root": "evidence",
+      "path": "source-preregister/watch-outputs.py",
+      "sha256": "381eb4291ade219c5eb8037c97c86788862f8477763923d4f332418a23e9af6f"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkPublication.c",
+      "sha256": "b3b5061a73937763feb7fb1991f8ad6d7938970a009ff79f98e536c41f078deb"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkSnapshot.c",
+      "sha256": "53d99d9710ddc1a4dc4617046cb2a3496e7768d2d76920a8a69a276caf39724c"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_PairService.c",
+      "sha256": "d25bab19d72ea4e15a7d1a2762fa9d2bf8608fe362803df7228290079ca7de3e"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Device/RICON_RadioDeviceAdapter.c",
+      "sha256": "770d752657c78b5d87374d149f4eabecdb59786ffb3e5aafec40fa6dd5fbf7fa"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Network/RICON_NetworkContracts.c",
+      "sha256": "69f9fdaf905f962b65f35dffa599cb3dc90b614f9320306339c8c17cee4475d1"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelCutoff.c",
+      "sha256": "a6ab53c70ed6a02d5828c2efe851f9f09f576687adb46945d34b0f8b457211e7"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelDescriptor.c",
+      "sha256": "cb077b44f5debc9a132c2a21f29ea32de05d5718ef1a14ca876488b010428343"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_ChannelFading.c",
+      "sha256": "21bc98df6713891da5be9dd1719b183be6c77e13d9741422d9a2b001832e9992"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_IntelligibilityModel.c",
+      "sha256": "90e7d6ad589f231f38f7c5438c4f2fc7669e620c8002bc216ff6918a9e4d7676"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_LinkEvaluator.c",
+      "sha256": "8a454d9b171b2ea4215b68fc5d36aa35d9129dace6ffaaae6fb158c79e4249a5"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_NoiseModel.c",
+      "sha256": "8eb1f8c2a19356f93cd5b78c3b98056e1d06d620231c956d9a8edd42997ef5ce"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_PropagationModel.c",
+      "sha256": "27fd59aca542267dcc470a7da50d0b81e335f48d313b08aed70fd988866879a2"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_TerrainDiffractionModel.c",
+      "sha256": "a8996f6d7e7859b9644ef1e13b631d17ea4ad786e9663ca8a9df41ebbd4aaf51"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_Core/Scripts/Game/RICON/Propagation/RICON_WorldProfileProvider.c",
+      "sha256": "9958268ac2fbbb44d502c366934be8ea136e79d72f78c2dfd8267411aaf48272"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_PairServiceFixtureSupport.c",
+      "sha256": "4f7d210b5e53b9405363625f81ac484636913cb8a85ee106c43cd047e06c780e"
+    },
+    {
+      "root": "repo",
+      "path": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_VoNSeamFixtureSupport.c",
+      "sha256": "5ddcddb058273e1ccbec5452830ce53bde958e687ee8737e9059f362da8c648d"
+    },
+    {
+      "root": "repo",
+      "path": "docs/analysis/VON_RADIO_DSP_BINDING_RU.md",
+      "sha256": "b5c5c3e3a8396d38491271662a36ca687ae275b5ddd92dfdc671d04b329c233f"
+    },
+    {
+      "root": "repo",
+      "path": "docs/plan/GOAL_RICON_TEMPORAL_RU.md",
+      "sha256": "5d1ae1a7e830de0e5da8d70e6d8a9d01d689b6a9517bdefdcf67b65857ab4e10"
+    },
+    {
+      "root": "repo",
+      "path": "docs/plan/STATUS_RU.md",
+      "sha256": "9f91ad7bc9d6ed72081ec8743fa1d4c4b5d7b7b50875bf3a1a0d00f8d4f8ad47"
+    },
+    {
+      "root": "repo",
+      "path": "docs/plan/native-integration-20261104/PLAN_RICON_NATIVE_INTEGRATION_RU.md",
+      "sha256": "491d374180c3882b379a3bffa14481c2dddf810c29612c88b7af0974efd57290"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/p-item-lookup/SOURCE_FINDINGS_RU.md",
+      "sha256": "1eda25f78fe4f73e88f1d15cebe3e247378fe8302b9a7eb358b86ac370a364a3"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/p-item-lookup/leaf-cfg.asm",
+      "sha256": "92dcc99a6a240bd9778cfc690e2bc966b290b072b04e63e7f9ebfbe3797eddb8"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/p-item-lookup/leaf-cfg.json",
+      "sha256": "e0fdad38b3dd92a179a12130cdb34c7347b75a3962c8a13b432b922cdd5dd621"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/p-item-lookup/review.json",
+      "sha256": "47e0aca20a7178e6623fab549d41c9b7bfe0a0b7570da5a7f94d0bebc6a6bb23"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-delegate/SOURCE_FINDINGS_RU.md",
+      "sha256": "9458680d59384c40fcb6c9daa740493a8868ad1192c08ad56a49090a882ee6d7"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-delegate/body.asm",
+      "sha256": "006ca8d469724e1968e76783597e5ada2f0ae3461070bd57c2235ee1fa24a766"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-delegate/review.json",
+      "sha256": "d4ac136491938adb334a5e530fd15f9bebfda198a3b95aa50f9bc4da89d76cf6"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-initializer/SOURCE_FINDINGS_RU.md",
+      "sha256": "9a42dcb82710f2d2fe64fb73ac4c669f32f42bf037b310350bd1fde700bf8536"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-initializer/body.asm",
+      "sha256": "947d593285ed25e739088f6ad813ef9bfc46ea1ad2eb11e7e2971cac9034d026"
+    },
+    {
+      "root": "repo",
+      "path": "output/native-resume-20261109/same-t-initializer/review.json",
+      "sha256": "1fe75771c3d44f91864e179e7fe9b754edb146dc51ba3c757647b2058a3eb1b4"
+    },
+    {
+      "root": "repo",
+      "path": "tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveNativeRxProbe.c",
+      "sha256": "a6ab7e261c97edd7b601ae50c4d77642d545cd0b96040140a252eab93f4f5ed4"
+    },
+    {
+      "root": "repo",
+      "path": "tools/RICON_LiveProbe/Sounds/RICON_VoNProbe/RICON_VoNProbe.acp",
+      "sha256": "9e396d6432a25a1f519c43414faea1f69316d6a416d4a071fd22d90854ca0573"
+    },
+    {
+      "root": "repo",
+      "path": "tools/RICON_LiveProbe/Sounds/RICON_VoNProbe/RICON_VoNProbe.sig",
+      "sha256": "7d02acb201f83cb89048cbb721a84387ec4b21c1fbb3ae3e992008fe95916707"
+    },
+    {
+      "root": "repo",
+      "path": "tools/RICON_TestRunner/README.md",
+      "sha256": "77576052eaf4407bf05eeb14b84b8468818710edc6f1c3715ba525c945b36c73"
+    }
+  ],
+  "partial_source_refresh": {
+    "date": "2026-11-10",
+    "scope": "manager_refs_only",
+    "manager_path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+    "old_manager_sha256": "c2644e9d25503d47c73ba9760068d6392cca132b19eb65fb8d38b605a0d5be36",
+    "new_manager_sha256": "bde099e32a0a03632c138ccdf46074d739104ad0534eb06f5ec9d5098883ffa8",
+    "original_snapshot_date": "2026-11-09",
+    "full_snapshot_reverified": false,
+    "new_runtime_qualification": false,
+    "note": "Частично освежены только manager source refs/hash/line mapping. Исторические snapshot_date/generated_utc, topology, статусы и доказательства сохранены; compile/runtime/audio заново не квалифицированы."
+  },
+  "partial_source_refresh_lease_query": {
+    "date": "2026-11-10",
+    "scope": "manager_lifecycle_query_refs_only",
+    "sources": [
+      {
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+        "old_sha256": "bde099e32a0a03632c138ccdf46074d739104ad0534eb06f5ec9d5098883ffa8",
+        "new_sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea"
+      },
+      {
+        "path": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+        "old_sha256": "3f159470916f75d92118774ede66980133696d1d0cfc8f74d299129b315b9f4a",
+        "new_sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767"
+      }
+    ],
+    "historical_snapshot_date": "2026-11-09",
+    "prequery_graph_sha256": "fede686119e79da1b3e78483a450d398ac02109a9485f514b58d119b4966e453",
+    "full_snapshot_reverified": false,
+    "node_qualifications_changed": false,
+    "new_runtime_qualification": false,
+    "sdk_evidence": "SDK_COMPILE_EVIDENCE_RU.md / SDK_COMPILE_RECEIPT.json are separate staged evidence; Game+WorkbenchGame compile logs confirmed, pure fixtures NOT_RUN",
+    "note": "2026-11-10 · partial_source_refresh_lease_query: только Manager/Lifecycle SHA и source line refs перенесены по unchanged-line mapping; snapshot 09.11.2026, topology/statuses/22 requirements/остальные pins сохранены. SDK compile logs и lease-query source имеют отдельный evidence; pure fixtures NOT_RUN, это не runtime или full snapshot re-verification."
+  }
+}

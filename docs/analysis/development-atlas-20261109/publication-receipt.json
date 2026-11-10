@@ -1,0 +1,69 @@
+{
+  "status": "PUBLISHED_REVIEWED_DERIVATIVE_ATLAS",
+  "target": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109",
+  "files": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\RICON_FULL_DEVELOPMENT_GRAPH.html",
+      "sha256": "8ce5867bdd06ea2a175f3a8318aafbdedb00505c47f18df0661089229c8911a2"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\RICON_FULL_DEVELOPMENT_GRAPH.json",
+      "sha256": "3c69eac3633e59d01f7d8d0930f67e6434646f8fbc2e86932bffb920a028dedb"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\RICON_FULL_DEVELOPMENT_TREE_RU.md",
+      "sha256": "a8f8d348f701935892b65471e499353a2b561464db37386d1180649612f001a4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\RICON_RADIAL_OVERVIEW.html",
+      "sha256": "1a8a3ac023910d212506dabb7707c89a7178c3d5879ddb229f53fa46a893501f"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\RICON_RADIAL_OVERVIEW.svg",
+      "sha256": "cad9c44743fe4a6ec7193e275f48ba36affaabfe5a84e9d6b4703cf8f31d36fa"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\README_RU.md",
+      "sha256": "4ad791b719e9a04b7915ec29b5b972db438a0961303be5324141228fe68e1dbc"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\validation-result.json",
+      "sha256": "4d1b89f966073f4fda8f29303dbdc3a3d4076bc75b10def25c297182e422f6a9"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\build-receipt.json",
+      "sha256": "192c9020b01fbc416c93326ae5b0da0a2f1c3a139ff37e37075d87f5a00a37f9"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\review\\REVIEW.json",
+      "sha256": "f62bfbf04dd35e81afd7d3d8bd6a5546f2df8732a14f4ce037746232ccac3991"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\review\\REVIEW_RU.md",
+      "sha256": "fe350eef69dc7ca31fdd657900669ae5688bddcd42e21cca60b6f5026169e90a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\browser-checks.json",
+      "sha256": "7e7c92efa761714883045f745742070c23c766773610bd6c49fe3391a0cef083"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\compact-check.json",
+      "sha256": "abdc18b91d4a4aae3848f6c276e417f9abc008382d936101f91a9b98c3ebd2e8"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\radial-browser-checks.json",
+      "sha256": "bd4c62bac7f1453e65611dcaf8af053d3a5512c36317a546a8bdd718432a3ede"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\preview-current.png",
+      "sha256": "b16a83553880f0e81b0ce3beca4adb8b160c9cb617771dbe963d0455c2870399"
+    },
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\docs\\analysis\\development-atlas-20261109\\preview-radial.png",
+      "sha256": "9c3e04735ece4aabd37ce6d76512099eef459e6231ead0acc091fb712ab323f5"
+    }
+  ],
+  "existing_files_overwritten": false,
+  "plans_goals_runtime_or_auth_changed": false,
+  "product_goal_complete": false
+}

@@ -1,0 +1,116 @@
+{
+  "schema": "ricon.ct10.host-result",
+  "version": 1,
+  "date": "2026-11-10",
+  "scope": "HOST_CONTRACT_ONLY",
+  "verdict": "ACCEPT_SCOPED_CT10_HOST_CONTRACT_AND_INDEPENDENT_TESTS",
+  "canonicalRoot": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger",
+  "goal": {
+    "threadId": "01a14fdf-35c1-7491-b741-c20d764973af",
+    "status": "active",
+    "complete": false
+  },
+  "team": {
+    "lead": "codex.lead",
+    "contractAuthor": "codex.team.core",
+    "independentTests": "codex.team.review",
+    "documentation": "codex.team.docs",
+    "assistant": "agy"
+  },
+  "agora": {
+    "topic": "ricon-reforger-plan",
+    "goal": 8223,
+    "ownership": 8224,
+    "scopeDecision": 8234,
+    "agyCounters": [
+      8230,
+      8239
+    ],
+    "coreAccept": 8246,
+    "reviewerEvidence": 8249,
+    "reviewerAccept": 8250,
+    "coreDraftReconciled": 8251,
+    "coverageEvidence": 8252
+  },
+  "tests": {
+    "newUnitTests": 34,
+    "negativeControlsWithinOneMetaTest": 12,
+    "negativeControlsDetected": 12,
+    "negativeControlIncidentalErrors": 0,
+    "legacyUnitTests": {
+      "descriptor": 11,
+      "fading": 19,
+      "snapshot": 8,
+      "publication": 17,
+      "seam": 13,
+      "total": 68
+    },
+    "legacyVectors": {
+      "snapshot": 46,
+      "descriptor": 54,
+      "fading": 71,
+      "total": 171
+    },
+    "canonicalCommand": "python -X utf8 -B -m unittest discover -s oracle -p test_temporal_snapshot_oracle.py",
+    "canonicalRun": "PASS",
+    "authorOutputRun": "PASS",
+    "byteIdenticalAuthorTestsAndManualCorpus": true,
+    "gitDiffCheck": "PASS",
+    "newFileTrailingWhitespace": "PASS"
+  },
+  "artifacts": {
+    "docs/req/REQ-temporal-snapshot.md": "66ba473160796248f825157cff38f20156de112b7edfc0158b486b7e7b9e9408",
+    "oracle/temporal_snapshot_oracle.py": "417cd7a561d1d38e3e7c81561bdd7da5634ab05956167d01243148ce696fdb5e",
+    "oracle/test_temporal_snapshot_oracle.py": "3b1c4225201dee15666af0b94215a2c7e4a27f8ef919eacd8de054506aaea04a",
+    "oracle/vectors/temporal_snapshot_v2.review.json": "293485e812771f24546e54b6936a7d1c7088410fab51f01aae8bf8a5c7c436c0",
+    "docs/evidence/E-ct10-host-contract-20261110.md": "bf84c0112532d148917d0a92a6e4d8b668fdcfa309563f3fc02f18da56433071"
+  },
+  "preservedCorpora": {
+    "snapshot_v1.json": "3440982cea0cce21ef857e09a1db3dbe77a5c85561771212dd9ea1199e93721c",
+    "link_publication_v1.json": "a60ed14590222c103aceea9030fb80ee233eea432b5969b8ed7fe93ad5c10be3",
+    "von_seam_v1.json": "f78ad022bba25cc693a516c91954c33f586d01a241338bfc24893337966c101b",
+    "channel_descriptor_v1.json": "95208dd198cee4680763e6813cb66374832ef241ea1b5590e20799d834f2aa27",
+    "channel_fading_v1.json": "cf5030f6a4ab5e03b5c02ef63aa4211a012b6a36a059ee2b11b519491a925f61",
+    "channel_cutoff_v1.json": "b4ff545d34de7859aae3d71678689a727c835c57f46d429df1a722d492c654d8"
+  },
+  "authorArtifacts": {
+    "core/CONTRACT_DRAFT_RU.md": "bedb8e2a9e92c2c958378019ff4a83d39dcb066c7524b99604cdaf28cb2602ea",
+    "review/TEST_PLAN_RU.md": "1e15cb38c01fec5cf81c50625ce1f8889bc4b8f38e7ec54f07d0990cf2f08d3d",
+    "documentation/GOAL_COVERAGE_RU.md": "66efbde1e0bead4e67f2ffecf8822c9acc5785b669ddcfd0f1be9c7032432d44"
+  },
+  "artifactOutputRoot": "../Cellular System/output/ct10-contract-20261110",
+  "memory": {
+    "project": "be28a8d4-6417-443b-8433-223089fc1f2e",
+    "bank": "project:be28a8d4-6417-443b-8433-223089fc1f2e",
+    "service": "existing operator REST client",
+    "keys": [
+      "codex-resume:current-goal",
+      "codex-resume:program-goal",
+      "codex-resume:current-stage"
+    ]
+  },
+  "notRun": [
+    "CT10-I23 temporal seam",
+    "CT10-I28 real seam/device binding",
+    "CT10-I09 operational S3b allocation/epoch/lifecycle",
+    "Enforce/generators/fixtures/probes migration",
+    "outer wire/Rpl/authentication",
+    "actual game clock mapping",
+    "producer/world/RF builder and calibration",
+    "SERVER/RECEIVER production orchestration and shared RX",
+    "compile/runtime/JIP/load",
+    "voice/content/DSP/audio"
+  ],
+  "next": "Prepare coordinated producer/registry/snapshot/copy/single+full receiver/seam/fixture migration specification, retaining explicit lifecycle/end-event, trust, clock and outer serialization gates; never hide temporal meaning in v1.",
+  "gitVisibility": {
+    "newCT10FilesVisibleInStatus": true,
+    "otherUntrackedOracleFilesRemainIgnored": true,
+    "gitignoreDelta": "Targeted allowlist for the three new CT10 oracle/test/vector files; existing rules preserved."
+  },
+  "codeChangesCommitted": false,
+  "gameWorkbenchServerStarted": false,
+  "newVoiceBackend": false,
+  "newMemoryService": false,
+  "originalReqReviewedHash": "78cce5bb40fe180477371806567ed64d91c210d64ed0f947f3fe3fb57842c0d8",
+  "reqPostReviewDelta": "Status-only acceptance note; functional contract unchanged."
+}

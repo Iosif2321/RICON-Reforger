@@ -1,0 +1,42 @@
+{
+  "report_sha256": "0cc4183eaa19944fc7926c2ad1aa49cd4ae700ac3e7f91ab53b741b9e758a3d7",
+  "asm_spans": 6,
+  "semantic_function_bodies": 5,
+  "decoded_raw_bytes_equal": 489,
+  "local_links_valid": 13,
+  "rtid_primary_input_update": "1401645E0=32C0C3",
+  "sender_binding": "OPEN",
+  "sdk_engine_runtime": "NOT_RUN",
+  "records": [
+    {
+      "asm": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-temporal-20261104\\binding\\signal-scalar-getter.dumpbin.asm",
+      "asm_sha256": "19678e5f1672828df06ab4a713d1f7cda7bd76186fab3f0efd54df64c7659b07",
+      "bytes": 150
+    },
+    {
+      "asm": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-temporal-20261104\\binding\\project-variable-getter.dumpbin.asm",
+      "asm_sha256": "39a3a7b26f662abcaeb809b6029e8b69e11984a9e2187658b57f7b9bbf6d4806",
+      "bytes": 66
+    },
+    {
+      "asm": "output\\ricon-von-temporal-20261104\\binding\\iop-output-reader.dumpbin.asm",
+      "asm_sha256": "943593cb7077e33d5620b039edddfbcc34584bfebb0b3729dc3495751d5de19c",
+      "bytes": 54
+    },
+    {
+      "asm": "output\\ricon-von-temporal-20261104\\binding\\iop-instance-update.dumpbin.asm",
+      "asm_sha256": "87b5eeaabd5b23ce5e3ebeaa74b1a1e00647314acb2820e6aae46edc59c50509",
+      "bytes": 189
+    },
+    {
+      "asm": "output\\ricon-von-temporal-20261104\\binding\\iop-instance-update-tail.dumpbin.asm",
+      "asm_sha256": "9b043e85e158f4f1eef7d3067e7b13bb02fe4e027df93327b07e15417e70b530",
+      "bytes": 27
+    },
+    {
+      "asm": "output\\ricon-von-temporal-20261104\\binding\\selected-input-update.dumpbin.asm",
+      "asm_sha256": "df8f74fb89f2c676a664876d11ca80c81b09e41630818a982ecedf86e6d46eb3",
+      "bytes": 3
+    }
+  ]
+}

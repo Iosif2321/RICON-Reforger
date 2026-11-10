@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "runId": "X1-N0-G_PARSE-20261102-01",
+  "kind": "STATIC_POWERSHELL_PARSE",
+  "evidenceOrigin": "Operator-preserved functions.pwsh stdout and exit result; not an independent rerun or signed host attestation",
+  "taskRef": "task:a50f5d08-6102-4852-bc07-f024bd0ecef3",
+  "threadRef": "thread:9046ee8b-0c3c-4b14-acf6-928e80233081",
+  "startMessageRef": "message:600324f3-69a9-4818-8554-fc4d8a4d9ee3",
+  "endMessageRef": "message:42d1e9d8-acaa-4340-b9d3-0edbc0e08b8d",
+  "inputGit": "a04a14f125fe757ad0038d762e2b44ab4819085b",
+  "workingTreeNote": "Documentation and metadata dirty; frozen tools and N0 plan unchanged relative to inputGit before and after parse",
+  "cwd": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger",
+  "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "arguments": [
+    "-NoProfile",
+    "-NonInteractive",
+    "-Command",
+    "$ErrorActionPreference=\"Stop\"; if ($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSEdition -ne \"Desktop\") { throw \"N0_WRONG_PARSER_HOST\" }; Write-Output (\"HOST=\"+$PSVersionTable.PSVersion+\" EDITION=\"+$PSVersionTable.PSEdition); Get-ExecutionPolicy -List | Format-Table -AutoSize; $ops=Join-Path (Get-Location) \"tools\\RICON_LiveProbe\\ops\"; foreach ($n in @(\"k0-neutral-core.ps1\",\"k0-neutral-helper.ps1\",\"k0-neutral-preflight.ps1\",\"k0-neutral-selftest.ps1\")) { $tok=$null; $err=$null; $null=[System.Management.Automation.Language.Parser]::ParseFile((Join-Path $ops $n),[ref]$tok,[ref]$err); Write-Output (\"N0_AST \"+$n+\" errors=\"+$err.Count); if ($err.Count) { $err | Format-List; throw \"N0_AST_ERRORS\" } }; Write-Output \"N0_AST_PASS\""
+  ],
+  "sourceSha256BeforeAndAfter": {
+    "tools/RICON_LiveProbe/ops/k0-neutral-core.ps1": "a254d93d93b28cae44556bd14a3a5547242139e682445a7e504451e15d69d0e4",
+    "tools/RICON_LiveProbe/ops/k0-neutral-helper.ps1": "9da576fe3b5e6f1fc9eb3cc849d700c02632aad2719256d5a18ce4ae2717605c",
+    "tools/RICON_LiveProbe/ops/k0-neutral-preflight.ps1": "d392af9f7735a3130b1521aef4027ffc7ffccec8643fd92d6f7b56bb27e9bc00",
+    "tools/RICON_LiveProbe/ops/k0-neutral-selftest.ps1": "d46d393ae65815a62ba0209ae377ad5324be2d993207ebe9517867ab7d76284c",
+    "docs/plan/PLAN-standard-ptt-K0.md": "13b573056a9b9eb1eda2e49cac4cb377e1f120e3fc3a9545610019cc432301cc"
+  },
+  "stdoutText": "HOST=5.1.19041.6456 EDITION=Desktop\n\n        Scope ExecutionPolicy\n        ----- ---------------\nMachinePolicy       Undefined\n   UserPolicy       Undefined\n      Process       Undefined\n  CurrentUser    RemoteSigned\n LocalMachine       Undefined\n\n\nN0_AST k0-neutral-core.ps1 errors=0\nN0_AST k0-neutral-helper.ps1 errors=0\nN0_AST k0-neutral-preflight.ps1 errors=0\nN0_AST k0-neutral-selftest.ps1 errors=0\nN0_AST_PASS\n",
+  "stdoutPreservation": "Complete visible text; line endings normalized to LF; no claim of byte-exact pipe capture",
+  "stderrVisible": "",
+  "exitCode": 0,
+  "errorsByFile": {
+    "k0-neutral-core.ps1": 0,
+    "k0-neutral-helper.ps1": 0,
+    "k0-neutral-preflight.ps1": 0,
+    "k0-neutral-selftest.ps1": 0
+  },
+  "result": "PASS_PARSE_ONLY",
+  "gateConsumed": "G_PARSE",
+  "projectScriptsExecuted": false,
+  "dotSourcePerformed": false,
+  "n0HelpersStarted": 0,
+  "gameInputFocusAudioPerformed": false,
+  "notProven": ["PURE", "IPC", "K0", "native release", "audio delivery", "RICON effect", "direct preservation"],
+  "nextGate": "G_PURE closed pending reviewed fixed-PS5.1 executor contract; no execution-policy bypass or alternate invocation on denial"
+}

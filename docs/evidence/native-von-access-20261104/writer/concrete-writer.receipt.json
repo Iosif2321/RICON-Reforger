@@ -1,0 +1,71 @@
+{
+  "image_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "source_stat_unchanged": true,
+  "method": "Two authorized concrete SndComponent wrappers plus full known helper leaf; exact pdata where present, no game/VM execution",
+  "records": [
+    {
+      "name": "native-object-unwrap-full",
+      "range": [
+        "0x14088ccb0",
+        "0x14088cd3e"
+      ],
+      "raw_pdata": [],
+      "raw_hex": "448b4a104c8bd1418bc125000000f03d000000607574488b42184181e1ffffff0f4c8b40504b8b04c8f6405010745bf74214008a00007552488b4a08488b15453a8f01488b829001000048394808743a488b829801000048394808742d488b82a0010000483948087420498b0233d24885c07412488b004885c0488d48f0480f44ca488bc1c3488bc2c3498b02c3",
+      "raw_sha256": "cd0c04dba081473663a58ad29580318e21dca0c00c564ad8147f3aee7b604142",
+      "asm_sha256": "adf6c98004aaf70628bcbdbee83a6ea8afbdb81661cf719437e895813bc481f6",
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x14088CCB0,0x14088CD3D",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ],
+      "decoded_bytes_verified_against_raw": 142,
+      "exit_code": 0
+    },
+    {
+      "name": "snd-set-signal-value",
+      "range": [
+        "0x14120d7a0",
+        "0x14120d7de"
+      ],
+      "raw_pdata": [
+        "a0d72001ded7200110ecea01"
+      ],
+      "raw_hex": "40534883ec2033d2488bd9e850f867ff488b13488b0a488bd0e8f2f467ff488b0b4c8b4110488b5108488d4850f3410f10108b124883c4205be992c1ffff",
+      "raw_sha256": "7bb441ed02bbc71a3da09a61489f42603194c534b586d47ebfa0f6d5bac5aeaa",
+      "asm_sha256": "6879744a880e474465c4e404e0ed03f37349aa4ea7f8e7e2538c8dc58b079288",
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x14120D7A0,0x14120D7DD",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ],
+      "decoded_bytes_verified_against_raw": 62,
+      "exit_code": 0
+    },
+    {
+      "name": "snd-set-signal-value-str",
+      "range": [
+        "0x14120d7e0",
+        "0x14120d83e"
+      ],
+      "raw_pdata": [
+        "e0d720013ed820012831ec01"
+      ],
+      "raw_hex": "40534883ec3033d20f29742420488bd9e80bf867ff488b13488b0a488bd0e8adf467ff488b13488d5850488b4a10488b5208f30f1031488bcb488b12e8cf9effff83f8ff740d0f28d68bd0488bcbe83dc1ffff0f287424204883c4305bc3",
+      "raw_sha256": "93e7d139c157fd925e0d3218aa3d780b9f24193a83f911489a1e7707e85e60bc",
+      "asm_sha256": "c6547ebe3cc23e44f4ab8df7d942f3772d2a9f463a106529a4231fb96cdef4ac",
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x14120D7E0,0x14120D83D",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ],
+      "decoded_bytes_verified_against_raw": 94,
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "registrar": [
+    "0x141362bf0",
+    "0x141362e45"
+  ],
+  "method": "Method sequence matches complete installed BaseSoundComponent declaration, disambiguated from SndComponent/MusicManager/SndBaseModule; native pointer R9 preceding exact name R8",
+  "records": [
+    {
+      "method": "SetSignalValue",
+      "name_lea": "0x141362c84",
+      "wrapper_lea": "0x141362c78",
+      "wrapper_pointer": "0x14027ac60",
+      "pdata": [
+        "0x14027ac60",
+        "0x14027ac83"
+      ]
+    },
+    {
+      "method": "SetSignalValueStr",
+      "name_lea": "0x141362ca2",
+      "wrapper_lea": "0x141362c96",
+      "wrapper_pointer": "0x14027ac60",
+      "pdata": [
+        "0x14027ac60",
+        "0x14027ac83"
+      ]
+    }
+  ]
+}

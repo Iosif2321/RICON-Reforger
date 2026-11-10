@@ -1,0 +1,43 @@
+{
+  "level": "STATIC_ASM_REUSE_AND_MATHEMATICAL_CONDITIONAL",
+  "files": [
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_SetRange.asm",
+      "sha256": "3f5355f7bab52dc21eb7fea21c3d350642d3a32d8785ada21fbf5ead166a4ff4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_ConcreteSlot6.asm",
+      "sha256": "bce0fe736b14bd24efa4f9dd6882482825181549883d4723cedbb72c9ced36d4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_GraphCandidate.asm",
+      "sha256": "d16dcce2efdebfe3420b5a0eab1263ad311a6c0bf318e852f2dd1e3e1d9d723a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Relay_FullSlot6.asm",
+      "sha256": "57e1cff406da8753756a520891f1c62e87b70940b1677170237ef6296926ab60"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Radio_CommonSync.asm",
+      "sha256": "d7913dabf6ff748a7c06d7231b4b1c77534bde379ecb14e0677b7f844d63ce0e"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\Radio_GraphSlot8_DFC30_Union.asm",
+      "sha256": "ea48932019f0adc7a5d4cc5163506db3fe596f7437e1757dec9b7488b1f72ddb"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch12\\export\\RPC_Authorize.asm",
+      "sha256": "a69c0e575c52c6bdd3c1f66f6d295a927d5fe18d455676b6c2b9c5b9be1d31d3"
+    }
+  ],
+  "checks": {
+    "source_range1_d10_reject": true,
+    "first_hop_relay_d0_5_admit": true,
+    "relay_hop_range65535_d9_5_admit": true,
+    "equal_boundary_admits_quality0": true
+  },
+  "newGhidraRequests": 0,
+  "engine": "NOT_RUN",
+  "sourceIDWire": "OTHER_WORKER_OWNED_PENDING_RESULT",
+  "reportSha256": "7990a23e93460fc90506da580b00ab2ddda25c8489c39a982bbaaa344389798e"
+}

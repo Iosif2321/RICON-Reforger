@@ -1,0 +1,10 @@
+{
+  "status": "POSTAPPLY_SOURCE_VERIFIED",
+  "canonicalSources": 3,
+  "legacyMethodsComparedToImmutableBackup": 6,
+  "unchangedCoreAndSupportDependencies": 12,
+  "nativeVoiceEffect": "NONE",
+  "scope": "SOURCE_AND_FILESYSTEM_ONLY",
+  "Enforce": "NOT_RUN",
+  "engine": "NOT_RUN"
+}

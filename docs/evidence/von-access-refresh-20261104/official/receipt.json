@@ -1,0 +1,102 @@
+{
+  "read_time_utc": "2026-11-04 18:03:49 UTC",
+  "scope": "four official class method surfaces only",
+  "installed_version": "1.8.0.13",
+  "frozen_scriptdiff_pin": "3d77cc212d5cda9922daf5f45635c7300d2d4cce",
+  "frozen_pin_commit_date": "not recorded in local manifest; not revalidated",
+  "current_head_revision": null,
+  "current_head_status": "UNVERIFIED_FETCH_FAILURE",
+  "current_docs_game_version": null,
+  "generator": "Doxygen 1.13.2 (not game version)",
+  "documents": [
+    {
+      "class": "VoNComponent",
+      "url": "https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceVoNComponent.html",
+      "official_generated_path": "Game/generated/Components/VoNComponent.c",
+      "read_status": "SUCCESS_VIA_WEB_TOOL",
+      "observed_declared_methods": [
+        "SetCapture",
+        "SetCommMethod",
+        "GetCommMethod",
+        "SetTransmitRadio",
+        "GetTransmitRadio",
+        "SoundEventPriority",
+        "ConnectEditorToVoNSystem",
+        "DisconnectEditorFromVoNSystem",
+        "OnCapture",
+        "OnReceive",
+        "OnVoNUsed",
+        "GetEditorEntity",
+        "GetEditorWorldLocation",
+        "IsEntityActiveEditor"
+      ],
+      "inherited_surface": "not used to infer hidden native methods"
+    },
+    {
+      "class": "BaseTransceiver",
+      "url": "https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceBaseTransceiver.html",
+      "official_generated_path": "Game/generated/Radio/BaseTransceiver.c",
+      "read_status": "SUCCESS_VIA_WEB_TOOL",
+      "observed_declared_methods": [
+        "GetFrequency",
+        "GetMinFrequency",
+        "GetMaxFrequency",
+        "SetFrequency",
+        "GetFrequencyResolution",
+        "IsMuted",
+        "SetMuteState",
+        "GetRange",
+        "SetRange",
+        "GetRadio",
+        "BeginTransmission",
+        "BeginTransmissionFreq"
+      ],
+      "inherited_surface": "not used to infer hidden native methods"
+    },
+    {
+      "class": "ScriptedRadioComponent",
+      "url": "https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceScriptedRadioComponent.html",
+      "official_generated_path": "Game/generated/Components/ScriptedRadioComponent.c",
+      "read_status": "SUCCESS_VIA_WEB_TOOL",
+      "observed_declared_methods": [
+        "OnPostInit",
+        "OnInit",
+        "OnFrame"
+      ],
+      "inherited_surface": "BaseRadio device methods + state-change observers; no pair hook"
+    },
+    {
+      "class": "RadioManagerEntity",
+      "url": "https://community.bistudio.com/wikidata/external-data/arma-reforger/ArmaReforgerScriptAPIPublic/interfaceRadioManagerEntity.html",
+      "official_generated_path": "Game/generated/Entities/RadioManagerEntity.c",
+      "read_status": "SUCCESS_VIA_WEB_TOOL",
+      "observed_declared_methods": [
+        "GetTransceiversInRange"
+      ],
+      "inherited_surface": "not used to infer hidden native methods"
+    }
+  ],
+  "hash_kind": "SHA256 of local normalized observations only; not HTTP entity/content hash",
+  "fetch_failures": [
+    {
+      "url": "https://api.github.com/repos/BohemiaInteractive/Arma-Reforger-Script-Diff/commits?per_page=1",
+      "error": "web tool URL inaccessible"
+    },
+    {
+      "url": "https://api.github.com/repos/BohemiaInteractive/Arma-Reforger-Script-Diff/commits/main",
+      "error": "direct PowerShell read fallback forbidden socket by sandbox"
+    },
+    {
+      "url": "https://github.com/BohemiaInteractive/Arma-Reforger-Script-Diff/commits/main/",
+      "error": "official web fallback DisabledError"
+    },
+    {
+      "url": "https://github.com/BohemiaInteractive/Arma-Reforger-Script-Diff/blob/main/scripts/Game/generated/Components/ScriptedRadioComponent.c",
+      "error": "official web fallback DisabledError"
+    },
+    {
+      "url": "https://github.com/BohemiaInteractive/Arma-Reforger-Script-Diff/blob/main/scripts/Game/generated/Entities/RadioManagerEntity.c",
+      "error": "official web fallback DisabledError"
+    }
+  ]
+}

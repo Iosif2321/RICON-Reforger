@@ -1,0 +1,127 @@
+{
+  "schema": "ricon.ct10.integration-source-result",
+  "version": 1,
+  "date": "2026-11-10",
+  "status": "SOURCE_REVIEWED_UNCOMPILED",
+  "goalStatus": "active",
+  "artifacts": {
+    "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c": "23a9ec398b9b409226ae9fb2109be656f04bc913103c5030610d3f8aa5c61551",
+    "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c": "3b0a11e50d9e1446a0bd94495d639053c27a23f087a3c319abba36805daf7e8d",
+    "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c": "bde099e32a0a03632c138ccdf46074d739104ad0534eb06f5ec9d5098883ffa8",
+    "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalLifecycleFixtures.c": "a885df72d704493197cf0d0ccf27e2e5c5ad5af8b6d8f8da037856bdc434a019",
+    "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalAuthorityFixtures.c": "5da0c046f9f76c223de1b0035bd741d1a070aea03aef021e972dd4ed13225d52",
+    "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c": "deb80d3483923d8e5ad5d66479f1c13bf3db3a97bcdc8208c54530baea03e57c",
+    "tools/RICON_TestRunner/run.ps1": "0c6934205d389002a6194e7d9df2ec4c5d375bb17bacdbe80eea88a251e6fb90",
+    "docs/evidence/E-ct10-integration-source-20261110.md": "082c3981c33eec0cfb35798ec56faafe469cd67778b963a5b825d0e225869c67",
+    "docs/review/R-agy-ct10-capture-20261110.md": "e579d2854ca79bba3baffdfccaafa4d5d63cd21db2364ae6e2e5e1c1636c98f8",
+    "docs/analysis/CT10_INTEGRATION_DELTA_RU.md": "6cd718476e2140bcfb8f820beffb108132186f70a2dd5d2e4822c839ccdbcd29"
+  },
+  "protectedLifecycleHash": "3f159470916f75d92118774ede66980133696d1d0cfc8f74d299129b315b9f4a",
+  "managerDelta": {
+    "baseline": "c2644e9d25503d47c73ba9760068d6392cca132b19eb65fb8d38b605a0d5be36",
+    "current": "bde099e32a0a03632c138ccdf46074d739104ad0534eb06f5ec9d5098883ffa8",
+    "scope": "Nullable capture journal field and explicit opt-in guarded methods; existing method bodies unchanged"
+  },
+  "agy": {
+    "conversation": "e5549ddb-ab94-4798-8edc-bd535874afda",
+    "model": "Gemini 4 Argon",
+    "modelChanged": false,
+    "initialCounters": [
+      8313,
+      8314
+    ],
+    "fixedDiffVerdict": 8317,
+    "sourceScope": "SOURCE_REVIEWED_UNCOMPILED",
+    "rootPinsNotIndependentlyComputedByAgy": true,
+    "memoryProjection": {
+      "id": "c43a27a8-fea0-4ead-b9de-227d76d8065f",
+      "revision": 6,
+      "contentHash": "f0ce19914f4bad30374e6e2379fb9ec4049685509e71c687b0a19270bb1f6d58",
+      "nativeApiClaimed": false
+    },
+    "firstProviderError": "unexpected EOF; initial terminal exit1",
+    "resumeSameConversationExit": 0,
+    "oldAgyPortFinal": "UNVERIFIED"
+  },
+  "reviewers": {
+    "coreFreeze": 8305,
+    "reviewerSource": 8308,
+    "reviewerRxDelta": 8320,
+    "documentationRxSource": 8319,
+    "agyFix": 8317
+  },
+  "checks": {
+    "canonical7ByteIdentity": true,
+    "whitespace": "PASS",
+    "runnerParserErrors": 0,
+    "integrationDryRun": {
+      "status": "DRY_RUN_NO_WORKBENCH_STARTED",
+      "executable": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\ArmaReforgerWorkbenchSteamDiag.exe",
+      "project": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_TestRunner\\addon.gproj",
+      "plugin": "RICON_TemporalIntegrationProbePlugin",
+      "arguments": [
+        "-gproj",
+        "\"C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\tools\\RICON_TestRunner\\addon.gproj\"",
+        "-addonsDir",
+        "\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\addons,C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger Tools\\Workbench\\addons,C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\RICON-Reforger\\addons\"",
+        "-noBackend",
+        "-wbModule=ScriptEditor",
+        "-plugin=RICON_TemporalIntegrationProbePlugin",
+        "-wbSilent",
+        "-exitAfterInit",
+        "-noThrow",
+        "-logLevel",
+        "normal",
+        "-logsDir",
+        "ricon-tests-ct10-integration-preview-20261110-111121"
+      ],
+      "expectedMarker": "[RICON_TEMPORAL_INTEGRATION] done: PASS"
+    },
+    "graphStrict": {
+      "status": "GRAPH_VALIDATED_SOURCE_SCOPE_ONLY",
+      "nodes": 57,
+      "edges": 83,
+      "problems": 16,
+      "requirements": 22,
+      "references": 320,
+      "source_files": 72,
+      "errors": [],
+      "runtime_qualified": false
+    },
+    "validatorHash": "619d0e2a450d218e74b4908c0efe7eecc47ae27f34b6892c46c083e1373ed985",
+    "validationChecksSkipped": false,
+    "modelSwitchRequired": false,
+    "enforceCompile": "NOT_RUN",
+    "enforceFixtures": "NOT_RUN",
+    "roleRuntime": "NOT_RUN",
+    "gameMpAudio": "NOT_RUN"
+  },
+  "graph": {
+    "historicalSnapshotDate": "2026-11-09",
+    "partialSourceRefreshDate": "2026-11-10",
+    "fullSnapshotReverified": false,
+    "fieldChanges": 19,
+    "scope": "manager_refs_only",
+    "topologyStatusRequirementsChanged": false,
+    "archiveSha256": {
+      "RICON_KNOWLEDGE_GRAPH.20261109.json": "92b2a5abe4ea9509c1eb865454da9c81ea5f6faa12df0eff828b513370cca392",
+      "RICON_KNOWLEDGE_GRAPH.20261109.html": "dfeac7649626d0028b75611a632880368d864050226a2a366b650ffad6106f94",
+      "RICON_KNOWLEDGE_GRAPH.20261109.mmd": "110860c97c3ab6fab4e40e7c82ce061ed8a7b23380aa65225df5e8ae92223ac5",
+      "RICON_KNOWLEDGE_GRAPH_RU.20261109.md": "bad5dbfaf8be9edb2924a39f7b544a110fde405bf876a44f44049dab256a22f8"
+    }
+  },
+  "open": [
+    "Actual committed producer/current Expected truth and atomic capture-all transaction",
+    "Lifecycle-call coordinator / epoch retirement and real source handoff",
+    "Assigned END sequence / reserved-ID failure integration",
+    "Enforce SDK compilation and pure fixture execution",
+    "RPC/auth/wire/ACK/liveness",
+    "Persistent medium/shared RX/RF/world calibration",
+    "Game/JIP/load/content/DSP/audio and full M1/M2/M3"
+  ],
+  "next": "Obtain current ScriptEditor-stage allowance, then compile and execute the prepared pure integration probe; continue actual producer/coordinator wiring with captured source identities.",
+  "newMemoryService": false,
+  "newVoiceBackend": false,
+  "gameWorkbenchStarted": false,
+  "gitCommitCreated": false
+}

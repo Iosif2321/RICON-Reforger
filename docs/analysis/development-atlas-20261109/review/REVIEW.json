@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "verdict": "ACCEPT_FULL_DEVELOPMENT_GRAPH_SOURCE",
+  "reviewer": "codex.graph.ui.review",
+  "scope": "Frozen model/renderer/source safety/semantic and synthetic DOM checks. Actual browser QA and product runtime acceptance remain separate.",
+  "findings": [],
+  "pins": {
+    "RICON_FULL_DEVELOPMENT_GRAPH.json": "3c69eac3633e59d01f7d8d0930f67e6434646f8fbc2e86932bffb920a028dedb",
+    "RICON_FULL_DEVELOPMENT_GRAPH.html": "8ce5867bdd06ea2a175f3a8318aafbdedb00505c47f18df0661089229c8911a2",
+    "viewer.html": "4b7cadf29adba86816a48a9d36064ece8a4d05d83ea06f4073e5534241c4d4c3",
+    "build.mjs": "8da20431ed6e8aaedd378b2bec70380c87894aed0727742db9492defc8848335",
+    "radial-project.json": "f3f67c5610676245eb8444e530e1075788cd2041cf63ac8ff71cfc47784847cd",
+    "RICON_RADIAL_OVERVIEW.html": "1a8a3ac023910d212506dabb7707c89a7178c3d5879ddb229f53fa46a893501f",
+    "documentation/inventory.json": "17331d5cdb542e8bc6d900f9f5ff8a74530197361d294ab6a65b74166e068f46",
+    "core-inventory/inventory.json": "b2f8553408e09fed57fc81375c377f32dd154048cc7240648e4bbcaee5d6ed3d",
+    "native-inventory/inventory.json": "20b73c8a414f587714888b5422854f8c3d54ede55064455bccf7016b83566f3c"
+  },
+  "counts": {
+    "nodes": 186,
+    "domains": 12,
+    "groups": 14,
+    "leaves": 172,
+    "dependencies": 338,
+    "sourcePins": 92,
+    "sections": 21,
+    "stages": 9,
+    "requirements": 22,
+    "invariants": 14
+  },
+  "checks": [
+    {
+      "command": "node review/renderer-check.mjs",
+      "exitCode": 0,
+      "observed": "PASS",
+      "level": "Actual viewer script with synthetic DOM; not browser QA",
+      "coverage": [
+        "Closed branches search includes ancestors",
+        "All four axes independently intersect",
+        "Empty result and expand/overview",
+        "Dependencies do not mutate workflow/proof",
+        "Keyboard focus retained after rerender",
+        "Source-specific historical scopes and generic no-rerun scope displayed",
+        "No eval, HTML-injection or network APIs; restrictive CSP"
+      ]
+    },
+    {
+      "command": "node review/semantic-check.mjs",
+      "exitCode": 0,
+      "observed": "PASS",
+      "coverage": [
+        "All21sections and stages0through8 target existing nodes",
+        "Requirements22/invariants14 retained",
+        "Embedded HTML model exactly matches JSON",
+        "All92sourceSHA and inventory pins current",
+        "Dependency DAG acyclic",
+        "M1 infra before first radio release",
+        "M2 after M1 and required by full release",
+        "Problem bool normalized consistently",
+        "Cellular not claimed implemented",
+        "Native A/B remain open; current owning cell UNKNOWN",
+        "Typical credential patterns absent"
+      ]
+    },
+    {
+      "command": "node C:/Users/Ded/.codex/skills/creating-radial-system-atlases/scripts/validate-radial-atlas.mjs --input radial-project.json --html RICON_RADIAL_OVERVIEW.html",
+      "exitCode": 0,
+      "observed": "PASS",
+      "result": {
+        "branches": 12,
+        "panels": 85,
+        "semanticObjects": 246,
+        "logicEntries": 246,
+        "relatedReferences": 262,
+        "autonomous": true,
+        "privacyPatterns": "clear"
+      }
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "GRAPH-01",
+      "priority": "P1",
+      "title": "M1 infrastructure incorrectly depended on radio release",
+      "status": "RESOLVED",
+      "evidence": "Final infrastructure requires devices+temporal; radio-release requires infrastructure. M2 vehicle subgroup requires radio-release; full release requires subgroup. PLAN_RU.md65-66 and ROADMAP_RU.md288-307 verified."
+    },
+    {
+      "id": "GRAPH-02",
+      "priority": "P2",
+      "title": "Historical source scopes absent from displayed evidence",
+      "status": "RESOLVED",
+      "evidence": "viewer63 displays sources[].scope; viewer67-68 display specific/generic evidence and historicalEvidence; actual synthetic DOM output asserted."
+    },
+    {
+      "id": "GRAPH-03",
+      "priority": "P2",
+      "title": "Enter/Space rerender removed keyboard focus",
+      "status": "RESOLVED",
+      "evidence": "viewer41/52 captures data-id and restores focus when visible; source script synthetic DOM check passed."
+    },
+    {
+      "id": "GRAPH-04",
+      "priority": "P2",
+      "title": "problem:false retained colored problem priority",
+      "status": "RESOLVED",
+      "evidence": "build27 normalizes false to empty + priority none and keeps taskPriority; semantic check verifies all no-problem nodes."
+    }
+  ],
+  "semanticEvidence": {
+    "cellular": "PLAN_RU.md516-552 explicitly includes SubscriberRegistry/SIM/attach/SMS/service codes/paging/CallSession/handover. Nodes remain planned/not_run; scope boundary done is documentation only; voice realization idea/blocked.",
+    "legacy": "A3 code/design retained as history/comparator, not product live proof.",
+    "native": "A partial/runtime_metadata; B blocked/not_run; supported writer, Radio-only DSP/content/DIRECT and current exact owning C0 cell remain open. Accepted source2207/source838/entryCFG66 and frozen inputs do not close product requirements.",
+    "proof": "Scope-specific historical source/unit/compile/metadata results are attributed; this graph-building task did not rerun those tests. Full release nodes remain planned/not_run."
+  },
+  "finalUiFreeze": {
+    "file": "viewer.html",
+    "line": 70,
+    "change": "nowView приоритетно выбирает current leaf родителя native с proof not_run вместо первого current leaf программы. Данные модели не меняются.",
+    "reviewerReran": ["node review/renderer-check.mjs", "node review/semantic-check.mjs"],
+    "result": "Обе команды PASS на final HTML 8ce5867b…; current native entry остаётся неподтверждённой работой, а не готовым DSP."
+  },
+  "limits": [
+    "No actual browser/app/game/DSH/native/model execution by reviewer; root owns visual QA.",
+    "No source/candidate/renderer/DSH changes by reviewer; ownership only review directory.",
+    "Synthetic DOM is not a substitute for browser rendering, pointer/touch behavior or audio/runtime/content acceptance.",
+    "Credential-pattern checks are limited checks, not exhaustive security audit.",
+    "No completion percentage, date forecast or parent readiness derived from number of completed nodes."
+  ]
+}

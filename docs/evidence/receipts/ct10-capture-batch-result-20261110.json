@@ -1,0 +1,987 @@
+{
+  "schema": "ricon.ct10.capture-batch-result",
+  "version": 1,
+  "status": "PURE_SCRIPTEDITOR_FIXTURES_PASS_LOCAL_CAPTURE_BATCH_ONLY",
+  "author": "codex.team.docs",
+  "canonical_publisher": "codex.lead",
+  "observation_utc": "2026-11-10T10:32:44.218249+00:00",
+  "observation_finished_utc": "2026-11-10T10:32:44.236481+00:00",
+  "documentation_new_sdk_runs": 0,
+  "documentation_shared_memory_writes": 0,
+  "canonical_publication_performed_by_documentation": false,
+  "goal_complete": false,
+  "authorization": {
+    "script_editor_pure_grant": "Owner direct yes, Agora8328",
+    "steam_condition_change": "Owner: Вход в Steam завершён; Root relay Agora8354",
+    "play_world_server_microphone": "NOT_RUN per Root scope; no gameplay/voice acceptance",
+    "sdk_framework_game_instance": "Observed standard SDK initialization, distinct from Play/world/server scenario"
+  },
+  "old_canonical_pure_baseline": {
+    "status": "ENFORCE_PURE_BASELINE_PASS_OLD_CANONICAL",
+    "run_order": [
+      "old_after_steam",
+      "old_diagnostic",
+      "old_flow_fixed"
+    ],
+    "logs": [
+      {
+        "id": "old_after_steam",
+        "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-pure-after-steam-20261110-131205/console.log",
+        "sha256": "b0c7875316bcc17a45f6a4185db9c8533dd5023ad91316879fd88483f1b2b2de",
+        "bytes": 21871,
+        "line_count": 215,
+        "root_reported_process_exit_code": 5,
+        "exit_code_provenance": "Root actual runner observation, Agora8355/8356 and task; completion marker independently read",
+        "script_error_lines": [],
+        "modules": [
+          {
+            "name": "Workbench",
+            "files": 18,
+            "classes": 36,
+            "crc32": "90ce0460",
+            "log_line": 135
+          },
+          {
+            "name": "GameLib",
+            "files": 512,
+            "classes": 704,
+            "crc32": "a2fafa86",
+            "log_line": 136
+          },
+          {
+            "name": "WorkbenchGame",
+            "files": 195,
+            "classes": 673,
+            "crc32": "2ba39cc3",
+            "log_line": 157
+          },
+          {
+            "name": "Game",
+            "files": 5798,
+            "classes": 11595,
+            "crc32": "feec6e28",
+            "log_line": 158
+          }
+        ],
+        "suites": {
+          "ordered": {
+            "checks": 40,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 167
+          },
+          "capture": {
+            "checks": 59,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 168
+          },
+          "lease_query": {
+            "checks": 67,
+            "failures": 5,
+            "first_failure": 60,
+            "log_line": 169
+          }
+        },
+        "completion": {
+          "line": 170,
+          "status": "FAIL"
+        },
+        "failed_diagnostic_check_ids": [],
+        "diagnostic_state_lines": [],
+        "steam_api_init_failure_lines": [],
+        "nonfatal_stats_failure_lines": [
+          171
+        ],
+        "scope": "OLD_CANONICAL_PRE_BATCH_PURE_FIXTURES_ONLY"
+      },
+      {
+        "id": "old_diagnostic",
+        "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-lease-query-diag-20261110-131406/console.log",
+        "sha256": "10f182dfa02c83f59622f7b5fa2a5eec43d2b219820fc8532e9c276b9ba55e1a",
+        "bytes": 22202,
+        "line_count": 219,
+        "root_reported_process_exit_code": 5,
+        "exit_code_provenance": "Root actual runner observation, Agora8355/8356 and task; completion marker independently read",
+        "script_error_lines": [],
+        "modules": [
+          {
+            "name": "Workbench",
+            "files": 18,
+            "classes": 36,
+            "crc32": "90ce0460",
+            "log_line": 135
+          },
+          {
+            "name": "GameLib",
+            "files": 512,
+            "classes": 704,
+            "crc32": "a2fafa86",
+            "log_line": 136
+          },
+          {
+            "name": "WorkbenchGame",
+            "files": 195,
+            "classes": 673,
+            "crc32": "2ba39cc3",
+            "log_line": 157
+          },
+          {
+            "name": "Game",
+            "files": 5798,
+            "classes": 11595,
+            "crc32": "34e8a565",
+            "log_line": 158
+          }
+        ],
+        "suites": {
+          "ordered": {
+            "checks": 40,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 171
+          },
+          "capture": {
+            "checks": 59,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 172
+          },
+          "lease_query": {
+            "checks": 67,
+            "failures": 5,
+            "first_failure": 60,
+            "log_line": 173
+          }
+        },
+        "completion": {
+          "line": 174,
+          "status": "FAIL"
+        },
+        "failed_diagnostic_check_ids": [
+          60,
+          63,
+          64,
+          65,
+          66
+        ],
+        "diagnostic_state_lines": [
+          {
+            "line": 166,
+            "text": "13:14:15.262  SCRIPT       : [RICON_LEASE_QUERY_DIAG] max=2147483647 minus5=2147483642 heldIssued=100 heldTTL=10 last=100"
+          },
+          {
+            "line": 167,
+            "text": "13:14:15.262  SCRIPT       : [RICON_LEASE_QUERY_DIAG] queryMax=0 queryBefore=0"
+          }
+        ],
+        "steam_api_init_failure_lines": [],
+        "nonfatal_stats_failure_lines": [
+          175
+        ],
+        "scope": "OLD_CANONICAL_PRE_BATCH_PURE_FIXTURES_ONLY"
+      },
+      {
+        "id": "old_flow_fixed",
+        "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-lease-query-flow-fix-20261110-131533/console.log",
+        "sha256": "01b4e6390eba4b55ea6507486764a8a9fae3bab5ed84e985bf50583136e3a2f8",
+        "bytes": 21875,
+        "line_count": 214,
+        "root_reported_process_exit_code": 0,
+        "exit_code_provenance": "Root actual runner observation, Agora8355/8356 and task; completion marker independently read",
+        "script_error_lines": [],
+        "modules": [
+          {
+            "name": "Workbench",
+            "files": 18,
+            "classes": 36,
+            "crc32": "90ce0460",
+            "log_line": 135
+          },
+          {
+            "name": "GameLib",
+            "files": 512,
+            "classes": 704,
+            "crc32": "a2fafa86",
+            "log_line": 136
+          },
+          {
+            "name": "WorkbenchGame",
+            "files": 195,
+            "classes": 673,
+            "crc32": "2ba39cc3",
+            "log_line": 157
+          },
+          {
+            "name": "Game",
+            "files": 5798,
+            "classes": 11595,
+            "crc32": "1c48eb1d",
+            "log_line": 158
+          }
+        ],
+        "suites": {
+          "ordered": {
+            "checks": 40,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 166
+          },
+          "capture": {
+            "checks": 59,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 167
+          },
+          "lease_query": {
+            "checks": 67,
+            "failures": 0,
+            "first_failure": 0,
+            "log_line": 168
+          }
+        },
+        "completion": {
+          "line": 169,
+          "status": "PASS"
+        },
+        "failed_diagnostic_check_ids": [],
+        "diagnostic_state_lines": [
+          {
+            "line": 164,
+            "text": "13:15:43.054  SCRIPT       : [RICON_LEASE_QUERY_DIAG] max=2147483647 minus5=2147483642 heldIssued=2147483642 heldTTL=10 last=100"
+          },
+          {
+            "line": 165,
+            "text": "13:15:43.054  SCRIPT       : [RICON_LEASE_QUERY_DIAG] queryMax=1 queryBefore=0"
+          }
+        ],
+        "steam_api_init_failure_lines": [],
+        "nonfatal_stats_failure_lines": [
+          170
+        ],
+        "scope": "OLD_CANONICAL_PRE_BATCH_PURE_FIXTURES_ONLY"
+      }
+    ],
+    "qualified_suite_counts": {
+      "ordered": 40,
+      "capture": 59,
+      "lease_query": 67
+    },
+    "scope_not_included": [
+      "RICON_TemporalSnapshotFixtures.RunAll raw snapshot/clock/validate/receiver/retained limits suite",
+      "new capture batch fixtures/API",
+      "real native manager role/player/lease source correctness",
+      "S3b/schema2 producer co-commit",
+      "wire/RPC/audio/content/load"
+    ],
+    "getter_lifecycle_sha_unchanged": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+    "flow_correction": "Only fixture ForceTiming and callsite inline-if/return/setup separated into explicit multiline blocks; production QueryActiveLease unchanged. No general engine/VM defect claimed.",
+    "pass_fixture_pin": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/before/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "986eaf5b051b17521554de2c0b9f21644a697102e77bcd033b79b79bf04321bc",
+      "bytes": 10168
+    },
+    "current_cleanup_fixture_pin": {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "246b4ce2ded3c30cd1f36f2236ff30e34d9956613d56c66da63daf4869cb8884",
+      "bytes": 9792
+    },
+    "cleanup_diff": [
+      "--- \n",
+      "+++ \n",
+      "@@ -1,2 +1,2 @@\n",
+      "-//! TEST_ONLY source fixtures for the inserted production getter. Enforce compile/execution NOT_RUN.",
+      "+//! TEST_ONLY pure fixtures for the production getter; invoked explicitly, with no autorun.",
+      " class RICON_LifecycleLeaseQueryProbeMachine : RICON_LifecycleStateMachine",
+      "@@ -158,4 +158,2 @@\n",
+      " \t\tmachine.ForceTiming(int.MAX - 5, 10);",
+      "-\t\tPrintFormat(\"[RICON_LEASE_QUERY_DIAG] max=%1 minus5=%2 heldIssued=%3 heldTTL=%4 last=%5\", int.MAX, int.MAX - 5, machine.Held(1).m_iIssuedAtMs, machine.Held(1).m_iTtlMs, machine.LastObservedNowMs());",
+      "-\t\tPrintFormat(\"[RICON_LEASE_QUERY_DIAG] queryMax=%1 queryBefore=%2\", machine.QueryActiveLease(1, int.MAX) != null, machine.QueryActiveLease(1, int.MAX - 6) != null);",
+      " \t\tCheck(machine.QueryActiveLease(1, int.MAX) != null && machine.QueryActiveLease(1, int.MAX - 6) == null);"
+    ],
+    "current_cleanup_fixture_executed_by_pass_log": false,
+    "source_pin_attribution": "Logs have module CRCs, not per-file SHAs. Source attribution uses Root run chronology and exact archived before pins; current cleanup/new batch not retroactively assigned to the pass log."
+  },
+  "archived_before_pins": [
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/before/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "986eaf5b051b17521554de2c0b9f21644a697102e77bcd033b79b79bf04321bc",
+      "bytes": 10168
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/before/RICON_TemporalAuthorityJournal.c",
+      "sha256": "6211c762a54b90a06bf7c7fa2b6fd0d54703b15026a9e3c1febc0ca6b239a937",
+      "bytes": 14573
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/before/RICON_CommsManagerComponent.c",
+      "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea",
+      "bytes": 16516
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/before/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "f4a9bf5f74e88ca0970a7f7043d91c6e9a183738d641a5b8ef86dfe01808860c",
+      "bytes": 1856
+    }
+  ],
+  "fixture_patch_pins": [
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/lease-query-diagnostics.patch",
+      "sha256": "869a86e2cf3c3d507196c1d499f8dc762e531b67ba9f37a7b630d86c5bf64214",
+      "bytes": 875
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/lease-query-fixture-flow-fix.patch",
+      "sha256": "ce70a3b0a99542f4b7b698c81c075ae3f1dbfe40f4fe740dc02c89e471fc461c",
+      "bytes": 712
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/lease-query-diagnostics-cleanup.patch",
+      "sha256": "a16aafe20430f49b0e0a9a13662822ff623edde8a787b87b320eaf98013a19ff",
+      "bytes": 763
+    }
+  ],
+  "immutable_historical_evidence_pins": [
+    {
+      "repo_relative": "docs/evidence/E-ct10-sdk-compile-20261110.md",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/E-ct10-sdk-compile-20261110.md",
+      "sha256": "922331b27cbff3c912afb647508a269c12a1e3c0ed20710b76b0c7965f42464a",
+      "bytes": 13850
+    },
+    {
+      "repo_relative": "docs/evidence/receipts/ct10-sdk-compile-result-20261110.json",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/receipts/ct10-sdk-compile-result-20261110.json",
+      "sha256": "8b37e9f8bb10f4057c54074690aef9829e3ebf313bcdc3fdce6b91eb82bc6584",
+      "bytes": 29016
+    },
+    {
+      "repo_relative": "docs/evidence/E-ct10-integration-source-20261110.md",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/E-ct10-integration-source-20261110.md",
+      "sha256": "082c3981c33eec0cfb35798ec56faafe469cd67778b963a5b825d0e225869c67",
+      "bytes": 8117
+    },
+    {
+      "repo_relative": "docs/evidence/receipts/ct10-integration-source-result-20261110.json",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/receipts/ct10-integration-source-result-20261110.json",
+      "sha256": "5e83fd112e12c264c917769f4560495e38a73920e53d5648ece9359f7a781267",
+      "bytes": 6198
+    }
+  ],
+  "agy": {
+    "actual_verdict_id": 8357,
+    "scope": "SOURCE_AND_DIAG_LOG_VERIFIED for five setup failures and unchanged production getter",
+    "pass_log_independent_followup_received": true,
+    "note": "8357 source+diag review was earlier; actual final log/source QA is8365 and Root-forwarded scope-agree8369, without Agy SDK run/model switch/independent SHA claim",
+    "final_pass_log_verdict": 8365
+  },
+  "state_boundary": "Old canonical166-check pass, controlled-dependency C#69/17/4 and new actual five-suite284-check Enforce pure pass are distinct evidence; no native manager authority/producer/wire/voice proof.",
+  "canonical_pins_at_initial_old_snapshot": [
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+      "bytes": 45601
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "sha256": "6211c762a54b90a06bf7c7fa2b6fd0d54703b15026a9e3c1febc0ca6b239a937",
+      "bytes": 14573
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea",
+      "bytes": 16516
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "sha256": "5104e10f99d5d3b7211034d07a6d9fffd73c0795b0cab2c429f27a3b9e88d28a",
+      "bytes": 19386
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c",
+      "sha256": "dfaad918d251206d35dd5dc5fc8371fd2a9b69a38d164e3121ffbcb8ca985c14",
+      "bytes": 4825
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "246b4ce2ded3c30cd1f36f2236ff30e34d9956613d56c66da63daf4869cb8884",
+      "bytes": 9792
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalSnapshotFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalSnapshotFixtures.c",
+      "sha256": "eabbccaa9a60d770595ad14f9dfe812019c6ef76e8955f230340772c961de8aa",
+      "bytes": 11593
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "f4a9bf5f74e88ca0970a7f7043d91c6e9a183738d641a5b8ef86dfe01808860c",
+      "bytes": 1856
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/run.ps1",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/run.ps1",
+      "sha256": "0c6934205d389002a6194e7d9df2ec4c5d375bb17bacdbe80eea88a251e6fb90",
+      "bytes": 2584
+    }
+  ],
+  "source_extracted_capture_and_manager_check": {
+    "source_scope": "LOCAL_CAPTURE_BATCH_ONLY",
+    "checker_scope": "SOURCE_EXTRACTED_CAPTURE_AND_MANAGER_ALGORITHM_ONLY",
+    "checker_result": {
+      "reported_by": "Root actual C# run; Agora8354 and direct task",
+      "status": "PASS",
+      "literal_assertions": 69,
+      "actual_legacy_single_cases": 17,
+      "semantic_mutants": [
+        "PrefixCommit",
+        "TransientBudget",
+        "SnapshotAlias",
+        "SingleLoop"
+      ],
+      "documentation_rerun": false
+    },
+    "actual_extracted_bodies": [
+      "journal capture/plan/commit and single wrapper",
+      "manager single/batch Prepare/Capture code and IsAuthority body",
+      "current QueryActiveLease and FindLease bodies",
+      "typed binding/Expected/limits/snapshot clone code"
+    ],
+    "controlled_dependencies_not_qualified": [
+      "TemporalSnapshots.Validate and CF/domain admission",
+      "RF descriptor/codec contents, size and clone controlled contract",
+      "SameSnapshot/equality Data serialization",
+      "Replication/native role",
+      "player state/generation/entity getters and lifecycle wrapper context",
+      "array/map/set host wrappers and source-to-C# syntax mapping"
+    ],
+    "checker_flags": {
+      "validation_and_rf_codec_and_snapshot_equality_stubbed": true,
+      "native_role_and_player_context_stubbed": true,
+      "actual_lease_query_extracted": true,
+      "enforce_executed": false,
+      "workbench_started": false,
+      "producer_commit_proven": false
+    },
+    "independent_repeat": {
+      "agora": 8362,
+      "literal_assertions": 69,
+      "legacy_single_cases": 17,
+      "semantic_mutants": 4,
+      "scope": "SOURCE_EXTRACTED_CAPTURE_AND_MANAGER_ALGORITHM_ONLY"
+    },
+    "checker_source_pins": [
+      {
+        "stage_relative": "core/RICON_TemporalAuthorityJournal.c",
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/core/RICON_TemporalAuthorityJournal.c",
+        "sha256": "7a0c694c75e1e6906b46c78400ed20f320a7dfa0cbd22daa47e8d70b9aaeb434",
+        "bytes": 17899
+      },
+      {
+        "stage_relative": "RICON_CommsManagerComponent.c",
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/RICON_CommsManagerComponent.c",
+        "sha256": "9ee052bfd2a66982764c6e7277e03105494fa0679aa4149eace79652a10d1c85",
+        "bytes": 18633
+      },
+      {
+        "stage_relative": "check_capture_batch.ps1",
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/check_capture_batch.ps1",
+        "sha256": "00ee803396d2765eccdfae33ec7d5b18b4db5248ae02aa94ceb3b6d8946c517d",
+        "bytes": 24732
+      }
+    ]
+  },
+  "final_observation_utc": "2026-11-10T10:45:21.249445+00:00",
+  "final_observation_finished_utc": "2026-11-10T10:45:21.257153+00:00",
+  "final_canonical_pins": [
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+      "bytes": 45601
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "sha256": "7a0c694c75e1e6906b46c78400ed20f320a7dfa0cbd22daa47e8d70b9aaeb434",
+      "bytes": 17899
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "sha256": "9ee052bfd2a66982764c6e7277e03105494fa0679aa4149eace79652a10d1c85",
+      "bytes": 18633
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "sha256": "5104e10f99d5d3b7211034d07a6d9fffd73c0795b0cab2c429f27a3b9e88d28a",
+      "bytes": 19386
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_LinkTypes.c",
+      "sha256": "dfaad918d251206d35dd5dc5fc8371fd2a9b69a38d164e3121ffbcb8ca985c14",
+      "bytes": 4825
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "246b4ce2ded3c30cd1f36f2236ff30e34d9956613d56c66da63daf4869cb8884",
+      "bytes": 9792
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalSnapshotFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalSnapshotFixtures.c",
+      "sha256": "eabbccaa9a60d770595ad14f9dfe812019c6ef76e8955f230340772c961de8aa",
+      "bytes": 11593
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalCaptureBatchFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalCaptureBatchFixtures.c",
+      "sha256": "f198355488ce4fb69fedfdf58242f595e8976ac2e6402f46ae8fd16291e20054",
+      "bytes": 11577
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "39061126199a2f0be59524f7b6e0f5489955f073a0015a7f4d9f003b74f68934",
+      "bytes": 2734
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/run.ps1",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/run.ps1",
+      "sha256": "0c6934205d389002a6194e7d9df2ec4c5d375bb17bacdbe80eea88a251e6fb90",
+      "bytes": 2584
+    }
+  ],
+  "final_capture_batch": {
+    "scope": "LOCAL_CAPTURE_BATCH_ONLY",
+    "status": "PURE_JOURNAL_RECEIVER_CLOCK_LIFECYCLE_FIXTURES_PASS",
+    "published_source_observed": true,
+    "initial_compile_failure": {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-capture-batch-all-20261110-133345/console.log",
+      "sha256": "7cc2cb18067fb627044e49da3705a161ea18b4010f9f0aacba25ac90c9346495",
+      "bytes": 22731,
+      "line_count": 224,
+      "script_error_lines": [
+        146,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        162,
+        163,
+        167,
+        168,
+        169
+      ],
+      "direct_ricon_script_errors": [
+        {
+          "line": 146,
+          "message": "13:33:50.996    SCRIPT    (E): @\"Scripts/Game/RICON_Tests/RICON_TemporalCaptureBatchFixtures.c,130\": Not enough parameters in function 'RICON_LifecycleResult'"
+        }
+      ],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 136
+        }
+      ],
+      "suites": {},
+      "completion_markers": [],
+      "root_observed_sdk_process_exit_code": 0,
+      "root_observed_runner_exit_code": 1,
+      "exit_code_provenance": "Root direct report/owned terminal; log contents independently read by Docs",
+      "non_script_error_diagnostics": [
+        {
+          "line": 174,
+          "message": "13:33:51.422   ENGINE    (E): Unable to initialize a game/gamelib. Some workbench features will not work."
+        },
+        {
+          "line": 180,
+          "message": "13:33:52.797  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 200,
+          "message": "13:33:53.276 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 201,
+          "message": "13:33:53.276 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 202,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 203,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 204,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 205,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 206,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 207,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 208,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 209,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 210,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 211,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 212,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 213,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 214,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 215,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 216,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 217,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 218,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 219,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 220,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 221,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 222,
+          "message": "13:33:53.276 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 223,
+          "message": "13:33:53.276 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 224,
+          "message": "13:33:53.276 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "steam_api_init_failure_lines": []
+    },
+    "constructor_fixture_only_patch": {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/batch-fixture-constructor-fix.patch",
+      "sha256": "cdc82dcd80648ab56987d0c41817c13a61f78b13d4ead54f36646de542bf8d7e",
+      "bytes": 395
+    },
+    "constructor_change_byte_exact_dfb_to_f198": true,
+    "final_actual_sdk_log": {
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-capture-batch-ctor-fix-20261110-133427/console.log",
+      "sha256": "925bcd35db99d53327074607de3ca4a87119b18e2a1c4ebf4e1f6a1312fff3b9",
+      "bytes": 21876,
+      "line_count": 214,
+      "script_error_lines": [],
+      "direct_ricon_script_errors": [],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 135
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 136
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "bb0c914c",
+          "log_line": 157
+        },
+        {
+          "name": "Game",
+          "files": 5799,
+          "classes": 11602,
+          "crc32": "4bae5ed1",
+          "log_line": 158
+        }
+      ],
+      "suites": {
+        "snapshot": {
+          "checks": 57,
+          "failures": 0,
+          "first_failure": 0,
+          "log_line": 164
+        },
+        "ordered": {
+          "checks": 40,
+          "failures": 0,
+          "first_failure": 0,
+          "log_line": 165
+        },
+        "capture": {
+          "checks": 59,
+          "failures": 0,
+          "first_failure": 0,
+          "log_line": 166
+        },
+        "lease_query": {
+          "checks": 67,
+          "failures": 0,
+          "first_failure": 0,
+          "log_line": 167
+        },
+        "capture_batch": {
+          "checks": 61,
+          "failures": 0,
+          "first_failure": 0,
+          "log_line": 168
+        }
+      },
+      "completion_markers": [
+        {
+          "line": 169,
+          "status": "PASS"
+        }
+      ],
+      "root_observed_sdk_process_exit_code": 0,
+      "root_observed_runner_exit_code": 0,
+      "exit_code_provenance": "Root direct report/owned terminal; log contents independently read by Docs",
+      "non_script_error_diagnostics": [
+        {
+          "line": 170,
+          "message": "13:34:36.304  PLATFORM  (E): Steamworks: RequestCurrentStats failed"
+        },
+        {
+          "line": 190,
+          "message": "13:34:36.539 RESOURCES (E): ==== Resource leaks ===="
+        },
+        {
+          "line": 191,
+          "message": "13:34:36.539 RESOURCES (E): UI/Fonts/RobotoCondensed/RobotoCondensed_Regular.edds   1"
+        },
+        {
+          "line": 192,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_place_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 193,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_transform_geometry_uiuc.edds   1"
+        },
+        {
+          "line": 194,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/cursors_atlas.edds   1"
+        },
+        {
+          "line": 195,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_objective_uiuc.edds   1"
+        },
+        {
+          "line": 196,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_waypoint_uiuc.edds   1"
+        },
+        {
+          "line": 197,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_rotate_uiuc.edds   1"
+        },
+        {
+          "line": 198,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 199,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_transform_snap_uiuc.edds   1"
+        },
+        {
+          "line": 200,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_move_camera_uiuc.edds   1"
+        },
+        {
+          "line": 201,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_wait_uiuc.edds   1"
+        },
+        {
+          "line": 202,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_transform_disabled_uiuc.edds   1"
+        },
+        {
+          "line": 203,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_transform_uiuc.edds   1"
+        },
+        {
+          "line": 204,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_place_uiuc.edds   1"
+        },
+        {
+          "line": 205,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_select_uiuc.edds   1"
+        },
+        {
+          "line": 206,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/Cursor/arrow_raw_uiuc.edds   1"
+        },
+        {
+          "line": 207,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/Panels/Shadow/panels_fadedBackground-16-100_atlas.edds   1"
+        },
+        {
+          "line": 208,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/Panels/Outline/panels_roundedOutline_atlas.edds   1"
+        },
+        {
+          "line": 209,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/Panels/panels_roundedCorners_atlas.edds   1"
+        },
+        {
+          "line": 210,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/WeaponInfo/panel_style_magazines.edds   1"
+        },
+        {
+          "line": 211,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/debugUI.edds   1"
+        },
+        {
+          "line": 212,
+          "message": "13:34:36.539 RESOURCES (E): UI/Textures/WidgetLibrary/ScrollBarRectangles.edds   1"
+        },
+        {
+          "line": 213,
+          "message": "13:34:36.539 RESOURCES (E): UI/Imagesets/default.edds   1"
+        },
+        {
+          "line": 214,
+          "message": "13:34:36.540 RESOURCES (E): ui/fonts/robotomono_msdf_28.edds   1"
+        }
+      ],
+      "steam_api_init_failure_lines": []
+    },
+    "suite_checks": {
+      "snapshot": 57,
+      "ordered": 40,
+      "capture": 59,
+      "lease_query": 67,
+      "capture_batch": 61
+    },
+    "total_assertions": 284,
+    "cleanup_query_fixture_246_executed_in_this_run": true,
+    "manager_compiled": true,
+    "manager_native_role_admission_enforce_executed": false,
+    "manager_runtime_status": "NOT_RUN/NOT_QUALIFIED in native Enforce authority context; compilation/source QA plus C# manager bodies with controlled Replication/player stubs only",
+    "fixture_call_graph": "Batch RunAll calls only AtomicAndDuplicateCases, FinalBudgetCases, FloorsAndIdentityCases, InputsCopiesAndSingleCodes (journal paths), not native manager role/admission",
+    "negative_runner_guard": "SDK process0 alone did not pass: initial compile failure wrapper1/no done; final SDK0+runner0+all five suite counters+donePASS required",
+    "reviewer": {
+      "source_repeat": 8362,
+      "final_sdk_and_ctor_review": 8364,
+      "report_pin": {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-capture-batch-20261110/review/IMPLEMENTATION_REVIEW_RU.md",
+        "sha256": "01184f071b689f0d05c627d3c701a15f54d398b238571123c052994185cc1c03",
+        "bytes": 19538
+      }
+    },
+    "agy": {
+      "verdict": 8365,
+      "scope_clarification_root": 8367,
+      "actual_read_paths": [
+        "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-capture-batch-ctor-fix-20261110-133427/console.log",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+        "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+        "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalCaptureBatchFixtures.c"
+      ],
+      "source_pins": "Root-provided pins; independent SHA computation not attributed to Agy",
+      "sdk_run_performed_by_agy": false,
+      "model_switch_performed_for_this_review": false,
+      "review_scope": "Source+actual log QA, not actual native manager role execution",
+      "scope_agreement_verdict": 8369,
+      "scope_agreement_provenance": "Root direct report of actual Agora8369 scope agreement; message not visible in Documentation read since8366",
+      "scope_agreed": "Actual five-suite journal/receiver/clock/Lifecycle fixture PASS; native manager role/admission NOT_RUN, only source/C# controlled-context QA"
+    },
+    "still_open": [
+      "real S3b/schema2 producer/registry state owner co-commit",
+      "source producer commit/complete Expected truth/RPC provenance",
+      "actual native manager authority/player admission Enforce execution",
+      "epoch retirement/coordinator/wire",
+      "Play/world/server/voice/audio/content/calibration/load/full Goal"
+    ]
+  },
+  "frozen_utc": "2026-11-10T10:49:46.073053+00:00",
+  "graph_work": "Not started by Documentation in this capture-batch task; Root owns separate graph-root output",
+  "root_publication": {
+    "publisher": "codex.lead",
+    "originalDraftShaPinsVerified": 42,
+    "historicalInitialPinsResolvedToExactArchives": 3,
+    "actualSdkGroups": 5,
+    "actualSdkChecks": 284,
+    "constructorFixByteExact": true,
+    "graphReviewAgoras": [
+      8372
+    ],
+    "graphReviewSha256": "90423562f781abe3f4267db092947de326e7fe46e7e25d0fe6a5ce9e6d5890c4",
+    "agyVerdict": 8365,
+    "rootScopeCounter": 8367,
+    "agyScopeAgreementIndependentlyReadByRoot": 8369,
+    "nativeManagerRuntimeExecuted": false,
+    "goalComplete": false
+  }
+}

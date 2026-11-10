@@ -1,0 +1,44 @@
+{
+  "image_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "method": "Exact BaseSoundComponent method registration context plus only one35byte sharedfunctionalwrapper; read-only MSVC ranges",
+  "records": [
+    {
+      "name": "basesound-registration",
+      "range": [
+        "0x141362bf0",
+        "0x141362e45"
+      ],
+      "role": "bounded method registration context",
+      "raw_hex": "48895c2408574883ec30498bf9c644242001488bda4c8d0df441ddff488bd74c8d05ba6d8100488bcbe8821554ff4c8d0dcbaceaffc6442420014c8d05ff707d00488bd7488bcbe8641554ff4c8d0dcdfbd9ffc6442420014c8d0571717d00488bd7488bcbe8461554ff4c8d0d8faceaffc6442420014c8d05cb005500488bd7488bcbe8281554ff4c8d0de17ff1fec6442420014c8d05c5b15000488bd7488bcbe80a1554ff4c8d0dc37ff1fec6442420014c8d059f005500488bd7488bcbe8ec1454ff4c8d0da5aceaffc6442420014c8d0561707d00488bd7488bcbe8ce1454ff4c8d0d87aceaffc6442420014c8d05c7255300488bd7488bcbe8b01454ff4c8d0d697ff1fec6442420014c8d0575707d00488bd7488bcbe8921454ff4c8d0d4b7ff1fec6442420014c8d0567707d00488bd7488bcbe8741454ff4c8d0d2d7ff1fec6442420014c8d0559095700488bd7488bcbe8561454ff4c8d0d0f010000c6442420014c8d053b707d00488bd7488bcbe8381454ff4c8d0d4164f1fec6442420014c8d05c5ea7c00488bd7488bcbe81a1454ffc6442420014c8d0d1e64f1fe488bd74c8d0514707d00488bcbe8fc1354ff4c8d0d55010000c6442420014c8d05a96f7d00488bd7488bcbe8de1354ff4c8d0df7000000c6442420014c8d05a30d7200488bd7488bcbe8c01354ff4c8d0d797ef1fec6442420014c8d052de17c00488bd7488bcbe8a21354ff4c8d0d5b7ef1fec6442420014c8d05cf6b8100488bd7488bcbe8841354ff4c8d0ded8232ffc6442420014c8d05b96b8100488bd7488bcbe8661354ff488b5c24404883c4305fc3",
+      "raw_sha256": "9ff3b783ee81acda39a190eefad15409eebf2acfa0bbd1e468c1874b9e2890fa",
+      "asm_sha256": "dc784296d7f2b8605f84107fbfd74ec0ddcb548ca15d45e2e4f54e2d2c0c6519",
+      "decoded_bytes_verified_against_raw": 597,
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x141362BF0,0x141362E44",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ]
+    },
+    {
+      "name": "public-writer-wrapper",
+      "range": [
+        "0x14027ac60",
+        "0x14027ac83"
+      ],
+      "role": "initial functional body1sharedwrapper",
+      "raw_hex": "40534883ec2033d2488bd9e890236100488b0b488bd0488b094883c4205be92d206100",
+      "raw_sha256": "b0e9c464a3d6a99ec9138d76da51d9993000d0f6142487fe052f4f7267388729",
+      "asm_sha256": "120afbc708d7821a099aecc2d97a5eea7be3e7f8399e62f9eeea569083ab9555",
+      "decoded_bytes_verified_against_raw": 35,
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x14027AC60,0x14027AC82",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ]
+    }
+  ]
+}

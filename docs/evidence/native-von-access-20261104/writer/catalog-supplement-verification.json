@@ -1,0 +1,25 @@
+{
+  "supplement_sha256": "f215b2a3da11663e1521813ef212644ac875f745952729203141fa72ab05fe9b",
+  "main_proof_sha256_unchanged": "6405135bf7f5aefdfe08e6ada15a432291ca5841d6d61942fc9817e45103e6d9",
+  "new_decoded_bytes_verified": 115,
+  "local_links_valid": 4,
+  "frozen_sources_reused": [
+    {
+      "path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\von-re-20261104\\world\\environment_sources\\engine_sound_constructor.dumpbin.asm",
+      "size": 6934,
+      "sha256": "04913841e964b612b62182eb30b511f777a6ed8d0b25a43178d746a7e2809bd4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\VoN_ComponentConstructor.c",
+      "size": 2519,
+      "sha256": "a1a46cebec5aec682e19adc1546d70bcfdc7b5529306dc99c69c5d586282402c"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch01f\\export\\VonStream_ConstructorCandidate.c",
+      "size": 5124,
+      "sha256": "a627aeeb64aae08c451cbffa3f4f12789de288c1bdbb2df6cb40d812e729bef4"
+    }
+  ],
+  "next_callee_not_read": "141207F50:14120826B",
+  "runtime": "NOT_RUN"
+}

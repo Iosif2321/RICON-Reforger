@@ -1,0 +1,19 @@
+{
+  "range": [
+    "0x1409faf6d",
+    "0x1409faf88"
+  ],
+  "raw_pdata": "6daf9f0088af9f0038e5f401",
+  "raw_hex": "834b3801488b4b40488d5358e8320e4a00836338fe4883c4205bc3",
+  "raw_sha256": "5cb8ea210ff9a73474b06d7a2168f5ad9d3fa20ba626fa909cd91ccd13500bd8",
+  "asm_sha256": "9b043e85e158f4f1eef7d3067e7b13bb02fe4e027df93327b07e15417e70b530",
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x1409FAF6D,0x1409FAF87",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "decoded_bytes_verified_against_raw": 27,
+  "scope": "Third contiguous pdata fragment of same9FAEB0 function; earlier189B prefix notfullbody"
+}

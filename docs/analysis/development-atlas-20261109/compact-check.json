@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "before": {
+    "w": 900,
+    "h": 700,
+    "scrollW": 900,
+    "scrollH": 700,
+    "detailClosed": true
+  },
+  "detailFits": true,
+  "toolbarFits": true
+}

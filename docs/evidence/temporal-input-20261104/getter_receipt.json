@@ -1,0 +1,60 @@
+{
+  "image": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe",
+  "image_sha256": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "tool": "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+  "tool_sha256": "9a2bcd5343b2c1ab4dd4a906f673bc89d1dbe6812e1b3de7cc5c85223d9058eb",
+  "source_stat_unchanged": true,
+  "method": "Read-only DISASM:BYTES; RANGE uses inclusive end; exact raw .pdata and raw span verified; only2fixedfunctions",
+  "records": [
+    {
+      "name": "signal-scalar-getter",
+      "range": [
+        "0x140a1ac90",
+        "0x140a1ad26"
+      ],
+      "bytes": 150,
+      "raw_hex": "48895c24104489442418574883ec408bfa488bd9443b4114720e0f57c0488b5c24584883c4405fc3488b4118488d5424204889442468418bc8488b8048010000488b0cc8488d4424504889442420488d4424684889442428488d43f04889442430488d44246048894c24504881c1900000004889442438e8a4ceffff448b4424608bd7488bcbe855324800488b5c24584883c4405fc3",
+      "raw_sha256": "ba71bc9fd512c91e68e10b9212f28a7af70dddedb67515e998794a4c488490ee",
+      "exact_pdata_bytes": "90aca10026ada100ece7f401",
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x140A1AC90,0x140A1AD25",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ],
+      "exit_code": 0,
+      "instructions": 38,
+      "last_va": "0x140a1ad25",
+      "last_instruction": "C3                 ret",
+      "asm_path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-temporal-20261104\\binding\\signal-scalar-getter.dumpbin.asm",
+      "asm_sha256": "19678e5f1672828df06ab4a713d1f7cda7bd76186fab3f0efd54df64c7659b07",
+      "decoded_bytes_verified_against_raw": 150
+    },
+    {
+      "name": "project-variable-getter",
+      "range": [
+        "0x140a1ade0",
+        "0x140a1ae22"
+      ],
+      "bytes": 66,
+      "raw_hex": "40534883ec2080ba8200000000488bda7414488b9180000000488bcb4883c4205be9ea6e3f000fb68990000000e8de373e00488bd0488bcb4883c4205be9ce6e3f00",
+      "raw_sha256": "9fd0cba70911afaccb9d66bfb473e3ca7de3fd59823dd52ff2f713fb4c6f3acd",
+      "exact_pdata_bytes": "e0ada10022aea10010ecea01",
+      "command": [
+        "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+        "/NOLOGO",
+        "/DISASM:BYTES",
+        "/RANGE:0x140A1ADE0,0x140A1AE21",
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+      ],
+      "exit_code": 0,
+      "instructions": 17,
+      "last_va": "0x140a1ae1d",
+      "last_instruction": "E9 CE 6E 3F 00     jmp         0000000140E11CF0",
+      "asm_path": "C:\\Users\\Ded\\Documents\\Projects\\ARMA 3 Scripts\\Cellular System\\output\\ricon-von-temporal-20261104\\binding\\project-variable-getter.dumpbin.asm",
+      "asm_sha256": "39a3a7b26f662abcaeb809b6029e8b69e11984a9e2187658b57f7b9bbf6d4806",
+      "decoded_bytes_verified_against_raw": 66
+    }
+  ]
+}

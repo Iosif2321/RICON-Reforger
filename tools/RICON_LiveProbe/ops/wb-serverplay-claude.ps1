@@ -59,11 +59,116 @@ param([Parameter(Mandatory = $true)][string]$Tag,
       [switch]$CommunicationDiscovery,
       # V0 native input-shape discovery; never combines with D0.
       [switch]$VoNInputShapeDiscovery,
+      # Public wrong-frequency falsifier; never activates outside the native paired fixture.
+      [switch]$WrongFrequencyControl,
       # I0 getter-only mapping; mutually exclusive with emitters.
       [switch]$VoNMappingInspection,
+      # Passive NRX metadata only; paired MpTest with fresh bounded-discovery profiles.
+      [switch]$NativeRxObserve,
+      # Пассивная placement capability; typed transaction без REST, Pulse и capture.
+      [switch]$NativePairPlacement,
+      # Одна пассивная проверка состояния: A наблюдает, B меняет питание радио.
+      [switch]$NativeRadioPower,
+      # Capability-only, host-held file read; no pulse/Arm/capture.
+      [switch]$FileHandleCapabilityProbe,
+      # One loopback-only native REST capability request; no pulse/Arm/capture.
+      [switch]$RestCapabilityProbe,
+      # ?????? paired guarded REHEARSAL, ??? capture ? Plugins dispatch.
+      [switch]$RestGuardedRehearsal,
+      # Отдельный guarded capture; rehearsal и solo несовместимы.
+      [switch]$RestGuardedCapture,
+      # Свежая геометрия разделённой пары только для guarded capture.
+      [switch]$CaptureSeparatedPair,
+      # Единственный короткий intended stop 400 мс; длительность не передаётся B.
+      [switch]$CaptureShort400,
+      # Одна приватная поздняя 400/1000 проба; B получает прежние аргументы.
+      [switch]$CaptureBlindTrial,
+      # Нейтральное наблюдение собственного B; выбор A в этот flag не входит.
+      [switch]$BlindBObserve,
+      # Только пассивные sound callbacks собственного B в обычном RADIO опыте.
+      [switch]$VoNSoundObserve,
+      # Явные negative controls; разрешён только один внутри guarded capture.
+      [switch]$CaptureNoSend,
+      [switch]$CaptureWrongFrequency,
+      # Одна проверка OFF всего устройства B с заранее фиксированным бюджетом.
+      [switch]$CaptureBPowerOff,
+      # Отдельная near-fixture DIRECT, без RADIO readiness и иных controls.
+      [switch]$CaptureDirect,
+      # Explicit comparative control: host only, never changes the client.
+      [switch]$RestBackendControl,
+      # Narrow REST-only topology control; paired VoN remains required separately.
+      [switch]$RestSingleHostControl,
+      # Optional read-only engine settings and unarmed host-only pulse rehearsal.
+      [string]$EngineConfig = "",
+      [switch]$PulseRehearsal,
+      # Explicit one-attempt armed rehearsal; no capture mode.
+      [switch]$ArmPulseRehearsal,
+      [string]$PulseAttempt = "",
+      # Own-B local meter calibration only; host stays endpoint-only.
+      [switch]$AudioMeterProbe,
+      # Diagnostic control: retain meter setup but omit the two client meter flags.
+      [switch]$AudioMeterFlagOffControl,
+      # Optional host AutoSpawn hint, not a guarantee of the actual spawned faction.
+      [string]$AutoDeployFaction = "",
       [string]$CommunicationRun = "",
       [switch]$DryRun)
 
+if ($CaptureDirect -and (-not $RestGuardedCapture -or $AutoDeployFaction -cne "US" -or $CaptureSeparatedPair -or $NativeRadioPower -or $NativePairPlacement -or $CaptureNoSend -or $CaptureWrongFrequency -or $CaptureShort400 -or $CaptureBlindTrial -or $BlindBObserve -or $VoNSoundObserve -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $RestSingleHostControl)) { "BAD_CAPTURE_DIRECT_MODE"; exit 2 }
+if ($CaptureBPowerOff -and (-not $RestGuardedCapture -or (-not $CaptureSeparatedPair -and -not $CaptureDirect) -or $AutoDeployFaction -cne "US" -or $NativeRadioPower -or $NativePairPlacement -or $CaptureShort400 -or $CaptureBlindTrial -or $CaptureNoSend -or $CaptureWrongFrequency -or $VoNSoundObserve -or $BlindBObserve -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $RestSingleHostControl)) { "BAD_CAPTURE_B_POWER_OFF_MODE"; exit 2 }
+if ($NativeRadioPower -and (-not $Client -or -not $NativeRxObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $AutoDeployFaction -cne "US" -or $CommunicationRun -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z' -or $NativePairPlacement -or $RestCapabilityProbe -or $RestBackendControl -or $RestGuardedCapture -or $RestGuardedRehearsal -or $RestSingleHostControl -or $PulseRehearsal -or $ArmPulseRehearsal -or $PulseAttempt -or $CaptureSeparatedPair -or $CaptureShort400 -or $CaptureBlindTrial -or $CaptureNoSend -or $CaptureWrongFrequency -or $VoNSoundObserve -or $BlindBObserve -or $FileHandleCapabilityProbe -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $WrongFrequencyControl -or $AudioMeterProbe -or $AudioMeterFlagOffControl)) { "BAD_NATIVE_RADIO_POWER_MODE"; exit 2 }
+if ($VoNSoundObserve -and (-not $RestGuardedCapture -or -not $CaptureSeparatedPair -or $CaptureBlindTrial -or $CaptureShort400 -or $CaptureNoSend -or $CaptureWrongFrequency -or $NativePairPlacement -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $RestSingleHostControl)) { "BAD_VON_SOUND_OBSERVE_MODE"; exit 2 }
+if ($BlindBObserve -and (-not $RestGuardedCapture -or -not $CaptureSeparatedPair -or $CaptureShort400 -or $CaptureNoSend -or $CaptureWrongFrequency -or $NativePairPlacement -or $RestGuardedRehearsal -or $RestSingleHostControl)) { "BAD_BLIND_B_OBSERVE_MODE"; exit 2 }
+if ($CaptureBlindTrial -and (-not $BlindBObserve -or -not $RestGuardedCapture -or -not $CaptureSeparatedPair -or $CaptureShort400 -or $CaptureNoSend -or $CaptureWrongFrequency -or $NativePairPlacement -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $RestSingleHostControl)) { "BAD_CAPTURE_BLIND_MODE"; exit 2 }
+if ($CaptureShort400 -and (-not $RestGuardedCapture -or -not $CaptureSeparatedPair -or $CaptureNoSend -or $CaptureWrongFrequency -or $NativePairPlacement -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $RestSingleHostControl)) { "BAD_CAPTURE_SHORT400_MODE"; exit 2 }
+if ($CaptureSeparatedPair -and (-not $RestGuardedCapture -or $NativePairPlacement -or $AutoDeployFaction -cne "US")) { "BAD_CAPTURE_SEPARATED_PAIR_MODE"; exit 2 }
+if ($NativePairPlacement -and (-not $Client -or -not $NativeRxObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $AutoDeployFaction -cne "US" -or $CommunicationRun -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z' -or $RestCapabilityProbe -or $RestBackendControl -or $RestGuardedRehearsal -or $RestGuardedCapture -or $RestSingleHostControl -or $FileHandleCapabilityProbe -or $PulseRehearsal -or $ArmPulseRehearsal -or $PulseAttempt -or $CaptureNoSend -or $CaptureWrongFrequency -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $WrongFrequencyControl -or $AudioMeterProbe -or $AudioMeterFlagOffControl)) {
+    "BAD_NATIVE_PAIR_PLACEMENT_MODE"; exit 2
+}
+if (($CaptureNoSend -or $CaptureWrongFrequency) -and (-not $RestGuardedCapture -or ($CaptureNoSend -and $CaptureWrongFrequency))) {
+    "BAD_CAPTURE_CONTROL_MODE"; exit 2
+}
+if ($RestGuardedCapture -and (-not $RestCapabilityProbe -or -not $RestBackendControl -or -not $NativeRxObserve -or -not $Client -or $RestSingleHostControl -or $RestGuardedRehearsal -or $PulseRehearsal -or $ArmPulseRehearsal -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $CommunicationRun -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z' -or $PulseAttempt -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z')) {
+    "BAD_REST_GUARDED_CAPTURE_MODE"; exit 2
+}
+if ($RestGuardedRehearsal -and (-not $RestCapabilityProbe -or -not $RestBackendControl -or -not $NativeRxObserve -or -not $Client -or $RestSingleHostControl -or -not $PulseRehearsal -or -not $ArmPulseRehearsal -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $CommunicationRun -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z' -or $PulseAttempt -cnotmatch '\A[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\z')) {
+    "BAD_REST_GUARDED_REHEARSAL_MODE"; exit 2
+}
+if ($RestSingleHostControl -and (-not $RestCapabilityProbe -or -not $RestBackendControl -or -not $NativeRxObserve -or $Client -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) { "BAD_REST_SINGLE_HOST_MODE"; exit 2 }
+if ($RestBackendControl -and -not $RestCapabilityProbe) { "BAD_REST_BACKEND_CONTROL_MODE"; exit 2 }
+if ($RestCapabilityProbe -and (-not $NativeRxObserve -or (-not $Client -and -not $RestSingleHostControl) -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $FileHandleCapabilityProbe -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $WrongFrequencyControl -or $AudioMeterProbe -or $AudioMeterFlagOffControl -or (($PulseRehearsal -or $ArmPulseRehearsal -or $PulseAttempt) -and -not ($RestGuardedRehearsal -or $RestGuardedCapture)))) {
+    "BAD_REST_CAPABILITY_MODE"; exit 2
+}
+if ($FileHandleCapabilityProbe -and (-not $NativeRxObserve -or -not $Client -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent" -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $WrongFrequencyControl -or $AudioMeterProbe -or $AudioMeterFlagOffControl -or $PulseRehearsal -or $ArmPulseRehearsal -or $PulseAttempt)) {
+    "BAD_FILE_HANDLE_CAPABILITY_MODE"; exit 2
+}
+if ($ArmPulseRehearsal -and (-not $PulseRehearsal -or -not $NativeRxObserve -or -not $Client -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_ARMED_REHEARSAL_MODE"; exit 2
+}
+if ($EngineConfig -and (-not $NativeRxObserve -or (-not $Client -and -not $RestSingleHostControl) -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_ENGINE_CONFIG_MODE"; exit 2
+}
+if (($PulseRehearsal -or $PulseAttempt) -and -not $RestGuardedCapture -and (-not $PulseRehearsal -or -not $NativeRxObserve -or -not $Client -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_PULSE_REHEARSAL_MODE"; exit 2
+}
+if ($PulseRehearsal -and $PulseAttempt -cnotmatch '\A[A-Za-z0-9_.-]{1,64}\z') { "BAD_PULSE_ATTEMPT"; exit 2 }
+if ($AudioMeterFlagOffControl -and (-not $AudioMeterProbe -or -not $Client -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_AUDIO_METER_FLAGOFF_MODE"; exit 2
+}
+if ($AudioMeterProbe -and (-not $Client -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $NativeRxObserve -or $WrongFrequencyControl -or $AutoDeployFaction -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_AUDIO_METER_MODES"; exit 2
+}
+if ($NativeRxObserve -and ((-not $Client -and -not $RestSingleHostControl) -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $WrongFrequencyControl -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent")) {
+    "BAD_NRX_MODES"; exit 2
+}
+if ($AutoDeployFaction -and -not $NativeRxObserve) { "BAD_NRX_FACTION_MODE"; exit 2 }
+if ($AutoDeployFaction -and $AutoDeployFaction -cnotmatch '\A[A-Za-z][A-Za-z0-9_]{0,31}\z') { "BAD_NRX_FACTION_KEY"; exit 2 }
+if ($WrongFrequencyControl -and (-not $VoNInputShapeDiscovery -or -not $Client -or $ReadAuthOnly -or $AudioObserve -or $CommunicationDiscovery -or $VoNMappingInspection -or $NativeRxObserve)) {
+    "BAD_WRONG_FREQUENCY_MODE"; exit 2
+}
+$restGuarded = $RestGuardedRehearsal -or $RestGuardedCapture
+$armedPulse = $ArmPulseRehearsal -or $RestGuardedCapture
+$typedTransaction = $restGuarded -or $NativePairPlacement -or $NativeRadioPower
+$transactionAttemptId = if ($NativeRadioPower) { "RadioPower.1" } elseif ($NativePairPlacement) { "PairPlacement.1" } else { $PulseAttempt }
 . (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1")
 $steam = "C:\Program Files (x86)\Steam\steamapps\common"
 $wb = "$steam\Arma Reforger Tools\Workbench\ArmaReforgerWorkbenchSteamDiag.exe"
@@ -111,18 +216,39 @@ if ($OutDir.StartsWith($repo, [StringComparison]::OrdinalIgnoreCase)) { "OUTDIR_
 if ($Seconds -lt 60 -or $Seconds -gt 600 -or $MaxChildren -lt 0) { "BAD_LIMITS"; exit 2 }
 if ($Client -and $Seconds -lt 300) { "BAD_LIMITS (-Client needs -Seconds 300 or more)"; exit 2 }
 if ($Client -and $ReadAuthOnly) { "BAD_MODES (-ReadAuthOnly never reaches Play)"; exit 2 }
-$boundedDiscovery = $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection
-$discoveryModeCount = ([int][bool]$CommunicationDiscovery) + ([int][bool]$VoNInputShapeDiscovery) + ([int][bool]$VoNMappingInspection)
+$boundedDiscovery = $CommunicationDiscovery -or $VoNInputShapeDiscovery -or $VoNMappingInspection -or $NativeRxObserve -or $AudioMeterProbe
+$discoveryModeCount = ([int][bool]$CommunicationDiscovery) + ([int][bool]$VoNInputShapeDiscovery) + ([int][bool]$VoNMappingInspection) + ([int][bool]$NativeRxObserve) + ([int][bool]$AudioMeterProbe)
 if ($discoveryModeCount -gt 1) { "BAD_DISCOVERY_BOTH_MODES"; exit 2 }
-$discoveryArgument = if ($VoNMappingInspection) { "-riconVoNMapping=1" } elseif ($VoNInputShapeDiscovery) { "-riconVoNInputShape=1" } else { "-riconCommunicationDiscovery=1" }
-$discoveryPrefix = if ($VoNMappingInspection) { "i0-" } elseif ($VoNInputShapeDiscovery) { "v0-" } else { "d0-" }
+$discoveryArgument = if ($AudioMeterProbe) { "-riconAudioMeter=1" } elseif ($NativeRxObserve) { "-riconNativeRx=1" } elseif ($VoNMappingInspection) { "-riconVoNMapping=1" } elseif ($VoNInputShapeDiscovery) { "-riconVoNInputShape=1" } else { "-riconCommunicationDiscovery=1" }
+$discoveryRunArgument = if ($AudioMeterProbe) { "-riconAudioMeterRun" } elseif ($NativeRxObserve) { "-riconNativeRxRun" } else { "-riconCommunicationRun" }
+$discoveryPrefix = if ($AudioMeterProbe) { "meter-" } elseif ($NativeRxObserve) { "nrx-" } elseif ($VoNMappingInspection) { "i0-" } elseif ($VoNInputShapeDiscovery) { "v0-" } else { "d0-" }
 $d0RunId = ""
 if ($boundedDiscovery) {
-	if (-not $Client -or $ReadAuthOnly -or $AudioObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent") { "BAD_D0_MODES"; exit 2 }
+	if ((-not $Client -and -not $RestSingleHostControl) -or $ReadAuthOnly -or $AudioObserve -or $World -cne "{96A8AF57260A7392}worlds/MP/MpTest/MpTest.ent") { "BAD_D0_MODES"; exit 2 }
 	$d0RunId = $CommunicationRun
 	if (-not $d0RunId) { $d0RunId = $discoveryPrefix + (Get-Date -Format "yyyyMMdd-HHmmss") + "-" + [guid]::NewGuid().ToString("N").Substring(0, 8) }
 	if ($d0RunId -cnotmatch '\A[A-Za-z0-9_.-]{1,64}\z') { "BAD_D0_RUN"; exit 2 }
 } elseif ($CommunicationRun) { "BAD_D0_RUN_WITHOUT_MODE"; exit 2 }
+$engineConfigPath = ""
+$engineConfigSha = ""
+if ($EngineConfig) {
+    try {
+        if ($EngineConfig -match '[\x00-\x1F\x7F\x22\x27]') { throw "Unsafe config path" }
+        $resolvedEngineConfig = Resolve-Path -LiteralPath $EngineConfig -ErrorAction Stop
+        if ($resolvedEngineConfig.Provider.Name -cne "FileSystem") { throw "Config is not a filesystem leaf" }
+        $engineConfigPath = $resolvedEngineConfig.ProviderPath
+        if (-not [IO.File]::Exists($engineConfigPath) -or [IO.Path]::GetExtension($engineConfigPath) -ine ".conf") { throw "Config is not a conf leaf" }
+        $configNode = New-Object IO.FileInfo($engineConfigPath)
+        while ($configNode) {
+            if ($configNode.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Reparse config path" }
+            if ($configNode -is [IO.FileInfo]) { $configNode = $configNode.Directory } else { $configNode = $configNode.Parent }
+        }
+        $engineConfigSha = (Get-FileHash -LiteralPath $engineConfigPath -Algorithm SHA256 -ErrorAction Stop).Hash
+        if ($engineConfigSha -cnotmatch '\A[A-Fa-f0-9]{64}\z') { throw "Missing config digest" }
+    } catch { "BAD_ENGINE_CONFIG_PATH"; exit 2 }
+}
+$fhcToken = if ($FileHandleCapabilityProbe) { [guid]::NewGuid().ToString("N") } else { "" }
+$restToken = if ($RestCapabilityProbe) { [guid]::NewGuid().ToString("N") } else { "" }
 $logsDir = "ricon-$Tag-" + (Get-Date -Format "yyyyMMdd-HHmmss")
 $log = "$logsRoot\$logsDir\console.log"
 $raw = Join-Path $OutDir "$logsDir-raw.jsonl"
@@ -134,18 +260,57 @@ if ($boundedDiscovery) {
 	$hostLogsArgument = "`"$d0HostLogsPath`""
 	$log = Join-Path $d0HostLogsPath "console.log"
 }
-$argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend", "-wbModule=WorldEditor",
+$argList = @("-gproj", "`"$gp`"", "-addonsDir", "`"$addons`"", "-noBackend")
+if ($engineConfigPath) { $argList += @("-cfg", "`"$engineConfigPath`"") }
+$argList += @("-wbModule=WorldEditor",
 	"-logLevel", "verbose", "-logsDir", $hostLogsArgument, "-noFocus", "-maxFPS", "30",
 	"-plugin=RICON_LiveBenchLauncherPlugin", "-riconBenchWorld=`"$world`"", "-riconBenchMode=inspect",
 	"-riconEndpointProbe=1", "-riconBenchPluginStart=1", "-log-scr-checksum")
-if ($Client) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
+if ($Client -or $RestSingleHostControl) { $argList += @("-riconEndpointSamples=120", "-forceUpdate") }
 if ($AudioObserve) { $argList += "-riconAudioObserve=1" }
 $d0HostProfileName = ""
 if ($boundedDiscovery) {
 	$d0HostProfileName = "$logsDir-host-profile"
-	$argList += @($discoveryArgument, "-riconCommunicationRun=$d0RunId", "-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
+	if ($AudioMeterProbe) {
+		$argList += @("-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
+	} else {
+		$argList += @($discoveryArgument, "$discoveryRunArgument=$d0RunId", "-profile", "`"$(Join-Path $OutDir $d0HostProfileName)`"")
+	}
 }
-"ARGS " + ($argList -join " ").Replace($OutDir, "<scratchpad>")
+if ($PulseRehearsal) { $argList += @("-riconPulseMode=rehearsal", "-riconPulseAttempt=$PulseAttempt") }
+if ($FileHandleCapabilityProbe) { $argList += @("-riconFileHandleCapability=1", "-riconFileHandleRun=$d0RunId", "-riconFileHandleToken=$fhcToken") }
+if ($RestCapabilityProbe) { $argList += @("-riconRestCapability=1", "-riconRestPort=0", "-riconRestRun=$d0RunId", "-riconRestToken=$restToken") }
+if ($RestGuardedRehearsal) { $argList += "-riconRestRehearsalArm=1" }
+if ($RestGuardedCapture) { $argList += @("-riconRestCapturePulse=1", "-riconPulseMode=capture", "-riconPulseAttempt=$PulseAttempt") }
+if ($CaptureNoSend) { $argList += "-riconCaptureNoSend=1" }
+if ($CaptureWrongFrequency) { $argList += "-riconCaptureWrongFrequency=1" }
+if ($CaptureDirect) { $argList += "-riconCaptureDirect=1" }
+if ($CaptureBPowerOff) { $argList += "-riconCaptureBPowerOff=1" }
+if ($NativePairPlacement) { $argList += "-riconPairPlacement=1" }
+if ($NativeRadioPower) { $argList += "-riconNativeRadioPower=1" }
+if ($CaptureSeparatedPair) { $argList += "-riconCaptureSeparatedPair=1" }
+if ($CaptureShort400) { $argList += "-riconCaptureShort400=1" }
+if ($CaptureBlindTrial) { $argList += "-riconCaptureBlindTrial=1" }
+if ($WrongFrequencyControl) { $argList += "-riconVoNWrongFrequency=1" }
+# Vanilla may ignore this hint or fall back to a random faction; runtime readback is required.
+if ($AutoDeployFaction) { $argList += "-autodeployFaction=$AutoDeployFaction" }
+if ($AudioMeterProbe) { "AUDIO_METER role=B_ONLY run=$d0RunId hostModes=NONE" }
+if ($AudioMeterFlagOffControl) { "AUDIO_METER_CONTROL case=FLAG_OFF meterFlags=OMITTED" }
+if ($engineConfigPath) { "ENGINE_CONFIG sha256=$engineConfigSha" }
+if ($PulseRehearsal) { "PULSE_REHEARSAL attempt=$PulseAttempt autoArm=0 source=HOST_ONLY" }
+if ($NativePairPlacement) { "NATIVE_PAIR_PLACEMENT configured=1 passive=1 typed=1 attempt=$transactionAttemptId geometryAudit=REQUIRED" }
+if ($NativeRadioPower) { "NATIVE_RADIO_POWER configured=1 passive=1 typed=1 attempt=$transactionAttemptId stateAudit=REQUIRED" }
+if ($RestBackendControl) {
+    if (@($argList | Where-Object { $_ -ceq "-noBackend" }).Count -ne 1) { "BAD_REST_BACKEND_CONTROL_FLAG_COUNT"; exit 2 }
+    $argList = @($argList | Where-Object { $_ -cne "-noBackend" })
+    "REST_BACKEND_CONTROL hostFlagOmitted=1 clientUnchanged=1"
+}
+$hostArgsText = $argList -join " "
+if ($engineConfigPath) { $hostArgsText = $hostArgsText.Replace($engineConfigPath, "<engine-config>") }
+if ($FileHandleCapabilityProbe) { $hostArgsText = $hostArgsText.Replace($fhcToken, "<fhc-token>") }
+if ($RestCapabilityProbe) { $hostArgsText = $hostArgsText.Replace($restToken, "<rest-token>").Replace("-riconRestPort=0", "-riconRestPort=<ephemeral>") }
+if ($RestSingleHostControl) { "REST_SINGLE_HOST_CONTROL hostOnly=1 clientStarted=0" }
+"ARGS " + $hostArgsText.Replace($OutDir, "<scratchpad>")
 "RUNNER " + (Get-FileHash $PSCommandPath -Algorithm SHA256).Hash.Substring(0, 16) + " LIB " + (Get-FileHash (Join-Path $PSScriptRoot "wb-run-lib-claude.ps1") -Algorithm SHA256).Hash.Substring(0, 16)
 "LIMITS seconds=$Seconds watchdogSeconds=$($Seconds + 30) settle=$Settle maxChildren=$MaxChildren readAuthOnly=$ReadAuthOnly yesTotal=$yesTotal"
 "PLUGIN menu=`"$pluginMenu`" item=`"$pluginItem`""
@@ -160,21 +325,92 @@ if ($Client) {
 	"CLIENT exe=ArmaReforgerSteamDiag.exe ver=$((Get-Item $clientExe).VersionInfo.FileVersion) hostAddress=$($ha.result) candidates=$($ha.count) class=$(if ($ha.address) { AddrClass $ha.address } else { '-' })"
 	if ($ha.result -ne "OK") { "HOST_ADDRESS_$($ha.result) (no client is started)"; exit 3 }
 	$ppName = "$logsDir-peer1-profile"; $clName = "$logsDir-peer1-logs"
-	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"", "-window", "-screenWidth", "960", "-screenHeight", "540",
+	$clientArgs = @("-gproj", "`"$gp`"", "-addonsDir", "`"$clientAddons`"")
+	if ($engineConfigPath) { $clientArgs += @("-cfg", "`"$engineConfigPath`"") }
+	$clientArgs += @("-window", "-screenWidth", "960", "-screenHeight", "540",
 		"-maxFPS", "20", "-noFocus", "-forceUpdate", "-noBackend", "-username", $clientUser, "-client", $ha.address, "-profile", "`"$(Join-Path $OutDir $ppName)`"",
 		"-logsDir", "`"$(Join-Path $OutDir $clName)`"", "-logLevel", "verbose", "-log-scr-checksum", "-riconEndpointProbe=1")
 	if ($AudioObserve) { $clientArgs += "-riconAudioObserve=1" }
-	if ($boundedDiscovery) { $clientArgs += @($discoveryArgument, "-riconCommunicationRun=$d0RunId") }
-	"CLIENT_ARGS " + ($clientArgs -join " ").Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
+	if ($boundedDiscovery -and -not $AudioMeterFlagOffControl) { $clientArgs += @($discoveryArgument, "$discoveryRunArgument=$d0RunId") }
+	if ($WrongFrequencyControl) { $clientArgs += "-riconVoNWrongFrequency=1" }
+	if ($CaptureWrongFrequency) { $clientArgs += "-riconCaptureWrongFrequency=1" }
+	if ($CaptureDirect) { $clientArgs += "-riconCaptureDirect=1" }
+	if ($CaptureBPowerOff) { $clientArgs += "-riconCaptureBPowerOff=1" }
+	if ($NativePairPlacement) { $clientArgs += "-riconPairPlacement=1" }
+	if ($NativeRadioPower) { $clientArgs += "-riconNativeRadioPower=1" }
+	if ($CaptureSeparatedPair) { $clientArgs += "-riconCaptureSeparatedPair=1" }
+	if ($BlindBObserve) { $clientArgs += "-riconBlindBObserve=1" }
+	if ($VoNSoundObserve) { $clientArgs += "-riconVoNSoundObserve=1" }
+	$clientArgsText = $clientArgs -join " "
+	if ($engineConfigPath) { $clientArgsText = $clientArgsText.Replace($engineConfigPath, "<engine-config>") }
+	"CLIENT_ARGS " + $clientArgsText.Replace($ha.address, "<host PRIVATE_V4>").Replace($OutDir, "<scratchpad>")
 	$script:secrets = @($ha.address, $OutDir)
 }
+if ($RestSingleHostControl) { $script:secrets += $OutDir }
+if ($engineConfigPath) { $script:secrets += $engineConfigPath }
+if ($RestCapabilityProbe) { $script:secrets += $restToken }
+if ($FileHandleCapabilityProbe) { $script:secrets += $fhcToken }
+if ($armedPulse) {
+    try {
+        $pulseHelperPath = Join-Path $PSScriptRoot "pulse-rehearsal-coordinator.ps1"
+        $pulseGuardPath = Join-Path $PSScriptRoot "cutoff-guard.ps1"
+        if ((Get-FileHash -LiteralPath $pulseHelperPath -Algorithm SHA256 -ErrorAction Stop).Hash -cne "911E12C49032390A5479EBA4A3FE39465CF10A86F9D19C28E8C48F59FA4EC7E9") { throw "Helper pin" }
+        if ((Get-FileHash -LiteralPath $pulseGuardPath -Algorithm SHA256 -ErrorAction Stop).Hash -cne "C3D17A4E805783DD889D1C74EAE85EFEAE721F251149E8CE341730065663FD85") { throw "Guard pin" }
+    } catch { "BAD_ARMED_REHEARSAL_HELPERS"; exit 2 }
+    if ($RestGuardedCapture) { "GUARDED_CAPTURE optIn=1 autoArmAtStartup=0 oneAttempt=1 media=NOT_TESTED" } else { "ARMED_REHEARSAL optIn=1 mode=rehearsal autoArmAtStartup=0 oneAttempt=1" }
+}
+if ($FileHandleCapabilityProbe) {
+    try {
+        $fhcHelperPath = Join-Path $PSScriptRoot "file-handle-capability-writer.ps1"
+        if ((Get-FileHash -LiteralPath $fhcHelperPath -Algorithm SHA256 -ErrorAction Stop).Hash -cne "B6F851C47AE1BAECE18705CAC6F2509BAC6256B2268A3835CC33034C1C240D45") { throw "Writer pin" }
+    } catch { "BAD_FILE_HANDLE_CAPABILITY_HELPER"; exit 2 }
+    "FHC_PARENT status=CONFIGURED"
+}
+if ($RestCapabilityProbe) {
+    try {
+        $restHelperPath = Join-Path $PSScriptRoot "rest-capability-responder.ps1"
+        if ((Get-FileHash -LiteralPath $restHelperPath -Algorithm SHA256 -ErrorAction Stop).Hash -cne "1373A6FA6924F81E463C275133F7FEAA3B2BD6B7CE8DC83B7C9489F4177DD30B") { throw "Responder pin" }
+    } catch { "BAD_REST_CAPABILITY_HELPER"; exit 2 }
+    "REST_PARENT status=CONFIGURED"
+}
+if ($typedTransaction) {
+    $rrWriterPath = "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\Cellular System\output\agora-native-von-20261103\recovery-staging\full-restore-live-candidate\recovery-transaction.ps1"
+    $rrPolicyPath = "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\Cellular System\output\agora-native-von-20261103\recovery-staging\recovery-policy.ps1"
+    $rrWorkerPath = "C:\Users\Ded\Documents\Projects\ARMA 3 Scripts\Cellular System\output\agora-native-von-20261103\recovery-staging\full-restore-live-candidate\wb-edit-recovery-stage.ps1"
+    try {
+        foreach ($pair in @(@($rrWriterPath,"2997C681814A2829F777718CB134716ED8C9CF5F5ABCCE824A5620C43104AAC7"),@($rrPolicyPath,"E705D29EE79A469D9E2C9A844B08E7F233C941D236B794E33A402A80999C4570"),@($rrWorkerPath,"1C870AF8AF62EEB6C1A541D2BFB1B7EB471388FAB705E7818E7830D2479C1544"))) {
+            if ((Get-FileHash -LiteralPath $pair[0] -Algorithm SHA256 -ErrorAction Stop).Hash -cne $pair[1]) { throw "Recovery pin" }
+        }
+    } catch { "BAD_REST_REHEARSAL_RECOVERY_PIN"; exit 2 }
+}
 if ($DryRun) { "DRY_RUN no process started"; exit 0 }
+if ($typedTransaction) { . $rrWriterPath; $script:rrTransaction=$null; $script:rrWriterEntered=$false; $script:rrClosed=$null; $script:rrCloseErrors=@(); $script:rrWriterErrors=@() }
+if ($RestCapabilityProbe) {
+    . $restHelperPath
+    $script:restWorker = $null
+    $script:restWorkerReceipt = $null
+}
+if ($FileHandleCapabilityProbe) { . $fhcHelperPath }
+if ($armedPulse) {
+    . $pulseGuardPath
+    . $pulseHelperPath
+    if (-not $restGuarded) { Initialize-RehearsalProxy }
+    $script:pulseCoordinator = New-RehearsalCoordinator $d0RunId $PulseAttempt -Capture:$RestGuardedCapture -NoSend:$CaptureNoSend -WrongFrequency:$CaptureWrongFrequency -SeparatedPair:$CaptureSeparatedPair -Short400:$CaptureShort400 -BlindTrial:$CaptureBlindTrial -VoNSoundObserve:$VoNSoundObserve -BPowerOff:$CaptureBPowerOff -Direct:$CaptureDirect
+    if ($CaptureBlindTrial) { Initialize-BlindParent $script:pulseCoordinator $OutDir (Join-Path $PSScriptRoot 'capture-blind-rule.json') (Join-Path $PSScriptRoot 'capture-blind-bjudge.ps1') }
+    if ($CaptureShort400 -or $CaptureBlindTrial) { $script:shortBStopFacts = [pscustomobject]@{beginTicks=0L;endTicks=0L;requested=$null;exited=$null} }
+}
 if ($boundedDiscovery) {
+	if ($FileHandleCapabilityProbe -and ([IO.Directory]::Exists((Join-Path $OutDir $d0HostProfileName)) -or [IO.Directory]::Exists((Join-Path $OutDir $d0HostLogsName)))) { "FHC_PARENT status=DIRS_NOT_FRESH"; exit 3 }
 	$d0HostProfile = NewPeerProfile $OutDir $d0HostProfileName
 	if (-not $d0HostProfile.ok) { "D0_HOST_PROFILE why=$($d0HostProfile.why)"; exit 3 }
 	$d0HostLogs = NewPeerProfile $OutDir $d0HostLogsName
 	if (-not $d0HostLogs.ok) { "D0_HOST_LOGS why=$($d0HostLogs.why)"; exit 3 }
 	"D0_HOST_PROFILE new=1 logsNew=1 root=<scratchpad>"
+	if ($FileHandleCapabilityProbe) {
+		try { $script:fhcWriter = New-FhcWriter $d0HostProfile.path (Join-Path $d0HostProfile.path "profile") $d0HostLogs.path $log $d0RunId $fhcToken }
+		catch { "FHC_PARENT status=EMPTY_CREATE_FAILED"; exit 3 }
+		"FHC_PARENT status=EMPTY_CREATED digest=$($script:fhcWriter.PayloadDigest)"
+	}
 }
 if ($Client) {
 	# both directories new and empty, outside the repository (-OutDir is checked above)
@@ -308,7 +544,18 @@ $started = Get-Date
 $deadline = $started.AddSeconds($Seconds)
 # the gproj dependencies resolve through "./addons", so Workbench must start in the repository root (run 171812 started
 # in ops\, lost RICON_Core/RICON_CoreTests and with them the launcher)
-$wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden -WorkingDirectory $repo
+if ($RestCapabilityProbe) {
+    try {
+        $script:restResponder = New-RestCapabilityResponder $d0RunId $restToken -GuardedRehearsal:$RestGuardedRehearsal -GuardedCapture:$RestGuardedCapture -Attempt $PulseAttempt -HostLog $log -NoSend:$CaptureNoSend -WrongFrequency:$CaptureWrongFrequency -SeparatedPair:$CaptureSeparatedPair -Short400:$CaptureShort400 -BlindTrial:$CaptureBlindTrial -BPowerOff:$CaptureBPowerOff -Direct:$CaptureDirect
+        $restPortIndex = [array]::IndexOf($argList, "-riconRestPort=0")
+        if ($restPortIndex -lt 0) { throw "Missing port placeholder" }
+        $argList[$restPortIndex] = "-riconRestPort=$($script:restResponder.Port)"
+        "REST_PARENT status=LISTENING_LOOPBACK"
+    } catch { if ($script:restResponder) { Close-RestCapabilityResponder $script:restResponder }; "REST_PARENT status=STARTUP_FAILED"; exit 3 }
+}
+try {
+    $wbProc = Start-Process -FilePath $wb -ArgumentList $argList -PassThru -WindowStyle Hidden -WorkingDirectory $repo
+} catch { if ($RestCapabilityProbe) { Close-RestCapabilityResponder $script:restResponder }; throw }
 $wbPid = [uint32]$wbProc.Id
 
 # One observation step; "" or the stop reason. Before Play nothing may start and no prompt may show.
@@ -317,6 +564,12 @@ function Tick {
 	$wbProc.Refresh()
 	if ($wbProc.HasExited) { return "WORKBENCH_EXITED" }
 	if ((Get-Date) -gt $deadline) { return "DEADLINE" }
+	if ($FileHandleCapabilityProbe) {
+		$fhcBefore = $script:fhcWriter.Status
+		$fhcStop = Invoke-FhcWriterStep $script:fhcWriter $wbProc
+		if ($script:fhcWriter.Status -cne $fhcBefore) { "FHC_PARENT status=$($script:fhcWriter.Status) digest=$($script:fhcWriter.PayloadDigest)" | Write-Host }
+		if ($fhcStop) { return $fhcStop }
+	}
 	$procs = @(Get-CimInstance Win32_Process -Property ProcessId, ParentProcessId, Name, CreationDate, CommandLine)
 	$desc = @(Descendants $procs $wbPid)
 	$now = @{}
@@ -365,7 +618,23 @@ function Tick {
 		# The second press also needs our own client started in this run (codex #4971)
 		$yText = $text
 		if ($Client -and [RiconWin]::FindByTitle($wbPid, $script:AuthTitle) -ne [IntPtr]::Zero) { $yText = LogText }
-		$y = YesGuardSites $wbPid $t (SitesAllowed $script:played $yText $(if ($Client -and $script:clientProc) { $peerJoined } else { "" })) $yesTotal
+		$yAllowed = SitesAllowed $script:played $yText $(if ($Client -and $script:clientProc) { $peerJoined } else { "" })
+		$y = YesGuardSites $wbPid $t $yAllowed $yesTotal
+		if ($restGuarded -and $y -ceq "SITE_REPEAT" -and $Client -and $script:clientProc -and $yesTotal -eq 2 -and $script:yesPressed -lt $yesTotal) {
+		    $peerOwnLive = $false
+		    try { $script:clientProc.Refresh(); $peerOwnLive = -not $script:clientProc.HasExited } catch {}
+		    if ($peerOwnLive) {
+		        $peerFreshText = LogText
+		        $peerFreshAllowed = SitesAllowed $script:played $peerFreshText $peerJoined
+		        $peerBeforeQuota = @($yAllowed | Where-Object { $_ -ceq "ARSENAL_1101" }).Count
+		        $peerAfterQuota = @($peerFreshAllowed | Where-Object { $_ -ceq "ARSENAL_1101" }).Count
+		        $peerProofChanged = ($peerBeforeQuota -eq 1 -and $peerAfterQuota -eq 2 -and $yText -notmatch $peerJoined -and $peerFreshText -match $peerJoined)
+		        "AUTH_PEER_REFRESH beforeQuota=$peerBeforeQuota afterQuota=$peerAfterQuota proofChanged=$([int]$peerProofChanged)" | Write-Host
+		        $peerStillLive = $false
+		        try { $peerStillLive = -not $script:clientProc.HasExited } catch {}
+		        if ($peerProofChanged -and $peerStillLive -and $script:yesPressed -lt $yesTotal) { $y = YesGuardSites $wbPid $t $peerFreshAllowed $yesTotal }
+		    }
+		}
 		if ($y -notin @("NONE", "CLOSING", "NOT_READY", "PRESSED")) { return "DIALOG_$y" }
 	} elseif (($ah = [RiconWin]::FindByTitle($wbPid, $script:AuthTitle)) -ne [IntPtr]::Zero) {
 		"AUTH_PROMPT before Play (read only) t=$t handle=$ah" | Write-Host
@@ -381,6 +650,15 @@ function Tick {
 	if ($Client) {
 		$c = ClientTick $t $text $procs $eps
 		if ($c) { return $c }
+	}
+	if ($armedPulse -and $phase -ceq "OBSERVE" -and $script:clientState -ceq "RUNNING" -and $script:invokeJob.done) {
+		$readPeer = { if ($script:clientLog -and (Test-Path $script:clientLog)) { Get-Content $script:clientLog -Raw } else { "" } }
+		if ($restGuarded) {
+			$armReason = Invoke-RestGuardedRehearsalStep $script:pulseCoordinator $script:restWorker $wbProc $script:clientProc $script:main { LogText } $readPeer
+		} else {
+			$armReason = Invoke-RehearsalStep $script:pulseCoordinator $wbProc $script:clientProc $script:main { LogText } $readPeer
+		}
+		if ($armReason) { return $armReason }
 	}
 	foreach ($id in $live) {
 		# the own client and its children: ClientTick reads the client's windows and stops the client part for a child
@@ -458,6 +736,23 @@ try {
 	$null = $wbProc.Handle
 	"PID $wbPid started $($started.ToString('HH:mm:ss'))"
 	$watchdog = StartWatchdog $wbProc (($Seconds + 30) * 1000)
+	if ($RestCapabilityProbe) {
+		$script:restResponder.Target = $wbProc
+		$script:restResponder.TargetStart = $wbProc.StartTime.ToUniversalTime().Ticks
+		$script:restResponder.TargetHandle = $wbProc.Handle
+		$script:restWorker = Start-RestCapabilityWorker $script:restResponder $wbProc $restHelperPath ([int][math]::Max(1, ($deadline - (Get-Date)).TotalMilliseconds))
+		"REST_PARENT status=ASYNC_WORKER_STARTED"
+	}
+	if ($FileHandleCapabilityProbe) {
+		$script:fhcWriter.Target = $wbProc
+		$script:fhcWriter.TargetStart = $wbProc.StartTime.ToUniversalTime().Ticks
+		$script:fhcWriter.TargetHandle = $wbProc.Handle
+	}
+	if ($armedPulse) {
+		$script:pulseCoordinator.Target = $wbProc
+		$script:pulseCoordinator.TargetStart = $wbProc.StartTime.ToUniversalTime().Ticks
+		$script:pulseCoordinator.TargetHandle = $wbProc.Handle
+	}
 	"WATCHDOG pid=$($watchdog.Id) limitMs=$(($Seconds + 30) * 1000)"
 	Raw @{ t = 0; kind = "START"; pid = $wbPid; logsDir = $logsDir }
 	$phase = "OPEN"
@@ -470,10 +765,29 @@ try {
 		for ($k = 0; $k -lt $tSettle -and -not $reason; $k++) { Start-Sleep -Seconds 1; $reason = Tick }
 	}
 	if (-not $reason -and $ReadAuthOnly) { $reason = "READ_AUTH_NO_PROMPT" }
+	if (-not $reason -and $typedTransaction) {
+		$phase = "TRANSACTION_SERVER_ON"; $script:rrWriterEntered=$true
+		$script:rrTransaction = Invoke-RrOwnedServerOn -OriginalProcess $wbProc -MainHandle $script:main -RunId $d0RunId -AttemptId $transactionAttemptId -ProfilePath $d0HostProfile.path -HostLog $log -OutDir $OutDir -LaunchDeadlineUtc $deadline.ToUniversalTime()
+		$base=$script:rrTransaction.baseline; $s1=$script:rrTransaction.state1; $script:switchedOn=$true
+		"RR_TRANSACTION status=STATE1_CONFIRMED preparedSha=$($script:rrTransaction.preparedSha256) appliedSha=$($script:rrTransaction.appliedSha256)"
+	} else {
 	if (-not $reason) {
 		$phase = "SWITCH_ON"
+		if ($armedPulse) {
+			$script:pulseCoordinator.InitialMenuDiagnostic = [pscustomobject]@{
+				beforeGame = (Get-RehearsalMenuObservation -Main $script:main -TargetId $wbPid -ClientId $script:clientPid -MenuName Game)
+				beforePlugins = (Get-RehearsalMenuObservation -Main $script:main -TargetId $wbPid -ClientId $script:clientPid -MenuName Plugins)
+				failedGame = $null; failedPlugins = $null
+			}
+		}
 		$base = StrictSnapshot $script:main $wbPid $null $required
-		if ($null -eq $base) { $reason = "BASELINE_READ_FAILED" }
+		if ($null -eq $base) {
+			if ($armedPulse) {
+				$script:pulseCoordinator.InitialMenuDiagnostic.failedGame = Get-RehearsalMenuObservation -Main $script:main -TargetId $wbPid -ClientId $script:clientPid -MenuName Game
+				$script:pulseCoordinator.InitialMenuDiagnostic.failedPlugins = Get-RehearsalMenuObservation -Main $script:main -TargetId $wbPid -ClientId $script:clientPid -MenuName Plugins
+			}
+			$reason = "BASELINE_READ_FAILED"
+		}
 		else {
 			"BASELINE $(MapText $base)"
 			foreach ($n in $required) { if ($base[$n] -cne "Off") { $reason = "BASELINE_NOT_OFF" } }
@@ -492,6 +806,7 @@ try {
 				$reason = "STATE1_UNEXPECTED"
 			} else { $script:switchedOn = $true }
 		}
+	}
 	}
 	if (-not $reason) { $reason = Tick }
 	if (-not $reason) {
@@ -512,7 +827,7 @@ try {
 		}
 	}
 	# a stop after switching On but before Play: put the target back from On in the same process, then re-read
-	if ($reason -and $script:switchedOn -and -not $script:played) {
+	if (-not $typedTransaction -and $reason -and $script:switchedOn -and -not $script:played) {
 		$put = FlipTarget "On"
 		$back = StrictSnapshot $script:main $wbPid @($base.Keys) $required
 		$result = if (-not $put -and $null -ne $back -and (ToggleDiff $base $back).Count -eq 0) { "PUT_BACK_OK" } else { "PUT_BACK_FAILED" }
@@ -522,7 +837,7 @@ try {
 		$phase = "OBSERVE"
 		$reason = WaitFor $mEditStable "EDIT_STABLE"
 	}
-	if (-not $reason) {
+	if (-not $reason -and -not $typedTransaction) {
 		$phase = "RESTORE"
 		# first menu contact since the Invoke (codex #4850): only once the worker is done, since a pending Invoke may block
 		# the next UIA call on that menu (codex #4860); then Plugins should have been closed by Qt itself
@@ -543,7 +858,7 @@ try {
 			if (-not (ClosedOk $pms)) { $reason = "PLUGINS_MENU_NOT_CLOSED" }
 		}
 	}
-	if (-not $reason) {
+	if (-not $reason -and -not $typedTransaction) {
 		$s2 = StrictSnapshot $script:main $wbPid @($base.Keys) $required
 		if ($null -eq $s2) { $reason = "STATE2_READ_FAILED" }
 		else {
@@ -564,14 +879,41 @@ try {
 		}
 		if (-not $reason) { $reason = "DONE" }
 	}
-} catch { $reason = "RUNNER_ERROR"; "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
+	if ($NativePairPlacement -and -not $reason) { $reason = "PAIR_PLACEMENT_OBSERVATION_ENDED" }
+	if ($NativeRadioPower -and -not $reason) { $reason = "RADIO_POWER_OBSERVATION_ENDED" }
+} catch {
+    $reason = "RUNNER_ERROR"
+    if ($typedTransaction) {
+        $e=$_.Exception; while ($e) { $script:rrWriterErrors += [pscustomobject]@{type=$e.GetType().FullName;hResult=$e.HResult;code=$(if($e.Message -cmatch '\A[A-Z_]+\z'){$e.Message}else{''})}; $e=$e.InnerException }
+        if ($NativeRadioPower) { "RUNNER_ERROR status=RADIO_POWER_TRANSACTION_FAILED" } elseif ($NativePairPlacement) { "RUNNER_ERROR status=PAIR_PLACEMENT_TRANSACTION_FAILED" } elseif ($RestGuardedCapture) { "RUNNER_ERROR status=REST_CAPTURE_TRANSACTION_OR_CONTROL_FAILED" } else { "RUNNER_ERROR status=REST_REHEARSAL_TRANSACTION_OR_CONTROL_FAILED" }
+    } else { "RUNNER_ERROR $($_.Exception.GetType().Name): $($_.Exception.Message)" }
+}
 finally {
+	if ($RestCapabilityProbe) {
+		try {
+			if ($script:restWorker) {
+				$script:restWorkerReceipt = Complete-RestCapabilityWorker $script:restWorker
+			} else {
+				Close-RestCapabilityResponder $script:restResponder
+				$script:restWorkerReceipt = Get-RestCapabilityReceipt $script:restResponder
+			}
+		} catch {
+			$restCleanupErrors = @(); $restCleanupException = $_.Exception
+			while ($restCleanupException) {
+				$restCleanupErrors += [pscustomobject]@{type=$restCleanupException.GetType().FullName;hResult=$restCleanupException.HResult}
+				$restCleanupException = $restCleanupException.InnerException
+			}
+			$script:restWorkerReceipt = [pscustomobject]@{status="WORKER_CLEANUP_INVALID";failure="SECONDARY_WORKER_CLEANUP_ERROR";ownedErrors=$restCleanupErrors;nativeCallback="UNQUALIFIED";capture="NOT_REQUESTED"}
+		}
+	}
 	$elapsed = [int]((Get-Date) - $started).TotalSeconds
-	if ($script:switchedOn -and $result -notin @("RESTORE_OK", "ALREADY_BASELINE", "PUT_BACK_OK")) { $result = "SETTING_MAY_REMAIN_ON" }
+	if (($script:switchedOn -or ($typedTransaction -and $script:rrWriterEntered)) -and $result -notin @("RESTORE_OK", "ALREADY_BASELINE", "PUT_BACK_OK")) { $result = "SETTING_MAY_REMAIN_ON" }
 	"STOP reason=$reason phase=$phase result=$result t=$elapsed yesPresses=$($script:yesPressed)$(if ($Client) { " client=$($script:clientState)" })"
 	# the own client first (codex #4906), through the handle Start-Process returned
 	if ($script:clientProc) {
+		if ($CaptureShort400 -or $CaptureBlindTrial) { $script:shortBStopFacts.beginTicks = [Diagnostics.Stopwatch]::GetTimestamp() }
 		$cs = StopOwned $script:clientProc 5000
+		if ($CaptureShort400 -or $CaptureBlindTrial) { $script:shortBStopFacts.endTicks = [Diagnostics.Stopwatch]::GetTimestamp(); $script:shortBStopFacts.requested=$cs.requested; $script:shortBStopFacts.exited=$cs.exited }
 		"TEARDOWN pid=$($script:clientPid) action=$(if ($cs.requested) { 'KILL_CLIENT' } else { 'CLIENT_EXITED' }) exited=$($cs.exited) error=`"$($cs.error)`""
 	}
 	$entries = @()
@@ -592,6 +934,44 @@ finally {
 	Start-Sleep -Seconds 3
 	$wbProc.Refresh()
 	"PROC_END pid=$wbPid name=root alive=$(-not $wbProc.HasExited)"
+	if ($typedTransaction -and $script:rrTransaction -and $wbProc.HasExited) {
+		try { $script:rrClosed = Write-RrClosed -OriginalProcess $wbProc -Transaction $script:rrTransaction; "RR_TRANSACTION status=CLOSED_WRITTEN digest=$($script:rrClosed.closedSha256)" }
+		catch {
+			$e=$_.Exception; while ($e) { $script:rrCloseErrors += [pscustomobject]@{type=$e.GetType().FullName;hResult=$e.HResult}; $e=$e.InnerException }
+			"RR_TRANSACTION status=CLOSED_WRITE_FAILED"
+		}
+	}
+	if ($armedPulse) {
+		try { Close-RehearsalCoordinator $script:pulseCoordinator } catch { $script:pulseCoordinator.Valid=$false; $script:pulseCoordinator.Status="INVALID"; $script:pulseCoordinator.Cleanup="CLOSE_ERROR" }
+		if ($CaptureShort400 -or $CaptureBlindTrial) {
+			try {
+				$previousB=$script:pulseCoordinator.BObservation
+				$bText=if ($script:clientLog -and (Test-Path $script:clientLog)) { Get-Content $script:clientLog -Raw } else { "" }
+				$expectedBStart=if ($script:pulseCoordinator.Snapshot) { $script:pulseCoordinator.Snapshot.BStart } else { "" }
+				$finalB=Get-BOwnObservation $bText $d0RunId $expectedBStart
+				$finalB.finalReadTicks=[Diagnostics.Stopwatch]::GetTimestamp()
+				if ($previousB) { $finalB.afterGuardReadTicks=$previousB.afterGuardReadTicks; $finalB.commonGuardDone=$previousB.commonGuardDone; $finalB.guardExitObservedTicks=$previousB.guardExitObservedTicks }
+				$finalB.stopBeginTicks=$script:shortBStopFacts.beginTicks; $finalB.stopEndTicks=$script:shortBStopFacts.endTicks; $finalB.stopRequested=$script:shortBStopFacts.requested; $finalB.stopExited=$script:shortBStopFacts.exited
+				$script:pulseCoordinator.BObservation=$finalB
+			} catch {
+				if (-not $script:pulseCoordinator.BObservation) { $script:pulseCoordinator.BObservation=Get-BOwnObservation "" $d0RunId "" }
+				$e=$_.Exception; while ($e) { $script:pulseCoordinator.BObservation.readErrors += [pscustomobject]@{type=$e.GetType().FullName;hResult=$e.HResult}; $e=$e.InnerException }
+			}
+		}
+		$pulseReceipt = Get-RehearsalReceipt $script:pulseCoordinator
+		if ($CaptureBlindTrial) {
+			try {
+				$privatePulseHash=Write-BlindParentRecord (Join-Path $script:pulseCoordinator.Blind.Private 'a-result.json') ([ordered]@{schema='ricon.blind.private-a-result.v1';nonce=$script:pulseCoordinator.Blind.Nonce;payload=$pulseReceipt})
+				$script:pulseCoordinator.Blind.PrivateAHash=$privatePulseHash
+				"BLIND_A_RECEIPT_SEALED hash=$privatePulseHash"
+				Raw @{kind='BLIND_A_RECEIPT_SEALED';hash=$privatePulseHash}
+			} catch { "BLIND_A_RECEIPT_SEAL_FAILED type=$($_.Exception.GetType().Name)" }
+		} else {
+			$(if ($RestGuardedCapture) { "PULSE_CAPTURE_RESULT " } else { "PULSE_REHEARSAL_RESULT " }) + ($pulseReceipt | ConvertTo-Json -Compress -Depth 5)
+			Raw @{ kind=$(if ($RestGuardedCapture) { "PULSE_CAPTURE_RESULT" } else { "PULSE_REHEARSAL_RESULT" }); receipt=$pulseReceipt }
+		}
+	}
+
 	if ($script:clientProc) {
 		$script:clientProc.Refresh()
 		$clientGone = $script:clientProc.HasExited
@@ -615,10 +995,38 @@ finally {
 	if ($watchdog) { $watchdog.Refresh(); if (-not $watchdog.HasExited) { try { $watchdog.Kill() } catch {} }; "WATCHDOG_END exited=$($watchdog.HasExited)" }
 	"others=" + @(Get-Process | Where-Object { $_.ProcessName -match '(?i)reforger|workbench|enfusion' }).Count
 	Raw @{ t = $elapsed; kind = "STOP"; reason = $reason; result = $result }
+	if ($typedTransaction) {
+		$rrSummary=[pscustomobject]@{entered=$script:rrWriterEntered;state1Confirmed=[bool]$script:rrTransaction;closedWritten=[bool]$script:rrClosed;writerErrors=$script:rrWriterErrors;closedErrors=$script:rrCloseErrors}
+		"RR_TRANSACTION_RESULT " + ($rrSummary | ConvertTo-Json -Compress -Depth 5)
+		Raw @{kind="RR_TRANSACTION_RESULT";receipt=$rrSummary}
+	}
+	if ($RestCapabilityProbe) {
+		$restReceipt = $script:restWorkerReceipt
+		if ($CaptureBlindTrial) {
+			try {
+				$privateRestHash=Write-BlindParentRecord (Join-Path $script:pulseCoordinator.Blind.Private 'rest-result.json') ([ordered]@{schema='ricon.blind.private-rest-result.v1';nonce=$script:pulseCoordinator.Blind.Nonce;payload=$restReceipt})
+				$script:pulseCoordinator.Blind.PrivateRestHash=$privateRestHash
+				"BLIND_REST_RECEIPT_SEALED hash=$privateRestHash"
+				Raw @{kind='BLIND_REST_RECEIPT_SEALED';hash=$privateRestHash}
+			} catch { "BLIND_REST_RECEIPT_SEAL_FAILED type=$($_.Exception.GetType().Name)" }
+		} else {
+			"REST_PARENT_RECEIPT " + ($restReceipt | ConvertTo-Json -Compress -Depth 4)
+			Raw @{ kind="REST_PARENT_RECEIPT"; receipt=$restReceipt }
+		}
+	}
+	if ($CaptureBlindTrial) {
+		try { $blindOutcome=Complete-BlindParent $script:pulseCoordinator $script:clientLog; "BLIND_TRIAL_FINAL status=$($blindOutcome.status) hash=$($blindOutcome.revealHash)" }
+		catch { "BLIND_TRIAL_FINAL status=UNREVEALED_ARTIFACT_FAILURE type=$($_.Exception.GetType().Name)" }
+	}
+	if ($FileHandleCapabilityProbe) {
+		$fhcReceipt = Get-FhcWriterReceipt $script:fhcWriter
+		"FHC_PARENT_RECEIPT " + ($fhcReceipt | ConvertTo-Json -Compress -Depth 4)
+		Raw @{ kind="FHC_PARENT_RECEIPT"; receipt=$fhcReceipt }
+	}
 }
 
 if ($boundedDiscovery) { "log=<scratchpad>/$d0HostLogsName/console.log" } else { "log=$logsDir/console.log" }
-if (Test-Path $log) {
+if (-not $CaptureBlindTrial -and (Test-Path $log)) {
 	$lines = Get-Content $log
 	"scriptErrors=" + @($lines | Select-String -Pattern "SCRIPT\s*\(E\)").Count
 	# the stream and its dump both come out, so the cap leaves room for 2 x 1024 events; a cut is never silent

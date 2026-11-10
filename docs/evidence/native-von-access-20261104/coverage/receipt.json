@@ -1,0 +1,73 @@
+{
+  "scope": "STATIC_ARITHMETIC_AND_ACCEPTED_ASM_REUSE",
+  "checks": [
+    "finite_setter_upper_clamp",
+    "finite_setter_lower_clamp",
+    "native_float_axis_equal_boundary_admitted_q0",
+    "axis_above_Rmax_rejected",
+    "no_arbitrary_world_coverage",
+    "admitted_not_necessarily_near_one_quality",
+    "q_lower_bound_example_10km",
+    "q_lower_bound_example_60km",
+    "q99_requires_D_at_most_R_times_point1",
+    "q999_diameter_limit_example",
+    "large_R_movement_threshold_not_update_period",
+    "50m_broadphase_axis_counts",
+    "broadphase_work_count_not_benchmark",
+    "small_R_reference_work_count",
+    "illustrative_box_bound_not_actual_map",
+    "effective_server_R_not_replica_half_readback",
+    "half_range_replica_value",
+    "accepted_pin_Radio_SetRange",
+    "accepted_pin_Radio_ConcreteSlot6",
+    "accepted_pin_Radio_GraphCandidate",
+    "accepted_pin_VoN_RadioGraphCaller",
+    "accepted_pin_World_CellEnumerator",
+    "accepted_pin_next_body_17",
+    "accepted_pin_Radio_Serialize"
+  ],
+  "passed": 24,
+  "gamePinReused": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "files": [
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_SetRange.asm",
+      "sha256": "3f5355f7bab52dc21eb7fea21c3d350642d3a32d8785ada21fbf5ead166a4ff4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_ConcreteSlot6.asm",
+      "sha256": "bce0fe736b14bd24efa4f9dd6882482825181549883d4723cedbb72c9ced36d4"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\Radio_GraphCandidate.asm",
+      "sha256": "d16dcce2efdebfe3420b5a0eab1263ad311a6c0bf318e852f2dd1e3e1d9d723a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch02\\export\\VoN_RadioGraphCaller.asm",
+      "sha256": "a07b397ae4a2fb369b2a50eefa8b0ce91f744689b34495f55b30110a18a7fd5a"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch05\\export\\World_CellEnumerator.asm",
+      "sha256": "0e57d68843f73457e03f6b7c71693255e7716de5639daf529139d9de2c71276b"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch03\\export\\next_body_17.asm",
+      "sha256": "9fe23e83cb926ecfe263fe13ea2f92ef13385aa60c3240b98b1b451694e01279"
+    },
+    {
+      "path": "C:\\Users\\Ded\\AppData\\Local\\Temp\\ricon-von-re-20261104\\batch08\\export\\Radio_Serialize.asm",
+      "sha256": "53f0fd7ca86efee03001e92918bfe2a11afd2bb32f7515a5c115b501f1f14061"
+    }
+  ],
+  "examples": {
+    "q10km": 0.976716225075614,
+    "q60km": 0.16178410272210098
+  },
+  "actualWorldBound": "UNKNOWN_NOT_MEASURED",
+  "actualWorldCoverage": "UNQUALIFIED",
+  "nativeEffect": "NOT_RUN",
+  "audio": "NOT_RUN",
+  "clientDSP": "NOT_QUALIFIED",
+  "newCalleeRequests": 0,
+  "modelNote": "Arithmetic examples are not runtime/world evidence",
+  "reportSha256": "5b03789b7a115407ba46e51cb397debabdc65d0545b9720491c3be51ea912f4e"
+}

@@ -18,3 +18,17 @@ docs/evidence/CLAUDE_DOSSIER.md -text
 # Archived plan versions (hashes cited in agora id301/id315): keep bytes.
 docs/plan/PLAN_RU.v3.1.md -text
 docs/plan/PLAN_RU.v4.md -text
+
+# Archived research and receipts retain their published byte hashes.
+docs/analysis/RICON_KNOWLEDGE_GRAPH* -text
+docs/analysis/development-atlas-20261109/** -text
+docs/evidence/native-source-id-20261104/** -text
+docs/evidence/native-von-access-20261104/** -text
+docs/evidence/temporal-input-20261104/** -text
+docs/evidence/von-access-refresh-20261104/** -text
+docs/evidence/receipts/ct10-*.json -text
+docs/evidence/receipts/native-ricon-*.json -text
+
+# Source bytes pinned by native-ricon-compile-review-20261104.json.
+tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LiveNativeRxGame.c -text
+tools/RICON_LiveProbe/Scripts/Game/RICON_Live/RICON_LivePairShadow.c -text

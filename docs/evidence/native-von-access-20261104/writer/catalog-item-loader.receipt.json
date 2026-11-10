@@ -1,0 +1,299 @@
+{
+  "range": [
+    "0x141207f50",
+    "0x14120826b"
+  ],
+  "exact_pdata": "507f20016b8220019813fe01",
+  "raw_hex": "488bc44889580855565741544155415641574881ecb00000000f2970b80f2978a8440f294098440f294888450fb6f8488bf2488be94533f64c393274418379341f763f488bcae8456b66ff488b084885c97406448b71f8eb07488d0dd414f60048894c2420458bce4c8d05191a9300ba05000000b910000000e8129df5fe32c0eb7de899f7ffff83f8ff7404b001eb6f498bde48895c24404c8b65484c8b6d40488b453848898424f8000000bfffffffff48833e007428e854b161ff4c8bc6488d942408010000488b88a0010000e80d5b6eff904883bc240801000000754f4032f64885db7414f00fc17b0883ff01750a488b13488bcbff520890400fb6c64c8d9c24b0000000498b5b40410f2873f0410f287be0450f2843d0450f284bc0498be3415f415e415d415c5f5e5dc3b998000000e838365e0048894424484885c074334c896424304c896c2428488b8c24f800000048894c24204533c9450fb6c7488b942408010000488bc8e840fd80ff488bf0eb03498bf641bf010000004885f67420418bc7f00fc14608ffc0413bc77509488b06488bceff5010488bde48895c244033d2488bcbe8331881ff84c075474885db741d8bc7f00fc14308413bc77509488b03488bcbff5008498bde48895c2440488b8c24080100004885c974138bc7f00fc1411083f8017507488b01ff504090e9e7feffff488b8c2408010000bfffffffff4885c974138bc7f00fc1411083f8017507488b01ff504090488bb3800000004c8b7540493bf6743c4885f67418418bc7f00fc14608ffc083f8017509488b06488bceff5010488975404d85f674168bc7f0410fc1460883f8017509498b06498bceff5008488bcbe8df2681ff440f28c8488bcbe8f32681ff440f28c0488bcbe8272881ff0fb6f0f30f103d0c5b66000f28f70f57c0440f2fc87609410f28f9f3410f59f9440f2fc07609410f28f0f3410f59f048895c2450f0440fc17b0841ffc74183ff017509488b03488bcbff5010f30f117c2458f30f1174245c4088742460488d542450488d4d28e81c1d000090488b4c24504885c974138bc7f00fc1410883f8017507488b01ff50089040b601e9c8fdffffcc",
+  "raw_sha256": "a9fe323aa7b55f02728f71a8c68b7147f457b4603b127b230299fe1e37f2509b",
+  "asm_sha256": "73531ec2bc17475a4ba79f0625d84d68fb15a317938d3ee9967621a88e33d101",
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Professional\\VC\\Tools\\MSVC\\14.50.35717\\bin\\Hostx64\\x64\\dumpbin.exe",
+    "/NOLOGO",
+    "/DISASM:BYTES",
+    "/RANGE:0x141207F50,0x14120826A",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Arma Reforger\\ArmaReforgerSteam.exe"
+  ],
+  "decoded_bytes_verified_against_raw": 795,
+  "image_sha256_from_current_lookup": "1d221a990fa16c78fe02f685a7ba1330be115ca93cd3b641e67e5d3f1b40d9c9",
+  "source_stat_unchanged": true,
+  "exit_code": 0,
+  "direct_flows": [
+    {
+      "from": "0000000141207F8B",
+      "kind": "je",
+      "to": "0000000141207FCE",
+      "external": false
+    },
+    {
+      "from": "0000000141207F91",
+      "kind": "jbe",
+      "to": "0000000141207FD2",
+      "external": false
+    },
+    {
+      "from": "0000000141207F96",
+      "kind": "call",
+      "to": "000000014086EAE0",
+      "external": true
+    },
+    {
+      "from": "0000000141207FA1",
+      "kind": "je",
+      "to": "0000000141207FA9",
+      "external": false
+    },
+    {
+      "from": "0000000141207FA7",
+      "kind": "jmp",
+      "to": "0000000141207FB0",
+      "external": false
+    },
+    {
+      "from": "0000000141207FC9",
+      "kind": "call",
+      "to": "0000000140161CE0",
+      "external": true
+    },
+    {
+      "from": "0000000141207FD0",
+      "kind": "jmp",
+      "to": "000000014120804F",
+      "external": false
+    },
+    {
+      "from": "0000000141207FD2",
+      "kind": "call",
+      "to": "0000000141207770",
+      "external": true
+    },
+    {
+      "from": "0000000141207FDA",
+      "kind": "je",
+      "to": "0000000141207FE0",
+      "external": false
+    },
+    {
+      "from": "0000000141207FDE",
+      "kind": "jmp",
+      "to": "000000014120804F",
+      "external": false
+    },
+    {
+      "from": "0000000141208005",
+      "kind": "je",
+      "to": "000000014120802F",
+      "external": false
+    },
+    {
+      "from": "0000000141208007",
+      "kind": "call",
+      "to": "0000000140823160",
+      "external": true
+    },
+    {
+      "from": "000000014120801E",
+      "kind": "call",
+      "to": "00000001408EDB30",
+      "external": true
+    },
+    {
+      "from": "000000014120802D",
+      "kind": "jne",
+      "to": "000000014120807E",
+      "external": false
+    },
+    {
+      "from": "0000000141208035",
+      "kind": "je",
+      "to": "000000014120804B",
+      "external": false
+    },
+    {
+      "from": "000000014120803F",
+      "kind": "jne",
+      "to": "000000014120804B",
+      "external": false
+    },
+    {
+      "from": "0000000141208083",
+      "kind": "call",
+      "to": "00000001417EB6C0",
+      "external": true
+    },
+    {
+      "from": "0000000141208090",
+      "kind": "je",
+      "to": "00000001412080C5",
+      "external": false
+    },
+    {
+      "from": "00000001412080BB",
+      "kind": "call",
+      "to": "0000000140A17E00",
+      "external": true
+    },
+    {
+      "from": "00000001412080C3",
+      "kind": "jmp",
+      "to": "00000001412080C8",
+      "external": false
+    },
+    {
+      "from": "00000001412080D1",
+      "kind": "je",
+      "to": "00000001412080F3",
+      "external": false
+    },
+    {
+      "from": "00000001412080E0",
+      "kind": "jne",
+      "to": "00000001412080EB",
+      "external": false
+    },
+    {
+      "from": "00000001412080F8",
+      "kind": "call",
+      "to": "0000000140A19930",
+      "external": true
+    },
+    {
+      "from": "00000001412080FF",
+      "kind": "jne",
+      "to": "0000000141208148",
+      "external": false
+    },
+    {
+      "from": "0000000141208104",
+      "kind": "je",
+      "to": "0000000141208123",
+      "external": false
+    },
+    {
+      "from": "0000000141208110",
+      "kind": "jne",
+      "to": "000000014120811B",
+      "external": false
+    },
+    {
+      "from": "000000014120812E",
+      "kind": "je",
+      "to": "0000000141208143",
+      "external": false
+    },
+    {
+      "from": "000000014120813A",
+      "kind": "jne",
+      "to": "0000000141208143",
+      "external": false
+    },
+    {
+      "from": "0000000141208143",
+      "kind": "jmp",
+      "to": "000000014120802F",
+      "external": false
+    },
+    {
+      "from": "0000000141208158",
+      "kind": "je",
+      "to": "000000014120816D",
+      "external": false
+    },
+    {
+      "from": "0000000141208164",
+      "kind": "jne",
+      "to": "000000014120816D",
+      "external": false
+    },
+    {
+      "from": "000000014120817B",
+      "kind": "je",
+      "to": "00000001412081B9",
+      "external": false
+    },
+    {
+      "from": "0000000141208180",
+      "kind": "je",
+      "to": "000000014120819A",
+      "external": false
+    },
+    {
+      "from": "000000014120818F",
+      "kind": "jne",
+      "to": "000000014120819A",
+      "external": false
+    },
+    {
+      "from": "00000001412081A1",
+      "kind": "je",
+      "to": "00000001412081B9",
+      "external": false
+    },
+    {
+      "from": "00000001412081AE",
+      "kind": "jne",
+      "to": "00000001412081B9",
+      "external": false
+    },
+    {
+      "from": "00000001412081BC",
+      "kind": "call",
+      "to": "0000000140A1A8A0",
+      "external": true
+    },
+    {
+      "from": "00000001412081C8",
+      "kind": "call",
+      "to": "0000000140A1A8C0",
+      "external": true
+    },
+    {
+      "from": "00000001412081D4",
+      "kind": "call",
+      "to": "0000000140A1AA00",
+      "external": true
+    },
+    {
+      "from": "00000001412081EE",
+      "kind": "jbe",
+      "to": "00000001412081F9",
+      "external": false
+    },
+    {
+      "from": "00000001412081FD",
+      "kind": "jbe",
+      "to": "0000000141208208",
+      "external": false
+    },
+    {
+      "from": "000000014120821A",
+      "kind": "jne",
+      "to": "0000000141208225",
+      "external": false
+    },
+    {
+      "from": "000000014120823F",
+      "kind": "call",
+      "to": "0000000141209F60",
+      "external": true
+    },
+    {
+      "from": "000000014120824D",
+      "kind": "je",
+      "to": "0000000141208262",
+      "external": false
+    },
+    {
+      "from": "0000000141208259",
+      "kind": "jne",
+      "to": "0000000141208262",
+      "external": false
+    },
+    {
+      "from": "0000000141208265",
+      "kind": "jmp",
+      "to": "0000000141208032",
+      "external": false
+    }
+  ]
+}

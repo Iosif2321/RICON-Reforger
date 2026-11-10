@@ -1,0 +1,342 @@
+{
+  "method": "Only4 registrar ranges selected by exact2method-name lookup; bounded raw LEAR8 string context, not full audio API enumeration",
+  "records": [
+    {
+      "range": [
+        "0x14028d920",
+        "0x14028dadc"
+      ],
+      "methodname_candidates": [
+        {
+          "va": "0x14028d960",
+          "target": "0x1418b2d78",
+          "name": "MusicManager"
+        },
+        {
+          "va": "0x14028d9ca",
+          "target": "0x1418952ac",
+          "name": "Play"
+        },
+        {
+          "va": "0x14028d9e8",
+          "target": "0x1418b2cd0",
+          "name": "Stop"
+        },
+        {
+          "va": "0x14028da06",
+          "target": "0x1418b2cd8",
+          "name": "MuteCategory"
+        },
+        {
+          "va": "0x14028da24",
+          "target": "0x1418b2ce8",
+          "name": "RequestServerMuteCategory"
+        },
+        {
+          "va": "0x14028da42",
+          "target": "0x1418b2d08",
+          "name": "ServerIsCategoryMuted"
+        },
+        {
+          "va": "0x14028da60",
+          "target": "0x1418b2d20",
+          "name": "SetManagerSignals"
+        },
+        {
+          "va": "0x14028da7e",
+          "target": "0x1418b2d38",
+          "name": "GetSignalIndex"
+        },
+        {
+          "va": "0x14028da9c",
+          "target": "0x14186de50",
+          "name": "SetSignalValue"
+        },
+        {
+          "va": "0x14028daba",
+          "target": "0x1418b2d48",
+          "name": "SetSignalValueStr"
+        }
+      ]
+    },
+    {
+      "range": [
+        "0x14120bf00",
+        "0x14120c173"
+      ],
+      "methodname_candidates": [
+        {
+          "va": "0x14120bf1f",
+          "target": "0x141b39cf0",
+          "name": "SetCallbackMask"
+        },
+        {
+          "va": "0x14120bf3a",
+          "target": "0x141b39d00",
+          "name": "SetForceUpdate"
+        },
+        {
+          "va": "0x14120bf58",
+          "target": "0x141b39d10",
+          "name": "SetDisableUpdate"
+        },
+        {
+          "va": "0x14120bf76",
+          "target": "0x1418a1e20",
+          "name": "GetOwner"
+        },
+        {
+          "va": "0x14120bf94",
+          "target": "0x141b39d28",
+          "name": "PlayStr"
+        },
+        {
+          "va": "0x14120bfb2",
+          "target": "0x141b39d30",
+          "name": "GetEventIndex"
+        },
+        {
+          "va": "0x14120bfd0",
+          "target": "0x141b39d40",
+          "name": "SoundEventBegin"
+        },
+        {
+          "va": "0x14120bfee",
+          "target": "0x141b39d50",
+          "name": "SoundEventEnd"
+        },
+        {
+          "va": "0x14120c00c",
+          "target": "0x1418b2d38",
+          "name": "GetSignalIndex"
+        },
+        {
+          "va": "0x14120c02a",
+          "target": "0x14186de50",
+          "name": "SetSignalValue"
+        },
+        {
+          "va": "0x14120c048",
+          "target": "0x1418b2d48",
+          "name": "SetSignalValueStr"
+        },
+        {
+          "va": "0x14120c066",
+          "target": "0x141b39d60",
+          "name": "SetTransformation"
+        },
+        {
+          "va": "0x14120c084",
+          "target": "0x141a83b78",
+          "name": "SetSoundTransformation"
+        },
+        {
+          "va": "0x14120c0a5",
+          "target": "0x141b39d78",
+          "name": "UpdateTrigger"
+        },
+        {
+          "va": "0x14120c0c0",
+          "target": "0x1418d3698",
+          "name": "Terminate"
+        },
+        {
+          "va": "0x14120c0de",
+          "target": "0x141b39d88",
+          "name": "TerminateAll"
+        },
+        {
+          "va": "0x14120c0fc",
+          "target": "0x141b31840",
+          "name": "IsPlaying"
+        },
+        {
+          "va": "0x14120c11a",
+          "target": "0x141b39d98",
+          "name": "IsFinishedPlaying"
+        },
+        {
+          "va": "0x14120c138",
+          "target": "0x141b39db0",
+          "name": "IsHandleValid"
+        },
+        {
+          "va": "0x14120c156",
+          "target": "0x141b39dc0",
+          "name": "GetSignalNames"
+        }
+      ]
+    },
+    {
+      "range": [
+        "0x141362bf0",
+        "0x141362e45"
+      ],
+      "methodname_candidates": [
+        {
+          "va": "0x141362c0f",
+          "target": "0x141b799d0",
+          "name": "GetEvents"
+        },
+        {
+          "va": "0x141362c2a",
+          "target": "0x141b39d30",
+          "name": "GetEventIndex"
+        },
+        {
+          "va": "0x141362c48",
+          "target": "0x141b39dc0",
+          "name": "GetSignalNames"
+        },
+        {
+          "va": "0x141362c66",
+          "target": "0x1418b2d38",
+          "name": "GetSignalIndex"
+        },
+        {
+          "va": "0x141362c84",
+          "target": "0x14186de50",
+          "name": "SetSignalValue"
+        },
+        {
+          "va": "0x141362ca2",
+          "target": "0x1418b2d48",
+          "name": "SetSignalValueStr"
+        },
+        {
+          "va": "0x141362cc0",
+          "target": "0x141b39d28",
+          "name": "PlayStr"
+        },
+        {
+          "va": "0x141362cde",
+          "target": "0x1418952ac",
+          "name": "Play"
+        },
+        {
+          "va": "0x141362cfc",
+          "target": "0x141b39d78",
+          "name": "UpdateTrigger"
+        },
+        {
+          "va": "0x141362d1a",
+          "target": "0x141b39d88",
+          "name": "TerminateAll"
+        },
+        {
+          "va": "0x141362d38",
+          "target": "0x1418d3698",
+          "name": "Terminate"
+        },
+        {
+          "va": "0x141362d56",
+          "target": "0x141b39d98",
+          "name": "IsFinishedPlaying"
+        },
+        {
+          "va": "0x141362d74",
+          "target": "0x141b31840",
+          "name": "IsPlaying"
+        },
+        {
+          "va": "0x141362d95",
+          "target": "0x141b39db0",
+          "name": "IsHandleValid"
+        },
+        {
+          "va": "0x141362db0",
+          "target": "0x141b39d60",
+          "name": "SetTransformation"
+        },
+        {
+          "va": "0x141362dce",
+          "target": "0x141a83b78",
+          "name": "SetSoundTransformation"
+        },
+        {
+          "va": "0x141362dec",
+          "target": "0x141b30f20",
+          "name": "SetDebug"
+        },
+        {
+          "va": "0x141362e0a",
+          "target": "0x141b799e0",
+          "name": "SetMute"
+        },
+        {
+          "va": "0x141362e28",
+          "target": "0x141b799e8",
+          "name": "GetGain"
+        }
+      ]
+    },
+    {
+      "range": [
+        "0x14142f460",
+        "0x14142f6e9"
+      ],
+      "methodname_candidates": [
+        {
+          "va": "0x14142f4da",
+          "target": "0x141baa000",
+          "name": "SndBaseModule"
+        },
+        {
+          "va": "0x14142f598",
+          "target": "0x141ba9ff0",
+          "name": "GetSndSystem"
+        },
+        {
+          "va": "0x14142f5b6",
+          "target": "0x1418b4d40",
+          "name": "SoundEvent"
+        },
+        {
+          "va": "0x14142f5d4",
+          "target": "0x1418b2d48",
+          "name": "SetSignalValueStr"
+        },
+        {
+          "va": "0x14142f5f2",
+          "target": "0x14186de50",
+          "name": "SetSignalValue"
+        },
+        {
+          "va": "0x14142f610",
+          "target": "0x1418b2d38",
+          "name": "GetSignalIndex"
+        },
+        {
+          "va": "0x14142f62e",
+          "target": "0x141b39d60",
+          "name": "SetTransformation"
+        },
+        {
+          "va": "0x14142f64c",
+          "target": "0x141b39d78",
+          "name": "UpdateTrigger"
+        },
+        {
+          "va": "0x14142f66a",
+          "target": "0x1418d3698",
+          "name": "Terminate"
+        },
+        {
+          "va": "0x14142f688",
+          "target": "0x141b39d98",
+          "name": "IsFinishedPlaying"
+        },
+        {
+          "va": "0x14142f6a6",
+          "target": "0x141a83b78",
+          "name": "SetSoundTransformation"
+        },
+        {
+          "va": "0x14142f6c4",
+          "target": "0x141ba9f90",
+          "name": "SetVolume"
+        }
+      ]
+    }
+  ]
+}

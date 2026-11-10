@@ -1,0 +1,14 @@
+{
+  "observedUtc": "2026-11-04 19:50:02 UTC",
+  "goal": {
+    "threadId": "01a19de1-0ca5-7891-8555-b5a893f03721",
+    "objective": "Read the Codex goal objective file at C:\\Users\\Ded\\.codex\\attachments\\e7fc704c-acd3-4d37-bbaf-aa86f22b0e92\\goal-objective.md before continuing.",
+    "status": "active",
+    "tokensUsed": 959140,
+    "timeUsedSeconds": 250,
+    "createdAt": 1793821501,
+    "updatedAt": 1793821752
+  },
+  "remainingTokens": null,
+  "completionBudgetReport": null
+}

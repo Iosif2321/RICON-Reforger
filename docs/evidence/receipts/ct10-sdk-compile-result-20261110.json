@@ -1,0 +1,746 @@
+{
+  "schema": "ricon.ct10.sdk-compile-evidence",
+  "version": 1,
+  "status": "ENFORCE_COMPILE_LOG_CONFIRMED_PURE_FIXTURES_NOT_RUN",
+  "compile_status": "ENFORCE_COMPILE_LOG_CONFIRMED",
+  "fixture_status": "PURE_FIXTURES_NOT_RUN",
+  "observation_utc": "2026-11-10T09:27:50.569269+00:00",
+  "observation_finished_utc": "2026-11-10T09:27:50.584576+00:00",
+  "author": "codex.team.docs",
+  "canonical_publisher": "codex.lead",
+  "canonical_publication_performed_by_author": false,
+  "new_workbench_run_performed_by_author": false,
+  "goal_complete": false,
+  "authorization": {
+    "quote": "Да, разрешаю ScriptEditor и pure fixtures",
+    "source": "Owner direct grant relayed in Agora8328",
+    "allowed": [
+      "ScriptEditor SDK compilation",
+      "pure fixture execution by root"
+    ],
+    "excluded": [
+      "Play",
+      "world",
+      "server",
+      "microphone/voice capture"
+    ],
+    "steam_login": "human owner only; no authentication automated"
+  },
+  "sdk_baseline": {
+    "engine_version_as_logged": "193322",
+    "game_version_as_logged": "1.9.0.37",
+    "game_build_as_logged": "2026-10-27 15:39:59 UTC",
+    "workbench_executable": "C:/Program Files (x86)/Steam/steamapps/common/Arma Reforger Tools/Workbench/ArmaReforgerWorkbenchSteamDiag.exe",
+    "mode": "ScriptEditor",
+    "plugin": "RICON_TemporalIntegrationProbePlugin",
+    "gproj": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/addon.gproj",
+    "engine_instance_initialization_observed": true,
+    "play_world_server_execution_qualified": false,
+    "baseline_compile_attempt": "fix03",
+    "lease_query_compile_attempt": "query_fix04"
+  },
+  "attempts": [
+    {
+      "id": "baseline",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-integration-baseline-20261110-120600/console.log",
+      "sha256": "4bfbb9cbdf5d1e87cebf9320b49dd12b597a2b66512a18bb3c6bdf6ab78f7c23",
+      "bytes": 18910,
+      "modified_utc": "2026-11-10T09:06:06.471699+00:00",
+      "line_count": 196,
+      "script_error_count": 2,
+      "script_error_log_lines": [
+        141,
+        142
+      ],
+      "direct_ricon_diagnostics": [
+        {
+          "file": "Scripts/Game/RICON_Tests/RICON_TemporalAuthorityFixtures.c",
+          "source_line": 56,
+          "message": "Broken expression (missing ';'?)",
+          "first_log_line": 141,
+          "occurrences": 1
+        }
+      ],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": false,
+      "steam_api_init_failures": [
+        {
+          "log_line": 151,
+          "message": "12:06:06.396   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": -1,
+      "process_exit_code_provenance": "Root observed process result; Agora8329/8333 or direct parent query-fix04 report, not inferred from console log"
+    },
+    {
+      "id": "fix01",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-integration-fix01-20261110-120734/console.log",
+      "sha256": "2f8216f8ad8ed7b2c537f8becf0ad87ec2990b6db4d732adb9e4ca56eaf4b7d3",
+      "bytes": 19151,
+      "modified_utc": "2026-11-10T09:07:39.799689+00:00",
+      "line_count": 198,
+      "script_error_count": 4,
+      "script_error_log_lines": [
+        141,
+        142,
+        143,
+        144
+      ],
+      "direct_ricon_diagnostics": [
+        {
+          "file": "Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+          "source_line": 112,
+          "message": "Multiple declaration of function 'Clone'",
+          "first_log_line": 141,
+          "occurrences": 1
+        },
+        {
+          "file": "Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+          "source_line": 26,
+          "message": "Multiple declaration of function 'Clone'",
+          "first_log_line": 142,
+          "occurrences": 1
+        },
+        {
+          "file": "Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+          "source_line": 65,
+          "message": "Multiple declaration of function 'Clone'",
+          "first_log_line": 143,
+          "occurrences": 1
+        }
+      ],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": false,
+      "steam_api_init_failures": [
+        {
+          "log_line": 153,
+          "message": "12:07:39.735   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": null,
+      "process_exit_code_provenance": "Not independently obtained from console log"
+    },
+    {
+      "id": "fix02",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-integration-fix02-20261110-121004/console.log",
+      "sha256": "38302d59bd576bc50e287c3ea80fb8ba22148bf5c263fbd7a8edbd0c98fb4cdb",
+      "bytes": 27088,
+      "modified_utc": "2026-11-10T09:10:09.932836+00:00",
+      "line_count": 259,
+      "script_error_count": 50,
+      "script_error_log_lines": [
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        203,
+        204,
+        205
+      ],
+      "direct_ricon_diagnostics": [
+        {
+          "file": "Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+          "source_line": 229,
+          "message": "Formula too complex",
+          "first_log_line": 141,
+          "occurrences": 7
+        },
+        {
+          "file": "Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c",
+          "source_line": 184,
+          "message": "Formula too complex",
+          "first_log_line": 181,
+          "occurrences": 4
+        },
+        {
+          "file": "Scripts/Game/RICON_Tests/RICON_TemporalLifecycleFixtures.c",
+          "source_line": 82,
+          "message": "Formula too complex",
+          "first_log_line": 192,
+          "occurrences": 8
+        }
+      ],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": false,
+      "steam_api_init_failures": [
+        {
+          "log_line": 214,
+          "message": "12:10:09.877   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": null,
+      "process_exit_code_provenance": "Not independently obtained from console log"
+    },
+    {
+      "id": "fix03",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-integration-fix03-20261110-121227/console.log",
+      "sha256": "cc742ec6a3fbbfa14b4695d2f667ffb794ae87762e4935a0ce08dc359f961315",
+      "bytes": 20914,
+      "modified_utc": "2026-11-10T09:12:33.252297+00:00",
+      "line_count": 206,
+      "script_error_count": 0,
+      "script_error_log_lines": [],
+      "direct_ricon_diagnostics": [],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "70b3248a",
+          "log_line": 156
+        },
+        {
+          "name": "Game",
+          "files": 5797,
+          "classes": 11593,
+          "crc32": "0dc0257a",
+          "log_line": 157
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": true,
+      "steam_api_init_failures": [
+        {
+          "log_line": 161,
+          "message": "12:12:33.166   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": -1,
+      "process_exit_code_provenance": "Root observed process result; Agora8329/8333 or direct parent query-fix04 report, not inferred from console log"
+    },
+    {
+      "id": "query_initial",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-lease-query-20261110-122100/console.log",
+      "sha256": "cc7f4663f2e8af16b815ff5a4a92fe9d2cdd519fd1cb39326efd6d6824b9818b",
+      "bytes": 24020,
+      "modified_utc": "2026-11-10T09:21:07.140341+00:00",
+      "line_count": 233,
+      "script_error_count": 24,
+      "script_error_log_lines": [
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        172,
+        173,
+        177,
+        178,
+        179
+      ],
+      "direct_ricon_diagnostics": [
+        {
+          "file": "Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+          "source_line": 59,
+          "message": "Formula too complex",
+          "first_log_line": 143,
+          "occurrences": 2
+        },
+        {
+          "file": "Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+          "source_line": 11,
+          "message": "No return statement in function returning non-void 'RICON_LifecycleLeaseQueryProbeMachine.ResponseCacheSize'",
+          "first_log_line": 151,
+          "occurrences": 1
+        },
+        {
+          "file": "Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+          "source_line": 15,
+          "message": "No return statement in function returning non-void 'RICON_LifecycleLeaseQueryProbeMachine.LastRequestSeq'",
+          "first_log_line": 152,
+          "occurrences": 1
+        }
+      ],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": false,
+      "steam_api_init_failures": [
+        {
+          "log_line": 188,
+          "message": "12:21:07.067   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": null,
+      "process_exit_code_provenance": "Not independently obtained from console log"
+    },
+    {
+      "id": "query_fix04",
+      "path": "C:/Users/Ded/Documents/My Games/ArmaReforgerWorkbench/logs/ricon-tests-ct10-lease-query-fix04-20261110-122202/console.log",
+      "sha256": "43453615c23ab8439da9ff4d5cb826937158fb5b1d20b3bc0f0cf9de025ed66c",
+      "bytes": 20914,
+      "modified_utc": "2026-11-10T09:22:09.879616+00:00",
+      "line_count": 206,
+      "script_error_count": 0,
+      "script_error_log_lines": [],
+      "direct_ricon_diagnostics": [],
+      "modules": [
+        {
+          "name": "Workbench",
+          "files": 18,
+          "classes": 36,
+          "crc32": "90ce0460",
+          "log_line": 134
+        },
+        {
+          "name": "GameLib",
+          "files": 512,
+          "classes": 704,
+          "crc32": "a2fafa86",
+          "log_line": 135
+        },
+        {
+          "name": "WorkbenchGame",
+          "files": 195,
+          "classes": 673,
+          "crc32": "2ba39cc3",
+          "log_line": 156
+        },
+        {
+          "name": "Game",
+          "files": 5798,
+          "classes": 11595,
+          "crc32": "feec6e28",
+          "log_line": 157
+        }
+      ],
+      "game_and_workbenchgame_compile_log_confirmed": true,
+      "steam_api_init_failures": [
+        {
+          "log_line": 161,
+          "message": "12:22:09.775   PLATFORM  (E): Steamworks: SteamAPI_Init failed. Is Steam running?"
+        }
+      ],
+      "integration_marker_lines": [],
+      "fixture_completion_marker_lines": [],
+      "fixture_execution_status": "PURE_FIXTURES_NOT_RUN",
+      "process_exit_code": -1,
+      "process_exit_code_provenance": "Root observed process result; Agora8329/8333 or direct parent query-fix04 report, not inferred from console log"
+    }
+  ],
+  "compile_fix_patches": [
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/compile-fix-01.patch",
+      "sha256": "0a1da4f7300d1f607eb8bbb48965d4a9be882889ae93ac2207419b9c6c61443f",
+      "bytes": 1336,
+      "modified_utc": "2026-11-10T09:07:26.707002+00:00",
+      "fix": "01",
+      "files": [
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalAuthorityFixtures.c"
+      ],
+      "summary": "Reserved local out renamed closureResult."
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/compile-fix-02.patch",
+      "sha256": "264f0f90fecc28921bb6f73e15e2e6548f1b559f5f4225f7b1ef3ff9609aa125",
+      "bytes": 2969,
+      "modified_utc": "2026-11-10T09:09:54.991429+00:00",
+      "fix": "02",
+      "files": [
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c",
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c"
+      ],
+      "summary": "Clone renamed CloneBinding/CloneContext/CloneLimits with all recorded callers."
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/compile-fix-03.patch",
+      "sha256": "8981c36c4cb08e755be8ec6b7e426b205e3eab0e18de18afa1de14671d66d91e",
+      "bytes": 3863,
+      "modified_utc": "2026-11-10T09:12:14.603741+00:00",
+      "fix": "03",
+      "files": [
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c",
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalLifecycleFixtures.c"
+      ],
+      "summary": "Three over-complex predicates split without changing recorded rejection/equality coverage."
+    },
+    {
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/compile-fix-04.patch",
+      "sha256": "2664b6cd1a4db5e7d12ead2d0b7b05bdc80a29054cb5eec9724d4936751235cb",
+      "bytes": 2819,
+      "modified_utc": "2026-11-10T09:21:52.517924+00:00",
+      "fix": "04",
+      "files": [
+        "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c"
+      ],
+      "summary": "Lease-query fixture SameLease/Check predicates split; two return paths made multiline."
+    }
+  ],
+  "sdk_patch_affected_file_count": 6,
+  "baseline_fix01_to03_affected_file_count": 5,
+  "current_canonical_pins": [
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c",
+      "sha256": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea",
+      "bytes": 16516,
+      "modified_utc": "2026-11-10T09:20:38.874177+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c",
+      "sha256": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+      "bytes": 45601,
+      "modified_utc": "2026-11-10T09:20:38.829991+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalAuthorityJournal.c",
+      "sha256": "6211c762a54b90a06bf7c7fa2b6fd0d54703b15026a9e3c1febc0ca6b239a937",
+      "bytes": 14573,
+      "modified_utc": "2026-11-10T09:10:00.116354+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalLifecycle.c",
+      "sha256": "d9dab7058aef64e9c2efe8fef1506a8812bc4fdb37b3dd1b88615eff51590b28",
+      "bytes": 21891,
+      "modified_utc": "2026-11-10T09:12:23.119631+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_Core/Scripts/Game/RICON/Core/RICON_TemporalSnapshot.c",
+      "sha256": "5104e10f99d5d3b7211034d07a6d9fffd73c0795b0cab2c429f27a3b9e88d28a",
+      "bytes": 19386,
+      "modified_utc": "2026-11-10T09:12:23.118631+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c",
+      "sha256": "c06804d68b97c21b32c462d202235f90b94ab90b9db75d6abc8d0520b9e5dbbc",
+      "bytes": 9717,
+      "modified_utc": "2026-11-10T09:21:59.479269+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalAuthorityFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalAuthorityFixtures.c",
+      "sha256": "b8bc79923048c4310b3135227bb7cd176a451685207a39976e4ca96a2a556fc4",
+      "bytes": 12970,
+      "modified_utc": "2026-11-10T09:07:29.581686+00:00"
+    },
+    {
+      "repo_relative": "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalLifecycleFixtures.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_TemporalLifecycleFixtures.c",
+      "sha256": "6ed9ad8dba26e152920cb7dea55acb225d77440b50a2b0374dfbf679ecedb8a5",
+      "bytes": 13571,
+      "modified_utc": "2026-11-10T09:12:23.119631+00:00"
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/Scripts/WorkbenchGame/RICON_TemporalIntegrationProbePlugin.c",
+      "sha256": "f4a9bf5f74e88ca0970a7f7043d91c6e9a183738d641a5b8ef86dfe01808860c",
+      "bytes": 1856,
+      "modified_utc": "2026-11-10T09:20:38.919692+00:00"
+    },
+    {
+      "repo_relative": "tools/RICON_TestRunner/run.ps1",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/tools/RICON_TestRunner/run.ps1",
+      "sha256": "0c6934205d389002a6194e7d9df2ec4c5d375bb17bacdbe80eea88a251e6fb90",
+      "bytes": 2584,
+      "modified_utc": "2026-11-10T08:09:49.343098+00:00"
+    }
+  ],
+  "pin_scope": "Exact post-run canonical observation; console logs do not embed per-source SHA. Current files are not retroactively attributed to baseline fix03. Query compile evidence belongs only to the separate query-fix04 run supplied by Root.",
+  "lease_query": {
+    "canonical_published_observed": true,
+    "status": "SOURCE_REVIEWED_AND_QUERY_SDK_COMPILE_LOG_CONFIRMED",
+    "compiled_by_baseline_fix03": false,
+    "compile_attempt": "query_fix04",
+    "pure_fixtures_executed": false,
+    "read_only_source_contract": "Explicit lifecycle nowMs; no BeginEvent/sweep/clock advance/effects; validates ready/anomaly/time floor/ACTIVE/lease TTL; returns detached nine-field lease copy.",
+    "manager_source_contract": "CaptureTemporalPublication adds lifecycleNowMs; QueryActiveLease result must match lease ID, owner player, TX generation and device. Issued seq and live player/entity checks retained.",
+    "query_algorithm_evidence": {
+      "source": "Assigned independent review/REVIEW_RU.md read-only report",
+      "scope": "SOURCE_EXTRACTED_QUERY_ALGORITHM_ONLY",
+      "literal_assertions_reported": 16,
+      "semantic_mutants_reported": 3,
+      "documentation_rerun": false,
+      "not_enforce_execution": true
+    },
+    "support_pins": [
+      {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/core/QueryActiveLease.c.txt",
+        "sha256": "674d6f5ee0440f01ce728a4d9f8433fd4f074976f70aa1569c3b2929ec27557c",
+        "bytes": 1014,
+        "modified_utc": "2026-11-10T08:54:00.005961+00:00"
+      },
+      {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/review/REVIEW_RU.md",
+        "sha256": "f816ea36dd636a626888365b1fee195b806c03baf90756cb721c3f7d69a0dd2b",
+        "bytes": 14544,
+        "modified_utc": "2026-11-10T09:14:07.017024+00:00"
+      },
+      {
+        "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/check_active_lease_query.ps1",
+        "sha256": "40b9364e63d28d53146c2fe0f6ca2f4967b32a708c6ba9f1e23ad91ed7ffc3bf",
+        "bytes": 6905,
+        "modified_utc": "2026-11-10T08:59:35.035374+00:00"
+      }
+    ],
+    "remaining_open": [
+      "truthful Lifecycle instance and lifecycleNowMs source",
+      "producer commit/current Expected exporter",
+      "full network/channel/access grant",
+      "epoch retirement/coordinator",
+      "wire/auth/source provenance",
+      "pure RunAll/Enforce parity",
+      "runtime/audio/content/load"
+    ]
+  },
+  "agy": {
+    "observed_source_review_ids": [
+      8312,
+      8313,
+      8314,
+      8317
+    ],
+    "scope": "Pre-SDK integration source review and entity-aware diff; not an SDK compile or lease-query execution review",
+    "sdk_review_claimed": false
+  },
+  "immutable_historical_source_evidence": [
+    {
+      "repo_relative": "docs/evidence/E-ct10-integration-source-20261110.md",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/E-ct10-integration-source-20261110.md",
+      "sha256": "082c3981c33eec0cfb35798ec56faafe469cd67778b963a5b825d0e225869c67",
+      "bytes": 8117,
+      "modified_utc": "2026-11-10T08:31:40.648521+00:00"
+    },
+    {
+      "repo_relative": "docs/evidence/receipts/ct10-integration-source-result-20261110.json",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/receipts/ct10-integration-source-result-20261110.json",
+      "sha256": "5e83fd112e12c264c917769f4560495e38a73920e53d5648ece9359f7a781267",
+      "bytes": 6198,
+      "modified_utc": "2026-11-10T08:35:12.725186+00:00"
+    },
+    {
+      "repo_relative": "docs/evidence/E-ct10-enforce-source-20261110.md",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/E-ct10-enforce-source-20261110.md",
+      "sha256": "a9d64b0100dab18bbe45e053fd8767298c072045e278c5f94eb880f1a4192ea5",
+      "bytes": 7506,
+      "modified_utc": "2026-11-10T05:23:33.464793+00:00"
+    },
+    {
+      "repo_relative": "docs/evidence/receipts/ct10-enforce-source-result-20261110.json",
+      "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/RICON-Reforger/docs/evidence/receipts/ct10-enforce-source-result-20261110.json",
+      "sha256": "8ba9af1f45e4bcf367c5f5065ff049133655b458e679519dada967841cd04ac5",
+      "bytes": 2891,
+      "modified_utc": "2026-11-10T05:23:03.609632+00:00"
+    }
+  ],
+  "historical_context_note": "AGENT_CONTEXT_RU top source-only status/no-SDK grant is a dated pre8328 slice; this new owner grant and compile log result are a separate evidence delta, not edits to old receipts.",
+  "limitations": [
+    "Final process exit -1 from SteamAPI_Init failed is not an overall PASS.",
+    "No integration start/completion marker in any of six logs; pure fixtures not executed/accepted.",
+    "SDK Create Game/engine instance startup is observed, not Play/world/server/audio acceptance.",
+    "Steam UI login state is Root observation Agora8333, not a new Documentation UI check.",
+    "No new run, source fix, shared-memory write or canonical evidence publication by Documentation."
+  ],
+  "root_verification": {
+    "status": "ROOT_VERIFIED_FOR_CANONICAL_PUBLICATION",
+    "originalDraftShaPinsChecked": 27,
+    "logsChecked": 6,
+    "queryCurrentPinsChecked": 4,
+    "scriptErrorsFinal": 0,
+    "fixtureMarkerPresent": false,
+    "gamePlayServerVoiceStarted": false,
+    "humanSteamLoginPending": true
+  },
+  "independent_compile_review": {
+    "agoraEvidence": 8340,
+    "agoraVerdict": 8341,
+    "status": "ACCEPT_SCOPED_COMPILE_FIXES_01_04_SEMANTIC_EXPECTATIONS_PRESERVED",
+    "path": "C:/Users/Ded/Documents/Projects/ARMA 3 Scripts/Cellular System/output/ct10-lease-query-20261110/review/COMPILE_FIX_REVIEW_RU.md",
+    "sha256": "051ed69b1f0e4878de8fd12b0acd16f8f7078f386d4dba8ac591013231c0e617",
+    "normalizedFiles": 6,
+    "patchHunks": 22,
+    "objectCloneCallersRenamed": 11,
+    "predicateAtoms": [
+      19,
+      11,
+      11
+    ],
+    "fixtureCheckSitesBefore": 38,
+    "fixtureCheckSitesAfter": 42,
+    "oldRuntimeCountsReusable": false
+  },
+  "agy_lease_review": {
+    "schema": "ricon.agy.lease-query-review",
+    "version": 1,
+    "conversationId": "e5549ddb-ab94-4798-8edc-bd535874afda",
+    "terminalSession": 34055,
+    "agoraVerdictId": 8338,
+    "sourceReview": "NO_BLOCKERS_REPORTED",
+    "reviewerStatusAsWritten": "SOURCE_REVIEWED_UNCOMPILED",
+    "reviewAxes": [
+      "TTL/expiry/overflow",
+      "owner/generation/device",
+      "clock",
+      "mutation",
+      "nullgate"
+    ],
+    "reportedReadFiles": [
+      "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_Lifecycle.c:1-1411",
+      "addons/RICON_Core/Scripts/Game/RICON/Core/RICON_CommsManagerComponent.c:310-416",
+      "addons/RICON_CoreTests/Scripts/Game/RICON_Tests/RICON_LifecycleLeaseQueryFixtures.c:1-164"
+    ],
+    "rootSourcePins": {
+      "lifecycle": "33935bc546231c4bd89d3b09cd3efef7e13fea2a9e25a2c7217ec698ac697767",
+      "manager": "74d892842fce7a3243ca2b5f67e140ff7e18a548e8fc8812b700868f07532fea",
+      "fixture": "c06804d68b97c21b32c462d202235f90b94ab90b9db75d6abc8d0520b9e5dbbc"
+    },
+    "hashIndependentlyComputedByAgy": false,
+    "modelChanged": false,
+    "model": "Gemini 4 Argon",
+    "fixtureExecution": "NOT_RUN",
+    "sdkLogVerifiedByOperator": true,
+    "agyMemoryFileProjectionRevision": 7,
+    "actualSharedMemoryCurrentStageRevisionByOperator": 8,
+    "nativeMemoryRefreshByAgyClaimed": false,
+    "goalComplete": false
+  }
+}

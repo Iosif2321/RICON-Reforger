@@ -1,0 +1,141 @@
+flowchart LR
+  C_MANAGER["Core: authority и реестры моделей<br/>source_implemented"]
+  C_SEQUENCE["Session epoch и link sequence<br/>source_implemented"]
+  C_OBSERVATION["Наблюдение native radio только для чтения<br/>source_implemented"]
+  C_RF_PROFILE["RF-профиль устройства<br/>source_implemented"]
+  C_QUERY["Направленный RadioQueryBuilder<br/>source_implemented"]
+  C_DEVICE_CATALOG["Каталог устройств и права<br/>source_implemented"]
+  C_LIFECYCLE["Чистая машина lifecycle, PTT и lease<br/>source_implemented"]
+  C_TRANSMISSION["TransmissionBinding и входы слушателей<br/>source_implemented"]
+  C_PAIR["S3 PairService<br/>source_implemented"]
+  C_EVALUATOR["WirelessLinkEvaluator<br/>source_implemented"]
+  C_PROPAGATION["Контракт потерь и free-space<br/>source_implemented"]
+  C_NOISE_Q["Шум и диагностическая разборчивость<br/>source_implemented"]
+  C_WORLD_TERRAIN["Мировой профиль и дифракция рельефа<br/>source_implemented"]
+  C_SNAPSHOT["LinkSnapshot v1<br/>source_implemented"]
+  C_PUBLICATION["S3b LinkPublication и registry<br/>source_implemented"]
+  C_RECEIVER["SnapshotReceiver: ordering, TTL и full resync<br/>source_implemented"]
+  C_ROUTE["Расширяемые routing и call контракты<br/>source_implemented"]
+  C_VON_BINDING["Pure привязка VoN identity<br/>source_implemented"]
+  C_VON_SEAM["VoNIntegration: проверка без actuator<br/>source_implemented"]
+  C_FADING["FINITE_MULTIPATH_V1: временной полезный коэффициент<br/>source_implemented"]
+  C_DESCRIPTOR["RCFD descriptor: codec, copy и rebase<br/>source_implemented"]
+  C_CUTOFF["Interval cutoff полезного вклада<br/>source_implemented"]
+  C_SHARED_RX["Общий RX и независимые output/device состояния<br/>planned"]
+  C_CALC_MODES["RECEIVER/SERVER: общая модель и физические часы<br/>planned"]
+  C_FIXTURES["Проверки Core и отдельных ядер<br/>source_implemented"]
+  G_RT_OWNER_CONTINUE["Проектная работа продолжается по поручению владельца<br/>source"]
+  G_RT_MACHINE_CARD["Последняя machine-card: blocked, причина неизвестна<br/>open"]
+  G_RT_ACCEPTANCE_OPEN["Writer, DSP, содержание, DIRECT и 32 пользователя открыты<br/>open"]
+  G_RT_WATCH_GUARDS["Read-only observer: identity, bounds, race guards<br/>source"]
+  G_RT_PREREG_GATES["A6 preregistration и B505 release gates<br/>source"]
+  E_RT_CAPTURE10["Capture10: пять дискретных numeric cache наблюдений<br/>runtime_cache"]
+  N_RT_C["C: actual ownB native VoNComponent<br/>runtime_metadata"]
+  N_RT_V["V: sender-key1 native VonStream<br/>runtime_metadata"]
+  N_RT_T["T: private AudioSourceTemplate данного stream<br/>runtime_metadata"]
+  N_RT_R["R: current own ACP resource<br/>runtime_metadata"]
+  N_RT_SOURCE_SGM["Source proxy SGM: local index75, readback1<br/>runtime_metadata"]
+  N_RT_INPUT_MAP["Native parameter k → packed state/record mapping<br/>runtime_metadata"]
+  N_RT_INPUT_CACHE["INPUT cache: q≈0.9999994, gain0<br/>runtime_cache"]
+  N_RT_OUTPUT_CACHE["OUTPUT cache: IDs5/8 ненулевые, ID12 present-zero<br/>runtime_cache"]
+  N_RT_AUTHORED_GRAPH["Authored own ACP/SIG: 30733:12 → Radio_V<br/>source"]
+  N_RT_CONTROL_DESCRIPTOR["Actual Radio control descriptor ещё не связан<br/>open"]
+  N_RT_PROJECT_READERS["Два current entry readers: 150 и 280 байт<br/>source"]
+  N_RT_OUTPUT_GETTER["Current output reader54 → leaf49<br/>source"]
+  N_RT_EVAL_BOUNDARY["A39D70/A1DF90: hydration и evaluation effects открыты<br/>open"]
+  N_RT_PUBLIC_WRITER["Supported private-T writer/accessor ещё не найден<br/>open"]
+  E_RT_HISTORICAL18["Исторические 1.8 DSP/VoN исследования<br/>historical"]
+  N_ARCH_CAPTURE["Штатные PTT и capture<br/>required_open"]
+  N_ARCH_OPUS["Штатное кодирование Opus<br/>required_open"]
+  N_ARCH_DELIVERY["Штатная сеть, recipients и native Radio<br/>required_open"]
+  N_ARCH_DECODE["Штатные decode и audio output<br/>required_open"]
+  N_RT_PLAYBACK_SUBMISSION["Same-T: source307 подготавливает array-like submission<br/>source"]
+  N_RT_T_CONSTRUCTION["Same-T source519: event record, construction и registration args<br/>source"]
+  N_RT_CONSTRUCTED_P["Constructed P: explicit same T в P+68 и original P return<br/>source"]
+  N_RT_P_CONTROL_CONSUMER["Same P: generic E737C0 consumer и collector insertion<br/>source"]
+  N_RT_MUTABLE_INITIALIZER_HANDOFF["A3AA40 source2207: mutable ctx/item/T-P handoff<br/>source"]
+  N_RT_MUTABLE_DELEGATE_STATE["A3B6D0 source838: mutable hooks, recursion и P-linked bitmap<br/>source"]
+  N_RT_P_ITEM_LOOKUP_CFG["E73830 closed entry-CFG66: P-table ordinal, не Radio selector<br/>source"]
+  C_MANAGER -->|"constructs"| C_EVALUATOR
+  C_MANAGER -->|"owns"| C_SEQUENCE
+  C_OBSERVATION -.->|"contract_input"| C_QUERY
+  C_RF_PROFILE -.->|"contract_input"| C_QUERY
+  C_DEVICE_CATALOG -->|"checks"| C_PAIR
+  C_TRANSMISSION -.->|"contract_input"| C_PAIR
+  C_PAIR -->|"calls"| C_QUERY
+  C_PAIR -->|"calls"| C_EVALUATOR
+  C_EVALUATOR -->|"calls"| C_PROPAGATION
+  C_EVALUATOR -->|"calls"| C_NOISE_Q
+  C_WORLD_TERRAIN -->|"implements"| C_PROPAGATION
+  C_PAIR -.->|"contract_input"| C_PUBLICATION
+  C_PUBLICATION -->|"calls"| C_SEQUENCE
+  C_PUBLICATION -->|"produces"| C_SNAPSHOT
+  C_SNAPSHOT -.->|"contract_input"| C_RECEIVER
+  C_RECEIVER -.->|"planned_adapter"| C_VON_SEAM
+  C_VON_BINDING -->|"checks"| C_VON_SEAM
+  C_LIFECYCLE -.->|"planned_adapter"| C_VON_SEAM
+  C_LIFECYCLE -.->|"planned_adapter"| C_TRANSMISSION
+  C_MANAGER -->|"registers"| C_ROUTE
+  C_EVALUATOR -.->|"contract_input"| C_ROUTE
+  C_DESCRIPTOR -->|"calls"| C_FADING
+  C_FADING -->|"separate_contracts"| C_CUTOFF
+  C_DESCRIPTOR -.->|"planned_migration"| C_PUBLICATION
+  C_CALC_MODES -.->|"planned_reuse"| C_PAIR
+  C_FADING -.->|"planned_channel_input"| C_SHARED_RX
+  C_SHARED_RX -.->|"planned_native_port"| C_VON_SEAM
+  C_CALC_MODES -.->|"planned_local_audio"| C_SHARED_RX
+  C_FIXTURES -->|"test_calls"| C_VON_SEAM
+  C_FIXTURES -->|"test_contract"| C_PAIR
+  G_RT_OWNER_CONTINUE -.->|"requires_full_goal"| G_RT_ACCEPTANCE_OPEN
+  G_RT_MACHINE_CARD -.->|"separate_status_axes"| G_RT_OWNER_CONTINUE
+  G_RT_WATCH_GUARDS -->|"bounds_observation"| E_RT_CAPTURE10
+  G_RT_PREREG_GATES -->|"registers_and_checks_local_signal"| N_RT_SOURCE_SGM
+  G_RT_PREREG_GATES -->|"admitted_before_release"| E_RT_CAPTURE10
+  E_RT_CAPTURE10 -->|"observes_typed_chain"| N_RT_C
+  N_RT_C -->|"sender_key_lookup"| N_RT_V
+  N_RT_V -->|"owns_private_template"| N_RT_T
+  N_RT_T -->|"current_resource_pointer"| N_RT_R
+  N_RT_R -->|"own_resource_guid_match"| N_RT_AUTHORED_GRAPH
+  E_RT_CAPTURE10 -->|"observes_input_records"| N_RT_INPUT_CACHE
+  E_RT_CAPTURE10 -->|"observes_output_records"| N_RT_OUTPUT_CACHE
+  N_RT_SOURCE_SGM -.->|"stored_propagation_unqualified"| N_RT_INPUT_CACHE
+  N_RT_R -->|"name_to_native_input_k"| N_RT_INPUT_MAP
+  N_RT_INPUT_MAP -->|"selects_input_record"| N_RT_INPUT_CACHE
+  N_RT_INPUT_MAP -->|"anchors_selected_state_only"| N_RT_OUTPUT_CACHE
+  N_RT_AUTHORED_GRAPH -.->|"suggests_compiled_connection"| N_RT_CONTROL_DESCRIPTOR
+  N_RT_AUTHORED_GRAPH -.->|"source_hint_only"| N_RT_OUTPUT_CACHE
+  N_RT_CONTROL_DESCRIPTOR -->|"decoded_selector_contract"| N_RT_PROJECT_READERS
+  N_RT_T -->|"interface_provenance"| N_RT_PROJECT_READERS
+  N_RT_PROJECT_READERS -->|"calls_prepare"| N_RT_EVAL_BOUNDARY
+  N_RT_PROJECT_READERS -->|"calls_output_reader"| N_RT_OUTPUT_GETTER
+  N_RT_OUTPUT_GETTER -->|"calls_update_before_leaf"| N_RT_EVAL_BOUNDARY
+  N_RT_OUTPUT_GETTER -->|"defines_output_vector_layout"| N_RT_OUTPUT_CACHE
+  N_RT_EVAL_BOUNDARY -.->|"freshness_unqualified"| N_RT_OUTPUT_CACHE
+  N_RT_PUBLIC_WRITER -.->|"requires_supported_same_instance_join"| N_RT_T
+  N_RT_PUBLIC_WRITER -.->|"blocks_actuation_acceptance"| G_RT_ACCEPTANCE_OPEN
+  N_RT_OUTPUT_CACHE -.->|"does_not_prove_audio_acceptance"| G_RT_ACCEPTANCE_OPEN
+  E_RT_HISTORICAL18 -->|"navigation_only"| N_RT_PROJECT_READERS
+  N_ARCH_CAPTURE -.->|"required_preserve"| N_ARCH_OPUS
+  N_ARCH_OPUS -.->|"required_preserve"| N_ARCH_DELIVERY
+  N_ARCH_DELIVERY -.->|"required_preserve"| N_RT_C
+  N_RT_T -.->|"required_preserve"| N_ARCH_DECODE
+  C_VON_SEAM -.->|"requires"| N_RT_PUBLIC_WRITER
+  C_DESCRIPTOR -.->|"requires"| C_CALC_MODES
+  C_SHARED_RX -.->|"requires"| N_RT_CONTROL_DESCRIPTOR
+  C_FIXTURES -->|"different_evidence_scope"| E_RT_CAPTURE10
+  N_RT_T -->|"same_T_source_forwarding"| N_RT_PLAYBACK_SUBMISSION
+  N_RT_PLAYBACK_SUBMISSION -->|"calls_with_T_params_array"| N_RT_T_CONSTRUCTION
+  N_RT_PLAYBACK_SUBMISSION -.->|"actual_Radio_control_join_open"| N_RT_CONTROL_DESCRIPTOR
+  N_RT_PLAYBACK_SUBMISSION -.->|"does_not_prove_runtime_audio"| G_RT_ACCEPTANCE_OPEN
+  N_RT_T_CONSTRUCTION -->|"calls_constructor_with_same_T"| N_RT_CONSTRUCTED_P
+  N_RT_CONSTRUCTED_P -->|"result_passed_to_registration"| N_RT_T_CONSTRUCTION
+  N_RT_CONSTRUCTED_P -.->|"actual_Radio_owner_unqualified"| N_RT_CONTROL_DESCRIPTOR
+  N_RT_CONSTRUCTED_P -->|"stores_same_T_at_68"| N_RT_T
+  N_RT_CONSTRUCTED_P -->|"same_P_passed_to_E737C0"| N_RT_P_CONTROL_CONSUMER
+  N_RT_P_CONTROL_CONSUMER -->|"conditional_current_P68_control_read"| N_RT_PROJECT_READERS
+  N_RT_P_CONTROL_CONSUMER -.->|"same_T_after_initializer_unqualified"| N_RT_T
+  N_RT_P_CONTROL_CONSUMER -.->|"authored_Radio_mapping_open"| N_RT_CONTROL_DESCRIPTOR
+  N_RT_P_CONTROL_CONSUMER -->|"pre_consumer_mutable_initializer"| N_RT_MUTABLE_INITIALIZER_HANDOFF
+  N_RT_MUTABLE_INITIALIZER_HANDOFF -->|"mutable_ctx_item_bundle_handoff"| N_RT_MUTABLE_DELEGATE_STATE
+  N_RT_MUTABLE_DELEGATE_STATE -->|"conditional_pointer_key_lookup"| N_RT_P_ITEM_LOOKUP_CFG
+  N_RT_MUTABLE_DELEGATE_STATE -.->|"requires_exact_same_item_C0_provenance"| N_RT_CONTROL_DESCRIPTOR
