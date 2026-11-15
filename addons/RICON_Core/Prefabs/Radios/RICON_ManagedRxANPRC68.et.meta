@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{3970132A45D84B8E}Prefabs/Radios/RICON_ManagedRxANPRC68.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}
