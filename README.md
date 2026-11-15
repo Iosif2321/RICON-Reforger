@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="ricon-logo.svg" alt="Логотип RICON" width="220">
+
 # RICON · Reforger
 
 **Радиосвязь для Arma Reforger — проект в разработке.**
