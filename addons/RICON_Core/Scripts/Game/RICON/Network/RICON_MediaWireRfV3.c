@@ -17,6 +17,7 @@ class RICON_MediaWireRfV3
 		if (!envelope.Matches(block.m_Binding, block.m_iFirstSampleIndex, block.m_iSampleCount)) return false;
 
 		RICON_TemporalRfBudget budget = history.m_Budget;
+		if (budget.m_RxEnvironment) return false;
 		if (envelope.m_sTimebaseId != timebaseId || budget.m_sTimebaseId != timebaseId) return false;
 		if (block.m_RfBudget && !budget.Same(block.m_RfBudget)) return false;
 		if (!ValidCoverage(envelope, history.m_iValidFromMs, history.m_iValidUntilMs, budget.m_iTickMs)) return false;

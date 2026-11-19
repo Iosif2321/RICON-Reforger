@@ -81,7 +81,7 @@ class RICON_RelayRfOutput
 	//! Сетка доступна только при закреплённой геометрии, до первого чтения и для непрерывной очереди.
 	bool EnableFixedGrid(int firstEmitMs)
 	{
-		int duration = RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		int duration = RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 		if (m_bClosed || m_bEvaluating || m_bTakeAttempted || m_iNextFixedEmitMs >= 0
 			|| !m_Geometry || !m_Output || !m_Output.HasSeriesQueue()
 			|| firstEmitMs < m_iLastNowMs || firstEmitMs >= m_iValidUntilMs
@@ -107,8 +107,8 @@ class RICON_RelayRfOutput
 		int untilMs;
 		if (m_Geometry)
 		{
-			if (m_iValidUntilMs - nowMs < RICON_MediaPcmProfile.FRAME_DURATION_MS) return Retire("STALE_MODEL");
-			untilMs = nowMs + RICON_MediaPcmProfile.FRAME_DURATION_MS;
+			if (m_iValidUntilMs - nowMs < RICON_MediaPcmTestProfile.FRAME_DURATION_MS) return Retire("STALE_MODEL");
+			untilMs = nowMs + RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 			if (!m_Geometry.CoversFixedInterval(nowMs, untilMs)) return Retire("RF_UNCOVERED");
 		}
 
@@ -124,7 +124,7 @@ class RICON_RelayRfOutput
 		if (status != "OK") return Retire(status);
 		if (!HasCurrentAuthority(m_Authority, m_Output, m_Path, nowMs)) return Retire("REVOKED");
 		if (!frame || !m_Path.SamePath(frame.m_Path) || frame.m_iEmitAtMs != nowMs || nowMs >= frame.m_iDeadlineMs
-			|| !frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES) return Retire("INVALID");
+			|| !frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES) return Retire("INVALID");
 
 		RICON_RelayRfOutputFrame emission = new RICON_RelayRfOutputFrame();
 		emission.m_Frame = frame;
@@ -151,7 +151,7 @@ class RICON_RelayRfOutput
 	{
 		result = null;
 		int emitMs = m_iNextFixedEmitMs;
-		int duration = RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		int duration = RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 		if (nowMs >= m_iValidUntilMs || emitMs >= m_iValidUntilMs || m_iValidUntilMs - emitMs <= duration)
 			return Retire("STALE_MODEL");
 		if (!HasCurrentAuthority(m_Authority, m_Output, m_Path, nowMs)) return Retire("REVOKED");
@@ -172,7 +172,7 @@ class RICON_RelayRfOutput
 		if (status == "EMPTY" || status == "WAIT") return Retire("GAP");
 		if (status != "OK") return Retire(status);
 		if (!frame || !frame.m_bContinuousInput || !m_Path.SamePath(frame.m_Path) || frame.m_iEmitAtMs != emitMs
-			|| !frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES) return Retire("INVALID");
+			|| !frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES) return Retire("INVALID");
 		if (nowMs >= frame.m_iDeadlineMs) return Retire("EXPIRED");
 		if (!HasCurrentAuthority(m_Authority, m_Output, m_Path, nowMs) || !m_Output.HasCurrentInputPermit()) return Retire("REVOKED");
 		if (!m_Geometry.CoversFixedInterval(emitMs, untilMs)) return Retire("RF_UNCOVERED");
@@ -249,7 +249,7 @@ class RICON_RelayRfOutput
 	{
 		if (m_bClosed || m_bEvaluating || !m_Geometry || !m_Output || nowMs < m_iLastNowMs || nowMs >= m_iValidUntilMs
 			|| !m_Authority.CanObserveTime(nowMs) || !m_Output.CanTakeAt(nowMs)) return false;
-		int duration = RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		int duration = RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 		return m_iValidUntilMs - nowMs >= duration && m_Geometry.CoversFixedInterval(nowMs, nowMs + duration)
 			&& HasCurrentAuthority(m_Authority, m_Output, m_Path, nowMs);
 	}

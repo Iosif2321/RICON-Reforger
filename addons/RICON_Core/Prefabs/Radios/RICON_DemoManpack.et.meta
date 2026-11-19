@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

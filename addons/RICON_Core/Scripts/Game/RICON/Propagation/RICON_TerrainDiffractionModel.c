@@ -188,6 +188,46 @@ class RICON_TerrainProfileProvider
 	}
 }
 
+//! TEST_ONLY provider used by parity fixtures; it owns a clone and never reads the world.
+class RICON_SyntheticTerrainProfileProvider : RICON_TerrainProfileProvider
+{
+	protected ref RICON_TerrainProfile m_Profile;
+	protected float m_fTransmitterHeightAglM;
+	protected float m_fReceiverHeightAglM;
+	protected RICON_EReason m_eReason;
+
+	void RICON_SyntheticTerrainProfileProvider(
+		RICON_TerrainProfile profile,
+		float transmitterHeightAglM,
+		float receiverHeightAglM,
+		RICON_EReason reason = RICON_EReason.OK)
+	{
+		if (profile)
+			m_Profile = profile.CloneProfile();
+		m_fTransmitterHeightAglM = transmitterHeightAglM;
+		m_fReceiverHeightAglM = receiverHeightAglM;
+		m_eReason = reason;
+	}
+
+	override RICON_EReason GetProfile(
+		RICON_LinkQuery query,
+		RICON_TerrainDiffractionConfig config,
+		out RICON_TerrainProfile profile,
+		out float transmitterHeightAglM,
+		out float receiverHeightAglM)
+	{
+		profile = null;
+		transmitterHeightAglM = m_fTransmitterHeightAglM;
+		receiverHeightAglM = m_fReceiverHeightAglM;
+		if (m_eReason != RICON_EReason.OK)
+			return m_eReason;
+		if (!m_Profile)
+			return RICON_EReason.TERRAIN_PROFILE_UNAVAILABLE;
+		profile = m_Profile.CloneProfile();
+		return RICON_EReason.OK;
+	}
+}
+
 class RICON_L2BullingtonResult
 {
 	float m_fLossDb;

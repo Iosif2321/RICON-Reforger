@@ -1,1 +1,5 @@
 **/resourceDatabase.rdb
+
+/output/
+/external/
+__pycache__/

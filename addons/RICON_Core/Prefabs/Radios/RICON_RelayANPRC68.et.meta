@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{92D16E79D3AF4B10}Prefabs/Radios/RICON_RelayANPRC68.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

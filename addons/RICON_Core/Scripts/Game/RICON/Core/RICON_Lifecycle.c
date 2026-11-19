@@ -80,7 +80,9 @@ enum RICON_ELifecycleEffectType
 enum RICON_ELifecycleMethod
 {
 	PTT_START = 1,
-	PTT_STOP = 2
+	PTT_STOP = 2,
+	PTT_CANCEL = 3,
+	PTT_RENEW = 4
 }
 
 enum RICON_EDeviceKind
@@ -282,6 +284,9 @@ class RICON_LifecycleResult
 	int m_iLeaseId;
 	RICON_ETransmitLeaseState m_eLeaseState;
 	RICON_ELeaseTerminalReason m_eTerminalReason;
+	bool m_bHasCancelBarrier;
+	int m_iCancelStartSeq;
+	int m_iRenewedUntilMs = -1;
 	ref array<ref RICON_LifecycleEffect> m_aEffects = {};
 
 	void RICON_LifecycleResult(RICON_ELifecycleResult resultCode)
@@ -302,10 +307,13 @@ class RICON_LifecycleFingerprint
 	int m_iNetworkTypeId;
 	int m_iChannelId;
 	int m_iLeaseId;
+	int m_iCancelStartSeq;
 
 	bool EqualsFingerprint(RICON_LifecycleFingerprint other)
 	{
-		return other && m_eMethod == other.m_eMethod && m_iCorrelationId == other.m_iCorrelationId
+		if (!other || m_iCancelStartSeq != other.m_iCancelStartSeq)
+			return false;
+		return m_eMethod == other.m_eMethod && m_iCorrelationId == other.m_iCorrelationId
 			&& m_iPayloadPlayerId == other.m_iPayloadPlayerId && m_iSessionEpoch == other.m_iSessionEpoch
 			&& m_iGeneration == other.m_iGeneration && m_iRequestSeq == other.m_iRequestSeq
 			&& m_iDeviceId == other.m_iDeviceId && m_iNetworkTypeId == other.m_iNetworkTypeId
@@ -329,6 +337,7 @@ class RICON_LifecyclePttRequest
 	int m_iChannelId;
 	int m_iServerTtlMs;
 	int m_iLeaseId;
+	int m_iCancelStartSeq;
 
 	RICON_LifecycleFingerprint MakeFingerprint()
 	{
@@ -345,17 +354,39 @@ class RICON_LifecyclePttRequest
 			fingerprint.m_iNetworkTypeId = m_iNetworkTypeId;
 			fingerprint.m_iChannelId = m_iChannelId;
 		}
-		else if (m_eMethod == RICON_ELifecycleMethod.PTT_STOP)
+		else if (m_eMethod == RICON_ELifecycleMethod.PTT_STOP || m_eMethod == RICON_ELifecycleMethod.PTT_RENEW)
 		{
 			fingerprint.m_iLeaseId = m_iLeaseId;
+		}
+		else if (m_eMethod == RICON_ELifecycleMethod.PTT_CANCEL)
+		{
+			fingerprint.m_iCancelStartSeq = m_iCancelStartSeq;
 		}
 		return fingerprint;
 	}
 
 	bool IsStructurallyValid()
 	{
-		if (m_iSchemaVersion != 1 || m_iCorrelationId <= 0 || m_iAuthenticatedPlayerId <= 0
+		if (m_iCorrelationId <= 0 || m_iAuthenticatedPlayerId <= 0
 			|| m_iPayloadPlayerId <= 0 || m_iSessionEpoch <= 0 || m_iGeneration <= 0 || m_iRequestSeq <= 0)
+			return false;
+		if (m_iSchemaVersion == 2)
+		{
+			if (m_eMethod != RICON_ELifecycleMethod.PTT_CANCEL || m_iCancelStartSeq <= 0 || m_iCancelStartSeq >= m_iRequestSeq)
+				return false;
+			if (m_iDeviceId != 0 || m_iNetworkTypeId != 0 || m_iChannelId != 0)
+				return false;
+			return m_iLeaseId == 0 && m_iServerTtlMs == 0;
+		}
+		if (m_iSchemaVersion == 3)
+		{
+			if (m_eMethod != RICON_ELifecycleMethod.PTT_RENEW || m_iLeaseId <= 0 || m_iCancelStartSeq != 0)
+				return false;
+			if (m_iDeviceId != 0 || m_iNetworkTypeId != 0 || m_iChannelId != 0)
+				return false;
+			return m_iServerTtlMs > 0 && m_iServerTtlMs <= 60000;
+		}
+		if (m_iSchemaVersion != 1)
 			return false;
 		if (m_eMethod == RICON_ELifecycleMethod.PTT_START)
 			return m_iDeviceId > 0 && m_iNetworkTypeId > 0 && m_iChannelId > 0 && m_iServerTtlMs > 0;
@@ -374,6 +405,9 @@ class RICON_LifecycleCachedResponse
 	int m_iLeaseId;
 	RICON_ETransmitLeaseState m_eLeaseState;
 	RICON_ELeaseTerminalReason m_eTerminalReason;
+	bool m_bHasCancelBarrier;
+	int m_iCancelStartSeq;
+	int m_iRenewedUntilMs = -1;
 }
 
 class RICON_LifecyclePlayer
@@ -398,9 +432,34 @@ class RICON_LifecycleLease
 	int m_iChannelId;
 	int m_iIssuedAtMs;
 	int m_iTtlMs;
+	int m_iStartCorrelationId;
+	int m_iStartRequestSeq;
+	int m_iRenewedUntilMs = -1;
 	int m_iTerminalAtMs;
 	RICON_ETransmitLeaseState m_eState;
 	RICON_ELeaseTerminalReason m_eTerminalReason;
+
+	//! Time window only. Callers still qualify the lease's state and owner.
+	bool IsAuthorityLiveAt(int nowMs)
+	{
+		if (m_iIssuedAtMs < 0 || m_iTtlMs <= 0 || nowMs < m_iIssuedAtMs)
+			return false;
+		if (m_iRenewedUntilMs != -1)
+			return nowMs < m_iRenewedUntilMs;
+		return nowMs - m_iIssuedAtMs < m_iTtlMs;
+	}
+
+	//! Display/wire timestamp; saturation does not replace the legacy subtraction check.
+	int EffectiveDeadlineMs()
+	{
+		if (m_iRenewedUntilMs != -1)
+			return m_iRenewedUntilMs;
+		if (m_iTtlMs <= 0 || m_iIssuedAtMs < 0)
+			return -1;
+		if (m_iIssuedAtMs > int.MAX - m_iTtlMs)
+			return int.MAX;
+		return m_iIssuedAtMs + m_iTtlMs;
+	}
 
 	bool MatchesSource(int playerId, int generation, int deviceId, int networkTypeId, int channelId)
 	{
@@ -434,8 +493,10 @@ class RICON_LifecycleStateMachine
 	protected int m_iLastObservedNowMs;
 	protected int m_iGenerationAllocator;
 	protected int m_iLeaseAllocator;
+	protected int m_iDeviceIdHighWater;
 	protected ref RICON_LifecycleConfig m_Config;
 	protected ref array<ref RICON_LifecycleDevice> m_aDevices = {};
+	protected ref array<ref RICON_LifecycleDevice> m_aInitialDevices = {};
 	protected ref array<ref RICON_LifecyclePlayer> m_aPlayers = {};
 	protected ref array<ref RICON_LifecycleLease> m_aLeases = {};
 	protected ref array<ref RICON_LifecycleTombstone> m_aTombstones = {};
@@ -471,12 +532,72 @@ class RICON_LifecycleStateMachine
 
 		m_Config = config.CloneConfig();
 		m_aDevices.Clear();
+		m_aInitialDevices.Clear();
+		m_iDeviceIdHighWater = 0;
 		foreach (RICON_LifecycleDevice device : devices)
+		{
 			m_aDevices.Insert(device.CloneDevice());
+			m_aInitialDevices.Insert(device.CloneDevice());
+			m_iDeviceIdHighWater = device.m_iDeviceId;
+		}
 		m_iSessionEpoch = sessionEpoch;
 		m_iLastObservedNowMs = nowMs;
 		m_bReady = true;
 		return NewResult(RICON_ELifecycleResult.OK);
+	}
+
+	//! Trusted server catalogue writer; never admit client-supplied device descriptions directly.
+	RICON_LifecycleResult AddDevice(int nowMs, int expectedEpoch, RICON_LifecycleDevice device)
+	{
+		RICON_LifecycleResult result = NewResult(RICON_ELifecycleResult.OK);
+		if (!m_bReady) return SetCode(result, RICON_ELifecycleResult.NOT_READY);
+		if (nowMs < 0) return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		if (expectedEpoch != m_iSessionEpoch) return SetCode(result, RICON_ELifecycleResult.INVALID_SESSION);
+		if (!BeginEvent(nowMs, result)) return result;
+		// An observed server time still sweeps TTLs when later catalogue validation rejects.
+		if (!device || !device.IsValid()) return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		RICON_LifecycleDevice existing = FindDevice(device.m_iDeviceId);
+		if (existing)
+		{
+			if (existing.EqualsDevice(device)) return SetCode(result, RICON_ELifecycleResult.DUPLICATE);
+			return SetCode(result, RICON_ELifecycleResult.REQUEST_CONFLICT);
+		}
+		if (m_iDeviceIdHighWater == int.MAX) return SetCode(result, RICON_ELifecycleResult.LIMIT_REACHED);
+		if (device.m_iDeviceId <= m_iDeviceIdHighWater) return SetCode(result, RICON_ELifecycleResult.REQUEST_CONFLICT);
+		m_aDevices.Insert(device.CloneDevice());
+		m_iDeviceIdHighWater = device.m_iDeviceId;
+		return result;
+	}
+
+	//! Pure TX catalogue/lease removal; caller separately retires RX registrations and client grants.
+	//! Current-catalogue RX gates deny first, so resource teardown may follow this removal.
+	//! Apply returned lifecycle effects through the manager only after this method returns.
+	RICON_LifecycleResult RemoveDevice(int nowMs, int expectedEpoch, int deviceId)
+	{
+		RICON_LifecycleResult result = NewResult(RICON_ELifecycleResult.OK);
+		if (!m_bReady) return SetCode(result, RICON_ELifecycleResult.NOT_READY);
+		if (nowMs < 0) return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		if (expectedEpoch != m_iSessionEpoch) return SetCode(result, RICON_ELifecycleResult.INVALID_SESSION);
+		if (!BeginEvent(nowMs, result)) return result;
+		if (deviceId <= 0) return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		int index = -1;
+		for (int i = 0; i < m_aDevices.Count(); i++)
+		{
+			if (m_aDevices[i].m_iDeviceId == deviceId) { index = i; break; }
+		}
+		if (index < 0) return SetCode(result, RICON_ELifecycleResult.UNKNOWN_DEVICE);
+		array<int> leaseIds = {};
+		foreach (RICON_LifecycleLease lease : m_aLeases)
+		{
+			if (lease.m_eState == RICON_ETransmitLeaseState.ACTIVE && lease.m_iDeviceId == deviceId)
+				leaseIds.Insert(lease.m_iLeaseId);
+		}
+		leaseIds.Sort();
+		foreach (int leaseId : leaseIds)
+			TerminateLease(leaseId, RICON_ETransmitLeaseState.REVOKED,
+				RICON_ELeaseTerminalReason.DEVICE_REMOVED, nowMs, result);
+		m_aDevices.RemoveOrdered(index);
+		return result;
 	}
 
 	RICON_LifecycleResult Connected(int nowMs, int playerId, int connectionId)
@@ -662,6 +783,12 @@ class RICON_LifecycleStateMachine
 			return SetCode(result, RICON_ELifecycleResult.NOT_READY);
 		if (!request)
 			return SetCode(result, RICON_ELifecycleResult.MALFORMED);
+		if (request.m_iSchemaVersion == 2 || request.m_iSchemaVersion == 3)
+		{
+			RICON_ELifecycleResult preflightCode = PreflightPttScope(request);
+			if (preflightCode != RICON_ELifecycleResult.OK)
+				return SetCode(result, preflightCode);
+		}
 		if (!BeginEvent(request.m_iNowMs, result))
 			return result;
 		if (!request.IsStructurallyValid())
@@ -771,6 +898,8 @@ class RICON_LifecycleStateMachine
 	}
 
 	int GetSessionEpoch() { return m_iSessionEpoch; }
+	int GetDeviceCount() { return m_aDevices.Count(); }
+	int GetDeviceIdHighWater() { return m_iDeviceIdHighWater; }
 	int GetPlayerCount() { return m_aPlayers.Count(); }
 	int GetLeaseCount() { return m_aLeases.Count(); }
 	int GetTombstoneCount() { return m_aTombstones.Count(); }
@@ -832,10 +961,7 @@ class RICON_LifecycleStateMachine
 		if (!CanQueryAt(nowMs) || leaseId <= 0)
 			return null;
 		RICON_LifecycleLease lease = FindLease(leaseId);
-		if (!lease || lease.m_eState != RICON_ETransmitLeaseState.ACTIVE
-			|| lease.m_iIssuedAtMs < 0 || lease.m_iTtlMs <= 0 || nowMs < lease.m_iIssuedAtMs)
-			return null;
-		if (nowMs - lease.m_iIssuedAtMs >= lease.m_iTtlMs)
+		if (!lease || lease.m_eState != RICON_ETransmitLeaseState.ACTIVE || !lease.IsAuthorityLiveAt(nowMs))
 			return null;
 		RICON_LifecycleLease copy = new RICON_LifecycleLease();
 		copy.m_iLeaseId = lease.m_iLeaseId;
@@ -846,6 +972,9 @@ class RICON_LifecycleStateMachine
 		copy.m_iChannelId = lease.m_iChannelId;
 		copy.m_iIssuedAtMs = lease.m_iIssuedAtMs;
 		copy.m_iTtlMs = lease.m_iTtlMs;
+		copy.m_iStartCorrelationId = lease.m_iStartCorrelationId;
+		copy.m_iStartRequestSeq = lease.m_iStartRequestSeq;
+		copy.m_iRenewedUntilMs = lease.m_iRenewedUntilMs;
 		copy.m_iTerminalAtMs = lease.m_iTerminalAtMs;
 		copy.m_eState = lease.m_eState;
 		copy.m_eTerminalReason = lease.m_eTerminalReason;
@@ -891,6 +1020,10 @@ class RICON_LifecycleStateMachine
 
 		if (request.m_eMethod == RICON_ELifecycleMethod.PTT_START)
 			return StartTransmit(request, player, result);
+		if (request.m_eMethod == RICON_ELifecycleMethod.PTT_CANCEL)
+			return CancelTransmit(request, player, result);
+		if (request.m_eMethod == RICON_ELifecycleMethod.PTT_RENEW)
+			return RenewTransmit(request, player, result);
 		return StopTransmit(request, player, result);
 	}
 
@@ -923,6 +1056,8 @@ class RICON_LifecycleStateMachine
 		lease.m_iChannelId = request.m_iChannelId;
 		lease.m_iIssuedAtMs = request.m_iNowMs;
 		lease.m_iTtlMs = request.m_iServerTtlMs;
+		lease.m_iStartCorrelationId = request.m_iCorrelationId;
+		lease.m_iStartRequestSeq = request.m_iRequestSeq;
 		lease.m_eState = RICON_ETransmitLeaseState.ACTIVE;
 		m_aLeases.Insert(lease);
 		AddLeaseEffect(result, RICON_ELifecycleEffectType.LEASE_GRANTED, lease);
@@ -949,6 +1084,92 @@ class RICON_LifecycleStateMachine
 		result.m_iLeaseId = lease.m_iLeaseId;
 		result.m_eLeaseState = lease.m_eState;
 		result.m_eTerminalReason = lease.m_eTerminalReason;
+		return result;
+	}
+
+	protected RICON_ELifecycleResult PreflightPttScope(RICON_LifecyclePttRequest request)
+	{
+		// A new control schema cannot sweep another scope or latch its clock before authentication.
+		if (request.m_iNowMs < 0 || !request.IsStructurallyValid())
+			return RICON_ELifecycleResult.MALFORMED;
+		if (request.m_iPayloadPlayerId != request.m_iAuthenticatedPlayerId)
+			return RICON_ELifecycleResult.FORGED_OWNER;
+		if (request.m_iSessionEpoch != m_iSessionEpoch)
+			return RICON_ELifecycleResult.INVALID_SESSION;
+		RICON_LifecyclePlayer player = FindPlayer(request.m_iAuthenticatedPlayerId);
+		if (!player)
+		{
+			RICON_LifecycleTombstone tombstone = FindLatestTombstone(request.m_iAuthenticatedPlayerId);
+			if (!tombstone || request.m_iGeneration > tombstone.m_iGeneration)
+				return RICON_ELifecycleResult.NOT_READY;
+			return RICON_ELifecycleResult.STALE_GENERATION;
+		}
+		if (request.m_iGeneration != player.m_iGeneration)
+			return RICON_ELifecycleResult.STALE_GENERATION;
+		return RICON_ELifecycleResult.OK;
+	}
+
+	protected RICON_LifecycleResult CancelTransmit(
+		RICON_LifecyclePttRequest request,
+		RICON_LifecyclePlayer player,
+		RICON_LifecycleResult result)
+	{
+		result.m_bHasCancelBarrier = true;
+		result.m_iCancelStartSeq = request.m_iCancelStartSeq;
+		foreach (RICON_LifecycleLease candidate : m_aLeases)
+		{
+			if (candidate.m_iPlayerId != request.m_iAuthenticatedPlayerId || candidate.m_iGeneration != player.m_iGeneration)
+				continue;
+			if (candidate.m_iStartCorrelationId != request.m_iCorrelationId || candidate.m_iStartRequestSeq != request.m_iCancelStartSeq)
+				continue;
+			// Termination may evict this terminal record from the owning array.
+			ref RICON_LifecycleLease held = candidate;
+			if (held.m_eState == RICON_ETransmitLeaseState.ACTIVE)
+				TerminateLease(held.m_iLeaseId, RICON_ETransmitLeaseState.REVOKED,
+					RICON_ELeaseTerminalReason.CLIENT_STOP, request.m_iNowMs, result);
+			result.m_bHasLease = true;
+			result.m_iLeaseId = held.m_iLeaseId;
+			result.m_eLeaseState = held.m_eState;
+			result.m_eTerminalReason = held.m_eTerminalReason;
+			return result;
+		}
+		return result;
+	}
+
+	protected RICON_LifecycleResult RenewTransmit(
+		RICON_LifecyclePttRequest request,
+		RICON_LifecyclePlayer player,
+		RICON_LifecycleResult result)
+	{
+		RICON_LifecycleLease lease = FindLease(request.m_iLeaseId);
+		if (!lease)
+			return SetCode(result, RICON_ELifecycleResult.UNKNOWN_LEASE);
+		if (lease.m_iPlayerId != request.m_iAuthenticatedPlayerId || lease.m_iGeneration != player.m_iGeneration)
+			return SetCode(result, RICON_ELifecycleResult.STALE_LEASE);
+		if (lease.m_eState != RICON_ETransmitLeaseState.ACTIVE || lease.m_iStartCorrelationId != request.m_iCorrelationId)
+			return SetCode(result, RICON_ELifecycleResult.STALE_LEASE);
+		RICON_LifecycleDevice device = FindDevice(lease.m_iDeviceId);
+		if (!device)
+			return SetCode(result, RICON_ELifecycleResult.UNKNOWN_DEVICE);
+		if (!device.CanAccess(lease.m_iPlayerId))
+			return SetCode(result, RICON_ELifecycleResult.NOT_OWNER);
+		if (!device.m_bPowered)
+			return SetCode(result, RICON_ELifecycleResult.POWER_OFF);
+		if (!device.Allows(lease.m_iNetworkTypeId, lease.m_iChannelId))
+			return SetCode(result, RICON_ELifecycleResult.INVALID_CATALOG);
+
+		int deadline = lease.EffectiveDeadlineMs();
+		// Preserve a legacy window when no finite explicit deadline can extend it.
+		if (deadline == int.MAX || request.m_iNowMs >= int.MAX - request.m_iServerTtlMs)
+			return SetCode(result, RICON_ELifecycleResult.LIMIT_REACHED);
+		int candidate = request.m_iNowMs + request.m_iServerTtlMs;
+		if (candidate > deadline)
+			deadline = candidate;
+		lease.m_iRenewedUntilMs = deadline;
+		result.m_bHasLease = true;
+		result.m_iLeaseId = lease.m_iLeaseId;
+		result.m_eLeaseState = lease.m_eState;
+		result.m_iRenewedUntilMs = deadline;
 		return result;
 	}
 
@@ -990,8 +1211,7 @@ class RICON_LifecycleStateMachine
 		array<int> due = {};
 		foreach (RICON_LifecycleLease lease : m_aLeases)
 		{
-			if (lease.m_eState == RICON_ETransmitLeaseState.ACTIVE
-				&& nowMs - lease.m_iIssuedAtMs >= lease.m_iTtlMs)
+			if (lease.m_eState == RICON_ETransmitLeaseState.ACTIVE && !lease.IsAuthorityLiveAt(nowMs))
 				due.Insert(lease.m_iLeaseId);
 		}
 		due.Sort();
@@ -1141,6 +1361,9 @@ class RICON_LifecycleStateMachine
 		cached.m_iLeaseId = response.m_iLeaseId;
 		cached.m_eLeaseState = response.m_eLeaseState;
 		cached.m_eTerminalReason = response.m_eTerminalReason;
+		cached.m_bHasCancelBarrier = response.m_bHasCancelBarrier;
+		cached.m_iCancelStartSeq = response.m_iCancelStartSeq;
+		cached.m_iRenewedUntilMs = response.m_iRenewedUntilMs;
 		player.m_aCache.Insert(cached);
 	}
 
@@ -1158,11 +1381,11 @@ class RICON_LifecycleStateMachine
 
 	protected bool DevicesEqual(array<ref RICON_LifecycleDevice> devices)
 	{
-		if (devices.Count() != m_aDevices.Count())
+		if (devices.Count() != m_aInitialDevices.Count())
 			return false;
 		for (int i = 0; i < devices.Count(); i++)
 		{
-			if (!m_aDevices[i].EqualsDevice(devices[i]))
+			if (!m_aInitialDevices[i].EqualsDevice(devices[i]))
 				return false;
 		}
 		return true;
@@ -1348,6 +1571,9 @@ class RICON_LifecycleStateMachine
 		result.m_iLeaseId = cached.m_iLeaseId;
 		result.m_eLeaseState = cached.m_eLeaseState;
 		result.m_eTerminalReason = cached.m_eTerminalReason;
+		result.m_bHasCancelBarrier = cached.m_bHasCancelBarrier;
+		result.m_iCancelStartSeq = cached.m_iCancelStartSeq;
+		result.m_iRenewedUntilMs = cached.m_iRenewedUntilMs;
 	}
 
 	protected void AddPlayerStateEffect(

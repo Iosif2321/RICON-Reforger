@@ -63,15 +63,16 @@ class RICON_RelayPcmOrigin
 	int m_iCaptureFromMs, m_iCaptureUntilMs, m_iRxReadyMs, m_iDeadlineMs;
 	bool m_bContinuousInput;
 	ref RICON_MediaCaptureEnvelope m_CaptureEnvelope;
+	ref RICON_MediaCaptureAnchor m_TrustedCaptureAnchor;
 	ref RICON_RelayPcmOrigin m_PreviousInput;
 
 	bool IsValid(int nowMs)
 	{
 		if (!ValidWindow(nowMs)) return false;
-		if (m_bContinuousInput && !IsFixedWindow()) return false;
+		if (m_bContinuousInput && !ValidSeriesWindow()) return false;
 		if (!m_PreviousInput) return true;
 		return m_bContinuousInput && !m_PreviousInput.m_PreviousInput && !m_PreviousInput.m_bContinuousInput
-			&& m_PreviousInput.ValidWindow(nowMs) && m_PreviousInput.IsFixedWindow() && Follows(m_PreviousInput);
+			&& m_PreviousInput.ValidWindow(nowMs) && m_PreviousInput.ValidSeriesWindow() && Follows(m_PreviousInput);
 	}
 
 	protected bool ValidWindow(int nowMs)
@@ -79,6 +80,7 @@ class RICON_RelayPcmOrigin
 		if (m_iSequence < 0 || m_iSequence >= int.MAX || m_iFirstSampleIndex < 0 || m_iSampleCount <= 0
 			|| m_iFirstSampleIndex > int.MAX - m_iSampleCount || m_iCaptureFromMs < 0
 			|| m_iCaptureFromMs >= m_iCaptureUntilMs || m_iCaptureUntilMs > m_iRxReadyMs || m_iRxReadyMs > nowMs) return false;
+		if (m_TrustedCaptureAnchor) return HasValidTrustedCapture();
 		if (m_CaptureEnvelope && (!m_CaptureEnvelope.m_Binding || m_CaptureEnvelope.m_iMappingRevision <= 0
 			|| !RICON_TemporalSnapshots.ValidKey(m_CaptureEnvelope.m_sTimebaseId)
 			|| m_CaptureEnvelope.m_iFirstSampleIndex != m_iFirstSampleIndex || m_CaptureEnvelope.m_iSampleCount != m_iSampleCount
@@ -87,17 +89,40 @@ class RICON_RelayPcmOrigin
 		return true;
 	}
 
+	bool HasValidTrustedCapture()
+	{
+		return m_TrustedCaptureAnchor && m_CaptureEnvelope && m_CaptureEnvelope.m_Binding
+			&& m_CaptureEnvelope.m_Binding.IsValid() && m_CaptureEnvelope.m_Binding.m_sProfileId == RICON_MediaPcmTestProfile.PROFILE_ID
+			&& m_iSampleCount == RICON_MediaPcmTestProfile.FRAME_SAMPLES
+			&& m_TrustedCaptureAnchor.m_iSampleRateHz == RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ
+			&& m_iFirstSampleIndex >= m_TrustedCaptureAnchor.m_iFirstSampleIndex
+			&& (m_iFirstSampleIndex - m_TrustedCaptureAnchor.m_iFirstSampleIndex) % RICON_MediaPcmTestProfile.FRAME_SAMPLES == 0
+			&& m_CaptureEnvelope.Matches(m_TrustedCaptureAnchor.m_Binding, m_iFirstSampleIndex, m_iSampleCount)
+			&& RICON_MediaCaptureClock.MatchesMappedBounds(m_TrustedCaptureAnchor, m_CaptureEnvelope, m_iCaptureFromMs, m_iCaptureUntilMs);
+	}
+
+	protected bool ValidSeriesWindow()
+	{
+		if (m_TrustedCaptureAnchor) return HasValidTrustedCapture();
+		return IsFixedWindow();
+	}
+
 	protected bool IsFixedWindow()
 	{
-		return m_iSampleCount == RICON_MediaPcmProfile.FRAME_SAMPLES
-			&& m_iCaptureUntilMs - m_iCaptureFromMs == RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		return m_iSampleCount == RICON_MediaPcmTestProfile.FRAME_SAMPLES
+			&& m_iCaptureUntilMs - m_iCaptureFromMs == RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 	}
 
 	bool Follows(RICON_RelayPcmOrigin earlier)
 	{
-		return earlier && m_iSequence == earlier.m_iSequence + 1
-			&& m_iFirstSampleIndex == earlier.m_iFirstSampleIndex + earlier.m_iSampleCount
-			&& m_iCaptureFromMs == earlier.m_iCaptureUntilMs && SameCaptureClock(earlier);
+		if (!earlier || earlier.m_iSequence >= int.MAX - 1 || earlier.m_iSampleCount <= 0
+			|| earlier.m_iFirstSampleIndex > int.MAX - earlier.m_iSampleCount || m_iSequence != earlier.m_iSequence + 1
+			|| m_iFirstSampleIndex != earlier.m_iFirstSampleIndex + earlier.m_iSampleCount) return false;
+		if (m_TrustedCaptureAnchor || earlier.m_TrustedCaptureAnchor)
+			return m_TrustedCaptureAnchor && earlier.m_TrustedCaptureAnchor
+				&& m_TrustedCaptureAnchor.SameAnchor(earlier.m_TrustedCaptureAnchor)
+				&& HasValidTrustedCapture() && earlier.HasValidTrustedCapture();
+		return m_iCaptureFromMs == earlier.m_iCaptureUntilMs && SameCaptureClock(earlier);
 	}
 
 	protected bool SameCaptureClock(RICON_RelayPcmOrigin earlier)
@@ -115,6 +140,11 @@ class RICON_RelayPcmOrigin
 			|| m_iSampleCount != other.m_iSampleCount || m_iCaptureFromMs != other.m_iCaptureFromMs
 			|| m_iCaptureUntilMs != other.m_iCaptureUntilMs || m_iRxReadyMs != other.m_iRxReadyMs
 			|| m_iDeadlineMs != other.m_iDeadlineMs) return false;
+		if (m_TrustedCaptureAnchor)
+		{
+			if (!m_TrustedCaptureAnchor.SameAnchor(other.m_TrustedCaptureAnchor)) return false;
+		}
+		else if (other.m_TrustedCaptureAnchor) return false;
 		if (m_CaptureEnvelope) return m_CaptureEnvelope.SameEnvelope(other.m_CaptureEnvelope);
 		return !other.m_CaptureEnvelope;
 	}
@@ -144,6 +174,7 @@ class RICON_RelayPcmOrigin
 		copy.m_iRxReadyMs = m_iRxReadyMs;
 		copy.m_iDeadlineMs = m_iDeadlineMs;
 		if (m_CaptureEnvelope) copy.m_CaptureEnvelope = m_CaptureEnvelope.CloneEnvelope();
+		if (m_TrustedCaptureAnchor) copy.m_TrustedCaptureAnchor = m_TrustedCaptureAnchor.CloneAnchor();
 		return copy;
 	}
 }
@@ -162,6 +193,7 @@ class RICON_RelayPcmHandoff
 	protected ref RICON_RelayPcmPath m_Path;
 	protected ref RICON_RelayPcmPolicy m_Policy;
 	protected ref RICON_MediaOutputPermit m_InputPermit;
+	protected ref RICON_RelayPcmOrigin m_LastTrustedOrigin;
 	protected ref array<ref RICON_RelayPcmEmission> m_Pending = {};
 	protected int m_iLastNowMs = -1, m_iLastOriginSequence = -1;
 	protected int m_iLastOriginSampleEnd, m_iLastRxSampleEnd, m_iLastCaptureEndMs, m_iNextEmissionSequence;
@@ -222,11 +254,19 @@ class RICON_RelayPcmHandoff
 			Close();
 			return "EXPIRED";
 		}
-		if (!mix || !m_Path.m_UpstreamRoute.Same(mix.m_Rx) || !RICON_SharedRxMixer.IsPcmWindow(mix.m_aSamples)
+		if (!mix || !m_Path.m_UpstreamRoute.Same(mix.m_Rx) || !RICON_SharedRxTestMixer.IsPcmWindow(mix.m_aSamples)
 			|| !mix.m_aPermits || mix.m_aPermits.Count() != 1 || mix.m_iFirstSampleIndex < 0
-			|| mix.m_iFirstSampleIndex > int.MAX - RICON_SharedRxMixer.WINDOW_SAMPLES
+			|| mix.m_iFirstSampleIndex > int.MAX - RICON_SharedRxTestMixer.WINDOW_SAMPLES
 			|| !origin || !origin.IsValid(nowMs)) return "INVALID";
 		if (m_bSeriesQueue && !origin.m_bContinuousInput) return "INVALID";
+		bool anchored = origin.m_TrustedCaptureAnchor != null;
+		if (mix.m_RelayInputOrigin)
+		{
+			if (!mix.m_RelayInputOrigin.SameWindow(origin) || mix.m_RelayInputOrigin.m_bContinuousInput != origin.m_bContinuousInput) return "INVALID";
+			RICON_RelayPcmOrigin modeledPrevious = mix.m_RelayInputOrigin.m_PreviousInput;
+			if (modeledPrevious && !modeledPrevious.SameWindow(origin.m_PreviousInput)) return "INVALID";
+			if (!modeledPrevious && origin.m_PreviousInput) return "INVALID";
+		}
 		if (origin.m_CaptureEnvelope && (!origin.m_bContinuousInput
 			|| !m_Path.m_UpstreamRoute.m_Source.Same(origin.m_CaptureEnvelope.m_Binding))) return "INVALID";
 		int rateRatio = RICON_PcmResampler8To48.OUTPUT_RATE_HZ / RICON_PcmResampler8To48.INPUT_RATE_HZ;
@@ -236,7 +276,18 @@ class RICON_RelayPcmHandoff
 		if (!permit || !permit.MatchesRoute(m_Path.m_UpstreamRoute) || (m_InputPermit && permit != m_InputPermit))
 			return "INVALID";
 		if (origin.m_iSequence <= m_iLastOriginSequence) return "DUPLICATE";
-		if (origin.m_iFirstSampleIndex < m_iLastOriginSampleEnd || origin.m_iCaptureFromMs < m_iLastCaptureEndMs
+		if (m_iLastOriginSequence >= 0 && anchored != (m_LastTrustedOrigin != null)) return "INVALID";
+		if (anchored)
+		{
+			if (!m_bSeriesQueue || !origin.m_bContinuousInput) return "INVALID";
+			if (m_LastTrustedOrigin)
+			{
+				if (!origin.Follows(m_LastTrustedOrigin) || !origin.m_PreviousInput
+					|| !origin.m_PreviousInput.SameWindow(m_LastTrustedOrigin)) return "INVALID";
+			}
+			else if (origin.m_PreviousInput) return "INVALID";
+		}
+		if (origin.m_iFirstSampleIndex < m_iLastOriginSampleEnd || (!anchored && origin.m_iCaptureFromMs < m_iLastCaptureEndMs)
 			|| mix.m_iFirstSampleIndex < m_iLastRxSampleEnd)
 			return "INVALID";
 		int deadlineMs = origin.EffectiveDeadlineMs();
@@ -260,8 +311,9 @@ class RICON_RelayPcmHandoff
 		m_iNextEmissionSequence++;
 		m_iLastOriginSequence = next.m_Origin.m_iSequence;
 		m_iLastOriginSampleEnd = next.m_Origin.m_iFirstSampleIndex + next.m_Origin.m_iSampleCount;
-		m_iLastRxSampleEnd = next.m_iRxFirstSampleIndex + RICON_SharedRxMixer.WINDOW_SAMPLES;
+		m_iLastRxSampleEnd = next.m_iRxFirstSampleIndex + RICON_SharedRxTestMixer.WINDOW_SAMPLES;
 		m_iLastCaptureEndMs = next.m_Origin.m_iCaptureUntilMs;
+		if (anchored) m_LastTrustedOrigin = next.m_Origin.CloneWindow();
 		return "OK";
 	}
 
@@ -311,6 +363,7 @@ class RICON_RelayPcmHandoff
 		m_bClosed = true;
 		m_Pending.Clear();
 		m_InputPermit = null;
+		m_LastTrustedOrigin = null;
 		m_Path = null;
 		m_Policy = null;
 	}

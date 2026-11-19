@@ -1,0 +1,14 @@
+GenericEntity : "{9B6B61BB3FE3DFB0}Prefabs/Items/Equipment/Radios/Radio_ANPRC77.et" {
+ ID "27C1B04EFFD363AC"
+ components {
+  BaseRadioComponent "{5A30BAE7673C63CA}" {
+   "Encryption key" ""
+   "Turned on" 1
+   Transceivers {
+    RadioTransceiver "{5EA4A89F0D06E18F}" { ChannelFrequency 38000 }
+    RadioTransceiver "{5E06C824E007EA8F}" { ChannelFrequency 38200 }
+   }
+  }
+  RICON_GameRadioEquipmentComponent "{2AA136DD2CC5B9A2}" { m_eEquipment 2 }
+ }
+}

@@ -1,0 +1,7 @@
+GenericEntity : "{3970132A45D84B8E}Prefabs/Radios/RICON_ManagedRxANPRC68.et" {
+ ID "E48B4DE8433B40E0"
+ components {
+  RICON_RelayStationComponent "{290D45E324C14AF1}" {
+  }
+ }
+}

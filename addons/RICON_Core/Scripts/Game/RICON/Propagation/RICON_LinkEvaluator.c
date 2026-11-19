@@ -4,6 +4,17 @@
 //! Common contract: query -> budget, with no knowledge of the network type (REQ-core §6, scenario EXT-5).
 class RICON_LinkEvaluator
 {
+	//! Physical substeps never mark the target as a complete valid link budget; callers must check the reason.
+	RICON_EReason FillReceivedPower(RICON_LinkQuery query, RICON_LinkBudget target, float spectralWidthHz = 0)
+	{
+		return RICON_EReason.UNKNOWN_MODEL;
+	}
+
+	RICON_EReason FillReceiverNoise(RICON_LinkQuery query, RICON_LinkBudget target)
+	{
+		return RICON_EReason.UNKNOWN_MODEL;
+	}
+
 	//! Never returns null; an invalid query yields an invalid, fully finite budget.
 	RICON_LinkBudget Evaluate(RICON_LinkQuery query)
 	{
@@ -46,6 +57,64 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 			&& m_Propagation.Type() == RICON_FreeSpaceModel && m_Noise.Type() == RICON_NoiseModel;
 	}
 
+	//! Shared TX/J -> RX power calculation, independent of keys, sensitivity and Q.
+	override RICON_EReason FillReceivedPower(RICON_LinkQuery query, RICON_LinkBudget target, float spectralWidthHz = 0)
+	{
+		if (!query || !target) return RICON_EReason.CATALOG_VIOLATION;
+		target.m_bValid = false;
+		target.m_aLayers.Clear();
+		target.m_fDistanceM = 0;
+		target.m_fTotalLossDb = 0;
+		target.m_fRxPowerDbm = 0;
+		if (!RICON_Num.IsFiniteVector(query.m_vTxPos) || !RICON_Num.IsFiniteVector(query.m_vRxPos)) return RICON_EReason.INVALID_COORDINATE;
+		if (!RICON_Num.IsFinite(query.m_fFrequencyMHz) || query.m_fFrequencyMHz <= 0) return RICON_EReason.INVALID_FREQUENCY;
+		if (!RICON_Num.IsFinite(query.m_fTxPowerDbm)) return RICON_EReason.CATALOG_VIOLATION;
+		if (!RICON_Num.IsFinite(query.m_fTxGainDbi) || !RICON_Num.IsFinite(query.m_fRxGainDbi)) return RICON_EReason.INVALID_GAIN;
+		if (m_sBandId.IsEmpty() || query.m_sBandId != m_sBandId) return RICON_EReason.UNKNOWN_BAND;
+		if (!m_Propagation || query.m_sModelId != m_Propagation.GetModelId()) return RICON_EReason.UNKNOWN_MODEL;
+		if (!m_Propagation.IsApplicable(query.m_fFrequencyMHz)) return RICON_EReason.OUT_OF_MODEL_DOMAIN;
+		if (spectralWidthHz != 0)
+		{
+			if (!RICON_Num.IsFinite(spectralWidthHz) || spectralWidthHz <= 0) return RICON_EReason.INVALID_BANDWIDTH;
+			float halfWidthMHz = spectralWidthHz / 2000000.0;
+			float lowerMHz = query.m_fFrequencyMHz - halfWidthMHz, upperMHz = query.m_fFrequencyMHz + halfWidthMHz;
+			if (!RICON_Num.IsFinite(lowerMHz) || !RICON_Num.IsFinite(upperMHz) || lowerMHz <= 0
+				|| !m_Propagation.IsApplicable(lowerMHz) || !m_Propagation.IsApplicable(upperMHz)) return RICON_EReason.OUT_OF_MODEL_DOMAIN;
+		}
+		target.m_fDistanceM = vector.Distance(query.m_vTxPos, query.m_vRxPos);
+		RICON_EReason reason = m_Propagation.AppendLosses(query, target.m_fDistanceM, target.m_aLayers);
+		if (reason != RICON_EReason.OK) return reason;
+		if (!AreLayersValid(target.m_aLayers, m_Propagation.GetModelId())) return RICON_EReason.MODEL_CONTRACT_VIOLATION;
+		foreach (RICON_LossLayer layer : target.m_aLayers) target.m_fTotalLossDb += layer.m_fLossDb;
+		target.m_fRxPowerDbm = query.m_fTxPowerDbm + query.m_fTxGainDbi + query.m_fRxGainDbi - target.m_fTotalLossDb;
+		if (!RICON_Num.IsFinite(target.m_fDistanceM) || !RICON_Num.IsFinite(target.m_fTotalLossDb)
+			|| !RICON_Num.IsFinite(target.m_fRxPowerDbm)) return RICON_EReason.NUMERIC_FAILURE;
+		return RICON_EReason.OK;
+	}
+
+	//! N depends on the receiver profile and noise model, not on a wanted talker or its Q.
+	override RICON_EReason FillReceiverNoise(RICON_LinkQuery query, RICON_LinkBudget target)
+	{
+		if (!query || !target) return RICON_EReason.CATALOG_VIOLATION;
+		target.m_bValid = false;
+		target.m_fThermalNoiseDbm = 0;
+		target.m_fNoiseDbm = 0;
+		target.m_bNoiseModelInDomain = false;
+		if (!RICON_Num.IsFinite(query.m_fFrequencyMHz) || query.m_fFrequencyMHz <= 0) return RICON_EReason.INVALID_FREQUENCY;
+		if (!RICON_Num.IsFinite(query.m_fBandwidthHz) || query.m_fBandwidthHz <= 0) return RICON_EReason.INVALID_BANDWIDTH;
+		if (!RICON_Num.IsFinite(query.m_fRxNoiseFigureDb) || query.m_fRxNoiseFigureDb < 0) return RICON_EReason.INVALID_NOISE_FIGURE;
+		if (m_sBandId.IsEmpty() || query.m_sBandId != m_sBandId) return RICON_EReason.UNKNOWN_BAND;
+		if (!m_Noise || query.m_sNoiseEnvironmentId != m_Noise.GetEnvironmentId()) return RICON_EReason.UNKNOWN_NOISE_ENVIRONMENT;
+		target.m_fThermalNoiseDbm = ThermalNoiseDbm(query.m_fBandwidthHz);
+		RICON_NoiseEstimate estimate = new RICON_NoiseEstimate();
+		m_Noise.Estimate(query.m_fFrequencyMHz, estimate);
+		target.m_bNoiseModelInDomain = estimate.m_bInDomain;
+		float receiverFactor = Math.Pow(10, query.m_fRxNoiseFigureDb / 10.0);
+		target.m_fNoiseDbm = target.m_fThermalNoiseDbm + 10.0 * Math.Log10(estimate.m_fFactorLinear + receiverFactor - 1);
+		if (!RICON_Num.IsFinite(target.m_fThermalNoiseDbm) || !RICON_Num.IsFinite(target.m_fNoiseDbm)) return RICON_EReason.NUMERIC_FAILURE;
+		return RICON_EReason.OK;
+	}
+
 	override RICON_LinkBudget Evaluate(RICON_LinkQuery query)
 	{
 		RICON_LinkBudget budget = new RICON_LinkBudget();
@@ -84,49 +153,19 @@ class RICON_WirelessLinkEvaluator : RICON_LinkEvaluator
 			budget.MarkInvalid(RICON_EReason.UNKNOWN_MODEL);
 			return budget;
 		}
-		RICON_PropagationModel propagation = m_Propagation;
-		RICON_NoiseModel noise = m_Noise;
 		RICON_IntelligibilityModel intelligibility = m_Intelligibility;
 		if (!intelligibility.IsConfigValid())
 		{
 			budget.MarkInvalid(RICON_EReason.CATALOG_VIOLATION);
 			return budget;
 		}
-		if (!propagation.IsApplicable(query.m_fFrequencyMHz))
+		RICON_EReason physicalReason = FillReceivedPower(query, budget);
+		if (physicalReason == RICON_EReason.OK) physicalReason = FillReceiverNoise(query, budget);
+		if (physicalReason != RICON_EReason.OK)
 		{
-			budget.MarkInvalid(RICON_EReason.OUT_OF_MODEL_DOMAIN);
+			budget.MarkInvalid(physicalReason);
 			return budget;
 		}
-
-		// Losses (REQ-LE-30, REQ-LE-31).
-		budget.m_fDistanceM = vector.Distance(query.m_vTxPos, query.m_vRxPos);
-		RICON_EReason propagationReason = propagation.AppendLosses(query, budget.m_fDistanceM, budget.m_aLayers);
-		if (propagationReason != RICON_EReason.OK)
-		{
-			budget.MarkInvalid(propagationReason);
-			return budget;
-		}
-		if (!AreLayersValid(budget.m_aLayers, propagation.GetModelId()))
-		{
-			budget.MarkInvalid(RICON_EReason.MODEL_CONTRACT_VIOLATION);
-			return budget;
-		}
-		budget.m_fTotalLossDb = 0;
-		foreach (RICON_LossLayer layer : budget.m_aLayers)
-		{
-			budget.m_fTotalLossDb += layer.m_fLossDb;
-		}
-
-		// Received power (REQ-LE-50).
-		budget.m_fRxPowerDbm = query.m_fTxPowerDbm + query.m_fTxGainDbi + query.m_fRxGainDbi - budget.m_fTotalLossDb;
-
-		// Noise: N0 = kT0B, N = N0 + 10 lg(f_a + f_r - 1) (REQ-LE-60, REQ-LE-61).
-		budget.m_fThermalNoiseDbm = ThermalNoiseDbm(query.m_fBandwidthHz);
-		RICON_NoiseEstimate estimate = new RICON_NoiseEstimate();
-		noise.Estimate(query.m_fFrequencyMHz, estimate);
-		budget.m_bNoiseModelInDomain = estimate.m_bInDomain;
-		float receiverFactor = Math.Pow(10, query.m_fRxNoiseFigureDb / 10.0);
-		budget.m_fNoiseDbm = budget.m_fThermalNoiseDbm + 10.0 * Math.Log10(estimate.m_fFactorLinear + receiverFactor - 1);
 
 		// Noise plus interference and SINR (REQ-LE-65, REQ-LE-70).
 		budget.m_fNoisePlusInterferenceDbm = budget.m_fNoiseDbm;

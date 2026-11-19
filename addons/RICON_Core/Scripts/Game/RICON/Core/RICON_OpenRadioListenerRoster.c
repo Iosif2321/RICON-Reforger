@@ -2,6 +2,7 @@ class RICON_OpenRadioListenerMembership
 {
 	ref RICON_OpenRadioPairListener m_Row;
 	int m_iIncarnation;
+	int m_iCarriedAdmission;
 }
 
 //! Server-approved fixed radio slot for one current controlled entity.
@@ -17,6 +18,9 @@ class RICON_OpenRadioListenerRoster
 	protected RICON_LifecycleStateMachine m_Lifecycle;
 	protected RICON_MediaReceiverAuthority m_Receivers;
 	protected ref RICON_GameControllerLifecycle m_GameControllerLifecycle;
+	protected ref RICON_GameRadioInventory m_CarriedInventory;
+	protected int m_iCarriedRawTune, m_iCarriedInventoryRevision;
+	protected bool m_bCarriedAvailable, m_bCarriedRefreshing;
 	protected int m_iEpoch, m_iNetworkId, m_iChannelId, m_iMaxListeners, m_iRevision;
 	protected int m_iLastWriteMs = -1;
 	protected bool m_bClosed;
@@ -55,10 +59,23 @@ class RICON_OpenRadioListenerRoster
 	bool UsesGameAuthority(RICON_GameControllerLifecycle bridge, RICON_MediaReceiverAuthority receivers, int networkId)
 	{
 		return bridge && bridge == m_GameControllerLifecycle && bridge.MatchesLifecycle(m_Lifecycle)
-			&& IsScope(m_Lifecycle, receivers, networkId, m_iChannelId);
+			&& IsScope(m_Lifecycle, receivers, networkId, m_iChannelId)
+			&& (!m_CarriedInventory || GetRevision() > 0);
 	}
 
 	int GetRevision()
+	{
+		if (m_CarriedInventory && (!m_bCarriedAvailable
+			|| m_CarriedInventory.GetReconcileRevision() != m_iCarriedInventoryRevision)) return 0;
+		return ScopeRevision();
+	}
+
+	bool MatchesRfReadTime(int nowMs)
+	{
+		return !m_CarriedInventory || (GetRevision() > 0 && nowMs == m_iLastWriteMs);
+	}
+
+	protected int ScopeRevision()
 	{
 		if (!IsScope(m_Lifecycle, m_Receivers, m_iNetworkId, m_iChannelId)) return 0;
 		if (m_GameControllerLifecycle && !m_GameControllerLifecycle.MatchesLifecycle(m_Lifecycle)) return 0;
@@ -67,12 +84,12 @@ class RICON_OpenRadioListenerRoster
 
 	bool Replace(int expectedRevision, array<ref RICON_OpenRadioPairListener> rows, int nowMs)
 	{
-		return !m_GameControllerLifecycle && ReplaceRows(expectedRevision, rows, nowMs);
+		return !m_CarriedInventory && !m_GameControllerLifecycle && ReplaceRows(expectedRevision, rows, nowMs);
 	}
 
 	bool ReplaceAssigned(int expectedRevision, array<ref RICON_OpenRadioSlotAssignment> assignments, int nowMs)
 	{
-		if (!m_GameControllerLifecycle || expectedRevision <= 0 || expectedRevision != GetRevision()) return false;
+		if (m_CarriedInventory || !m_GameControllerLifecycle || expectedRevision <= 0 || expectedRevision != GetRevision()) return false;
 		if (!assignments || assignments.Count() > m_iMaxListeners || nowMs < m_iLastWriteMs) return false;
 		if (!m_Receivers.CanRead(m_Lifecycle, nowMs)) return false;
 		array<ref RICON_OpenRadioPairListener> rows = {};
@@ -104,22 +121,97 @@ class RICON_OpenRadioListenerRoster
 		return ReplaceRows(expectedRevision, rows, nowMs);
 	}
 
-	protected bool ReplaceRows(int expectedRevision, array<ref RICON_OpenRadioPairListener> rows, int nowMs)
+	//! Select the inventory-backed mode before any listener rows are committed.
+	bool UseCarriedInventory(RICON_GameRadioInventory inventory, int rawTune)
 	{
-		int revision = GetRevision();
+		if (m_CarriedInventory || m_iLastWriteMs >= 0 || ScopeRevision() <= 0 || !inventory || rawTune <= 0) return false;
+		if (!inventory.OwnsOpenRadioScope(m_Lifecycle, m_Receivers) || ScopeRevision() <= 0) return false;
+		m_CarriedInventory = inventory;
+		m_iCarriedRawTune = rawTune;
+		return true;
+	}
+
+	//! The same successful inventory sample supplies both the roster and the caller's native slots.
+	bool RefreshCarried(array<ref RICON_GameRadioOpenSlot> slots, out int sampleMs)
+	{
+		sampleMs = -1;
+		if (!slots) return false;
+		slots.Clear();
+		ref RICON_GameRadioInventory inventory = m_CarriedInventory;
+		int revision = ScopeRevision();
+		if (!inventory || m_bCarriedRefreshing || revision <= 0) return false;
+		if (m_bCarriedAvailable && GetRevision() == 0)
+		{
+			if (revision == int.MAX) { Close(); return false; }
+			revision = ++m_iRevision;
+			m_bCarriedAvailable = false;
+		}
+		m_bCarriedRefreshing = true;
+		bool wasAvailable = m_bCarriedAvailable;
+		m_bCarriedAvailable = false;
+		bool accepted = CommitCarriedSample(inventory, revision, slots, sampleMs);
+		if (!accepted && wasAvailable && ScopeRevision() == revision)
+		{
+			// Keep member incarnations for retry, but never revive the failed publication revision.
+			if (revision == int.MAX) Close();
+			else m_iRevision++;
+		}
+		m_bCarriedAvailable = accepted;
+		m_bCarriedRefreshing = false;
+		return accepted;
+	}
+
+	protected bool CommitCarriedSample(RICON_GameRadioInventory inventory, int revision,
+		array<ref RICON_GameRadioOpenSlot> slots, out int sampleMs)
+	{
+		sampleMs = -1;
+		array<ref RICON_GameRadioOpenSlot> captured = {};
+		int nowMs;
+		if (!inventory.CaptureOpenRadioSlots(m_iNetworkId, m_iChannelId, m_iCarriedRawTune, m_iMaxListeners, captured, nowMs)
+			|| ScopeRevision() != revision || m_CarriedInventory != inventory) return false;
+		int inventoryRevision = inventory.GetReconcileRevision();
+		if (inventoryRevision <= 0) return false;
+		array<ref RICON_OpenRadioPairListener> rows = {};
+		array<int> admissions = {};
+		foreach (RICON_GameRadioOpenSlot slot : captured)
+		{
+			if (!slot || !slot.m_Listener || slot.m_iAdmission <= 0) return false;
+			RICON_OpenRadioPairListener row = slot.m_Listener;
+			if (m_GameControllerLifecycle && !m_Receivers.MatchesRadio(row.m_iDeviceId, row.m_iIndex, row.m_iGeneration, slot.m_Radio)) return false;
+			rows.Insert(row);
+			admissions.Insert(slot.m_iAdmission);
+		}
+		if (!ReplaceRows(revision, rows, nowMs, admissions, inventoryRevision)) return false;
+		m_iCarriedInventoryRevision = inventoryRevision;
+		foreach (RICON_GameRadioOpenSlot saved : captured) slots.Insert(saved);
+		sampleMs = nowMs;
+		return true;
+	}
+
+	protected bool ReplaceRows(int expectedRevision, array<ref RICON_OpenRadioPairListener> rows, int nowMs, array<int> admissions = null,
+		int inventoryRevision = 0)
+	{
+		int revision = ScopeRevision();
 		if (revision <= 0 || revision != expectedRevision || !rows || rows.Count() > m_iMaxListeners
+			|| (m_CarriedInventory && (inventoryRevision <= 0 || !admissions || admissions.Count() != rows.Count()))
 			|| nowMs < m_iLastWriteMs || !m_Lifecycle.CanQueryAt(nowMs)) return false;
 		map<string, ref RICON_OpenRadioListenerMembership> staged = new map<string, ref RICON_OpenRadioListenerMembership>();
 		bool changed = rows.Count() != m_Rows.Count();
-		foreach (RICON_OpenRadioPairListener row : rows)
+		foreach (int index, RICON_OpenRadioPairListener row : rows)
 		{
 			if (!ListenerCurrent(row)) return false;
 			RICON_LifecycleDevice device = m_Lifecycle.QueryDevice(row.m_iDeviceId, nowMs);
 			if (!device || !device.CanAccess(row.m_iPlayerId) || !device.Allows(m_iNetworkId, m_iChannelId)) return false;
+			int admission;
+			if (m_CarriedInventory)
+			{
+				admission = admissions[index];
+				if (!CarriedAdmissionCurrent(row, admission, nowMs) || ScopeRevision() != revision) return false;
+			}
 			string key = ListenerKey(row.m_iPlayerId, row.m_iDeviceId, row.m_iIndex);
 			if (staged.Contains(key)) return false;
 			RICON_OpenRadioListenerMembership existing = m_Rows.Get(key);
-			if (existing && SameBinding(existing.m_Row, row))
+			if (existing && SameBinding(existing.m_Row, row) && existing.m_iCarriedAdmission == admission)
 			{
 				staged.Set(key, existing);
 				continue;
@@ -128,9 +220,12 @@ class RICON_OpenRadioListenerRoster
 			RICON_OpenRadioListenerMembership added = new RICON_OpenRadioListenerMembership();
 			added.m_Row = CopyRow(row);
 			added.m_iIncarnation = revision + 1;
+			added.m_iCarriedAdmission = admission;
 			staged.Set(key, added);
 			changed = true;
 		}
+		if (ScopeRevision() != revision || (m_CarriedInventory && m_CarriedInventory.GetReconcileRevision() != inventoryRevision))
+			return false;
 		if (!changed)
 		{
 			m_iLastWriteMs = nowMs;
@@ -147,14 +242,17 @@ class RICON_OpenRadioListenerRoster
 	{
 		if (!rows) return false;
 		rows.Clear();
-		if (GetRevision() == 0) return false;
-		if (m_GameControllerLifecycle)
+		int revision = GetRevision();
+		if (revision == 0) return false;
+		if (m_GameControllerLifecycle || m_CarriedInventory)
 		{
+			int nowMs = LatestObservedMs();
 			for (int index = 0; index < m_Rows.Count(); index++)
 			{
-				if (!ListenerCurrent(m_Rows.GetElement(index).m_Row)) return false;
+				if (!MembershipCurrent(m_Rows.GetElement(index), nowMs)) return false;
 			}
 		}
+		if (GetRevision() != revision) return false;
 		for (int index = 0; index < m_Rows.Count(); index++)
 			rows.Insert(CopyRow(m_Rows.GetElement(index).m_Row));
 		return true;
@@ -162,8 +260,11 @@ class RICON_OpenRadioListenerRoster
 
 	bool MatchesInput(RICON_PairServiceInput input, RICON_LifecycleStateMachine lifecycle)
 	{
+		bool carried = m_CarriedInventory != null;
+		int revision = GetRevision();
 		if (!IsScope(lifecycle, m_Receivers, m_iNetworkId, m_iChannelId) || !input || input.m_iSessionEpoch != m_iEpoch
 			|| !input.m_aBindings || !input.m_aListeners || input.m_aListeners.Count() != m_Rows.Count()
+			|| (carried && (revision == 0 || input.m_iNowMs != m_iLastWriteMs))
 			|| !lifecycle.CanQueryAt(input.m_iNowMs)) return false;
 		foreach (RICON_TransmissionBinding binding : input.m_aBindings)
 		{
@@ -177,15 +278,17 @@ class RICON_OpenRadioListenerRoster
 			string key = ListenerKey(projected.m_iPlayerId, projected.m_iDeviceId, projected.m_iTransceiverIndex);
 			RICON_OpenRadioListenerMembership entry = m_Rows.Get(key);
 			if (seen.Contains(key) || !entry || entry.m_Row.m_iPlayerGeneration != projected.m_iGeneration
-				|| !ListenerCurrent(entry.m_Row)) return false;
+				|| (carried && projected.m_iRxGeneration != entry.m_Row.m_iGeneration)
+				|| !MembershipCurrent(entry, input.m_iNowMs) || m_bClosed) return false;
 			seen.Insert(key);
 		}
-		return true;
+		return !carried || GetRevision() == revision;
 	}
 
 	int ReadIncarnation(RICON_MediaEgressRoute route)
 	{
-		if (!route || !route.m_Source || GetRevision() == 0 || route.m_Source.m_iSessionEpoch != m_iEpoch
+		int revision = GetRevision();
+		if (!route || !route.m_Source || revision == 0 || route.m_Source.m_iSessionEpoch != m_iEpoch
 			|| route.m_Source.m_iNetworkTypeId != m_iNetworkId || route.m_Source.m_iChannelId != m_iChannelId) return 0;
 		string key = ListenerKey(route.m_iListenerPlayerId, route.m_iRxDeviceId, route.m_iRxTransceiverIndex);
 		RICON_OpenRadioListenerMembership entry = m_Rows.Get(key);
@@ -193,8 +296,19 @@ class RICON_OpenRadioListenerRoster
 		RICON_OpenRadioPairListener row = entry.m_Row;
 		if (route.m_iListenerGeneration != row.m_iPlayerGeneration || route.m_iListenerConnectionId != row.m_iConnectionId
 			|| route.m_iListenerEntityId != row.m_iEntityId || route.m_iRxGeneration != row.m_iGeneration
-			|| !ListenerCurrent(row)) return 0;
+			|| !MembershipCurrent(entry, LatestObservedMs()) || GetRevision() != revision) return 0;
 		return entry.m_iIncarnation;
+	}
+
+	//! A committed RF capture still needs the exact carried receiver admission.
+	bool AllowsDirectCaptureListener(int playerId, int deviceId, int index, int nowMs, int physicalGeneration = 0)
+	{
+		if (!m_CarriedInventory) return !m_bClosed;
+		int revision = GetRevision();
+		if (revision <= 0) return false;
+		ref RICON_OpenRadioListenerMembership member = m_Rows.Get(ListenerKey(playerId, deviceId, index));
+		return member && (physicalGeneration == 0 || physicalGeneration == member.m_Row.m_iGeneration)
+			&& MembershipCurrent(member, nowMs) && GetRevision() == revision;
 	}
 
 	void ConsumeLifecycle(RICON_LifecycleResult result, int preEventEpoch)
@@ -230,6 +344,31 @@ class RICON_OpenRadioListenerRoster
 		m_Lifecycle = null;
 		m_Receivers = null;
 		m_GameControllerLifecycle = null;
+		m_CarriedInventory = null;
+		m_bCarriedAvailable = false;
+	}
+
+	protected int LatestObservedMs()
+	{
+		int nowMs = m_Lifecycle.LastObservedTimeMs();
+		if (nowMs < m_Receivers.LastWriteTimeMs()) nowMs = m_Receivers.LastWriteTimeMs();
+		if (nowMs < m_iLastWriteMs) nowMs = m_iLastWriteMs;
+		return nowMs;
+	}
+
+	protected bool MembershipCurrent(RICON_OpenRadioListenerMembership member, int nowMs)
+	{
+		return member && ListenerCurrent(member.m_Row)
+			&& (!m_CarriedInventory || CarriedAdmissionCurrent(member.m_Row, member.m_iCarriedAdmission, nowMs));
+	}
+
+	protected bool CarriedAdmissionCurrent(RICON_OpenRadioPairListener row, int admission, int nowMs)
+	{
+		if (admission <= 0) return false;
+		RICON_LifecycleDevice device = m_Lifecycle.QueryDevice(row.m_iDeviceId, nowMs);
+		return device && device.m_eKind == RICON_EDeviceKind.CARRIED && device.m_iOwnerPlayerId == row.m_iPlayerId
+			&& m_Receivers.ReadRecordedOpenEndpointAdmission(row.m_iDeviceId, row.m_iIndex, row.m_iGeneration,
+				m_iNetworkId, m_iChannelId, m_iCarriedRawTune, nowMs) == admission;
 	}
 
 	protected bool ListenerCurrent(RICON_OpenRadioPairListener row)

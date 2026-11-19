@@ -1,0 +1,9 @@
+MetaFileClass {
+ Name "{EE56E0F7D22A4E10}Prefabs/Radios/RICON_Jammer.et"
+ Configurations {
+  EntityTemplateResourceClass PC {
+  }
+  EntityTemplateResourceClass HEADLESS : PC {
+  }
+ }
+}

@@ -25,6 +25,9 @@ class RICON_MediaFanoutBranch
 	ref RICON_MediaRfHistory m_RfHistory;
 	ref RICON_TemporalRfBudget m_PendingRfCoverage;
 	RICON_OpenRadioStaticLosSource m_RfCoverageSource;
+	ref RICON_GameRadioRfPoint m_PrecedingGameRfPoint;
+	ref RICON_TemporalRfBudget m_PrecedingGameRfBudget;
+	bool m_bGameRfCoverage;
 	string m_sRfHistoryTimebaseId;
 	int m_iFirstSampleIndex;
 	int m_iGrantedAtMs;
@@ -83,7 +86,7 @@ class RICON_MediaFanout
 	protected int m_iOpenRadioTxAdmission;
 	protected int m_iLastNowMs = -1;
 	protected bool m_bSending, m_bClosed;
-	protected bool m_bPreparingBranch;
+	protected bool m_bPreparingBranch, m_bReadingOpenRadioRoutes, m_bObservingGameRf;
 	protected bool m_bTemporal, m_bManagedReceivers, m_bLiveReceivers, m_bListenerRights;
 
 	bool Configure(RICON_MediaStreamOwner sourceOwner, RICON_LifecycleStateMachine lifecycle,
@@ -176,12 +179,17 @@ class RICON_MediaFanout
 		{
 			if (!m_ReceiverAuthority || !m_ReceiverAuthority.IsScope(m_Lifecycle)) { Close(); return false; }
 			if (!m_ReceiverAuthority.CanRead(m_Lifecycle, nowMs)) return false;
-			if (m_iOpenRadioTxAdmission > 0 && m_ReceiverAuthority.ReadOpenRadioSource(m_Source, nowMs) != m_iOpenRadioTxAdmission)
+			if (m_iOpenRadioTxAdmission > 0)
 			{
-				// A physical TX change ends the emission, including its undelivered ingress blocks.
-				m_SourceOwner.Retire(m_Source.m_iSessionEpoch, m_Source.m_iLeaseId, nowMs);
-				Close();
-				return false;
+				int admission = m_ReceiverAuthority.ReadOpenRadioSource(m_Source, nowMs);
+				if (m_bClosed) return false;
+				if (admission != m_iOpenRadioTxAdmission)
+				{
+					// A physical TX change ends the emission, including its undelivered ingress blocks.
+					m_SourceOwner.Retire(m_Source.m_iSessionEpoch, m_Source.m_iLeaseId, nowMs);
+					Close();
+					return false;
+				}
 			}
 		}
 		if (m_bListenerRights)
@@ -198,17 +206,23 @@ class RICON_MediaFanout
 
 	protected bool BranchCurrent(RICON_MediaFanoutBranch branch, int nowMs)
 	{
-		if (branch.m_bRetired) return false;
+		if (m_bClosed || branch.m_bRetired) return false;
 		bool receiverCurrent = !m_bManagedReceivers || RICON_MediaEgressQueue.ReceiverCurrent(branch.m_Route, m_Lifecycle, nowMs);
 		if (receiverCurrent && m_bTemporal)
 			receiverCurrent = branch.m_iGeometryRevision == m_Publication.GetMediaGeometryRevision();
 		if (receiverCurrent && m_bTemporal)
 			receiverCurrent = branch.m_iListenerIncarnation == m_Publication.GetMediaListenerIncarnation(branch.m_Route);
+		if (m_bClosed || branch.m_bRetired) return false;
 		if (receiverCurrent && m_bLiveReceivers)
 			receiverCurrent = m_ReceiverAuthority.ReadAdmission(branch.m_Route, nowMs) == branch.m_iRxAdmission;
+		if (m_bClosed || branch.m_bRetired) return false;
 		if (receiverCurrent && m_bListenerRights)
 			receiverCurrent = m_ListenerAuthority.MatchesGrant(branch.m_Route, branch.m_iRxAdmission, nowMs);
-		if (receiverCurrent && (!m_bTemporal || m_Publication.MatchesCurrentMediaLink(branch.m_iTemporalLinkId, branch.m_Route, m_Lifecycle, nowMs))) return true;
+		if (m_bClosed || branch.m_bRetired) return false;
+		bool linkCurrent = receiverCurrent && (!m_bTemporal
+			|| m_Publication.MatchesCurrentMediaLink(branch.m_iTemporalLinkId, branch.m_Route, m_Lifecycle, nowMs));
+		if (m_bClosed || branch.m_bRetired) return false;
+		if (linkCurrent) return true;
 		if (m_iOpenRadioTxAdmission > 0) m_ListenerAuthority.Revoke(branch.m_Route.m_iPolicyRevision);
 		RetireBranch(branch, nowMs);
 		return false;
@@ -220,7 +234,9 @@ class RICON_MediaFanout
 		branch.m_bRetired = true;
 		branch.m_Queue.Close();
 		branch.m_PendingRfCoverage = null;
-	branch.m_RfCoverageSource = null;
+		branch.m_RfCoverageSource = null;
+		branch.m_PrecedingGameRfPoint = null;
+		branch.m_PrecedingGameRfBudget = null;
 		if (branch.m_RfHistory) branch.m_RfHistory.Close();
 		if (m_DispatchTransport) m_DispatchTransport.RetireBranch(branch.m_Route.CloneRoute(), nowMs);
 	}
@@ -265,11 +281,46 @@ class RICON_MediaFanout
 		return null;
 	}
 
+	//! Refresh the server's current RADIO branches without consuming PCM or granting transport permission.
+	bool ReadOpenRadioRoutes(int nowMs, array<ref RICON_MediaEgressRoute> routes)
+	{
+		if (!routes) return false;
+		routes.Clear();
+		if (m_bReadingOpenRadioRoutes || m_bPreparingBranch || m_bSending) return false;
+		m_bReadingOpenRadioRoutes = true;
+		bool accepted = CollectOpenRadioRoutes(nowMs, routes);
+		m_bReadingOpenRadioRoutes = false;
+		return accepted;
+	}
+
+	protected bool CollectOpenRadioRoutes(int nowMs, array<ref RICON_MediaEgressRoute> routes)
+	{
+		if (!HasCommittedRfTick(nowMs) || !RefreshOpenRadioRoster(nowMs)
+			|| !HasCommittedRfTick(nowMs) || !CurrentSource(nowMs)) return false;
+		// Finish without a ReadState callback that could invalidate an already checked branch.
+		if (!m_ReceiverAuthority.MatchesRecordedOpenAdmission(m_Source, m_Source.m_iDeviceId, m_Source.m_iTxTransceiverIndex,
+			0, m_iOpenRadioTxAdmission, nowMs)) return false;
+		foreach (RICON_MediaFanoutBranch branch : m_Branches)
+		{
+			RICON_MediaEgressRoute route = branch.m_Route;
+			if (branch.m_bRetired || branch.m_iGeometryRevision != m_Publication.GetMediaGeometryRevision()
+				|| branch.m_iListenerIncarnation != m_Publication.GetMediaListenerIncarnation(route)
+				|| !m_ReceiverAuthority.MatchesRecordedOpenAdmission(m_Source, route.m_iRxDeviceId,
+					route.m_iRxTransceiverIndex, route.m_iRxGeneration, branch.m_iRxAdmission, nowMs)
+				|| !m_ListenerAuthority.MatchesGrant(route, branch.m_iRxAdmission, nowMs)
+				|| !RICON_MediaEgressQueue.ReceiverCurrent(route, m_Lifecycle, nowMs)
+				|| !RecipientControllerCurrent(route)) return false;
+		}
+		foreach (RICON_MediaFanoutBranch current : m_Branches) routes.Insert(current.m_Route.CloneRoute());
+		return true;
+	}
+
 	//! A trusted server continuity source starts an observation on an existing grant.
 	bool BeginRfCoverage(RICON_MediaEgressRoute route, int nowMs, string timebaseId, RICON_OpenRadioStaticLosSource source)
 	{
+		if (m_bObservingGameRf) return false;
 		RICON_MediaFanoutBranch branch = FindRfBranch(route);
-		if (!branch || branch.m_PendingRfCoverage || nowMs < branch.m_iGrantedAtMs) return false;
+		if (!branch || branch.m_bGameRfCoverage || branch.m_PendingRfCoverage || nowMs < branch.m_iGrantedAtMs) return false;
 		if (!m_Publication.CanAttestRfCoverage(source, m_Lifecycle, nowMs)) return false;
 		if (branch.m_RfHistory && branch.m_sRfHistoryTimebaseId != timebaseId) return false;
 		RICON_TemporalRfBudget budget = ReadBranchRfBudget(branch, nowMs);
@@ -289,8 +340,9 @@ class RICON_MediaFanout
 	//! A trusted server caller attests unchanged RF inputs throughout [start, nowMs).
 	bool CompleteRfCoverage(RICON_MediaEgressRoute route, int nowMs, RICON_OpenRadioStaticLosSource source)
 	{
+		if (m_bObservingGameRf) return false;
 		RICON_MediaFanoutBranch branch = FindRfBranch(route);
-		if (!branch || !branch.m_PendingRfCoverage || !source || branch.m_RfCoverageSource != source) return false;
+		if (!branch || branch.m_bGameRfCoverage || !branch.m_PendingRfCoverage || !source || branch.m_RfCoverageSource != source) return false;
 		ref RICON_TemporalRfBudget start = branch.m_PendingRfCoverage;
 		branch.m_PendingRfCoverage = null;
 		branch.m_RfCoverageSource = null;
@@ -300,7 +352,87 @@ class RICON_MediaFanout
 		if (!end || end.m_iLinkId != start.m_iLinkId || end.m_sTimebaseId != start.m_sTimebaseId) return false;
 		if (end.m_iModelMs < start.m_iModelMs || (end.m_iModelMs == start.m_iModelMs && end.m_iModelSubUs < start.m_iModelSubUs)) return false;
 		if (end.m_fRxPowerDbm != start.m_fRxPowerDbm || end.m_fNoiseDbm != start.m_fNoiseDbm || end.m_fBandwidthHz != start.m_fBandwidthHz) return false;
+		if (start.m_RxEnvironment)
+		{
+			if (!start.m_RxEnvironment.Same(end.m_RxEnvironment) || !start.m_RxEnvironment.Covers(start.m_iTickMs, nowMs)) return false;
+		}
+		else if (end.m_RxEnvironment) return false;
 		return branch.m_RfHistory.RecordCompleted(branch.m_Route, start.m_iTickMs, nowMs, start, nowMs);
+	}
+
+	//! A successful result means one new completed interval. A first point only seeds the branch.
+	bool ObserveGameRfCoverage(RICON_MediaEgressRoute route, int nowMs, RICON_GameRadioManagerComponent manager)
+	{
+		ref RICON_MediaFanout held = this;
+		if (m_bClosed || m_bObservingGameRf || m_bReadingOpenRadioRoutes || m_iOpenRadioTxAdmission <= 0
+			|| !manager || manager != RICON_CommsManagerComponent.GetInstance()) return false;
+		ref RICON_MediaFanoutBranch branch = FindRfBranch(route);
+		if (!branch || branch.m_bRetired || nowMs < branch.m_iGrantedAtMs || (branch.m_RfHistory && !branch.m_bGameRfCoverage)) return false;
+		if (branch.m_PrecedingGameRfPoint && nowMs <= branch.m_PrecedingGameRfPoint.m_iTickMs) return false;
+		m_bObservingGameRf = true;
+		bool recorded = ObserveGameRfCoverageHeld(branch, nowMs, manager);
+		m_bObservingGameRf = false;
+		return recorded;
+	}
+
+	protected bool ObserveGameRfCoverageHeld(RICON_MediaFanoutBranch branch, int nowMs, RICON_GameRadioManagerComponent manager)
+	{
+		ref RICON_GameRadioRfPoint previous = branch.m_PrecedingGameRfPoint;
+		ref RICON_TemporalRfBudget previousBudget = branch.m_PrecedingGameRfBudget;
+		branch.m_PrecedingGameRfPoint = null;
+		branch.m_PrecedingGameRfBudget = null;
+		ref RICON_MediaEgressRoute route = branch.m_Route.CloneRoute();
+		ref RICON_TemporalPublicationOwner publication = m_Publication;
+		int revision = m_iRevision;
+		int linkId = branch.m_iTemporalLinkId;
+		ref RICON_TemporalRfBudget budget = ReadBranchRfBudget(branch, nowMs);
+		if (!budget || budget.m_iTickMs != nowMs || budget.m_iLinkId != linkId || budget.m_RxEnvironment
+			|| !GameRfBranchHeld(branch, route, publication, revision, linkId)) return false;
+		ref RICON_GameRadioRfPoint current = manager.ReadGameRfCoveragePoint(route, linkId, nowMs, publication);
+		if (!current || current.m_iTickMs != nowMs || current.m_iDeadlineMs <= nowMs || current.m_iAttempt <= 0
+			|| (previous && current.m_iAttempt <= previous.m_iAttempt)
+			|| current.m_iTxGeneration <= 0 || current.m_iTxAdmission != m_iOpenRadioTxAdmission
+			|| current.m_iRxAdmission != branch.m_iRxAdmission || !GameRfBranchHeld(branch, route, publication, revision, linkId)) return false;
+		ref RICON_MediaFreeSpaceMotionLimits limits;
+		if (previous && previousBudget && previous.m_iAttempt == current.m_iAttempt - 1 && previous.m_iTickMs < nowMs
+			&& previous.m_iDeadlineMs > nowMs && previous.SameScope(current))
+			limits = manager.ReadGameRfCoverageLimits(route, previous, current);
+		if (!GameRfBranchHeld(branch, route, publication, revision, linkId)
+			|| manager != RICON_CommsManagerComponent.GetInstance()) return false;
+		ref RICON_TemporalRfBudget confirmed = ReadBranchRfBudget(branch, nowMs);
+		if (!budget.Same(confirmed) || !GameRfBranchHeld(branch, route, publication, revision, linkId)) return false;
+		ref RICON_MediaReceiverAuthority receivers = m_ReceiverAuthority;
+		ref RICON_MediaStreamBinding binding = m_Source;
+		if (!receivers.MatchesRecordedOpenAdmission(binding, binding.m_iDeviceId, binding.m_iTxTransceiverIndex,
+			current.m_iTxGeneration, current.m_iTxAdmission, nowMs)
+			|| !receivers.MatchesRecordedOpenAdmission(binding, route.m_iRxDeviceId, route.m_iRxTransceiverIndex,
+				route.m_iRxGeneration, current.m_iRxAdmission, nowMs)
+			|| !GameRfBranchHeld(branch, route, publication, revision, linkId)) return false;
+		ref RICON_GameRadioRfPoint finalPoint = manager.ReadGameRfCoveragePoint(route, linkId, nowMs, publication);
+		if (!current.SamePoint(finalPoint) || m_iLastNowMs != nowMs || manager != RICON_CommsManagerComponent.GetInstance()
+			|| !GameRfBranchHeld(branch, route, publication, revision, linkId)) return false;
+		if (branch.m_RfHistory && branch.m_sRfHistoryTimebaseId != budget.m_sTimebaseId) return false;
+		branch.m_bGameRfCoverage = true;
+		branch.m_PrecedingGameRfPoint = current;
+		branch.m_PrecedingGameRfBudget = confirmed;
+		if (!limits) return false;
+		ref RICON_MediaRfHistory history = branch.m_RfHistory;
+		if (!history)
+		{
+			history = new RICON_MediaRfHistory();
+			if (!history.Configure(route, budget.m_sTimebaseId, RF_HISTORY_MAX_ENTRIES, RF_HISTORY_MAX_AGE_MS)) return false;
+		}
+		if (!history.RecordCompletedFreeSpace(route, previousBudget, confirmed, previous.m_fDistanceM, current.m_fDistanceM, limits, nowMs)) return false;
+		branch.m_RfHistory = history;
+		branch.m_sRfHistoryTimebaseId = budget.m_sTimebaseId;
+		return true;
+	}
+
+	protected bool GameRfBranchHeld(RICON_MediaFanoutBranch branch, RICON_MediaEgressRoute route,
+		RICON_TemporalPublicationOwner publication, int revision, int linkId)
+	{
+		return !m_bClosed && !branch.m_bRetired && m_Publication == publication && m_iRevision == revision
+			&& branch.m_iTemporalLinkId == linkId && FindRfBranch(route) == branch;
 	}
 
 	protected RICON_MediaFanoutBranch FindRfBranch(RICON_MediaEgressRoute route)
@@ -319,6 +451,7 @@ class RICON_MediaFanout
 		if (!branch || branch.m_bRetired || !HasCommittedRfTick(nowMs)) return null;
 		if (!CurrentSource(nowMs) || !CanReadRoutes(nowMs)) return null;
 		if (!BranchCurrent(branch, nowMs) || !RecipientControllerCurrent(branch.m_Route)) return null;
+		if (m_bClosed || branch.m_bRetired || !m_Branches.Contains(branch)) return null;
 		return m_Publication.ReadMediaRfBudget(branch.m_iTemporalLinkId, branch.m_Route, m_Lifecycle, nowMs);
 	}
 
@@ -365,6 +498,11 @@ class RICON_MediaFanout
 	}
 
 	bool RefreshOpenRadio(int nowMs)
+	{
+		return !m_bReadingOpenRadioRoutes && RefreshOpenRadioRoster(nowMs);
+	}
+
+	protected bool RefreshOpenRadioRoster(int nowMs)
 	{
 		if (m_bPreparingBranch) return false;
 		if (m_iOpenRadioTxAdmission <= 0 || !CurrentSource(nowMs) || !CanReadRoutes(nowMs)) return false;

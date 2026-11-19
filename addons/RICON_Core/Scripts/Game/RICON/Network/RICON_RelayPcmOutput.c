@@ -16,8 +16,8 @@ class RICON_RelayPcmOutputOrigin
 //! Local PCM16LE representation of a station emission. The path also identifies the separate original source.
 class RICON_RelayPcmOutputFrame
 {
-	static const int SAMPLE_RATE_HZ = RICON_MediaPcmProfile.SAMPLE_RATE_HZ;
-	static const int FRAME_SAMPLES = RICON_MediaPcmProfile.FRAME_SAMPLES;
+	static const int SAMPLE_RATE_HZ = RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ;
+	static const int FRAME_SAMPLES = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 	static const int GROUP_DELAY_OUTPUT_SAMPLES = RICON_PcmResampler48To8.GROUP_DELAY_OUTPUT_SAMPLES;
 	ref RICON_RelayPcmPath m_Path;
 	int m_iSequence, m_iFirstSampleIndex, m_iEmitAtMs, m_iDeadlineMs;
@@ -89,7 +89,7 @@ class RICON_RelayPcmOutput
 
 		int firstOutputSampleIndex;
 		array<int> samples = m_Decimator.Process(emission.m_iRxFirstSampleIndex, emission.m_aSamples, firstOutputSampleIndex);
-		array<int> bytes = RICON_MediaPcmProfile.Encode(samples);
+		array<int> bytes = RICON_MediaPcmTestProfile.Encode(samples);
 		if (!bytes || firstOutputSampleIndex != m_iNextOutputSampleIndex) return Retire("INVALID");
 
 		RICON_RelayPcmOutputOrigin current = new RICON_RelayPcmOutputOrigin();

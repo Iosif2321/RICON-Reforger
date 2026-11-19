@@ -1,0 +1,26 @@
+Vehicle : "{259EE7B78C51B624}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469.et" {
+ ID "68A01E476F7AD2E2"
+ components {
+  BaseRadioComponent "{5AD4F813E67ECBF1}" {
+   "Turned on" 1
+   Transceivers {
+    IntercomTransceiver "{5AD4F813E67ECBCD}" {}
+    RadioTransceiver "{3E6EF8A780334F13}" {
+     ChannelFrequency 38000
+     "Transmitting Range" 6000
+     "Min tunable frequency" 32000
+     "Max tunable frequency" 68000
+     "Frequency resolution" 200
+    }
+    RadioTransceiver "{BA7AE4DF92F37AF0}" {
+     ChannelFrequency 38200
+     "Transmitting Range" 6000
+     "Min tunable frequency" 32000
+     "Max tunable frequency" 68000
+     "Frequency resolution" 200
+    }
+   }
+  }
+  RICON_GameRadioEquipmentComponent "{E76F61C10A2CA3A0}" { m_eEquipment 3 }
+ }
+}

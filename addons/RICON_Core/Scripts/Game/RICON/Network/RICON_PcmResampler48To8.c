@@ -3,8 +3,8 @@ class RICON_PcmResampler48To8
 {
 	static const int INPUT_RATE_HZ = RICON_PcmResampler8To48.OUTPUT_RATE_HZ;
 	static const int INPUT_SAMPLES = RICON_PcmResampler8To48.OUTPUT_SAMPLES;
-	static const int OUTPUT_RATE_HZ = RICON_MediaPcmProfile.SAMPLE_RATE_HZ;
-	static const int OUTPUT_SAMPLES = RICON_MediaPcmProfile.FRAME_SAMPLES;
+	static const int OUTPUT_RATE_HZ = RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ;
+	static const int OUTPUT_SAMPLES = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 	static const int GROUP_DELAY_INPUT_SAMPLES = 192;
 	static const int GROUP_DELAY_OUTPUT_SAMPLES = 32;
 

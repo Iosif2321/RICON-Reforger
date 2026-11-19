@@ -13,6 +13,19 @@ class RICON_PcmWaveClip
 	AudioHandle m_Handle = AudioHandle.Invalid;
 	bool m_bRequireCompleteDeadline;
 	ref array<ref RICON_MediaOutputPermit> m_Permits;
+	protected bool m_bFiniteRx;
+	protected RICON_LocalRxSlot m_FiniteRxSlot;
+
+	void BindFiniteRxSlot(RICON_LocalRxSlot slot)
+	{
+		m_bFiniteRx = true;
+		m_FiniteRxSlot = slot;
+	}
+
+	bool HasCurrentRxSlot()
+	{
+		return !m_bFiniteRx || (m_FiniteRxSlot && m_FiniteRxSlot.IsOpen());
+	}
 }
 
 //! Finite local WAV playback. The caller serializes access and never reuses an owner ID in this process/profile.
@@ -20,7 +33,7 @@ class RICON_PcmWavePlaybackOwner
 {
 	protected int m_iEpoch, m_iOwnerId, m_iCapacity, m_iGraceMs, m_iNowMs;
 	protected int m_iClipSerial, m_iNextSampleIndex, m_iOutputFenceMs;
-	protected bool m_bClosed;
+	protected bool m_bClosed, m_bCheckingPermits;
 	protected ref array<ref RICON_PcmWaveClip> m_aClips = {};
 	protected RICON_PcmWaveClip m_Active;
 
@@ -64,7 +77,7 @@ class RICON_PcmWavePlaybackOwner
 	{
 		clipId = 0;
 		if (!window || !window.m_Destination || !window.m_Destination.IsValid()
-			|| !RICON_SharedRxMixer.IsPcmWindow(window.m_aSamples) || window.m_iWireDeadlineMs < 0) return "BAD_BATCH";
+			|| !RICON_SharedRxTestMixer.IsPcmWindow(window.m_aSamples) || window.m_iWireDeadlineMs < 0) return "BAD_BATCH";
 		if (!window.m_aPermits || window.m_aPermits.Count() < 1 || window.m_aPermits.Count() > 16) return "ROUTE_REVOKED";
 		RICON_PcmBatch batch = new RICON_PcmBatch();
 		batch.m_iEpoch = window.m_iEpoch;
@@ -75,15 +88,26 @@ class RICON_PcmWavePlaybackOwner
 		return PrepareClip(batch, nowMs, window.m_aPermits, clipId, true);
 	}
 
+	//! A complete, contiguous clip handed off by one local RX slot with its original permits.
+	string PrepareFiniteRxClip(RICON_PcmBatch batch, array<ref RICON_MediaOutputPermit> permits,
+		RICON_LocalRxSlot slot, int nowMs, out int clipId)
+	{
+		clipId = 0;
+		if (!slot || !slot.IsOpen() || !permits || permits.Count() < 1 || permits.Count() > 16) return "ROUTE_REVOKED";
+		return PrepareClip(batch, nowMs, permits, clipId, true, slot);
+	}
+
 	protected string PrepareClip(RICON_PcmBatch batch, int nowMs, array<ref RICON_MediaOutputPermit> permits,
-		out int clipId, bool requireCompleteDeadline = false)
+		out int clipId, bool requireCompleteDeadline = false, RICON_LocalRxSlot finiteRxSlot = null)
 	{
 		clipId = 0;
 		if (m_bClosed) return "CLOSED";
+		if (m_bCheckingPermits) return "BUSY";
 		if (!batch) return "BAD_BATCH";
-		if (!m_iEpoch || batch.m_iEpoch != m_iEpoch) return "STALE_EPOCH";
+		int epoch = batch.m_iEpoch;
+		if (!m_iEpoch || epoch != m_iEpoch) return "STALE_EPOCH";
 		if (!ObserveTime(nowMs)) return "BAD_TIME";
-		if (!PermitsCurrent(permits)) return "ROUTE_REVOKED";
+		bool finiteRx = finiteRxSlot != null;
 		array<ref RICON_MediaOutputPermit> ownedPermits;
 		if (permits)
 		{
@@ -94,13 +118,25 @@ class RICON_PcmWavePlaybackOwner
 				ownedPermits.Insert(permit);
 			}
 		}
+		bool permitted = PermitsCurrent(ownedPermits);
+		if (m_bClosed) return "CLOSED";
+		if (epoch != m_iEpoch || epoch != batch.m_iEpoch) return "STALE_EPOCH";
+		if (nowMs != m_iNowMs) return "BAD_TIME";
+		if (!permitted || (finiteRx && (!finiteRxSlot || !finiteRxSlot.IsOpen()))) return "ROUTE_REVOKED";
 		if (!batch.m_aSamples || batch.m_iBlockCount < 1 || batch.m_iBlockCount > 4 || batch.m_iExpiresAtMs < 0)
 			return "BAD_BATCH";
 		int count = batch.m_aSamples.Count();
 		if (count < batch.m_iBlockCount || count > 48000 || count % batch.m_iBlockCount != 0)
 			return "BAD_BATCH";
 		int first = batch.m_iFirstSampleIndex;
-		if (first < 0 || first > int.MAX - count || first % (count / batch.m_iBlockCount) != 0) return "BAD_BATCH";
+		int alignment = count / batch.m_iBlockCount;
+		if (finiteRx)
+		{
+			alignment = RICON_SharedRxTestMixer.WINDOW_SAMPLES;
+			if (batch.m_iBlockCount != 1 || count < alignment || count > 16 * alignment || count % alignment != 0)
+				return "BAD_BATCH";
+		}
+		if (first < 0 || first > int.MAX - count || first % alignment != 0) return "BAD_BATCH";
 		if (first < m_iNextSampleIndex) return "STALE_SAMPLE";
 		int durationMs = (count + 47) / 48;
 		if (nowMs >= batch.m_iExpiresAtMs || (requireCompleteDeadline && batch.m_iExpiresAtMs - nowMs < durationMs))
@@ -130,6 +166,7 @@ class RICON_PcmWavePlaybackOwner
 		clip.m_iExpiresAtMs = batch.m_iExpiresAtMs;
 		clip.m_bRequireCompleteDeadline = requireCompleteDeadline;
 		clip.m_Permits = ownedPermits;
+		if (finiteRx) clip.BindFiniteRxSlot(finiteRxSlot);
 		m_aClips.Insert(clip);
 		m_iNextSampleIndex = first + count;
 		clipId = clip.m_iId;
@@ -139,6 +176,7 @@ class RICON_PcmWavePlaybackOwner
 	string Submit(int epoch, int clipId, int nowMs)
 	{
 		if (m_bClosed) return "CLOSED";
+		if (m_bCheckingPermits) return "BUSY";
 		if (!m_iEpoch || epoch != m_iEpoch) return "STALE_EPOCH";
 		if (!ObserveTime(nowMs)) return "BAD_TIME";
 		SweepRevoked(nowMs, clipId);
@@ -146,9 +184,14 @@ class RICON_PcmWavePlaybackOwner
 		if (m_bClosed) return "CLOSED";
 		if (epoch != m_iEpoch) return "STALE_EPOCH";
 		if (nowMs != m_iNowMs) return "BAD_TIME";
-		RICON_PcmWaveClip clip = FindClip(clipId);
+		ref RICON_PcmWaveClip clip = FindClip(clipId);
 		if (!clip || clip.m_eState != RICON_EPcmWaveClipState.PREPARED) return "STALE_CLIP";
-		if (!PermitsCurrent(clip.m_Permits))
+		bool permitted = PermitsCurrent(clip.m_Permits);
+		if (m_bClosed) return "CLOSED";
+		if (epoch != m_iEpoch) return "STALE_EPOCH";
+		if (nowMs != m_iNowMs) return "BAD_TIME";
+		if (clip.m_eState != RICON_EPcmWaveClipState.PREPARED || FindClip(clipId) != clip) return "STALE_CLIP";
+		if (!permitted || !clip.HasCurrentRxSlot())
 		{
 			Retire(clip, nowMs + m_iGraceMs);
 			return "ROUTE_REVOKED";
@@ -200,7 +243,7 @@ class RICON_PcmWavePlaybackOwner
 
 	int Collect(int nowMs)
 	{
-		if (!ObserveTime(nowMs)) return 0;
+		if (m_bCheckingPermits || !ObserveTime(nowMs)) return 0;
 		SweepRevoked(nowMs);
 		if (nowMs != m_iNowMs) return 0;
 		int removed = 0;
@@ -268,20 +311,31 @@ class RICON_PcmWavePlaybackOwner
 	{
 		foreach (RICON_PcmWaveClip clip : m_aClips)
 		{
-			if (clip.m_iId != exceptClipId && clip.m_eState == RICON_EPcmWaveClipState.PREPARED
-				&& !PermitsCurrent(clip.m_Permits)) Retire(clip, nowMs + m_iGraceMs);
+			if (clip.m_iId == exceptClipId || clip.m_eState != RICON_EPcmWaveClipState.PREPARED) continue;
+			bool permitted = PermitsCurrent(clip.m_Permits);
+			if (nowMs != m_iNowMs || m_bClosed) return;
+			if (clip.m_eState == RICON_EPcmWaveClipState.PREPARED && (!permitted || !clip.HasCurrentRxSlot()))
+				Retire(clip, nowMs + m_iGraceMs);
 		}
-		if (m_Active && !PermitsCurrent(m_Active.m_Permits)) RetireActive(nowMs);
+		ref RICON_PcmWaveClip active = m_Active;
+		if (!active) return;
+		bool activePermitted = PermitsCurrent(active.m_Permits);
+		if (nowMs == m_iNowMs && m_Active == active && (!activePermitted || !active.HasCurrentRxSlot())) RetireActive(nowMs);
 	}
 
 	protected bool PermitsCurrent(array<ref RICON_MediaOutputPermit> permits)
 	{
 		if (!permits) return true;
+		m_bCheckingPermits = true;
+		bool permitted = true;
 		foreach (RICON_MediaOutputPermit permit : permits)
 		{
-			if (!permit || !permit.IsCurrent()) return false;
+			if (permit && permit.IsCurrent()) continue;
+			permitted = false;
+			break;
 		}
-		return true;
+		m_bCheckingPermits = false;
+		return permitted;
 	}
 
 	protected void RetireActive(int nowMs)

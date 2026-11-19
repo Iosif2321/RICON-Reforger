@@ -9,6 +9,7 @@ class RICON_MediaWireV1
 		if (!item || !item.m_Route || !item.m_Route.IsValid() || !item.m_Block) return null;
 		RICON_QueuedMediaBlock block = item.m_Block;
 		if (block.m_RfHistory || block.m_CaptureEnvelope) return null;
+		if (block.m_RfBudget && block.m_RfBudget.m_RxEnvironment) return null;
 		if (!item.m_Route.m_Source.Same(block.m_Binding)) return null;
 		if (!ValidRange(block.m_iSequence, block.m_iFirstSampleIndex, block.m_iSampleCount) || !block.m_Bytes) return null;
 		int count = block.m_Bytes.Count();

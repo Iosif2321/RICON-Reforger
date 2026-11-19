@@ -1,6 +1,9 @@
 class RICON_SharedRxPresentationEntry
 {
 	ref RICON_SharedRxContribution m_Input;
+	ref RICON_MediaCaptureEnvelope m_DirectCapture;
+	ref RICON_MediaRfHistoryEntry m_DirectRfHistory;
+	float m_fReferenceDbm;
 	int m_iSourceOutputIndex, m_iWireExpiryMs;
 }
 
@@ -12,9 +15,9 @@ class RICON_SharedRxPresentationWindow
 //! TEST_ONLY. Trusted playout gives an RX-local target and a prepared PCM window.
 class RICON_SharedRxPresentationTimeline
 {
-	static const int WINDOW_MS = RICON_MediaPcmProfile.FRAME_DURATION_MS;
+	static const int WINDOW_MS = RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 	static const int HORIZON_WINDOWS = 8;
-	protected static const int WINDOW_SAMPLES = RICON_SharedRxMixer.WINDOW_SAMPLES;
+	protected static const int WINDOW_SAMPLES = RICON_SharedRxTestMixer.WINDOW_SAMPLES;
 	protected ref RICON_MediaEgressRoute m_Rx;
 	protected ref RICON_RelayDestination m_Destination;
 	protected int m_iEpoch;
@@ -22,6 +25,7 @@ class RICON_SharedRxPresentationTimeline
 	protected int m_iNextTargetMs, m_iNextOutputIndex;
 	protected int m_iLastNowMs = -1;
 	protected bool m_bClosed;
+	protected bool m_bCommittingNoise;
 
 	bool Configure(RICON_MediaEgressRoute rx, int anchorTargetMs, int anchorOutputIndex)
 	{
@@ -53,6 +57,7 @@ class RICON_SharedRxPresentationTimeline
 	string CheckOfferTime(int targetMs, int nowMs)
 	{
 		if (m_bClosed || !m_Destination) return "CLOSED";
+		if (m_bCommittingNoise) return "BUSY";
 		if (nowMs < 0 || nowMs < m_iLastNowMs) return "BAD_TIME";
 		if (targetMs < m_iNextTargetMs || nowMs > targetMs) return "LATE";
 		int deltaMs = targetMs - m_iNextTargetMs;
@@ -71,7 +76,7 @@ class RICON_SharedRxPresentationTimeline
 		if (timeStatus != "OK") return timeStatus;
 		if (relay.m_iDeadlineMs <= relay.m_iTargetMs || relay.m_iDeadlineMs - relay.m_iTargetMs < WINDOW_MS) return "EXPIRED";
 		float signalRatio, noiseRatio;
-		if (!RICON_SharedRxMixer.TryNormalizePower(relay.m_Emission.m_fRxPowerDbm, relay.m_Emission.m_fNoiseDbm,
+		if (!RICON_SharedRxTestMixer.TryNormalizePower(relay.m_Emission.m_fRxPowerDbm, relay.m_Emission.m_fNoiseDbm,
 			referenceDbm, signalRatio, noiseRatio)) return "INVALID_RF";
 		if (!relay.m_Permit.ConsumeWindow(relay, nowMs)) return "REVOKED";
 		RICON_SharedRxContribution input = new RICON_SharedRxContribution();
@@ -90,7 +95,38 @@ class RICON_SharedRxPresentationTimeline
 		return InsertContribution(targetMs, nowMs, wireExpiryMs, input);
 	}
 
-	protected string InsertContribution(int targetMs, int nowMs, int wireExpiryMs, RICON_SharedRxContribution input)
+	string OfferDirect(int targetMs, int nowMs, int wireExpiryMs, RICON_SharedRxContribution input,
+		RICON_MediaCaptureEnvelope capture, float referenceDbm, RICON_MediaRfHistoryEntry admittedHistory)
+	{
+		if (!admittedHistory || !admittedHistory.m_Budget || admittedHistory.m_Budget.m_RxEnvironment) return "INVALID";
+		if (!capture || !input || input.m_RelayGrant || !input.m_Route || !input.m_Route.m_Source
+			|| !input.m_Route.m_Source.Same(capture.m_Binding) || !RICON_Num.IsFinite(referenceDbm)) return "INVALID";
+		ref RICON_MediaCaptureEnvelope heldCapture = capture.CloneEnvelope();
+		ref RICON_MediaRfHistoryEntry heldHistory = admittedHistory.CloneEntry();
+		return InsertContribution(targetMs, nowMs, wireExpiryMs, input, heldCapture, referenceDbm, heldHistory);
+	}
+
+	RICON_MediaCaptureEnvelope ReadDirectCapture(int targetMs, RICON_MediaEgressRoute route, float referenceDbm,
+		out RICON_MediaRfHistoryEntry admittedHistory)
+	{
+		admittedHistory = null;
+		if (!IsNextTarget(targetMs) || !route) return null;
+		RICON_SharedRxPresentationWindow window = m_Windows.Get(targetMs);
+		if (!window) return null;
+		foreach (RICON_SharedRxPresentationEntry entry : window.m_Entries)
+		{
+			if (entry.m_DirectCapture && entry.m_DirectRfHistory && entry.m_fReferenceDbm == referenceDbm
+				&& route.Same(entry.m_Input.m_Route))
+			{
+				admittedHistory = entry.m_DirectRfHistory.CloneEntry();
+				return entry.m_DirectCapture.CloneEnvelope();
+			}
+		}
+		return null;
+	}
+
+	protected string InsertContribution(int targetMs, int nowMs, int wireExpiryMs, RICON_SharedRxContribution input,
+		RICON_MediaCaptureEnvelope capture = null, float referenceDbm = 0.0, RICON_MediaRfHistoryEntry admittedHistory = null)
 	{
 		string timeStatus = CheckOfferTime(targetMs, nowMs);
 		if (timeStatus != "OK") return timeStatus;
@@ -100,7 +136,7 @@ class RICON_SharedRxPresentationTimeline
 			return "INVALID";
 		if (!input.MatchesReceiver(m_iEpoch, m_Destination)) return "WRONG_RX";
 		if (input.m_iFirstSampleIndex < 0 || input.m_iFirstSampleIndex > int.MAX - WINDOW_SAMPLES
-			|| !RICON_SharedRxMixer.IsPcmWindow(input.m_aSamples) || !RICON_SharedRxMixer.IsPowerRatio(input.m_fPowerRatio))
+			|| !RICON_SharedRxTestMixer.IsPcmWindow(input.m_aSamples) || !RICON_SharedRxTestMixer.IsPowerRatio(input.m_fPowerRatio))
 			return "INVALID";
 		if (!input.HasCurrentPermit()) return "REVOKED";
 		if (m_bClosed) return "CLOSED";
@@ -118,11 +154,11 @@ class RICON_SharedRxPresentationTimeline
 				bool current = CoversDeadline(existing, targetMs, entry.m_iWireExpiryMs) && existing.HasCurrentPermit();
 				if (m_bClosed) return "CLOSED";
 				if (current)
-					return DuplicateStatus(entry, input, wireExpiryMs);
+					return DuplicateStatus(entry, input, wireExpiryMs, capture, referenceDbm, admittedHistory);
 				held = entry;
 				break;
 			}
-			if (!held && window.m_Entries.Count() >= RICON_SharedRxMixer.MAX_INPUTS) return "RX_RESOURCE_LIMIT";
+			if (!held && window.m_Entries.Count() >= RICON_SharedRxTestMixer.MAX_INPUTS) return "RX_RESOURCE_LIMIT";
 		}
 		else
 		{
@@ -145,6 +181,9 @@ class RICON_SharedRxPresentationTimeline
 			window.m_Entries.Insert(held);
 		}
 		held.m_Input = detached;
+		held.m_DirectCapture = capture;
+		held.m_DirectRfHistory = admittedHistory;
+		held.m_fReferenceDbm = referenceDbm;
 		held.m_iSourceOutputIndex = input.m_iFirstSampleIndex;
 		held.m_iWireExpiryMs = wireExpiryMs;
 		m_iLastNowMs = nowMs;
@@ -154,9 +193,31 @@ class RICON_SharedRxPresentationTimeline
 	RICON_SharedRxMixResult Commit(int targetMs, int nowMs, float noisePowerRatio, array<int> noiseSamples, out int minWireExpiryMs)
 	{
 		minWireExpiryMs = -1;
+		if (m_bCommittingNoise) return null;
+		return CommitWindow(targetMs, nowMs, noisePowerRatio, noiseSamples, minWireExpiryMs);
+	}
+
+	RICON_SharedRxMixResult CommitQualifiedNoise(int targetMs, int nowMs, float noisePowerRatio, array<int> noiseSamples,
+		RICON_TemporalRxEnvironment environment, RICON_MediaEgressRoute noiseRoute, float referenceDbm, out int minWireExpiryMs)
+	{
+		minWireExpiryMs = -1;
+		if (m_bCommittingNoise || !environment || !noiseRoute || !RICON_SharedRxTestMixer.IsPcmWindow(noiseSamples)) return null;
+		m_bCommittingNoise = true;
+		ref RICON_SharedRxMixResult result = CommitWindow(targetMs, nowMs, noisePowerRatio, noiseSamples,
+			minWireExpiryMs, environment, noiseRoute, referenceDbm);
+		m_bCommittingNoise = false;
+		return result;
+	}
+
+	protected RICON_SharedRxMixResult CommitWindow(int targetMs, int nowMs, float noisePowerRatio, array<int> noiseSamples,
+		out int minWireExpiryMs, RICON_TemporalRxEnvironment environment = null, RICON_MediaEgressRoute noiseRoute = null,
+		float referenceDbm = 0.0)
+	{
+		minWireExpiryMs = -1;
 		if (m_bClosed || !m_Destination || targetMs != m_iNextTargetMs || nowMs < 0 || nowMs < m_iLastNowMs || nowMs > targetMs)
 			return null;
 		array<ref RICON_SharedRxContribution> survivors = {};
+		bool hasNoiseRoute = environment == null;
 		int expiry = -1;
 		ref RICON_SharedRxPresentationWindow window = m_Windows.Get(targetMs);
 		if (window)
@@ -167,11 +228,14 @@ class RICON_SharedRxPresentationTimeline
 				bool current = CoversDeadline(input, targetMs, entry.m_iWireExpiryMs) && input.HasCurrentPermit();
 				if (m_bClosed) return null;
 				if (!current) continue;
+				if (environment && !MatchesNoiseWindow(entry, environment, referenceDbm)) return null;
+				if (!hasNoiseRoute && noiseRoute.Same(input.m_Route)) hasNoiseRoute = true;
 				survivors.Insert(input);
 				if (expiry < 0 || expiry > entry.m_iWireExpiryMs) expiry = entry.m_iWireExpiryMs;
 			}
 		}
-		RICON_SharedRxMixResult result = RICON_SharedRxMixer.MixReceiver(m_iEpoch, m_Destination,
+		if (!hasNoiseRoute) return null;
+		RICON_SharedRxMixResult result = RICON_SharedRxTestMixer.MixReceiver(m_iEpoch, m_Destination,
 			m_iNextOutputIndex, survivors, noisePowerRatio, noiseSamples, m_Rx);
 		if (m_bClosed || !result) return null;
 		minWireExpiryMs = expiry;
@@ -183,10 +247,19 @@ class RICON_SharedRxPresentationTimeline
 		return result;
 	}
 
+	protected static bool MatchesNoiseWindow(RICON_SharedRxPresentationEntry entry,
+		RICON_TemporalRxEnvironment environment, float referenceDbm)
+	{
+		RICON_MediaCaptureEnvelope capture = entry.m_DirectCapture;
+		if (!capture || capture.m_sTimebaseId != environment.m_sTimebaseId || entry.m_fReferenceDbm != referenceDbm) return false;
+		return RICON_TemporalClock.ContainsInterval(capture.m_iLowerMs, capture.m_iLowerSubUs,
+			capture.m_iUpperMs, capture.m_iUpperSubUs, environment.m_iFromMs, environment.m_iUntilMs);
+	}
+
 	//! Missed targets receive no rendered replacement. Leave the first non-past target pending.
 	int SkipLate(int nowMs)
 	{
-		if (m_bClosed || !m_Destination || nowMs < m_iLastNowMs || nowMs <= m_iNextTargetMs) return 0;
+		if (m_bClosed || m_bCommittingNoise || !m_Destination || nowMs < m_iLastNowMs || nowMs <= m_iNextTargetMs) return 0;
 		int skipped = Math.Min((nowMs - m_iNextTargetMs - 1) / WINDOW_MS + 1, RemainingWindows());
 		m_iLastNowMs = nowMs;
 		Advance(skipped);
@@ -232,11 +305,34 @@ class RICON_SharedRxPresentationTimeline
 		m_iNextOutputIndex += windows * WINDOW_SAMPLES;
 	}
 
-	protected static string DuplicateStatus(RICON_SharedRxPresentationEntry held, RICON_SharedRxContribution input, int wireExpiryMs)
+	//! Compare only the RF metadata represented by V3. The receiver environment is qualified separately.
+	static bool MatchesV3History(RICON_MediaRfHistoryEntry admitted, RICON_MediaRfHistoryEntry selected)
+	{
+		if (!admitted || !admitted.m_Budget || !selected || !selected.m_Budget) return false;
+		if (admitted.m_iValidFromMs != selected.m_iValidFromMs || admitted.m_iValidUntilMs != selected.m_iValidUntilMs) return false;
+		RICON_TemporalRfBudget wire = admitted.m_Budget;
+		RICON_TemporalRfBudget source = selected.m_Budget;
+		if (wire.m_sTimebaseId != source.m_sTimebaseId || wire.m_fBandwidthHz != source.m_fBandwidthHz) return false;
+		if (wire.m_iLinkId != source.m_iLinkId || wire.m_iTickMs != source.m_iTickMs
+			|| wire.m_iModelMs != source.m_iModelMs || wire.m_iModelSubUs != source.m_iModelSubUs) return false;
+		if (!RICON_MediaWireRfV2.ValidPowerDbm(wire.m_fRxPowerDbm) || !RICON_MediaWireRfV2.ValidPowerDbm(source.m_fRxPowerDbm)
+			|| !RICON_MediaWireRfV2.ValidPowerDbm(wire.m_fNoiseDbm) || !RICON_MediaWireRfV2.ValidPowerDbm(source.m_fNoiseDbm)) return false;
+		return RICON_MediaWireRfV2.QuantizePower(wire.m_fRxPowerDbm) == RICON_MediaWireRfV2.QuantizePower(source.m_fRxPowerDbm)
+			&& RICON_MediaWireRfV2.QuantizePower(wire.m_fNoiseDbm) == RICON_MediaWireRfV2.QuantizePower(source.m_fNoiseDbm);
+	}
+
+	protected static string DuplicateStatus(RICON_SharedRxPresentationEntry held, RICON_SharedRxContribution input,
+		int wireExpiryMs, RICON_MediaCaptureEnvelope capture, float referenceDbm, RICON_MediaRfHistoryEntry admittedHistory)
 	{
 		RICON_SharedRxContribution existing = held.m_Input;
 		if (!existing.SameEmission(input) || existing.m_Permit != input.m_Permit || existing.m_fPowerRatio != input.m_fPowerRatio
 			|| held.m_iSourceOutputIndex != input.m_iFirstSampleIndex || held.m_iWireExpiryMs != wireExpiryMs) return "CONFLICT";
+		if (capture)
+		{
+			if (!held.m_DirectCapture || !held.m_DirectCapture.SameEnvelope(capture) || held.m_fReferenceDbm != referenceDbm
+				|| !held.m_DirectRfHistory || !held.m_DirectRfHistory.SameEntry(admittedHistory)) return "CONFLICT";
+		}
+		else if (held.m_DirectCapture) return "CONFLICT";
 		for (int index = 0; index < WINDOW_SAMPLES; index++)
 		{
 			if (existing.m_aSamples[index] != input.m_aSamples[index]) return "CONFLICT";

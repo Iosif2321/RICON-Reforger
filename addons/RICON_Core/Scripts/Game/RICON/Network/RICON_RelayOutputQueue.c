@@ -1,11 +1,11 @@
-//! Trusted local planner hands over pre-rendered PCM and its original permits. One exact timed take.
+//! Trusted local planner hands over pre-rendered PCM and its original permits.
 class RICON_RelayOutputQueue
 {
 	protected ref RICON_RelayDestination m_Destination;
 	protected ref array<ref RICON_SharedRxMixResult> m_Windows = {};
 	protected int m_iEpoch, m_iCapacity, m_iLastNowMs;
 	protected int m_iLastTargetMs = -1, m_iLastSampleIndex = -1;
-	protected bool m_bClosed;
+	protected bool m_bClosed, m_bBusy;
 
 	bool Configure(int epoch, RICON_RelayDestination destination, int capacity, int nowMs)
 	{
@@ -20,15 +20,25 @@ class RICON_RelayOutputQueue
 
 	string Offer(RICON_SharedRxMixResult window, int nowMs)
 	{
+		if (m_bBusy) return "BUSY";
+		ref RICON_RelayOutputQueue held = this;
+		m_bBusy = true;
+		string status = OfferHeld(window, nowMs);
+		m_bBusy = false;
+		return status;
+	}
+
+	protected string OfferHeld(RICON_SharedRxMixResult window, int nowMs)
+	{
 		if (m_bClosed || !m_Destination) return "CLOSED";
 		if (nowMs < m_iLastNowMs) return "BAD_TIME";
 		if (!window || window.m_iEpoch != m_iEpoch || !m_Destination.Same(window.m_Destination)) return "WRONG_RX";
-		int width = RICON_SharedRxMixer.WINDOW_SAMPLES;
+		int width = RICON_SharedRxTestMixer.WINDOW_SAMPLES;
 		int duration = RICON_SharedRxPresentationTimeline.WINDOW_MS;
 		if (window.m_iTargetMs < 0 || window.m_iTargetMs > int.MAX - duration
 			|| window.m_iFirstSampleIndex < 0 || window.m_iFirstSampleIndex > int.MAX - width
-			|| window.m_iFirstSampleIndex % width != 0 || !RICON_SharedRxMixer.IsPcmWindow(window.m_aSamples)
-			|| !window.m_aPermits || window.m_aPermits.Count() > RICON_SharedRxMixer.MAX_INPUTS) return "INVALID";
+			|| window.m_iFirstSampleIndex % width != 0 || !RICON_SharedRxTestMixer.IsPcmWindow(window.m_aSamples)
+			|| !window.m_aPermits || window.m_aPermits.Count() > RICON_SharedRxTestMixer.MAX_INPUTS) return "INVALID";
 		if (window.m_iTargetMs <= m_iLastTargetMs || window.m_iFirstSampleIndex <= m_iLastSampleIndex) return "RETIRED";
 		if (m_iLastTargetMs >= 0)
 		{
@@ -78,6 +88,16 @@ class RICON_RelayOutputQueue
 
 	RICON_SharedRxMixResult Take(int nowMs)
 	{
+		if (m_bBusy) return null;
+		ref RICON_RelayOutputQueue held = this;
+		m_bBusy = true;
+		ref RICON_SharedRxMixResult window = TakeHeld(nowMs);
+		m_bBusy = false;
+		return window;
+	}
+
+	protected RICON_SharedRxMixResult TakeHeld(int nowMs)
+	{
 		if (m_bClosed || !m_Destination || nowMs < m_iLastNowMs) return null;
 		m_iLastNowMs = nowMs;
 		Sweep(nowMs);
@@ -85,6 +105,72 @@ class RICON_RelayOutputQueue
 		ref RICON_SharedRxMixResult window = m_Windows[0];
 		m_Windows.RemoveOrdered(0);
 		return window;
+	}
+
+	//! Detach one complete prefix before its first target. The finite WAV owner must honor its tighter expiry.
+	RICON_PcmBatch TakeFiniteWavePrefix(int firstTargetMs, int firstSampleIndex, int windowCount, int nowMs,
+		out array<ref RICON_MediaOutputPermit> permits)
+	{
+		permits = null;
+		if (m_bBusy || m_bClosed || !m_Destination || nowMs < m_iLastNowMs || nowMs >= firstTargetMs
+			|| windowCount <= 0 || windowCount > m_iCapacity || m_Windows.Count() < windowCount) return null;
+		ref RICON_RelayOutputQueue held = this;
+		m_bBusy = true;
+		ref RICON_PcmBatch batch = TakeFiniteWavePrefixHeld(firstTargetMs, firstSampleIndex, windowCount, nowMs, permits);
+		m_bBusy = false;
+		return batch;
+	}
+
+	protected RICON_PcmBatch TakeFiniteWavePrefixHeld(int firstTargetMs, int firstSampleIndex, int windowCount, int nowMs,
+		out array<ref RICON_MediaOutputPermit> permits)
+	{
+		int width = RICON_SharedRxTestMixer.WINDOW_SAMPLES;
+		int windowMs = RICON_SharedRxPresentationTimeline.WINDOW_MS;
+		int sampleCount = width * windowCount;
+		int durationMs = windowMs * windowCount;
+		if (firstTargetMs > int.MAX - durationMs || firstSampleIndex < 0 || firstSampleIndex > int.MAX - sampleCount
+			|| firstSampleIndex % width != 0) return null;
+
+		ref RICON_RelayDestination destination = m_Destination;
+		array<ref RICON_SharedRxMixResult> prefix = {};
+		array<ref RICON_MediaOutputPermit> unique = {};
+		ref RICON_PcmBatch batch = new RICON_PcmBatch();
+		batch.m_iEpoch = m_iEpoch;
+		batch.m_iFirstSampleIndex = firstSampleIndex;
+		batch.m_iBlockCount = 1;
+		batch.m_iExpiresAtMs = firstTargetMs + durationMs - 1;
+		batch.m_aSamples.Reserve(sampleCount);
+		for (int index = 0; index < windowCount; index++)
+		{
+			ref RICON_SharedRxMixResult window = m_Windows[index];
+			int target = firstTargetMs + index * windowMs;
+			if (!window || window.m_iEpoch != m_iEpoch || !destination.Same(window.m_Destination)
+				|| window.m_iTargetMs != target || window.m_iFirstSampleIndex != firstSampleIndex + index * width
+				|| window.m_iWireDeadlineMs < target + windowMs || !RICON_SharedRxTestMixer.IsPcmWindow(window.m_aSamples)
+				|| !window.m_aPermits || window.m_aPermits.IsEmpty()) return null;
+			foreach (RICON_MediaOutputPermit permit : window.m_aPermits)
+			{
+				if (!permit) return null;
+				if (unique.Contains(permit)) continue;
+				if (unique.Count() >= RICON_SharedRxTestMixer.MAX_INPUTS) return null;
+				unique.Insert(permit);
+			}
+			batch.m_iExpiresAtMs = Math.Min(batch.m_iExpiresAtMs, window.m_iWireDeadlineMs);
+			batch.m_aSamples.InsertAll(window.m_aSamples);
+			prefix.Insert(window);
+		}
+		if (batch.m_iExpiresAtMs - nowMs < durationMs) return null;
+		foreach (RICON_MediaOutputPermit current : unique)
+			if (!current.IsCurrent() || m_bClosed) return null;
+		if (m_bClosed || m_Destination != destination || m_Windows.Count() < windowCount) return null;
+		for (int check = 0; check < windowCount; check++)
+			if (m_Windows[check] != prefix[check]) return null;
+
+		// Consume the complete prefix before the caller performs WAV I/O. Never sweep into a later prefix.
+		for (int remove = 0; remove < windowCount; remove++) m_Windows.RemoveOrdered(0);
+		m_iLastNowMs = nowMs;
+		permits = unique;
+		return batch;
 	}
 
 	protected void Sweep(int nowMs)

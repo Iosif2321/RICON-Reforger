@@ -14,12 +14,12 @@ class RICON_LocalRxDirectTrack
 	bool Configure(RICON_MediaWireReceiver receiver, RICON_MediaEgressRoute route, int targetMs, int leadMs)
 	{
 		if (m_Receiver || !receiver || receiver.GetWireVersion() != 3 || !route || !route.IsValid()
-			|| route.m_Source.m_sProfileId != RICON_MediaPcmProfile.PROFILE_ID) return false;
+			|| route.m_Source.m_sProfileId != RICON_MediaPcmTestProfile.PROFILE_ID) return false;
 		int firstSequence, firstSample;
 		RICON_MediaOutputPermit permit = receiver.ReadUnclaimedPlayout(route, firstSequence, firstSample);
 		RICON_MediaPlayout playout = new RICON_MediaPlayout();
-		if (!permit || !playout.Configure(route, firstSequence, firstSample, RICON_MediaPcmProfile.FRAME_SAMPLES,
-			RICON_MediaPcmProfile.FRAME_DURATION_MS, targetMs, 8, 8, leadMs)
+		if (!permit || !playout.Configure(route, firstSequence, firstSample, RICON_MediaPcmTestProfile.FRAME_SAMPLES,
+			RICON_MediaPcmTestProfile.FRAME_DURATION_MS, targetMs, 8, 8, leadMs)
 			|| !receiver.ClaimPlayout(route, playout, permit)) return false;
 		m_Receiver = receiver;
 		m_Route = route.CloneRoute();
@@ -53,10 +53,10 @@ class RICON_LocalRxDirectTrack
 		int firstSample = decision.m_iFirstSampleIndex;
 		int priorNext = m_iNextSample;
 		m_iNextSample = -1;
-		array<int> decoded = RICON_MediaPcmProfile.Decode(m_Route.m_Source, decision);
+		array<int> decoded = RICON_MediaPcmTestProfile.Decode(m_Route.m_Source, decision);
 		if (!decoded || !decision.m_Block.m_RfHistory || !decision.m_Block.m_CaptureEnvelope) return "INVALID";
 		float power, noise;
-		if (!RICON_SharedRxMixer.TryNormalizeRfBudget(decision.m_Block.m_RfHistory.m_Budget, referenceDbm, power, noise))
+		if (!RICON_SharedRxTestMixer.TryNormalizeRfBudget(decision.m_Block.m_RfHistory.m_Budget, referenceDbm, power, noise))
 			return "INVALID_RF";
 		int endMs = decision.m_iTargetMs + RICON_SharedRxPresentationTimeline.WINDOW_MS;
 		int mappingRevision = decision.m_Block.m_CaptureEnvelope.m_iMappingRevision;
@@ -75,10 +75,11 @@ class RICON_LocalRxDirectTrack
 		input.m_iFirstSampleIndex = firstOutput;
 		int expiryMs = decision.m_iWireExpiryMs;
 		if (continuous && m_iPreviousExpiryMs < expiryMs) expiryMs = m_iPreviousExpiryMs;
-		string status = slot.Offer(decision.m_iTargetMs, nowMs, expiryMs, input);
+		string status = slot.Offer(decision.m_iTargetMs, nowMs, expiryMs, input,
+			decision.m_Block.m_CaptureEnvelope, referenceDbm, decision.m_Block.m_RfHistory);
 		if (status == "ACCEPTED")
 		{
-			m_iNextSample = firstSample + RICON_MediaPcmProfile.FRAME_SAMPLES;
+			m_iNextSample = firstSample + RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 			m_iPreviousExpiryMs = decision.m_iWireExpiryMs;
 			m_iPreviousMapping = mappingRevision;
 			m_fPreviousPower = power;
@@ -106,13 +107,17 @@ class RICON_LocalRxSlot
 	protected ref RICON_SharedRxMixResult m_Issued;
 	protected ref array<ref RICON_MediaOutputPermit> m_IssuedPermits = {};
 	protected ref array<ref RICON_LocalRxDirectTrack> m_Direct = {};
-	protected int m_iEpoch, m_iIssuedAtMs = -1;
+	protected ref RICON_TemporalRxEnvironment m_LastNoiseEnvironment;
+	protected float m_fNoiseReferenceDbm;
+	protected int m_iEpoch, m_iIssuedAtMs = -1, m_iLastOutputNowMs = -1;
 	protected bool m_bClosed;
+	protected bool m_bPreparing;
+	protected bool m_bExactOutput, m_bFiniteOutput;
 
 	bool Configure(int epoch, RICON_RelayDestination destination, int anchorMs, int sampleIndex, int outputCapacity, int nowMs)
 	{
 		if (m_bClosed || m_Address || !destination || anchorMs < nowMs || nowMs < 0
-			|| sampleIndex < 0 || sampleIndex % RICON_SharedRxMixer.WINDOW_SAMPLES != 0) return false;
+			|| sampleIndex < 0 || sampleIndex % RICON_SharedRxTestMixer.WINDOW_SAMPLES != 0) return false;
 		RICON_SharedRxPresentationTimeline timeline = new RICON_SharedRxPresentationTimeline();
 		RICON_RelayOutputQueue output = new RICON_RelayOutputQueue();
 		if (!timeline.ConfigureReceiver(epoch, destination, anchorMs, sampleIndex)
@@ -121,6 +126,7 @@ class RICON_LocalRxSlot
 		m_Timeline = timeline;
 		m_Output = output;
 		m_iEpoch = epoch;
+		m_iLastOutputNowMs = nowMs;
 		return true;
 	}
 
@@ -142,7 +148,7 @@ class RICON_LocalRxSlot
 
 	RICON_LocalRxDirectTrack OpenDirect(RICON_MediaWireReceiver receiver, RICON_MediaEgressRoute route, int firstTargetMs, int leadMs)
 	{
-		if (!IsOpen() || !route || !route.IsValid() || !Matches(route.m_Source.m_iSessionEpoch, RICON_RelayDestination.FromRoute(route)))
+		if (!IsOpen() || m_bPreparing || !route || !route.IsValid() || !Matches(route.m_Source.m_iSessionEpoch, RICON_RelayDestination.FromRoute(route)))
 			return null;
 		if (!m_Timeline.IsNextTarget(firstTargetMs)) return null;
 		for (int index = m_Direct.Count() - 1; index >= 0; index--)
@@ -154,7 +160,7 @@ class RICON_LocalRxSlot
 			prior.Close();
 			m_Direct.RemoveOrdered(index);
 		}
-		if (m_Direct.Count() >= RICON_SharedRxMixer.MAX_INPUTS) return null;
+		if (m_Direct.Count() >= RICON_SharedRxTestMixer.MAX_INPUTS) return null;
 		RICON_LocalRxDirectTrack track = new RICON_LocalRxDirectTrack();
 		if (!track.Configure(receiver, route, firstTargetMs, leadMs)) return null;
 		if (!IsOpen()) { track.Close(); return null; }
@@ -165,19 +171,25 @@ class RICON_LocalRxSlot
 	string StageDirect(RICON_LocalRxDirectTrack track, int nowMs, float referenceDbm)
 	{
 		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
 		if (!track || !m_Direct.Contains(track)) return "WRONG_RX";
 		return track.Stage(this, nowMs, referenceDbm);
 	}
 
-	string Offer(int targetMs, int nowMs, int wireExpiryMs, RICON_SharedRxContribution input)
+	string Offer(int targetMs, int nowMs, int wireExpiryMs, RICON_SharedRxContribution input,
+		RICON_MediaCaptureEnvelope capture = null, float referenceDbm = 0.0, RICON_MediaRfHistoryEntry admittedHistory = null)
 	{
 		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
 		if (!input || !input.MatchesReceiver(m_iEpoch, m_Address)) return "WRONG_RX";
 		// Очередь вывода требует разрешение на всё окно; короткий direct-вклад не портит уже смешанный PCM.
 		if (targetMs >= 0 && (wireExpiryMs <= targetMs || wireExpiryMs - targetMs < RICON_SharedRxPresentationTimeline.WINDOW_MS))
 			return "EXPIRED";
 		ref RICON_SharedRxPresentationTimeline timeline = m_Timeline;
-		string status = timeline.Offer(targetMs, nowMs, wireExpiryMs, input);
+		string status;
+		if (capture || admittedHistory)
+			status = timeline.OfferDirect(targetMs, nowMs, wireExpiryMs, input, capture, referenceDbm, admittedHistory);
+		else status = timeline.Offer(targetMs, nowMs, wireExpiryMs, input);
 		if (!IsOpen()) return "CLOSED";
 		return status;
 	}
@@ -185,6 +197,7 @@ class RICON_LocalRxSlot
 	string OfferRelay(RICON_RelayPresentationWindow window, float referenceDbm, int nowMs)
 	{
 		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
 		ref RICON_SharedRxPresentationTimeline timeline = m_Timeline;
 		string status = timeline.OfferRelay(window, referenceDbm, nowMs);
 		if (!IsOpen()) return "CLOSED";
@@ -193,13 +206,14 @@ class RICON_LocalRxSlot
 
 	bool OpenRelay(RICON_RelayWireReceiver receiver)
 	{
-		if (!IsOpen() || !receiver || !receiver.MatchesBoundDestination(m_Address)) return false;
+		if (!IsOpen() || m_bPreparing || !receiver || !receiver.MatchesBoundDestination(m_Address)) return false;
 		return receiver.ClaimRawCursor();
 	}
 
 	string StageRelay(RICON_RelayWireReceiver receiver, int sequence, int targetMs, int nowMs, float referenceDbm)
 	{
 		if (!IsOpen() || !receiver) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
 		ref RICON_SharedRxPresentationTimeline timeline = m_Timeline;
 		string status = receiver.StagePresentation(timeline, sequence, targetMs, nowMs, referenceDbm);
 		if (!IsOpen()) return "CLOSED";
@@ -208,7 +222,7 @@ class RICON_LocalRxSlot
 
 	int SkipLate(int nowMs)
 	{
-		if (!IsOpen()) return 0;
+		if (!IsOpen() || m_bPreparing) return 0;
 		return m_Timeline.SkipLate(nowMs);
 	}
 
@@ -216,25 +230,122 @@ class RICON_LocalRxSlot
 	string Prepare(int targetMs, int nowMs)
 	{
 		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
+		ref RICON_LocalRxSlot held = this;
+		m_bPreparing = true;
 		ref RICON_SharedRxPresentationTimeline timeline = m_Timeline;
 		int expiryMs;
-		RICON_SharedRxMixResult result = timeline.Commit(targetMs, nowMs, 0, null, expiryMs);
+		ref RICON_SharedRxMixResult result = timeline.Commit(targetMs, nowMs, 0, null, expiryMs);
+		string status = OfferPrepared(result, nowMs);
+		m_bPreparing = false;
+		return status;
+	}
+
+	//! TEST_ONLY direct PCM. Model time comes from the authority that owns the completed history.
+	//! The held V3 capture envelope maps that history to this one local target.
+	string PrepareWithNoise(int targetMs, int nowMs, RICON_MediaRfHistory history, RICON_MediaEgressRoute route,
+		int modelNowMs, float referenceDbm, array<int> noiseSamples)
+	{
+		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
+		if (!route || !route.IsValid() || !Matches(route.m_Source.m_iSessionEpoch, RICON_RelayDestination.FromRoute(route)))
+			return "WRONG_RX";
+		ref RICON_SharedRxPresentationTimeline timeline = m_Timeline;
+		if (nowMs < m_iLastOutputNowMs || !timeline.IsNextTarget(targetMs)
+			|| timeline.CheckOfferTime(targetMs, nowMs) != "OK") return "INVALID_CURSOR";
+		if (!history || !RICON_SharedRxTestMixer.IsPcmWindow(noiseSamples)) return "INVALID_NOISE";
+		ref RICON_MediaRfHistoryEntry admittedHistory;
+		RICON_MediaCaptureEnvelope capture = timeline.ReadDirectCapture(targetMs, route, referenceDbm, admittedHistory);
+		if (!capture) return "INVALID_NOISE";
+		ref RICON_MediaRfHistoryEntry selected = history.Select(route, capture, modelNowMs, false);
+		if (!selected || !selected.m_Budget || !selected.m_Budget.m_RxEnvironment) return "INVALID_NOISE";
+		RICON_TemporalRfBudget budget = selected.m_Budget;
+		RICON_TemporalRxEnvironment environment = budget.m_RxEnvironment;
+		if (!environment.IsValidFor(m_iEpoch, m_Address.m_iRxDeviceId, m_Address.m_iRxIndex,
+		capture.m_sTimebaseId, budget.m_fNoiseDbm, m_Address.m_iRxGeneration)) return "INVALID_NOISE";
+	if (!environment.Covers(selected.m_iValidFromMs, selected.m_iValidUntilMs))
+			return "INVALID_NOISE";
+		if (m_LastNoiseEnvironment)
+		{
+			if (environment.m_iRevision < m_LastNoiseEnvironment.m_iRevision) return "STALE_NOISE";
+			if (environment.m_sTimebaseId != m_LastNoiseEnvironment.m_sTimebaseId
+				|| referenceDbm != m_fNoiseReferenceDbm) return "INVALID_NOISE";
+			if (environment.m_iRevision == m_LastNoiseEnvironment.m_iRevision && !environment.Same(m_LastNoiseEnvironment))
+				return "INVALID_NOISE";
+		}
+		if (!RICON_SharedRxPresentationTimeline.MatchesV3History(admittedHistory, selected)) return "INVALID_NOISE";
+		float signalPowerRatio, noisePowerRatio;
+		if (!RICON_SharedRxTestMixer.TryNormalizePower(admittedHistory.m_Budget.m_fRxPowerDbm, environment.m_fNoisePlusInterferenceDbm,
+			referenceDbm, signalPowerRatio, noisePowerRatio)) return "INVALID_NOISE";
+
+		array<int> detachedNoise = {};
+		detachedNoise.InsertAll(noiseSamples);
+		ref RICON_MediaEgressRoute noiseRoute = route.CloneRoute();
+		ref RICON_LocalRxSlot held = this;
+		m_bPreparing = true;
+		int expiryMs;
+		ref RICON_SharedRxMixResult result = timeline.CommitQualifiedNoise(targetMs, nowMs, noisePowerRatio,
+			detachedNoise, environment, noiseRoute, referenceDbm, expiryMs);
+		if (IsOpen() && result)
+		{
+			m_LastNoiseEnvironment = environment;
+			m_fNoiseReferenceDbm = referenceDbm;
+		}
+		string status = OfferPrepared(result, nowMs);
+		m_bPreparing = false;
+		return status;
+	}
+
+	protected string OfferPrepared(RICON_SharedRxMixResult result, int nowMs)
+	{
 		if (!IsOpen()) return "CLOSED";
 		if (!result) return "INVALID_CURSOR";
 		ref RICON_RelayOutputQueue output = m_Output;
+		m_iLastOutputNowMs = Math.Max(m_iLastOutputNowMs, nowMs);
 		string status = output.Offer(result, nowMs);
 		if (!IsOpen()) return "CLOSED";
 		return status;
 	}
 
+	//! Transfers a whole prepared prefix once into the finite WAV owner.
+	string PrepareFiniteWave(RICON_PcmWavePlaybackOwner owner, int firstTargetMs, int firstSampleIndex,
+		int windowCount, int nowMs, out int clipId)
+	{
+		clipId = 0;
+		if (!IsOpen()) return "CLOSED";
+		if (m_bPreparing) return "BUSY";
+		if (m_bExactOutput || !owner || owner.GetEpoch() != m_iEpoch || nowMs < m_iLastOutputNowMs)
+			return "WRONG_OUTPUT";
+
+		ref RICON_LocalRxSlot held = this;
+		ref RICON_PcmWavePlaybackOwner wave = owner;
+		ref RICON_RelayOutputQueue output = m_Output;
+		m_bPreparing = true;
+		array<ref RICON_MediaOutputPermit> permits;
+		ref RICON_PcmBatch batch = output.TakeFiniteWavePrefix(firstTargetMs, firstSampleIndex, windowCount, nowMs, permits);
+		string status = "PREFIX_UNAVAILABLE";
+		if (batch && IsOpen() && m_Output == output)
+		{
+			m_bFiniteOutput = true;
+			m_iLastOutputNowMs = nowMs;
+			status = wave.PrepareFiniteRxClip(batch, permits, this, nowMs, clipId);
+		}
+		m_bPreparing = false;
+		if (IsOpen() && m_Output == output) return status;
+		clipId = 0;
+		return "CLOSED";
+	}
+
 	RICON_SharedRxMixResult Take(int nowMs)
 	{
-		if (!IsOpen()) return null;
+		if (!IsOpen() || m_bPreparing || m_bFiniteOutput) return null;
 		ref RICON_RelayOutputQueue output = m_Output;
+		m_iLastOutputNowMs = Math.Max(m_iLastOutputNowMs, nowMs);
 		ref RICON_SharedRxMixResult result = output.Take(nowMs);
 		if (!IsOpen()) return null;
 		if (result)
 		{
+			m_bExactOutput = true;
 			m_Issued = result;
 			m_iIssuedAtMs = nowMs;
 			m_IssuedPermits.Clear();
@@ -246,7 +357,7 @@ class RICON_LocalRxSlot
 	//! Последняя проверка перед синхронным выводом; результат Take не является разрешением.
 	bool AuthorizeOutput(RICON_SharedRxMixResult window, int nowMs)
 	{
-		if (!IsOpen() || !window || window != m_Issued || m_iIssuedAtMs != nowMs || window.m_iTargetMs != nowMs
+		if (!IsOpen() || m_bPreparing || !window || window != m_Issued || m_iIssuedAtMs != nowMs || window.m_iTargetMs != nowMs
 			|| !Matches(window.m_iEpoch, window.m_Destination) || !window.m_aPermits) return false;
 		m_Issued = null;
 		ref array<ref RICON_MediaOutputPermit> issued = m_IssuedPermits;
@@ -270,6 +381,7 @@ class RICON_LocalRxSlot
 		foreach (RICON_LocalRxDirectTrack track : m_Direct) track.Close();
 		m_Direct.Clear();
 		m_Issued = null;
+		m_LastNoiseEnvironment = null;
 		m_IssuedPermits.Clear();
 		if (m_Timeline) m_Timeline.Close();
 		if (m_Output) m_Output.Close();

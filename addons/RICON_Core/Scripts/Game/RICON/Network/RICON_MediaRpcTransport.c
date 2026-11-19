@@ -215,12 +215,33 @@ modded class SCR_PlayerController
 	protected BaseWorld m_RICON_RelayWorld;
 	protected IEntity m_RICON_RelayEntity;
 	protected int m_iRICON_RelayEpoch, m_iRICON_RelayWidth;
+	protected int m_iRICON_DevDirectRaw, m_iRICON_DevDirectAccepted, m_iRICON_DevRelayRaw, m_iRICON_DevRelayAccepted;
+	protected string m_sRICON_DevLastMedia = "none";
+	protected int m_iRICON_DevLastMediaLog = -1;
+	protected string m_sRICON_DevPriorCounts;
+
+	void RICON_AppendDevMedia(array<string> lines)
+	{
+		if (!RICON_IsLocalWireOwner()) { lines.Insert("RX media: no local wire owner"); return; }
+		string counts = string.Format("RX frames raw/accepted  direct=%1/%2  relay=%3/%4  last=%5",
+			m_iRICON_DevDirectRaw, m_iRICON_DevDirectAccepted, m_iRICON_DevRelayRaw, m_iRICON_DevRelayAccepted, m_sRICON_DevLastMedia);
+		lines.Insert(counts);
+		lines.Insert(string.Format("RX owners  wire=%1  direct playout=%2  relay=%3  relay playout=%4",
+			m_RICON_WireReceiver != null, m_RICON_LocalRx != null, m_RICON_RelayReceiver != null, m_RICON_RelayPlayout != null));
+		int nowMs = System.GetTickCount();
+		if (counts != m_sRICON_DevPriorCounts && (m_iRICON_DevLastMediaLog < 0 || nowMs - m_iRICON_DevLastMediaLog >= 1000))
+		{
+			m_iRICON_DevLastMediaLog = nowMs;
+			m_sRICON_DevPriorCounts = counts;
+			Print("[RICON_DEV] CLIENT " + counts);
+		}
+	}
 
 	//! Возвращает успешность вызова RPC. Допуск и доставка определяются сервером.
 	bool RICON_SubmitOpenRadioPcm(int epoch, int leaseId, int streamId, int sequence, int firstSampleIndex, array<int> payload)
 	{
 		if (!RICON_IsLocalWireOwner() || epoch <= 0 || leaseId <= 0 || streamId <= 0 || sequence < 0
-			|| firstSampleIndex < 0 || !payload || payload.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES) return false;
+			|| firstSampleIndex < 0 || !payload || payload.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES) return false;
 		Rpc(RpcAsk_RICON_OpenRadioPcm, epoch, leaseId, streamId, sequence, firstSampleIndex, payload);
 		return true;
 	}
@@ -228,7 +249,7 @@ modded class SCR_PlayerController
 	[RplRpc(RplChannel.Unreliable, RplRcver.Server)]
 	protected void RpcAsk_RICON_OpenRadioPcm(int epoch, int leaseId, int streamId, int sequence, int firstSampleIndex, array<int> payload)
 	{
-		if (!Replication.IsServer() || !payload || payload.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES) return;
+		if (!Replication.IsServer() || !payload || payload.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES) return;
 		RICON_CommsManagerComponent manager = RICON_CommsManagerComponent.GetInstance();
 		if (manager) manager.ReceiveOpenRadioPcm(this, epoch, leaseId, streamId, sequence, firstSampleIndex, payload);
 	}
@@ -296,6 +317,16 @@ modded class SCR_PlayerController
 		RICON_OnRelayWireMediaObservation("RAW", body && body.Count() == RICON_RelayWire.BODY_VALUES);
 		bool accepted = RICON_IsCurrentRelayWireReceiver()
 			&& m_RICON_RelayReceiver.Enqueue(body, timebaseId, m_RICON_RelayDestination, m_iRICON_RelayEpoch, System.GetTickCount());
+		if (RICON_RadioDev.Enabled())
+		{
+			if (m_iRICON_DevRelayRaw < int.MAX) m_iRICON_DevRelayRaw++;
+			m_sRICON_DevLastMedia = "RELAY_REJECTED";
+			if (accepted)
+			{
+				if (m_iRICON_DevRelayAccepted < int.MAX) m_iRICON_DevRelayAccepted++;
+				m_sRICON_DevLastMedia = "RELAY_ACCEPTED";
+			}
+		}
 		if (accepted) RICON_OnRelayWireMediaObservation("ACCEPTED", true);
 	}
 
@@ -327,7 +358,7 @@ modded class SCR_PlayerController
 		m_bRICON_RelayPlayoutUsed = true;
 		m_fRICON_RelayReferenceDbm = referenceDbm;
 		m_iRICON_RelayWakeSerial++;
-		queue.CallLater(RICON_PumpRelayPlayout, RICON_MediaPcmProfile.FRAME_DURATION_MS, true, m_iRICON_RelayWakeSerial);
+		queue.CallLater(RICON_PumpRelayPlayout, RICON_MediaPcmTestProfile.FRAME_DURATION_MS, true, m_iRICON_RelayWakeSerial);
 		return true;
 	}
 
@@ -766,6 +797,9 @@ modded class SCR_PlayerController
 		RICON_OnMediaWireObservation(prefix + "RAW", sessionEpoch, streamId, routeId, routeGeneration, policyRevision,
 			sequence, firstSampleIndex, length);
 		string stage = prefix + "REJECTED";
+		bool dev = RICON_RadioDev.Enabled();
+		string observed;
+		if (dev) observed = stage;
 		if (RICON_IsCurrentWireReceiver() && sessionEpoch == m_iRICON_WireEpoch && m_RICON_WireReceiver.GetWireVersion() == wireVersion)
 		{
 			int nowMs = System.GetTickCount();
@@ -776,10 +810,17 @@ modded class SCR_PlayerController
 				sequence, firstSampleIndex, body, nowMs);
 			else result = m_RICON_WireReceiver.Receive(sessionEpoch, streamId, routeId, routeGeneration, policyRevision,
 				sequence, firstSampleIndex, body, nowMs);
+			if (dev) observed = prefix + result;
 			if (result == "ACCEPTED") stage = prefix + "ACCEPTED";
 			else if (result == "DUPLICATE" || result == "INVALID_BODY" || result == "FULL")
 				RICON_OnMediaWireObservation(prefix + result, sessionEpoch, streamId, routeId, routeGeneration,
 					policyRevision, sequence, firstSampleIndex, length);
+		}
+		if (dev)
+		{
+			if (m_iRICON_DevDirectRaw < int.MAX) m_iRICON_DevDirectRaw++;
+			if (stage == prefix + "ACCEPTED" && m_iRICON_DevDirectAccepted < int.MAX) m_iRICON_DevDirectAccepted++;
+			m_sRICON_DevLastMedia = observed;
 		}
 		RICON_OnMediaWireObservation(stage, sessionEpoch, streamId, routeId, routeGeneration, policyRevision,
 			sequence, firstSampleIndex, length);

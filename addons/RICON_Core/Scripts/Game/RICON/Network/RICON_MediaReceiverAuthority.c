@@ -102,6 +102,7 @@ class RICON_MediaNativeRxWatch : RICON_MediaRxWatch
 class RICON_MediaRxSlot
 {
 	ref RICON_MediaRxWatch m_Watch;
+	int m_iDeviceId, m_iIndex, m_iWriteRevision;
 	int m_iGeneration, m_iAdmission, m_iWatchVersion, m_iNetworkId, m_iChannelId, m_iFrequency;
 	string m_sKey;
 
@@ -145,9 +146,100 @@ class RICON_MediaReceiverAuthority
 	}
 
 	int LastWriteTimeMs() { return m_iLastWriteMs; }
+	//! Resource availability only; current catalogue/admission checks still grant permission.
+	int AvailableRegistrationSlots()
+	{
+		if (!IsScope(m_Lifecycle)) return -1;
+		return m_iMaxSlots - m_Slots.Count();
+	}
+
+	//! Resource-version witness only; it does not grant catalogue or media permission.
+	int ReadRegistrationVersion(int deviceId, int index, int generation)
+	{
+		if (!IsScope(m_Lifecycle)) return -1;
+		string key = SlotKey(deviceId, index);
+		ref RICON_MediaRxSlot held = m_Slots.Get(key);
+		if (!held || held.m_iGeneration != generation || !held.m_Watch) return -1;
+		ref RICON_MediaRxWatch watch = held.m_Watch;
+		int version = watch.GetVersion();
+		if (!IsScope(m_Lifecycle) || m_Slots.Get(key) != held || held.m_iGeneration != generation
+			|| held.m_Watch != watch || version <= 0 || version >= int.MAX) return -1;
+		return version;
+	}
 
 	protected static string SlotKey(int deviceId, int index) { return string.Format("%1:%2", deviceId, index); }
 
+	protected bool CurrentSlot(RICON_MediaRxSlot slot)
+	{
+		return slot && slot.m_Watch && m_Slots.Get(SlotKey(slot.m_iDeviceId, slot.m_iIndex)) == slot;
+	}
+
+	protected bool CatalogueCurrent(RICON_MediaRxSlot slot, int networkId, int channelId, int nowMs)
+	{
+		if (!CanRead(m_Lifecycle, nowMs) || !CurrentSlot(slot)) return false;
+		RICON_LifecycleDevice device = m_Lifecycle.QueryDevice(slot.m_iDeviceId, nowMs);
+		return device && device.m_bPowered && device.Allows(networkId, channelId);
+	}
+
+	protected bool SameAdmission(RICON_MediaRxSlot slot, int generation, int admission, int revision, int watchVersion,
+		int networkId, int channelId, int frequency, string key)
+	{
+		return CurrentSlot(slot) && slot.m_iGeneration == generation && slot.m_iAdmission == admission
+			&& slot.m_iWriteRevision == revision && slot.m_iWatchVersion == watchVersion && slot.m_iNetworkId == networkId
+			&& slot.m_iChannelId == channelId && slot.m_iFrequency == frequency && slot.m_sKey == key;
+	}
+
+	protected bool CurrentAdmission(RICON_MediaRxSlot slot, int generation, int admission, int revision, int watchVersion,
+		int networkId, int channelId, int frequency, string key, int nowMs)
+	{
+		return admission > 0 && revision > 0 && revision < int.MAX && watchVersion > 0 && watchVersion < int.MAX
+			&& SameAdmission(slot, generation, admission, revision, watchVersion, networkId, channelId, frequency, key)
+			&& CatalogueCurrent(slot, networkId, channelId, nowMs) && slot.m_Watch.GetVersion() == watchVersion;
+	}
+
+	protected void AdvanceWriteTime(int nowMs)
+	{
+		if (nowMs > m_iLastWriteMs) m_iLastWriteMs = nowMs;
+	}
+
+	protected bool BeginSlotWrite(RICON_MediaRxSlot slot, int nowMs)
+	{
+		AdvanceWriteTime(nowMs);
+		if (slot.m_iWriteRevision <= 0 || slot.m_iWriteRevision >= int.MAX - 1)
+		{
+			slot.m_iWriteRevision = int.MAX;
+			slot.m_iAdmission = 0;
+			return false;
+		}
+		slot.m_iWriteRevision++;
+		return true;
+	}
+
+	protected void RetireCaptured(RICON_MediaRxSlot slot, int generation, int admission, int revision, int watchVersion,
+		int networkId, int channelId, int frequency, string key, int nowMs)
+	{
+		if (admission <= 0 || !SameAdmission(slot, generation, admission, revision, watchVersion, networkId, channelId, frequency, key)) return;
+		BeginSlotWrite(slot, nowMs);
+		slot.m_iAdmission = 0;
+	}
+
+	protected int ReadCurrentAdmission(RICON_MediaRxSlot slot, int networkId, int channelId, int frequency, string key,
+		int nowMs, bool retireMismatch = true)
+	{
+		if (!slot || slot.m_iAdmission <= 0 || slot.m_iNetworkId != networkId || slot.m_iChannelId != channelId
+			|| slot.m_iFrequency != frequency || slot.m_sKey != key) return 0;
+		int generation = slot.m_iGeneration, admission = slot.m_iAdmission, revision = slot.m_iWriteRevision;
+		int version = slot.m_iWatchVersion;
+		bool current = CurrentAdmission(slot, generation, admission, revision, version, networkId, channelId, frequency, key, nowMs);
+		if (current && slot.ReadMatches(frequency, key, version)
+			&& CurrentAdmission(slot, generation, admission, revision, version, networkId, channelId, frequency, key, nowMs)) return admission;
+		// A different slot may have advanced the registry clock during readback.
+		if (!CanRead(m_Lifecycle, nowMs)) return 0;
+		if (retireMismatch) RetireCaptured(slot, generation, admission, revision, version, networkId, channelId, frequency, key, nowMs);
+		return 0;
+	}
+
+	//! Resource presence only; current permission must be queried through an admission reader.
 	bool HasRegistration(int deviceId, int index, int generation)
 	{
 		if (!IsScope(m_Lifecycle)) return false;
@@ -169,46 +261,77 @@ class RICON_MediaReceiverAuthority
 	int ReadFixedOpenAdmission(int deviceId, int index, int generation, int expectedFrequency)
 	{
 		if (!IsScope(m_Lifecycle)) return 0;
-		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
-		if (!slot || slot.m_iGeneration != generation || slot.m_iAdmission <= 0) return 0;
-		if (slot.m_iFrequency != expectedFrequency || !slot.m_sKey.IsEmpty()) return 0;
-		if (!slot.ReadMatches(expectedFrequency, "", slot.m_iWatchVersion)) return 0;
-		return slot.m_iAdmission;
+		int nowMs = m_Lifecycle.LastObservedTimeMs();
+		if (m_iLastWriteMs > nowMs) nowMs = m_iLastWriteMs;
+		if (!CanRead(m_Lifecycle, nowMs)) return 0;
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
+		if (!slot || slot.m_iGeneration != generation) return 0;
+		return ReadCurrentAdmission(slot, slot.m_iNetworkId, slot.m_iChannelId, expectedFrequency, "", nowMs, false);
 	}
 
 	//! An infrastructure endpoint does not carry an originating player's stream binding.
 	int ReadOpenEndpointAdmission(int deviceId, int index, int generation, int networkId, int channelId, int frequency, int nowMs)
 	{
 		if (!CanRead(m_Lifecycle, nowMs)) return 0;
-		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
-		if (!slot || slot.m_iGeneration != generation || slot.m_iNetworkId != networkId || slot.m_iChannelId != channelId) return 0;
-		if (slot.m_iFrequency != frequency || !slot.m_sKey.IsEmpty() || slot.m_iAdmission <= 0) return 0;
-		if (slot.ReadMatches(frequency, "", slot.m_iWatchVersion)) return slot.m_iAdmission;
-		slot.m_iAdmission = 0;
-		m_iLastWriteMs = nowMs;
-		return 0;
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
+		if (!slot || slot.m_iGeneration != generation) return 0;
+		return ReadCurrentAdmission(slot, networkId, channelId, frequency, "", nowMs);
+	}
+
+	//! Check the recorded admit after an inventory batch without a fresh ReadState callback.
+	int ReadRecordedOpenEndpointAdmission(int deviceId, int index, int generation, int networkId, int channelId, int frequency, int nowMs)
+	{
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
+		if (!slot || slot.m_iGeneration != generation) return 0;
+		int admission = slot.m_iAdmission;
+		int revision = slot.m_iWriteRevision, watchVersion = slot.m_iWatchVersion;
+		if (!CurrentAdmission(slot, generation, admission, revision, watchVersion,
+			networkId, channelId, frequency, "", nowMs)) return 0;
+		if (!CatalogueCurrent(slot, networkId, channelId, nowMs)
+			|| !SameAdmission(slot, generation, admission, revision, watchVersion, networkId, channelId, frequency, "")) return 0;
+		return admission;
+	}
+
+	protected bool WatchRegistered(RICON_MediaRxWatch watch)
+	{
+		for (int i = 0; i < m_Slots.Count(); i++)
+			if (m_Slots.GetElement(i).m_Watch == watch) return true;
+		return false;
+	}
+
+	protected bool CanRegister(int deviceId, int index, RICON_MediaRxWatch watch, int nowMs)
+	{
+		if (!CanRead(m_Lifecycle, nowMs) || !watch || deviceId <= 0 || index < 0 || m_iSerial >= int.MAX - 1) return false;
+		if (m_Slots.Contains(SlotKey(deviceId, index)) || m_Slots.Count() >= m_iMaxSlots || !m_Lifecycle.QueryDevice(deviceId, nowMs)) return false;
+		RICON_MediaNativeRxWatch nativeWatch = RICON_MediaNativeRxWatch.Cast(watch);
+		if (nativeWatch && (!nativeWatch.GetTransceiver() || nativeWatch.GetIndex() != index)) return false;
+		for (int i = 0; i < m_Slots.Count(); i++)
+		{
+			RICON_MediaRxWatch existing = m_Slots.GetElement(i).m_Watch;
+			if (existing == watch) return false;
+			RICON_MediaNativeRxWatch existingNative = RICON_MediaNativeRxWatch.Cast(existing);
+			if (nativeWatch && existingNative && nativeWatch.GetTransceiver() == existingNative.GetTransceiver()) return false;
+		}
+		return true;
 	}
 
 	int Register(int deviceId, int index, RICON_MediaRxWatch watch, int nowMs)
 	{
-		if (!CanRead(m_Lifecycle, nowMs) || !watch || deviceId <= 0 || index < 0 || m_iSerial >= int.MAX - 1) return 0;
-		string key = SlotKey(deviceId, index);
-		if (m_Slots.Contains(key) || m_Slots.Count() >= m_iMaxSlots || !m_Lifecycle.QueryDevice(deviceId, nowMs)) return 0;
-		RICON_MediaNativeRxWatch nativeWatch = RICON_MediaNativeRxWatch.Cast(watch);
-		if (nativeWatch && (!nativeWatch.GetTransceiver() || nativeWatch.GetIndex() != index)) return 0;
-		for (int i = 0; i < m_Slots.Count(); i++)
+		if (!CanRegister(deviceId, index, watch, nowMs) || !watch.Claim()) return 0;
+		if (!CanRegister(deviceId, index, watch, nowMs))
 		{
-			RICON_MediaRxWatch existing = m_Slots.GetElement(i).m_Watch;
-			RICON_MediaNativeRxWatch existingNative = RICON_MediaNativeRxWatch.Cast(existing);
-			if (nativeWatch && existingNative && nativeWatch.GetTransceiver() == existingNative.GetTransceiver()) return 0;
+			if (!WatchRegistered(watch)) watch.Stop();
+			return 0;
 		}
-		if (!watch.Claim()) return 0;
 		RICON_MediaRxSlot slot = new RICON_MediaRxSlot();
 		slot.m_Watch = watch;
+		slot.m_iDeviceId = deviceId;
+		slot.m_iIndex = index;
+		slot.m_iWriteRevision = 1;
 		m_iSerial++;
 		slot.m_iGeneration = m_iSerial;
-		m_Slots.Set(key, slot);
-		m_iLastWriteMs = nowMs;
+		m_Slots.Set(SlotKey(deviceId, index), slot);
+		AdvanceWriteTime(nowMs);
 		return slot.m_iGeneration;
 	}
 
@@ -227,8 +350,8 @@ class RICON_MediaReceiverAuthority
 		if (!CanRead(m_Lifecycle, nowMs)) return false;
 		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
 		if (!slot || slot.m_iGeneration != generation) return false;
+		if (!BeginSlotWrite(slot, nowMs)) return false;
 		slot.m_iAdmission = 0;
-		m_iLastWriteMs = nowMs;
 		return true;
 	}
 
@@ -236,19 +359,22 @@ class RICON_MediaReceiverAuthority
 		string expectedKey = "")
 	{
 		if (!CanRead(m_Lifecycle, nowMs)) return false;
-		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
-		if (!slot || slot.m_iGeneration != generation) return false;
-		m_iLastWriteMs = nowMs;
-		RICON_LifecycleDevice device = m_Lifecycle.QueryDevice(deviceId, nowMs);
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
+		if (!slot || slot.m_iGeneration != generation || !BeginSlotWrite(slot, nowMs)) return false;
+		int admission = slot.m_iAdmission, revision = slot.m_iWriteRevision, priorVersion = slot.m_iWatchVersion;
+		int priorNetwork = slot.m_iNetworkId, priorChannel = slot.m_iChannelId, priorFrequency = slot.m_iFrequency;
+		string priorKey = slot.m_sKey;
 		int version = slot.m_Watch.GetVersion();
-		if (!device || !device.m_bPowered || !device.Allows(networkId, channelId) || expectedFrequency <= 0
-			|| !slot.ReadMatches(expectedFrequency, expectedKey, version))
+		bool matches = CatalogueCurrent(slot, networkId, channelId, nowMs) && expectedFrequency > 0
+			&& slot.ReadMatches(expectedFrequency, expectedKey, version);
+		if (!matches || !SameAdmission(slot, generation, admission, revision, priorVersion, priorNetwork, priorChannel, priorFrequency, priorKey)
+			|| !CatalogueCurrent(slot, networkId, channelId, nowMs) || slot.m_Watch.GetVersion() != version)
 		{
-			slot.m_iAdmission = 0;
+			RetireCaptured(slot, generation, admission, revision, priorVersion, priorNetwork, priorChannel, priorFrequency, priorKey, nowMs);
 			return false;
 		}
-		if (slot.m_iAdmission && slot.m_iWatchVersion == version && slot.m_iNetworkId == networkId
-			&& slot.m_iChannelId == channelId && slot.m_iFrequency == expectedFrequency && slot.m_sKey == expectedKey) return true;
+		if (admission && priorVersion == version && priorNetwork == networkId && priorChannel == channelId
+			&& priorFrequency == expectedFrequency && priorKey == expectedKey) return true;
 		slot.m_iAdmission = 0;
 		if (m_iSerial >= int.MAX - 1) return false;
 		m_iSerial++;
@@ -264,45 +390,63 @@ class RICON_MediaReceiverAuthority
 	int ReadAdmission(RICON_MediaEgressRoute route, int nowMs)
 	{
 		if (!route || !route.m_Source || route.m_Source.m_iSessionEpoch != m_iEpoch || !CanRead(m_Lifecycle, nowMs)) return 0;
-		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(route.m_iRxDeviceId, route.m_iRxTransceiverIndex));
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(route.m_iRxDeviceId, route.m_iRxTransceiverIndex));
 		if (!slot || slot.m_iGeneration != route.m_iRxGeneration) return 0;
 		return ReadSlotAdmission(slot, route.m_Source, nowMs);
 	}
 
+	//! Fence an OPEN radio admission after readbacks that may have revoked another slot.
+	bool MatchesRecordedOpenAdmission(RICON_MediaStreamBinding source, int deviceId, int index, int generation, int admission, int nowMs)
+	{
+		if (!source || source.m_iSessionEpoch != m_iEpoch || !CanRead(m_Lifecycle, nowMs)) return false;
+		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(deviceId, index));
+		// The TX binding carries the unique admission number; a receiver also carries its generation.
+		if (!slot || (generation > 0 && slot.m_iGeneration != generation)) return false;
+		return CurrentAdmission(slot, slot.m_iGeneration, admission, slot.m_iWriteRevision, slot.m_iWatchVersion,
+			source.m_iNetworkTypeId, source.m_iChannelId, slot.m_iFrequency, "", nowMs);
+	}
+
 	protected int ReadSlotAdmission(RICON_MediaRxSlot slot, RICON_MediaStreamBinding source, int nowMs)
 	{
-		if (!slot || slot.m_iAdmission <= 0 || slot.m_iNetworkId != source.m_iNetworkTypeId
-			|| slot.m_iChannelId != source.m_iChannelId) return 0;
-		if (slot.ReadMatches(slot.m_iFrequency, slot.m_sKey, slot.m_iWatchVersion)) return slot.m_iAdmission;
-		// A detected mismatch stays revoked until a fresh authority admission.
-		slot.m_iAdmission = 0;
-		m_iLastWriteMs = nowMs;
-		return 0;
+		if (!source || source.m_iSessionEpoch != m_iEpoch || !slot) return 0;
+		return ReadCurrentAdmission(slot, source.m_iNetworkTypeId, source.m_iChannelId, slot.m_iFrequency, slot.m_sKey, nowMs);
 	}
 
 	//! Open RADIO uses current, unkeyed physical admissions for both ends. No key leaves this registry.
 	int ReadOpenRadioSource(RICON_MediaStreamBinding source, int nowMs)
 	{
 		if (!source || source.m_iSessionEpoch != m_iEpoch || !CanRead(m_Lifecycle, nowMs)) return 0;
-		RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(source.m_iDeviceId, source.m_iTxTransceiverIndex));
+		ref RICON_MediaRxSlot slot = m_Slots.Get(SlotKey(source.m_iDeviceId, source.m_iTxTransceiverIndex));
 		if (!slot || !slot.m_sKey.IsEmpty()) return 0;
 		return ReadSlotAdmission(slot, source, nowMs);
 	}
 
 	int ReadOpenRadioReceiver(RICON_MediaStreamBinding source, int rxDeviceId, int rxIndex, int txAdmission, int nowMs)
 	{
-		if (txAdmission <= 0 || ReadOpenRadioSource(source, nowMs) != txAdmission) return 0;
-		RICON_MediaRxSlot tx = m_Slots.Get(SlotKey(source.m_iDeviceId, source.m_iTxTransceiverIndex));
-		RICON_MediaRxSlot rx = m_Slots.Get(SlotKey(rxDeviceId, rxIndex));
-		if (!rx || !rx.m_sKey.IsEmpty() || rx.m_iFrequency != tx.m_iFrequency || ReadSlotAdmission(rx, source, nowMs) <= 0) return 0;
-		return rx.m_iGeneration;
+		if (!source || txAdmission <= 0) return 0;
+		int txDeviceId = source.m_iDeviceId, txIndex = source.m_iTxTransceiverIndex;
+		int networkId = source.m_iNetworkTypeId, channelId = source.m_iChannelId;
+		if (ReadOpenRadioSource(source, nowMs) != txAdmission) return 0;
+		ref RICON_MediaRxSlot tx = m_Slots.Get(SlotKey(txDeviceId, txIndex));
+		ref RICON_MediaRxSlot rx = m_Slots.Get(SlotKey(rxDeviceId, rxIndex));
+		if (!tx || !rx || !tx.m_sKey.IsEmpty() || !rx.m_sKey.IsEmpty() || rx.m_iFrequency != tx.m_iFrequency) return 0;
+		int txGeneration = tx.m_iGeneration, txRevision = tx.m_iWriteRevision, txVersion = tx.m_iWatchVersion;
+		int frequency = tx.m_iFrequency;
+		int rxGeneration = rx.m_iGeneration, rxAdmission = rx.m_iAdmission, rxRevision = rx.m_iWriteRevision, rxVersion = rx.m_iWatchVersion;
+		if (ReadCurrentAdmission(rx, networkId, channelId, frequency, "", nowMs) != rxAdmission || rxAdmission <= 0) return 0;
+		// RX readback can revoke TX; the final check must not invoke either ReadState again.
+		if (!CurrentAdmission(tx, txGeneration, txAdmission, txRevision, txVersion, networkId, channelId, frequency, "", nowMs)
+			|| !CurrentAdmission(rx, rxGeneration, rxAdmission, rxRevision, rxVersion, networkId, channelId, frequency, "", nowMs)) return 0;
+		if (source.m_iSessionEpoch != m_iEpoch || source.m_iDeviceId != txDeviceId || source.m_iTxTransceiverIndex != txIndex
+			|| source.m_iNetworkTypeId != networkId || source.m_iChannelId != channelId) return 0;
+		return rxGeneration;
 	}
 
 	bool Unregister(int deviceId, int index, int generation, int nowMs)
 	{
 		if (!CanRead(m_Lifecycle, nowMs)) return false;
 		if (!Detach(deviceId, index, generation)) return false;
-		m_iLastWriteMs = nowMs;
+		AdvanceWriteTime(nowMs);
 		return true;
 	}
 
@@ -317,11 +461,32 @@ class RICON_MediaReceiverAuthority
 		return true;
 	}
 
+	//! Remove only the exact registrations captured before any Stop callback runs.
+	int DetachDevice(int deviceId)
+	{
+		array<int> indices = {};
+		for (int i = 0; i < m_Slots.Count(); i++)
+		{
+			RICON_MediaRxSlot slot = m_Slots.GetElement(i);
+			if (slot.m_iDeviceId == deviceId) indices.Insert(slot.m_iIndex);
+		}
+		indices.Sort();
+		array<int> generations = {};
+		foreach (int index : indices) generations.Insert(m_Slots.Get(SlotKey(deviceId, index)).m_iGeneration);
+		int detached;
+		for (int item = 0; item < indices.Count(); item++)
+			if (Detach(deviceId, indices[item], generations[item])) detached++;
+		return detached;
+	}
+
 	void Close()
 	{
+		if (m_bClosed) return;
 		m_bClosed = true;
-		for (int i = 0; i < m_Slots.Count(); i++) m_Slots.GetElement(i).m_Watch.Stop();
+		array<ref RICON_MediaRxSlot> retired = {};
+		for (int i = 0; i < m_Slots.Count(); i++) retired.Insert(m_Slots.GetElement(i));
 		m_Slots.Clear();
 		m_Lifecycle = null;
+		foreach (RICON_MediaRxSlot slot : retired) slot.m_Watch.Stop();
 	}
 }

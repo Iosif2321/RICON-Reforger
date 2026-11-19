@@ -263,7 +263,7 @@ class RICON_StaticLosGeometryAuthority
 			&& rf.m_fFrequencyMHz == m_Profile.m_fFrequencyMHz && rf.m_fRxBandwidthHz == fixed.m_fBandwidthHz;
 	}
 
-	protected static RICON_StaticLosProfile CopyProfile(RICON_StaticLosProfile source)
+	static RICON_StaticLosProfile CopyProfile(RICON_StaticLosProfile source)
 	{
 		RICON_StaticLosProfile copy = new RICON_StaticLosProfile();
 		copy.m_sProfileId = source.m_sProfileId;

@@ -1,0 +1,11 @@
+SCR_BaseGameMode : "{CF216D5BDD2B40F0}Prefabs/GameModes/RICON_GameRadioControl.et" {
+ ID "858B564200C9F798"
+ components {
+  RICON_GameRadioManagerComponent "{37831EAF359C4990}" {
+   m_iInventoryNetworkId 1
+   m_bInventoryOpenRadioAdmissions 1
+   m_bInventoryMixedEquipment 1
+   m_iMixedRadioTuneKHz 38000
+  }
+ }
+}

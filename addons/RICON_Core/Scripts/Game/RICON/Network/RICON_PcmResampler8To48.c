@@ -1,8 +1,8 @@
 //! Streaming mono PCM16 interpolation for the synthetic V1 profile.
 class RICON_PcmResampler8To48
 {
-	static const int INPUT_RATE_HZ = RICON_MediaPcmProfile.SAMPLE_RATE_HZ;
-	static const int INPUT_SAMPLES = RICON_MediaPcmProfile.FRAME_SAMPLES;
+	static const int INPUT_RATE_HZ = RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ;
+	static const int INPUT_SAMPLES = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 	static const int OUTPUT_RATE_HZ = 48000;
 	static const int OUTPUT_SAMPLES = 192;
 	static const int GROUP_DELAY_OUTPUT_SAMPLES = 48;

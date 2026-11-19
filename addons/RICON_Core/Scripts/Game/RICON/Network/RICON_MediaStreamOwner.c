@@ -75,6 +75,24 @@ class RICON_MediaStreamOwner
 		return scope && scope.m_Ingress && scope.m_Binding.Same(binding) && scope.m_Ingress.IsCurrent(nowMs);
 	}
 
+	//! Detached current binding for one lease. Reading never advances ingress or touches its queue.
+	RICON_MediaStreamBinding ReadCurrentSource(int epoch, int leaseId, int nowMs)
+	{
+		if (m_bClosed || leaseId <= 0 || nowMs < 0 || nowMs < m_iLastNowMs) return null;
+		RICON_MediaStreamScope scope = FindScope(epoch, leaseId);
+		if (!scope || !scope.m_Binding || !scope.m_Ingress || !scope.m_Ingress.IsCurrent(nowMs)) return null;
+		return scope.m_Binding.CloneBinding();
+	}
+
+	//! Read the installed mapping for this exact live source without observing time or consuming PCM.
+	RICON_MediaCaptureAnchor ReadCurrentCaptureAnchor(RICON_MediaStreamBinding source, int nowMs)
+	{
+		if (!IsSourceCurrent(source, m_Lifecycle, nowMs)) return null;
+		RICON_MediaStreamScope scope = FindScope(source.m_iSessionEpoch, source.m_iLeaseId);
+		if (!scope || !scope.m_CaptureAnchor || !source.Same(scope.m_CaptureAnchor.m_Binding)) return null;
+		return scope.m_CaptureAnchor.CloneAnchor();
+	}
+
 	//! Complete detached set of admitted emissions for the specified channel. No queue is read or advanced.
 	bool ReadActiveRadioSources(RICON_LifecycleStateMachine lifecycle, int networkId, int channelId, int nowMs,
 		array<ref RICON_MediaStreamBinding> sources)
@@ -299,14 +317,14 @@ class RICON_MediaStreamOwner
 		if (binding.m_iPlayerId != authenticatedPlayerId || binding.m_iConnectionId != authenticatedConnectionId)
 			return RICON_EMediaIngressDecision.SENDER_MISMATCH;
 		if (binding.m_iStreamId != streamId || binding.m_iPlayerGeneration != playerGeneration || binding.m_iEntityId != entityId
-			|| binding.m_sProfileId != RICON_MediaPcmProfile.PROFILE_ID) return RICON_EMediaIngressDecision.BINDING_MISMATCH;
+			|| binding.m_sProfileId != RICON_MediaPcmTestProfile.PROFILE_ID) return RICON_EMediaIngressDecision.BINDING_MISMATCH;
 		if (!scope.m_Ingress) return RICON_EMediaIngressDecision.CLOSED;
 		RICON_MediaCaptureAnchor anchor = scope.m_CaptureAnchor;
-		if (!anchor || anchor.m_iSampleRateHz != RICON_MediaPcmProfile.SAMPLE_RATE_HZ
+		if (!anchor || anchor.m_iSampleRateHz != RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ
 			|| (!requiredTimebaseId.IsEmpty() && anchor.m_sTimebaseId != requiredTimebaseId))
 			return RICON_EMediaIngressDecision.CLOCK_UNVERIFIED;
 		if (nowMs < 0 || nowMs < m_iLastNowMs || maxCaptureAgeMs <= 0) return RICON_EMediaIngressDecision.LEASE_INACTIVE;
-		int frameSamples = RICON_MediaPcmProfile.FRAME_SAMPLES;
+		int frameSamples = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 		if (sequence < scope.m_iFirstSequence || sequence >= int.MAX)
 			windowDecision = RICON_EMediaWindowDecision.INVALID_SEQUENCE;
 		else if (firstSampleIndex < anchor.m_iFirstSampleIndex || firstSampleIndex > int.MAX - frameSamples)
@@ -318,7 +336,7 @@ class RICON_MediaStreamOwner
 				windowDecision = RICON_EMediaWindowDecision.INVALID_SAMPLE_RANGE;
 		}
 		if (windowDecision != RICON_EMediaWindowDecision.INVALID_WINDOW) return RICON_EMediaIngressDecision.WINDOW_REJECTED;
-		if (!payload || payload.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES)
+		if (!payload || payload.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES)
 		{
 			windowDecision = RICON_EMediaWindowDecision.INVALID_PAYLOAD;
 			return RICON_EMediaIngressDecision.WINDOW_REJECTED;
@@ -331,6 +349,74 @@ class RICON_MediaStreamOwner
 		}
 		return AcceptBlock(binding, authenticatedPlayerId, authenticatedConnectionId, nowMs, -1, -1,
 			sequence, firstSampleIndex, frameSamples, payload, windowDecision, true, maxCaptureAgeMs);
+	}
+
+	//! Copy only the exact accepted queued block. Direct fanout keeps ownership of the original FIFO.
+	RICON_EMediaIngressDecision AcceptRemotePcmWithReceipt(int epoch, int leaseId, int streamId, int authenticatedPlayerId,
+		int authenticatedConnectionId, int playerGeneration, int entityId, int nowMs, int sequence, int firstSampleIndex,
+		array<int> payload, int maxCaptureAgeMs, out RICON_EMediaWindowDecision windowDecision,
+		out RICON_QueuedMediaBlock accepted, string requiredTimebaseId = "")
+	{
+		accepted = null;
+		RICON_EMediaIngressDecision decision = AcceptRemotePcm(epoch, leaseId, streamId, authenticatedPlayerId,
+			authenticatedConnectionId, playerGeneration, entityId, nowMs, sequence, firstSampleIndex,
+			payload, maxCaptureAgeMs, windowDecision, requiredTimebaseId);
+		if (decision != RICON_EMediaIngressDecision.ACCEPTED) return decision;
+		RICON_MediaStreamScope scope = FindScope(epoch, leaseId);
+		if (!scope || !scope.m_Binding || scope.m_Queue.IsEmpty()
+			|| !IsSourceCurrent(scope.m_Binding, m_Lifecycle, nowMs)) return decision;
+		RICON_QueuedMediaBlock block = scope.m_Queue[scope.m_Queue.Count() - 1];
+		RICON_MediaStreamBinding binding = scope.m_Binding;
+		if (!block || !binding.Same(block.m_Binding) || binding.m_iSessionEpoch != epoch || binding.m_iLeaseId != leaseId
+			|| binding.m_iStreamId != streamId
+			|| binding.m_iPlayerId != authenticatedPlayerId || binding.m_iConnectionId != authenticatedConnectionId
+			|| binding.m_iPlayerGeneration != playerGeneration || binding.m_iEntityId != entityId
+			|| block.m_iSequence != sequence || block.m_iFirstSampleIndex != firstSampleIndex
+			|| block.m_iSampleCount != RICON_MediaPcmTestProfile.FRAME_SAMPLES || block.m_RfBudget || block.m_RfHistory
+			|| !block.m_Bytes || block.m_Bytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES
+			|| !RICON_MediaCaptureClock.MatchesMappedBounds(scope.m_CaptureAnchor, block.m_CaptureEnvelope,
+				block.m_iCaptureLowerMs, block.m_iCaptureUpperMs)) return decision;
+		for (int index = 0; index < block.m_Bytes.Count(); index++)
+			if (block.m_Bytes[index] != payload[index]) return decision;
+		accepted = CopyQueuedMappedPcm(block);
+		return decision;
+	}
+
+	//! The station may bind after ingress but before the direct fanout consumes this FIFO.
+	bool CopyAdmittedPcmBacklog(RICON_MediaStreamBinding source, int firstSampleIndex, int nowMs,
+		out array<ref RICON_QueuedMediaBlock> copies)
+	{
+		copies = null;
+		if (firstSampleIndex < 0 || !IsSourceCurrent(source, m_Lifecycle, nowMs)) return false;
+		RICON_MediaStreamScope scope = FindScope(source.m_iSessionEpoch, source.m_iLeaseId);
+		if (!scope || !scope.m_CaptureAnchor) return false;
+		array<ref RICON_QueuedMediaBlock> staged = {};
+		foreach (RICON_QueuedMediaBlock block : scope.m_Queue)
+		{
+			if (!block || !source.Same(block.m_Binding) || block.m_RfBudget || block.m_RfHistory) return false;
+			if (block.m_iFirstSampleIndex < firstSampleIndex) continue;
+			if (block.m_iSampleCount != RICON_MediaPcmTestProfile.FRAME_SAMPLES || !block.m_Bytes
+				|| block.m_Bytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES
+				|| !RICON_MediaCaptureClock.MatchesMappedBounds(scope.m_CaptureAnchor, block.m_CaptureEnvelope,
+					block.m_iCaptureLowerMs, block.m_iCaptureUpperMs)) return false;
+			staged.Insert(CopyQueuedMappedPcm(block));
+		}
+		copies = staged;
+		return true;
+	}
+
+	protected static RICON_QueuedMediaBlock CopyQueuedMappedPcm(RICON_QueuedMediaBlock block)
+	{
+		RICON_QueuedMediaBlock copy = new RICON_QueuedMediaBlock();
+		copy.m_Binding = block.m_Binding.CloneBinding();
+		copy.m_iSequence = block.m_iSequence;
+		copy.m_iFirstSampleIndex = block.m_iFirstSampleIndex;
+		copy.m_iSampleCount = block.m_iSampleCount;
+		copy.m_iCaptureLowerMs = block.m_iCaptureLowerMs;
+		copy.m_iCaptureUpperMs = block.m_iCaptureUpperMs;
+		copy.m_CaptureEnvelope = block.m_CaptureEnvelope.CloneEnvelope();
+		copy.m_Bytes.InsertAll(block.m_Bytes);
+		return copy;
 	}
 
 	protected RICON_EMediaIngressDecision AcceptBlock(RICON_MediaStreamBinding claimed, int authenticatedPlayerId,

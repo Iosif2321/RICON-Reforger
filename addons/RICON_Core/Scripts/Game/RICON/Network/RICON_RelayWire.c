@@ -49,7 +49,7 @@ class RICON_RelayWireGrant
 		return ValidWireProfile() && m_iEpoch > 0 && m_iEpoch < int.MAX && m_iEmissionId > 0 && m_iBridgeGeneration > 0 && m_iTransformGeneration > 0
 			&& m_iTxDeviceId > 0 && m_iTxIndex >= 0 && m_iTxGeneration > 0 && m_iOriginStreamId > 0
 			&& m_iOriginGeneration > 0 && m_iOriginCaptureEpoch > 0 && m_Destination && m_Destination.IsValid()
-			&& RICON_MediaWireV1.ValidRange(m_iFirstSequence, m_iFirstSampleIndex, RICON_MediaPcmProfile.FRAME_SAMPLES)
+			&& RICON_MediaWireV1.ValidRange(m_iFirstSequence, m_iFirstSampleIndex, RICON_MediaPcmTestProfile.FRAME_SAMPLES)
 			&& RICON_TemporalSnapshots.ValidKey(m_sTimebaseId);
 	}
 
@@ -57,16 +57,16 @@ class RICON_RelayWireGrant
 	{
 		if (m_iWireVersion == 1) return m_iOriginFirstSequence == 0 && m_iOriginFirstSampleIndex == 0;
 		return m_iWireVersion == 2 && RICON_MediaWireV1.ValidRange(m_iOriginFirstSequence, m_iOriginFirstSampleIndex,
-			RICON_MediaPcmProfile.FRAME_SAMPLES);
+			RICON_MediaPcmTestProfile.FRAME_SAMPLES);
 	}
 
 	bool MatchesSample(int sequence, int firstSampleIndex)
 	{
-		if (!RICON_MediaWireV1.ValidRange(sequence, firstSampleIndex, RICON_MediaPcmProfile.FRAME_SAMPLES)
+		if (!RICON_MediaWireV1.ValidRange(sequence, firstSampleIndex, RICON_MediaPcmTestProfile.FRAME_SAMPLES)
 			|| sequence < m_iFirstSequence || firstSampleIndex < m_iFirstSampleIndex) return false;
 		int delta = firstSampleIndex - m_iFirstSampleIndex;
-		return delta % RICON_MediaPcmProfile.FRAME_SAMPLES == 0
-			&& delta / RICON_MediaPcmProfile.FRAME_SAMPLES == sequence - m_iFirstSequence;
+		return delta % RICON_MediaPcmTestProfile.FRAME_SAMPLES == 0
+			&& delta / RICON_MediaPcmTestProfile.FRAME_SAMPLES == sequence - m_iFirstSequence;
 	}
 
 	bool ReadOriginSpan(int sequence, int firstSampleIndex, out int originSequence, out int originStart, out int windows)
@@ -75,7 +75,7 @@ class RICON_RelayWireGrant
 		int delta = sequence - m_iFirstSequence;
 		windows = 1 + Math.Min(delta, 3);
 		int oldestDelta = delta - (windows - 1);
-		int samples = RICON_MediaPcmProfile.FRAME_SAMPLES;
+		int samples = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 		if (m_iOriginFirstSequence > int.MAX - windows - oldestDelta
 			|| oldestDelta > (int.MAX - windows * samples - m_iOriginFirstSampleIndex) / samples) return false;
 		originSequence = m_iOriginFirstSequence + oldestDelta;
@@ -178,7 +178,7 @@ class RICON_RelayWire
 	static const int DISCRIMINATOR_V2 = -102;
 	static const int ROUTE_VALUES = 18;
 	static const int HEADER_VALUES = 29;
-	static const int BODY_VALUES = HEADER_VALUES + RICON_MediaPcmProfile.PAYLOAD_BYTES;
+	static const int BODY_VALUES = HEADER_VALUES + RICON_MediaPcmTestProfile.PAYLOAD_BYTES;
 
 	static array<int> Encode(RICON_RelayAddressedFrame addressed, RICON_RelayWireGrant installed = null)
 	{
@@ -203,13 +203,13 @@ class RICON_RelayWire
 			|| !RICON_MediaWireRfV2.ValidPowerDbm(budget.m_fNoiseDbm) || emission.m_fBandwidthHz != bandwidth) return null;
 		if (frame.m_iEmitAtMs != emission.m_iModelAtMs || emission.m_iReleasedAtMs < emission.m_iCoveredUntilMs
 			|| emission.m_iReleasedAtMs >= frame.m_iDeadlineMs) return null;
-		if (!frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES || !frame.m_aProvenance) return null;
+		if (!frame.m_aBytes || frame.m_aBytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES || !frame.m_aProvenance) return null;
 		int windows, originSequence, originStart, originCount;
 		if (series)
 		{
 			if (!installed.ReadOriginSpan(frame.m_iSequence, frame.m_iFirstSampleIndex, originSequence, originStart, windows)
 				|| !MatchesSeriesProvenance(installed, frame, originSequence, originStart, windows)) return null;
-			originCount = windows * RICON_MediaPcmProfile.FRAME_SAMPLES;
+			originCount = windows * RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 		}
 		else if (!ReadLegacyProvenance(frame, originSequence, originStart, windows, originCount)) return null;
 		array<int> body = grant.RouteFields();
@@ -264,7 +264,7 @@ class RICON_RelayWire
 		int parts = 1 + Math.Min(frame.m_iSequence - grant.m_iFirstSequence, 2);
 		if (frame.m_aProvenance.Count() != parts || frame.m_iSourceOriginWindows != windows
 			|| frame.m_iOldestSourceSequence != originSequence) return false;
-		int samples = RICON_MediaPcmProfile.FRAME_SAMPLES;
+		int samples = RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 		int rateRatio = RICON_PcmResampler8To48.OUTPUT_RATE_HZ / RICON_PcmResampler8To48.INPUT_RATE_HZ;
 		int stationFirst = frame.m_iSequence - (parts - 1);
 		int nextOriginSequence = originSequence + windows - parts;
@@ -305,7 +305,7 @@ class RICON_RelayWire
 		}
 		if (!grant.MatchesSample(body[18], body[19]) || !ValidMedia(body, grant)) return null;
 		array<int> bytes = {};
-		bytes.Reserve(RICON_MediaPcmProfile.PAYLOAD_BYTES);
+		bytes.Reserve(RICON_MediaPcmTestProfile.PAYLOAD_BYTES);
 		for (int index = HEADER_VALUES; index < BODY_VALUES; index++)
 		{
 			int value = body[index];
@@ -330,7 +330,7 @@ class RICON_RelayWire
 
 	protected static bool ValidMedia(array<int> body, RICON_RelayWireGrant grant)
 	{
-		if (body[20] < 0 || body[21] <= body[20] || body[21] - body[20] != RICON_MediaPcmProfile.FRAME_DURATION_MS
+		if (body[20] < 0 || body[21] <= body[20] || body[21] - body[20] != RICON_MediaPcmTestProfile.FRAME_DURATION_MS
 			|| !RICON_MediaWireRfV2.ValidWirePower(body[22]) || !RICON_MediaWireRfV2.ValidWirePower(body[23])
 			|| body[24] < 1 || body[24] > RICON_MediaWireRfV2.MAX_BANDWIDTH_HZ) return false;
 		if (grant && grant.m_iWireVersion == 2)
@@ -338,7 +338,7 @@ class RICON_RelayWire
 			int originSequence, originStart, windows;
 			return grant.ReadOriginSpan(body[18], body[19], originSequence, originStart, windows)
 				&& body[25] == originSequence && body[26] == windows && body[27] == originStart
-				&& body[28] == windows * RICON_MediaPcmProfile.FRAME_SAMPLES;
+				&& body[28] == windows * RICON_MediaPcmTestProfile.FRAME_SAMPLES;
 		}
 		return body[26] == Math.Min(body[18] + 1, 3) && body[25] >= 0 && body[25] <= int.MAX - body[26]
 			&& body[27] >= 0 && body[28] >= body[26] && body[27] <= int.MAX - body[28];
@@ -385,7 +385,7 @@ class RICON_RelayWireReceiver
 			|| !grant.m_Destination.Same(localDestination) || width < 1 || width > 64
 			|| queueCapacity < 1 || queueCapacity > 16) return false;
 		if (!m_Window.Initialize(grant.m_iTransformGeneration, grant.m_iFirstSequence, width,
-			RICON_MediaPcmProfile.PAYLOAD_BYTES)) return false;
+			RICON_MediaPcmTestProfile.PAYLOAD_BYTES)) return false;
 		m_Grant = grant.CloneGrant();
 		m_iQueueCapacity = queueCapacity;
 		m_Permit = new RICON_RelayOutputPermit(null, 0);
@@ -446,7 +446,7 @@ class RICON_RelayWireReceiver
 		for (int i = RICON_RelayWire.ROUTE_VALUES + 2; i < RICON_RelayWire.HEADER_VALUES; i++)
 			contextKey += "/" + body[i].ToString();
 		RICON_EMediaWindowDecision status = m_Window.Accept(m_Grant.m_iTransformGeneration, parsed.m_iSequence,
-			parsed.m_aBytes, parsed.m_iFirstSampleIndex, RICON_MediaPcmProfile.FRAME_SAMPLES, contextKey);
+			parsed.m_aBytes, parsed.m_iFirstSampleIndex, RICON_MediaPcmTestProfile.FRAME_SAMPLES, contextKey);
 		if (status == RICON_EMediaWindowDecision.ACCEPTED)
 		{
 			m_iLastAcceptedAtMs = arrivalMs;
@@ -585,12 +585,12 @@ class RICON_RelayWireReceiver
 	{
 		if (!HasPresentationPermit(m_Permit)) return "CLOSED";
 		if (nowMs < 0 || nowMs < m_iLastAcceptedAtMs || targetMs < nowMs
-			|| targetMs > int.MAX - RICON_MediaPcmProfile.FRAME_DURATION_MS) return "BAD_TIME";
+			|| targetMs > int.MAX - RICON_MediaPcmTestProfile.FRAME_DURATION_MS) return "BAD_TIME";
 		if (m_CommittedPresentation && nowMs > m_iPresentedTargetMs) m_CommittedPresentation = null;
 		m_iLastAcceptedAtMs = nowMs;
 		DiscardPreparedIfLate(nowMs);
 		if (m_Prepared) return "FULL";
-		int durationMs = RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		int durationMs = RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 		if (m_iPresentedSequence >= 0 && targetMs < m_iPresentedTargetMs + durationMs) return "BEFORE_TARGET";
 		DiscardExpired(nowMs);
 		int first = FindPresentationFrame(targetMs, sequence);
@@ -607,7 +607,7 @@ class RICON_RelayWireReceiver
 			&& frame.m_iEmitFromMs == m_iPresentedEmitEnd && targetMs == m_iPresentedTargetMs + durationMs
 			&& targetMs + durationMs <= m_iPresentedDeadlineMs;
 		if (!consecutive && !m_Resampler.Reset(frame.m_iFirstSampleIndex)) return "INVALID";
-		array<int> decoded = RICON_MediaPcmProfile.DecodeBytes(frame.m_aBytes);
+		array<int> decoded = RICON_MediaPcmTestProfile.DecodeBytes(frame.m_aBytes);
 		int outputIndex;
 		array<int> samples = m_Resampler.Process(frame.m_iFirstSampleIndex, decoded, outputIndex);
 		if (!samples) return "INVALID";
@@ -633,7 +633,7 @@ class RICON_RelayWireReceiver
 
 	protected int FindPresentationFrame(int targetMs, int sequence)
 	{
-		int endMs = targetMs + RICON_MediaPcmProfile.FRAME_DURATION_MS;
+		int endMs = targetMs + RICON_MediaPcmTestProfile.FRAME_DURATION_MS;
 		int first = -1;
 		for (int index = m_Pending.Count() - 1; index >= 0; index--)
 		{

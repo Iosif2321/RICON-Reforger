@@ -31,14 +31,13 @@ class RICON_StaticLosTick
 		staged.m_sTimebaseId = timebaseId;
 		foreach (RICON_TransmissionBinding binding : input.m_aBindings)
 		{
-			if (!binding.m_bActive || binding.m_iSessionEpoch != input.m_iSessionEpoch
-				|| input.m_iNowMs < binding.m_iIssuedAtMs || input.m_iNowMs - binding.m_iIssuedAtMs >= binding.m_iTtlMs)
+			if (binding.m_iSessionEpoch != input.m_iSessionEpoch || !binding.IsAuthorityLiveAt(input.m_iNowMs))
 				return "STALE_BINDING";
 			RICON_PairEndpoint tx = endpoints.Get(EndpointKey(binding.m_iTxDeviceId, binding.m_iTxTransceiverIndex));
 			if (!tx) return "ENDPOINT_UNAVAILABLE";
 			foreach (RICON_PairListener listener : input.m_aListeners)
 			{
-				if (listener.m_iDeviceId == binding.m_iTxDeviceId) continue;
+				if (RICON_PairService.IsSelfPair(input, binding, listener)) continue;
 				RICON_PairEndpoint rx = endpoints.Get(EndpointKey(listener.m_iDeviceId, listener.m_iTransceiverIndex));
 				if (!rx) return "ENDPOINT_UNAVAILABLE";
 				RICON_TemporalChannelInput channel;

@@ -28,6 +28,7 @@ class RICON_TemporalProducerEntry
     bool m_bHasRfPowers;
     float m_fRxPowerDbm;
     float m_fNoiseDbm;
+    ref RICON_TemporalRxEnvironment m_RxEnvironment;
     int m_iRfPowerTickMs = -1;
     int m_iRfModelMs = -1;
     int m_iRfModelSubUs = -1;
@@ -42,6 +43,7 @@ class RICON_TemporalProducerEntry
         c.m_bHasRfPowers = m_bHasRfPowers;
         c.m_fRxPowerDbm = m_fRxPowerDbm;
         c.m_fNoiseDbm = m_fNoiseDbm;
+        if (m_RxEnvironment) c.m_RxEnvironment = m_RxEnvironment.CloneEnvironment();
         c.m_iRfPowerTickMs = m_iRfPowerTickMs;
         c.m_iRfModelMs = m_iRfModelMs;
         c.m_iRfModelSubUs = m_iRfModelSubUs;
@@ -264,7 +266,7 @@ class RICON_TemporalPublicationService : RICON_LinkPublicationService
         RICON_PairListener listener = Listener(tick.m_PairInput, pair);
         RICON_LifecycleLease lease = lifecycle.QueryActiveLease(b.m_iLeaseId, nowMs);
         if (!listener || !lease || !lease.MatchesSource(b.m_iTxPlayerId, b.m_iTxGeneration, b.m_iTxDeviceId, b.m_iNetworkTypeId, b.m_iChannelId)
-            || lease.m_iIssuedAtMs != b.m_iIssuedAtMs || lease.m_iTtlMs != b.m_iTtlMs
+            || !b.SameLeaseAuthority(lease)
             || lifecycle.GetPlayerState(b.m_iTxPlayerId) != RICON_EPlayerLifecycleState.BOUND_ACTIVE
             || lifecycle.GetPlayerState(listener.m_iPlayerId) != RICON_EPlayerLifecycleState.BOUND_ACTIVE
             || lifecycle.GetPlayerGeneration(b.m_iTxPlayerId) != b.m_iTxGeneration
@@ -343,6 +345,18 @@ class RICON_TemporalPublicationService : RICON_LinkPublicationService
         RICON_PairResult budget = pair.m_Pair;
         if (budget.m_bHasRfPowers && RICON_Num.IsFinite(budget.m_fRxPowerDbm) && RICON_Num.IsFinite(budget.m_fNoiseDbm))
         {
+            if (budget.m_bHasRxEnvironment || budget.m_RxEnvironment)
+            {
+                RICON_TemporalRxEnvironment environment = budget.m_RxEnvironment;
+                if (!budget.m_bHasRxEnvironment || !environment || listener.m_iRxGeneration <= 0
+                    || environment.m_iRevision != budget.m_iRxEnvironmentRevision
+                    || !environment.IsValidFor(tick.m_PairInput.m_iSessionEpoch, listener.m_iDeviceId, listener.m_iTransceiverIndex,
+                        tick.m_sTimebaseId, budget.m_fNoiseDbm, listener.m_iRxGeneration)
+                    || q.m_iNowMs != nowMs || nowMs == int.MAX || !environment.Covers(nowMs, nowMs + 1)
+                    || environment.m_fNoisePlusInterferenceDbm != budget.m_fNoisePlusInterferenceDbm)
+                    return "UNQUALIFIED_RX_ENVIRONMENT";
+                entry.m_RxEnvironment = environment.CloneEnvironment();
+            }
             entry.m_bHasRfPowers = true;
             entry.m_fRxPowerDbm = budget.m_fRxPowerDbm;
             entry.m_fNoiseDbm = budget.m_fNoiseDbm;
@@ -421,6 +435,15 @@ class RICON_TemporalPublicationService : RICON_LinkPublicationService
             row.m_bNeed = true;
             if (old && !rebind)
             {
+                RICON_TemporalRxEnvironment priorEnvironment = old.m_RxEnvironment;
+                RICON_TemporalRxEnvironment nextEnvironment = next.m_RxEnvironment;
+                if (priorEnvironment && (!nextEnvironment || (nextEnvironment.m_iRxGeneration == priorEnvironment.m_iRxGeneration
+                    && (nextEnvironment.m_iRevision < priorEnvironment.m_iRevision
+                        || (nextEnvironment.m_iRevision == priorEnvironment.m_iRevision && !nextEnvironment.Same(priorEnvironment))))))
+                {
+                    plan.m_sCode = "UNQUALIFIED_RX_ENVIRONMENT";
+                    return plan;
+                }
                 row.m_Old = old;
                 row.m_iKind = RICON_LinkPublicationItem.KEEP;
                 next.m_Snapshot.m_iLinkId = old.m_Snapshot.m_iLinkId;

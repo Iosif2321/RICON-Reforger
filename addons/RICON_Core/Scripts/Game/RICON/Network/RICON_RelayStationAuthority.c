@@ -77,15 +77,18 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 	protected ref RICON_MediaStreamOwner m_SourceOwner;
 	protected ref RICON_MediaReceiverAuthority m_Receivers;
 	protected ref RICON_RelayPcmPath m_Path;
+	protected RICON_RelayStationComponent m_Station;
+	protected BaseRadioComponent m_StationRadio;
 	protected int m_iOriginTxGeneration, m_iInputFrequency;
 	protected int m_iOutputNetworkId, m_iOutputChannelId, m_iOutputFrequency, m_iDestinationIndex;
 	protected int m_iListenerPlayerId, m_iListenerConnectionId, m_iListenerGeneration, m_iListenerEntityId;
 	protected int m_iOriginAdmission, m_iRelayRxAdmission, m_iRelayTxAdmission, m_iDestinationAdmission;
 	protected int m_iLastNowMs = -1;
-	protected bool m_bInputLive, m_bOutputLive, m_bClosed;
+	protected bool m_bInputLive, m_bOutputLive, m_bClosed, m_bRequiresNativeStation;
 
 	bool Configure(RICON_RelayPcmPath path, RICON_RelayStationDirection direction, RICON_LifecycleStateMachine lifecycle,
-		RICON_MediaStreamOwner sourceOwner, RICON_MediaReceiverAuthority receivers, int nowMs)
+		RICON_MediaStreamOwner sourceOwner, RICON_MediaReceiverAuthority receivers, int nowMs,
+		RICON_RelayStationComponent station = null)
 	{
 		if (m_bClosed || m_Path || !path || !path.IsValid() || !direction || !direction.IsValid()) return false;
 		if (!lifecycle || !sourceOwner || !receivers || !sourceOwner.IsScope(lifecycle) || !receivers.CanRead(lifecycle, nowMs)) return false;
@@ -99,6 +102,14 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 		m_SourceOwner = sourceOwner;
 		m_Receivers = receivers;
 		m_Path = path.ClonePath();
+		m_bRequiresNativeStation = station != null;
+		m_Station = station;
+		if (station)
+		{
+			IEntity owner = station.GetOwner();
+			if (owner && !owner.IsDeleted()) m_StationRadio = BaseRadioComponent.Cast(owner.FindComponent(BaseRadioComponent));
+			if (!NativeStationCurrent()) { Close(); return false; }
+		}
 		m_iOriginTxGeneration = direction.m_iOriginTxGeneration;
 		m_iInputFrequency = direction.m_iInputFrequency;
 		m_iOutputNetworkId = direction.m_iOutputNetworkId;
@@ -117,7 +128,7 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 		m_iDestinationAdmission = ReadDestination(nowMs);
 		m_bInputLive = m_iOriginAdmission > 0 && m_iRelayRxAdmission > 0;
 		m_bOutputLive = m_iRelayTxAdmission > 0 && m_iDestinationAdmission > 0;
-		if (m_bInputLive && m_bOutputLive) return true;
+		if (m_bInputLive && m_bOutputLive && NativeStationCurrent()) return true;
 		Close();
 		return false;
 	}
@@ -126,6 +137,7 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 	{
 		if (!m_bInputLive || !ObservePath(path, nowMs)) return false;
 		m_bInputLive = ReadOrigin(nowMs) == m_iOriginAdmission && ReadRelayRx(nowMs) == m_iRelayRxAdmission;
+		if (!NativeStationCurrent()) { Close(); return false; }
 		return m_bInputLive;
 	}
 
@@ -133,7 +145,15 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 	{
 		if (!m_bOutputLive || !ObservePath(path, nowMs)) return false;
 		m_bOutputLive = ReadRelayTx(nowMs) == m_iRelayTxAdmission && ReadDestination(nowMs) == m_iDestinationAdmission;
+		if (!NativeStationCurrent()) { Close(); return false; }
 		return m_bOutputLive;
+	}
+
+	//! Exact native station radio bound to this inlet; a legacy policy cannot witness a game sample.
+	bool MatchesNativeInputRadio(RICON_RelayPcmPath path, BaseRadioComponent radio)
+	{
+		return !m_bClosed && m_bInputLive && m_bRequiresNativeStation && m_Path && m_Path.SamePath(path)
+			&& radio && radio == m_StationRadio && NativeStationCurrent();
 	}
 
 	//! Перед чтением источник и вход станции должны совпасть со снимком допуска.
@@ -238,12 +258,25 @@ class RICON_RelayStationAuthority : RICON_RelayPcmPolicy
 		m_Lifecycle = null;
 		m_SourceOwner = null;
 		m_Receivers = null;
+		m_Station = null;
+		m_StationRadio = null;
+	}
+
+	protected bool NativeStationCurrent()
+	{
+		if (!m_bRequiresNativeStation) return true;
+		if (!m_Station || !m_StationRadio || !m_Path || !m_Receivers || !m_Station.MatchesRadio(m_StationRadio)) return false;
+		IEntity owner = m_Station.GetOwner();
+		if (!owner || owner.IsDeleted() || BaseRadioComponent.Cast(owner.FindComponent(BaseRadioComponent)) != m_StationRadio) return false;
+		RICON_MediaEgressRoute upstream = m_Path.m_UpstreamRoute;
+		return m_Receivers.MatchesRadio(upstream.m_iRxDeviceId, upstream.m_iRxTransceiverIndex, upstream.m_iRxGeneration, m_StationRadio)
+			&& m_Receivers.MatchesRadio(m_Path.m_iRelayTxDeviceId, m_Path.m_iRelayTxIndex, m_Path.m_iRelayTxGeneration, m_StationRadio);
 	}
 
 	protected bool ObservePath(RICON_RelayPcmPath path, int nowMs)
 	{
 		if (!m_Path || !m_Path.SamePath(path) || nowMs < m_iLastNowMs) return false;
-		if (!m_SourceOwner.IsScope(m_Lifecycle) || !m_Receivers.IsScope(m_Lifecycle))
+		if (!m_SourceOwner.IsScope(m_Lifecycle) || !m_Receivers.IsScope(m_Lifecycle) || !NativeStationCurrent())
 		{
 			Close();
 			return false;

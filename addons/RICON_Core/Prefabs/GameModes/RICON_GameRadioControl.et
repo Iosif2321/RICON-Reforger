@@ -1,0 +1,7 @@
+SCR_BaseGameMode : "{1B76F75A3175E85C}Prefabs/MP/Modes/Plain/GameMode_Plain.et" {
+ ID "9DDB0956C358407C"
+ components {
+  RICON_GameRadioManagerComponent "{37831EAF359C4990}" {
+  }
+ }
+}

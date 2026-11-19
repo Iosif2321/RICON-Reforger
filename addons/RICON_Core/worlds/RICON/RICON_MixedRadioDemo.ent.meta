@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{6006F05677EB0E0C}worlds/RICON/RICON_MixedRadioDemo.ent"
+ Configurations {
+  ENTResourceClass PC {}
+  ENTResourceClass HEADLESS : PC {}
+ }
+}

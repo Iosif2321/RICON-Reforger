@@ -4,12 +4,59 @@ class RICON_MediaDirectCandidate
     int m_iLinkId, m_iListenerPlayerId, m_iRxDeviceId, m_iRxTransceiverIndex;
 }
 
+//! Detached receiver environment qualified for a half-open interval on one RF timebase.
+class RICON_TemporalRxEnvironment
+{
+    int m_iEpoch, m_iRxDeviceId, m_iRxIndex = -1, m_iRxGeneration, m_iRevision;
+    int m_iFromMs = -1, m_iUntilMs = -1;
+    float m_fNoisePlusInterferenceDbm;
+    string m_sTimebaseId;
+
+    RICON_TemporalRxEnvironment CloneEnvironment()
+    {
+        RICON_TemporalRxEnvironment copy = new RICON_TemporalRxEnvironment();
+        copy.m_iEpoch = m_iEpoch;
+        copy.m_iRxDeviceId = m_iRxDeviceId;
+        copy.m_iRxIndex = m_iRxIndex;
+        copy.m_iRxGeneration = m_iRxGeneration;
+        copy.m_iRevision = m_iRevision;
+        copy.m_iFromMs = m_iFromMs;
+        copy.m_iUntilMs = m_iUntilMs;
+        copy.m_fNoisePlusInterferenceDbm = m_fNoisePlusInterferenceDbm;
+        copy.m_sTimebaseId = m_sTimebaseId;
+        return copy;
+    }
+
+    bool Same(RICON_TemporalRxEnvironment other)
+    {
+        return other && m_iEpoch == other.m_iEpoch && m_iRxDeviceId == other.m_iRxDeviceId
+            && m_iRxIndex == other.m_iRxIndex && m_iRxGeneration == other.m_iRxGeneration && m_iRevision == other.m_iRevision
+            && m_iFromMs == other.m_iFromMs && m_iUntilMs == other.m_iUntilMs
+            && m_fNoisePlusInterferenceDbm == other.m_fNoisePlusInterferenceDbm && m_sTimebaseId == other.m_sTimebaseId;
+    }
+
+    bool IsValidFor(int epoch, int deviceId, int index, string timebaseId, float noiseDbm, int rxGeneration = 0)
+    {
+        return epoch > 0 && m_iEpoch == epoch && deviceId > 0 && m_iRxDeviceId == deviceId && index >= 0 && m_iRxIndex == index
+            && m_iRxGeneration > 0 && (rxGeneration == 0 || m_iRxGeneration == rxGeneration)
+            && m_iRevision > 0 && m_sTimebaseId == timebaseId && RICON_TemporalSnapshots.ValidKey(timebaseId)
+            && Covers(m_iFromMs, m_iUntilMs) && RICON_Num.IsFinite(noiseDbm) && RICON_Num.IsFinite(m_fNoisePlusInterferenceDbm)
+            && m_fNoisePlusInterferenceDbm >= noiseDbm;
+    }
+
+    bool Covers(int fromMs, int untilMs)
+    {
+        return m_iFromMs >= 0 && fromMs >= m_iFromMs && untilMs > fromMs && untilMs <= m_iUntilMs;
+    }
+}
+
 //! Detached mean received power and receiver noise from one committed server RF calculation.
 class RICON_TemporalRfBudget
 {
     float m_fRxPowerDbm, m_fNoiseDbm, m_fBandwidthHz;
     int m_iLinkId, m_iTickMs, m_iModelMs, m_iModelSubUs;
     string m_sTimebaseId;
+    ref RICON_TemporalRxEnvironment m_RxEnvironment;
 
     RICON_TemporalRfBudget CloneBudget()
     {
@@ -22,6 +69,7 @@ class RICON_TemporalRfBudget
         copy.m_iModelMs = m_iModelMs;
         copy.m_iModelSubUs = m_iModelSubUs;
         copy.m_sTimebaseId = m_sTimebaseId;
+        if (m_RxEnvironment) copy.m_RxEnvironment = m_RxEnvironment.CloneEnvironment();
         return copy;
     }
 
@@ -29,7 +77,9 @@ class RICON_TemporalRfBudget
     {
         if (!other || m_iLinkId != other.m_iLinkId || m_iTickMs != other.m_iTickMs || m_sTimebaseId != other.m_sTimebaseId) return false;
         if (m_iModelMs != other.m_iModelMs || m_iModelSubUs != other.m_iModelSubUs) return false;
-        return m_fRxPowerDbm == other.m_fRxPowerDbm && m_fNoiseDbm == other.m_fNoiseDbm && m_fBandwidthHz == other.m_fBandwidthHz;
+        if (m_fRxPowerDbm != other.m_fRxPowerDbm || m_fNoiseDbm != other.m_fNoiseDbm || m_fBandwidthHz != other.m_fBandwidthHz) return false;
+        if (m_RxEnvironment) return m_RxEnvironment.Same(other.m_RxEnvironment);
+        return other.m_RxEnvironment == null;
     }
 }
 
@@ -68,6 +118,23 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
     int GetReservedHighWater() { return m_iReservedHighWater; }
     bool ProducerNeedsFull() { return m_bProducerNeedsFull; }
     RICON_TemporalProducerRegistry ReadProducerRegistry() { return m_Registry.CloneRegistry2(); }
+
+    void TraceRadioDevLink(int linkId, RICON_TemporalExpected expected, int tickMs)
+    {
+        if (!RICON_RadioDev.Enabled() || !expected || !expected.m_Binding || m_Registry.m_iLastTickMs != tickMs) return;
+        RICON_TemporalBinding binding = expected.m_Binding;
+        string key = RICON_TemporalPublicationService.PairKey(binding.m_iLeaseId, binding.m_iRxDeviceId,
+            binding.m_iRxTransceiverIndex, expected.m_iListenerPlayerId);
+        RICON_TemporalProducerEntry entry = m_Registry.m_Entries.Get(key);
+        if (!entry || !entry.m_Snapshot || entry.m_Snapshot.m_iLinkId != linkId) return;
+        RICON_TemporalSnapshot snapshot = entry.m_Snapshot;
+        PrintFormat("[RICON_DEV] SERVER LINK tick=%1 link=%2 lease=%3 tx=%4:%5 rx=%6:%7 state=%8 quality=%9",
+            tickMs, linkId, binding.m_iLeaseId, binding.m_iTxDeviceId, binding.m_iTxTransceiverIndex,
+            binding.m_iRxDeviceId, binding.m_iRxTransceiverIndex, typename.EnumToString(RICON_ELinkState, snapshot.m_eState), snapshot.m_fQuality);
+        if (entry.m_bHasRfPowers && entry.m_iRfPowerTickMs == tickMs)
+            PrintFormat("[RICON_DEV] SERVER RF_POWER link=%1 rxDbm=%2 noiseDbm=%3 modelMs=%4 environment=%5",
+                linkId, entry.m_fRxPowerDbm, entry.m_fNoiseDbm, entry.m_iRfModelMs, entry.m_RxEnvironment != null);
+    }
     int GetMediaGeometryRevision() { return m_iGeometryRevision; }
 
     int GetMediaListenerIncarnation(RICON_MediaEgressRoute route)
@@ -85,7 +152,8 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
             && m_sConfiguration == "OK" && m_sProducerConfiguration == "OK" && m_Registry.m_iSessionEpoch == m_iEpoch
             && lifecycle && lifecycle == m_PublishedLifecycle && lifecycle.GetSessionEpoch() == m_iEpoch && lifecycle.CanQueryAt(nowMs)
             && nowMs >= m_Registry.m_iLastTickMs && CanReadMediaGeometry(nowMs)
-            && (!m_ListenerRoster || m_ListenerRoster.GetRevision() == m_iListenerRosterRevision);
+            && (!m_ListenerRoster || (m_ListenerRoster.GetRevision() == m_iListenerRosterRevision
+                && m_ListenerRoster.MatchesRfReadTime(nowMs)));
     }
 
     protected bool CanReadMediaGeometry(int nowMs)
@@ -119,7 +187,7 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
     }
 
     protected bool CurrentDirectMediaCapture(int linkId, RICON_TemporalCapturedLink capture, RICON_MediaStreamBinding source,
-        RICON_LifecycleStateMachine lifecycle)
+        RICON_LifecycleStateMachine lifecycle, int nowMs, int physicalGeneration = 0)
     {
         if (linkId <= 0 || !capture || !capture.m_Snapshot || !capture.m_Snapshot.m_Binding) return false;
         RICON_TemporalSnapshot snapshot = capture.m_Snapshot;
@@ -135,6 +203,8 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
         if (listener <= 0 || listener == source.m_iPlayerId || connection <= 0 || connection == source.m_iConnectionId
             || binding.m_iRxDeviceId <= 0 || binding.m_iRxDeviceId == source.m_iDeviceId || binding.m_iRxTransceiverIndex < 0
             || capture.m_iReceiverEntityId <= 0) return false;
+        if (m_ListenerRoster && !m_ListenerRoster.AllowsDirectCaptureListener(listener, binding.m_iRxDeviceId,
+            binding.m_iRxTransceiverIndex, nowMs, physicalGeneration)) return false;
         string key = RICON_TemporalPublicationService.PairKey(source.m_iLeaseId, binding.m_iRxDeviceId,
             binding.m_iRxTransceiverIndex, listener);
         RICON_TemporalProducerEntry entry = m_Registry.m_Entries.Get(key);
@@ -147,7 +217,7 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
     {
         if (linkId <= 0 || !route || !route.IsValid() || !CurrentMediaSource(route.m_Source, lifecycle, nowMs)) return false;
         RICON_TemporalCapturedLink capture = m_Active.Get(linkId);
-        if (!CurrentDirectMediaCapture(linkId, capture, route.m_Source, lifecycle)) return false;
+        if (!CurrentDirectMediaCapture(linkId, capture, route.m_Source, lifecycle, nowMs, route.m_iRxGeneration)) return false;
         RICON_TemporalSnapshot snapshot = capture.m_Snapshot;
         RICON_TemporalBinding binding = snapshot.m_Binding;
         return snapshot.m_iListenerPlayerId == route.m_iListenerPlayerId && binding.m_iRxDeviceId == route.m_iRxDeviceId
@@ -176,6 +246,13 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
         budget.m_iModelMs = entry.m_iRfModelMs;
         budget.m_iModelSubUs = entry.m_iRfModelSubUs;
         budget.m_sTimebaseId = entry.m_Snapshot.m_sTimebaseId;
+        if (entry.m_RxEnvironment)
+        {
+            if (!entry.m_RxEnvironment.IsValidFor(route.m_Source.m_iSessionEpoch, route.m_iRxDeviceId,
+                route.m_iRxTransceiverIndex, budget.m_sTimebaseId, budget.m_fNoiseDbm, route.m_iRxGeneration)) return null;
+            if (nowMs == int.MAX || !entry.m_RxEnvironment.Covers(nowMs, nowMs + 1)) return null;
+            budget.m_RxEnvironment = entry.m_RxEnvironment.CloneEnvironment();
+        }
         return budget;
     }
 
@@ -190,7 +267,7 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
         for (int index = 0; index < m_Active.Count(); index++)
         {
             int linkId = m_Active.GetKey(index);
-            if (CurrentDirectMediaCapture(linkId, m_Active.GetElement(index), source, lifecycle)) ids.Insert(linkId);
+            if (CurrentDirectMediaCapture(linkId, m_Active.GetElement(index), source, lifecycle, nowMs)) ids.Insert(linkId);
         }
         ids.Sort();
         foreach (int id : ids)
@@ -302,7 +379,7 @@ class RICON_TemporalPublicationOwner : RICON_TemporalAuthorityJournal
                     || binding.m_iSessionEpoch != m_iEpoch || !lease
                     || !lease.MatchesSource(binding.m_iTxPlayerId, binding.m_iTxGeneration, binding.m_iTxDeviceId,
                         binding.m_iNetworkTypeId, binding.m_iChannelId)
-                    || lease.m_iIssuedAtMs != binding.m_iIssuedAtMs || lease.m_iTtlMs != binding.m_iTtlMs)
+                    || !binding.SameLeaseAuthority(lease))
                 {
                     return "STALE_SOURCE_PROJECTION";
                 }

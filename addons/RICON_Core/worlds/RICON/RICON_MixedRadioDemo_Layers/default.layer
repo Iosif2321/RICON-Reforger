@@ -1,0 +1,31 @@
+SCR_BaseGameMode : "{F3CCABDC54C9877A}Prefabs/GameModes/RICON_MixedRadioGameMode.et" {
+ coords 28 0 128
+}
+RadioManagerEntity {
+ coords 30 0 128
+}
+SCR_FactionManager : "{A1C54BBE72C5C696}Prefabs/MP/Managers/Factions/FactionManager_FFA.et" {
+}
+SCR_LoadoutManager : "{B7E5D7F4864D81C0}Prefabs/MP/Managers/Loadouts/LoadoutManager_FFA.et" {
+}
+SCR_SpawnPoint : "{5392C4D80E4B18F8}Prefabs/MP/Spawning/SpawnPoint_FFA.et" {
+ coords 112 1 128
+}
+GenericEntity : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
+ coords 108 1 129
+}
+GenericEntity : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
+ coords 109 1 129
+}
+GenericEntity : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
+ coords 108 1 132
+}
+GenericEntity : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
+ coords 109 1 132
+}
+Vehicle : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
+ coords 112 1 150
+}
+Vehicle : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
+ coords 130 1 150
+}

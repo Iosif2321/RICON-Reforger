@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{CBA7E7015D212F5F}Missions/RICON_MixedRadioDemo.conf"
+ Configurations {
+  CONFResourceClass PC {}
+  CONFResourceClass HEADLESS : PC {}
+ }
+}

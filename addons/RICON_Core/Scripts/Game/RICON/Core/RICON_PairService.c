@@ -20,7 +20,8 @@ enum RICON_EPairCode
 	RX_DEVICE_INVALID = 6,
 	STATE_MISMATCH = 7,
 	DEVICE_QUERY = 8,
-	EVALUATED = 9
+	EVALUATED = 9,
+	RX_ENVIRONMENT = 10
 }
 
 class RICON_TransmissionBinding
@@ -36,6 +37,32 @@ class RICON_TransmissionBinding
 	bool m_bActive;
 	int m_iIssuedAtMs = -1;
 	int m_iTtlMs;
+	// A current authority witness, separate from the original START interval.
+	int m_iAuthorityUntilMs = -1;
+
+	bool HasValidAuthorityWindow()
+	{
+		if (m_iIssuedAtMs < 0 || m_iTtlMs <= 0) return false;
+		if (m_iAuthorityUntilMs == -1) return true;
+		if (m_iAuthorityUntilMs <= m_iIssuedAtMs || m_iAuthorityUntilMs >= int.MAX) return false;
+		return m_iAuthorityUntilMs - m_iIssuedAtMs >= m_iTtlMs;
+	}
+
+	bool IsAuthorityLiveAt(int nowMs)
+	{
+		if (!m_bActive || !HasValidAuthorityWindow() || nowMs < m_iIssuedAtMs) return false;
+		if (m_iAuthorityUntilMs == -1)
+		{
+			return nowMs - m_iIssuedAtMs < m_iTtlMs;
+		}
+		return nowMs < m_iAuthorityUntilMs;
+	}
+
+	bool SameLeaseAuthority(RICON_LifecycleLease lease)
+	{
+		return lease && lease.m_iIssuedAtMs == m_iIssuedAtMs && lease.m_iTtlMs == m_iTtlMs
+			&& lease.m_iRenewedUntilMs == m_iAuthorityUntilMs;
+	}
 }
 
 class RICON_PairListener
@@ -45,6 +72,7 @@ class RICON_PairListener
 	int m_iSessionEpoch;
 	int m_iDeviceId;
 	int m_iTransceiverIndex = -1;
+	int m_iRxGeneration; //!< Physical registration, separate from the player generation.
 }
 
 class RICON_PairPlayer
@@ -76,6 +104,9 @@ class RICON_PairServiceInput
 	int m_iSessionEpoch;
 	ref RICON_PairServiceLimits m_Limits;
 	ref RICON_RadioQueryContext m_Context;
+	bool m_bUseRxEnvironments;
+	bool m_bExcludeOwnReceivers;
+	ref array<ref RICON_RxEnvironment> m_aRxEnvironments = {};
 	ref array<ref RICON_TransmissionBinding> m_aBindings = {};
 	ref array<ref RICON_PairListener> m_aListeners = {};
 	ref array<ref RICON_PairPlayer> m_aPlayers = {};
@@ -103,6 +134,10 @@ class RICON_PairResult
 	bool m_bHasRfPowers;
 	float m_fRxPowerDbm;
 	float m_fNoiseDbm;
+	float m_fNoisePlusInterferenceDbm;
+	bool m_bHasRxEnvironment;
+	int m_iRxEnvironmentRevision;
+	ref RICON_TemporalRxEnvironment m_RxEnvironment;
 }
 
 class RICON_PairServiceResult
@@ -130,12 +165,12 @@ class RICON_PairService
 		if (!b || b.m_iLeaseId <= 0 || b.m_iSessionEpoch <= 0 || b.m_iTxPlayerId <= 0 || b.m_iTxGeneration <= 0)
 			return false;
 		return EndpointIdentity(b.m_iTxDeviceId, b.m_iTxTransceiverIndex) && b.m_iNetworkTypeId > 0
-			&& b.m_iChannelId > 0 && b.m_iIssuedAtMs >= 0 && b.m_iTtlMs > 0;
+			&& b.m_iChannelId > 0 && b.HasValidAuthorityWindow();
 	}
 
 	protected static bool ValidListener(RICON_PairListener l)
 	{
-		return l && l.m_iPlayerId > 0 && l.m_iGeneration > 0 && l.m_iSessionEpoch > 0
+		return l && l.m_iPlayerId > 0 && l.m_iGeneration > 0 && l.m_iSessionEpoch > 0 && l.m_iRxGeneration >= 0
 			&& EndpointIdentity(l.m_iDeviceId, l.m_iTransceiverIndex);
 	}
 
@@ -174,7 +209,7 @@ class RICON_PairService
 	{
 		if (!input || !input.m_Limits || !input.m_Context)
 			return RICON_EPairServiceCode.NULL_INPUT;
-		if (!input.m_aBindings || !input.m_aListeners || !input.m_aPlayers || !input.m_aDevices || !input.m_aEndpoints)
+		if (!input.m_aBindings || !input.m_aListeners || !input.m_aPlayers || !input.m_aDevices || !input.m_aEndpoints || !input.m_aRxEnvironments)
 			return RICON_EPairServiceCode.NULL_INPUT;
 		RICON_PairServiceLimits limits = input.m_Limits;
 		if (!ValidLimits(limits))
@@ -184,6 +219,11 @@ class RICON_PairService
 		if (input.m_aPlayers.Count() > limits.m_iMaxPlayers || input.m_aDevices.Count() > limits.m_iMaxDevices
 			|| input.m_aEndpoints.Count() > limits.m_iMaxEndpoints)
 			return RICON_EPairServiceCode.LIMIT_EXCEEDED;
+		if (input.m_aRxEnvironments.Count() > limits.m_iMaxEndpoints)
+			return RICON_EPairServiceCode.LIMIT_EXCEEDED;
+		if ((!input.m_bUseRxEnvironments && !input.m_aRxEnvironments.IsEmpty())
+			|| (input.m_bUseRxEnvironments && (!RICON_RadioQueryBuilder.IsValidContext(input.m_Context) || input.m_Context.m_bHasInterference)))
+			return RICON_EPairServiceCode.INVALID_ELEMENT;
 		// Длины уже не больше 4096: произведение помещается в int32.
 		if (input.m_aBindings.Count() * input.m_aListeners.Count() > limits.m_iMaxPairs)
 			return RICON_EPairServiceCode.LIMIT_EXCEEDED;
@@ -219,6 +259,11 @@ class RICON_PairService
 				return RICON_EPairServiceCode.INVALID_ELEMENT;
 		}
 		// Полная проверка элементов раньше любых дублей: REQ-PS-04.
+		foreach (RICON_RxEnvironment environment : input.m_aRxEnvironments)
+		{
+			if (!environment || !EndpointIdentity(environment.m_iRxDeviceId, environment.m_iRxTransceiverIndex))
+				return RICON_EPairServiceCode.INVALID_ELEMENT;
+		}
 		map<int, bool> ids = new map<int, bool>();
 		foreach (RICON_TransmissionBinding b1 : input.m_aBindings)
 		{
@@ -256,6 +301,12 @@ class RICON_PairService
 			if (!UniqueString(keys, key))
 				return RICON_EPairServiceCode.DUPLICATE;
 		}
+		keys.Clear();
+		foreach (RICON_RxEnvironment uniqueEnvironment : input.m_aRxEnvironments)
+		{
+			if (!UniqueString(keys, EndpointKey(uniqueEnvironment.m_iRxDeviceId, uniqueEnvironment.m_iRxTransceiverIndex)))
+				return RICON_EPairServiceCode.DUPLICATE;
+		}
 		return RICON_EPairServiceCode.OK;
 	}
 
@@ -280,9 +331,16 @@ class RICON_PairService
 		return RICON_RadioQueryBuilder.Build(tx.m_Observation, tx.m_Profile, rx.m_Observation, rx.m_Profile, context, query);
 	}
 
+	static bool IsSelfPair(RICON_PairServiceInput input, RICON_TransmissionBinding binding, RICON_PairListener listener)
+	{
+		return listener.m_iDeviceId == binding.m_iTxDeviceId
+			|| (input.m_bExcludeOwnReceivers && listener.m_iPlayerId == binding.m_iTxPlayerId);
+	}
+
 	protected RICON_PairResult EvaluatePair(RICON_PairServiceInput input, RICON_TransmissionBinding b,
 		RICON_PairListener l, map<int, ref RICON_PairPlayer> players, map<int, ref RICON_LifecycleDevice> devices,
-		map<string, ref RICON_PairEndpoint> endpoints, RICON_LinkEvaluator evaluator, RICON_PairServiceResult result)
+		map<string, ref RICON_PairEndpoint> endpoints, map<string, ref RICON_RxEnvironment> environments,
+		RICON_LinkEvaluator evaluator, RICON_PairServiceResult result)
 	{
 		RICON_PairResult row = new RICON_PairResult();
 		row.m_iLeaseId = b.m_iLeaseId;
@@ -290,9 +348,7 @@ class RICON_PairService
 		row.m_iRxPlayerId = l.m_iPlayerId;
 		row.m_iRxDeviceId = l.m_iDeviceId;
 		row.m_iRxTransceiverIndex = l.m_iTransceiverIndex;
-		if (!b.m_bActive || b.m_iSessionEpoch != input.m_iSessionEpoch || input.m_iNowMs < b.m_iIssuedAtMs)
-			return row;
-		if (input.m_iNowMs - b.m_iIssuedAtMs >= b.m_iTtlMs)
+		if (b.m_iSessionEpoch != input.m_iSessionEpoch || !b.IsAuthorityLiveAt(input.m_iNowMs))
 			return row;
 		row.m_ePairCode = RICON_EPairCode.TX_PLAYER_INVALID;
 		RICON_PairPlayer txPlayer = players.Get(b.m_iTxPlayerId);
@@ -304,7 +360,7 @@ class RICON_PairService
 		if (!txEndpoint || !HasAccess(txDevice, b.m_iTxPlayerId, b))
 			return row;
 		row.m_ePairCode = RICON_EPairCode.SELF_PAIR;
-		if (l.m_iDeviceId == b.m_iTxDeviceId)
+		if (IsSelfPair(input, b, l))
 			return row;
 		row.m_ePairCode = RICON_EPairCode.RX_PLAYER_INVALID;
 		RICON_PairPlayer rxPlayer = players.Get(l.m_iPlayerId);
@@ -320,11 +376,40 @@ class RICON_PairService
 		row.m_ePairCode = RICON_EPairCode.STATE_MISMATCH;
 		if (txDevice.m_bPowered != txEndpoint.m_Observation.m_bPowered || rxDevice.m_bPowered != rxEndpoint.m_Observation.m_bPowered)
 			return row;
+		RICON_RadioQueryContext context = input.m_Context;
+		if (input.m_bUseRxEnvironments)
+		{
+			row.m_ePairCode = RICON_EPairCode.RX_ENVIRONMENT;
+			RICON_RxEnvironment environment = environments.Get(EndpointKey(l.m_iDeviceId, l.m_iTransceiverIndex));
+			// Shared jammer-only J cannot reuse a projection that excluded a particular wanted emission.
+			if (!environment || environment.m_iExcludedEmissionId != 0 || !environment.IsCurrentFor(rxEndpoint.m_Observation, rxEndpoint.m_Profile, input.m_Context,
+				input.m_iSessionEpoch, input.m_iNowMs)) return row;
+			if (l.m_iRxGeneration > 0 && environment.m_iRxGeneration > 0 && environment.m_iRxGeneration != l.m_iRxGeneration) return row;
+			row.m_bHasRxEnvironment = true;
+			row.m_iRxEnvironmentRevision = environment.m_iRevision;
+			if (l.m_iRxGeneration > 0 && environment.m_iRxGeneration == l.m_iRxGeneration
+				&& RICON_TemporalSnapshots.ValidKey(environment.m_sTimebaseId)
+				&& environment.m_iObservedAtMs <= int.MAX - environment.m_iTtlMs)
+			{
+				RICON_TemporalRxEnvironment snapshot = new RICON_TemporalRxEnvironment();
+				snapshot.m_iEpoch = environment.m_iSessionEpoch;
+				snapshot.m_iRxDeviceId = environment.m_iRxDeviceId;
+				snapshot.m_iRxIndex = environment.m_iRxTransceiverIndex;
+				snapshot.m_iRxGeneration = environment.m_iRxGeneration;
+				snapshot.m_iRevision = environment.m_iRevision;
+				snapshot.m_iFromMs = environment.m_iObservedAtMs;
+				snapshot.m_iUntilMs = environment.m_iObservedAtMs + environment.m_iTtlMs;
+				snapshot.m_fNoisePlusInterferenceDbm = environment.m_fNoisePlusInterferenceDbm;
+				snapshot.m_sTimebaseId = environment.m_sTimebaseId;
+				row.m_RxEnvironment = snapshot;
+			}
+			context = environment.m_Context;
+		}
 		row.m_ePairCode = RICON_EPairCode.DEVICE_QUERY;
 		row.m_bHasDeviceCode = true;
 		result.m_iS2Calls++;
 		RICON_LinkQuery query;
-		row.m_eDeviceCode = BuildQuery(txEndpoint, rxEndpoint, input.m_Context, query);
+		row.m_eDeviceCode = BuildQuery(txEndpoint, rxEndpoint, context, query);
 		if (row.m_eDeviceCode != RICON_ERadioQueryCode.READY)
 			return row;
 		result.m_iEvaluatorCalls++;
@@ -339,10 +424,12 @@ class RICON_PairService
 		row.m_eState = budget.m_eState;
 		row.m_fIntelligibility = budget.m_fIntelligibility;
 		row.m_fSinrDb = budget.m_fSinrDb;
-		if (budget.m_bValid && RICON_Num.IsFinite(budget.m_fRxPowerDbm) && RICON_Num.IsFinite(budget.m_fNoiseDbm))
+		if (budget.m_bValid && RICON_Num.IsFinite(budget.m_fRxPowerDbm) && RICON_Num.IsFinite(budget.m_fNoiseDbm)
+			&& RICON_Num.IsFinite(budget.m_fNoisePlusInterferenceDbm))
 		{
 			row.m_fRxPowerDbm = budget.m_fRxPowerDbm;
 			row.m_fNoiseDbm = budget.m_fNoiseDbm;
+			row.m_fNoisePlusInterferenceDbm = budget.m_fNoisePlusInterferenceDbm;
 			row.m_bHasRfPowers = true;
 		}
 		return row;
@@ -357,6 +444,7 @@ class RICON_PairService
 		map<int, ref RICON_PairPlayer> players = new map<int, ref RICON_PairPlayer>();
 		map<int, ref RICON_LifecycleDevice> devices = new map<int, ref RICON_LifecycleDevice>();
 		map<string, ref RICON_PairEndpoint> endpoints = new map<string, ref RICON_PairEndpoint>();
+		map<string, ref RICON_RxEnvironment> environments = new map<string, ref RICON_RxEnvironment>();
 		map<int, ref RICON_TransmissionBinding> bindings = new map<int, ref RICON_TransmissionBinding>();
 		array<int> leaseIds = {};
 		foreach (RICON_PairPlayer player : input.m_aPlayers)
@@ -365,6 +453,8 @@ class RICON_PairService
 			devices.Set(device.m_iDeviceId, device);
 		foreach (RICON_PairEndpoint endpoint : input.m_aEndpoints)
 			endpoints.Set(EndpointKey(endpoint.m_Observation.m_iDeviceId, endpoint.m_Observation.m_iTransceiverIndex), endpoint);
+		foreach (RICON_RxEnvironment rxEnvironment : input.m_aRxEnvironments)
+			environments.Set(EndpointKey(rxEnvironment.m_iRxDeviceId, rxEnvironment.m_iRxTransceiverIndex), rxEnvironment);
 		foreach (RICON_TransmissionBinding binding : input.m_aBindings)
 		{
 			bindings.Set(binding.m_iLeaseId, binding);
@@ -389,7 +479,7 @@ class RICON_PairService
 		foreach (int leaseId : leaseIds)
 		{
 			foreach (RICON_PairListener target : ordered)
-				result.m_aPairs.Insert(EvaluatePair(input, bindings.Get(leaseId), target, players, devices, endpoints, evaluator, result));
+				result.m_aPairs.Insert(EvaluatePair(input, bindings.Get(leaseId), target, players, devices, endpoints, environments, evaluator, result));
 		}
 		return result;
 	}

@@ -15,6 +15,7 @@ class RICON_MediaWireRfV2
 		if (!ValidStamp(budget.m_iLinkId, budget.m_iTickMs, budget.m_iModelMs, budget.m_iModelSubUs)) return false;
 		RICON_QueuedMediaBlock block = item.m_Block;
 		if (block.m_RfHistory || block.m_CaptureEnvelope) return false;
+		if (budget.m_RxEnvironment || (block.m_RfBudget && block.m_RfBudget.m_RxEnvironment)) return false;
 		if (!item.m_Route.m_Source.Same(block.m_Binding)) return false;
 		if (!RICON_MediaWireV1.ValidRange(block.m_iSequence, block.m_iFirstSampleIndex, block.m_iSampleCount)) return false;
 		if (block.m_iCaptureLowerMs != budget.m_iTickMs || block.m_iCaptureUpperMs != budget.m_iTickMs) return false;

@@ -10,7 +10,7 @@
 | [`RICON_MediaFanout.c`](RICON_MediaFanout.c) | Распределяет данные по разрешённым маршрутам. |
 | [`RICON_MediaIngress.c`](RICON_MediaIngress.c) | Проверяет и принимает входящие медиаданные. |
 | [`RICON_MediaListenerAuthority.c`](RICON_MediaListenerAuthority.c) | Описывает допуск слушателя к медиамаршруту. |
-| [`RICON_MediaPcmProfile.c`](RICON_MediaPcmProfile.c) | Ограниченный экспериментальный формат PCM и кодирование кадров. |
+| [`RICON_MediaPcmTestProfile.c`](RICON_MediaPcmTestProfile.c) | Ограниченный экспериментальный формат PCM и кодирование кадров. |
 | [`RICON_MediaPlayout.c`](RICON_MediaPlayout.c) | Планирует выдачу медиаданных на воспроизведение. |
 | [`RICON_MediaReceiverAuthority.c`](RICON_MediaReceiverAuthority.c) | Управляет правами и актуальностью получателя. |
 | [`RICON_MediaRfHistory.c`](RICON_MediaRfHistory.c) | Хранит RF-данные, связанные с интервалами кадров. |
@@ -36,7 +36,7 @@
 | [`RICON_RelayStationAuthority.c`](RICON_RelayStationAuthority.c) | Проверяет полномочия и адреса станции. |
 | [`RICON_RelayWire.c`](RICON_RelayWire.c) | Формат, приём и представление кадров ретранслятора. |
 | [`RICON_RelayWireControl.c`](RICON_RelayWireControl.c) | Управляющие сообщения и готовность ретрансляции. |
-| [`RICON_SharedRxMixer.c`](RICON_SharedRxMixer.c) | Экспериментально смешивает вклады в общем приёмнике. |
+| [`RICON_SharedRxTestMixer.c`](RICON_SharedRxTestMixer.c) | Экспериментально смешивает вклады в общем приёмнике. |
 | [`RICON_SharedRxPresentationTimeline.c`](RICON_SharedRxPresentationTimeline.c) | Упорядочивает окна вывода общего приёмника. |
 
 [← Карта RICON](../README.md)

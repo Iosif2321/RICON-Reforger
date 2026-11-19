@@ -5,14 +5,22 @@ class RICON_RelayInputFrame
 	protected ref RICON_QueuedMediaBlock m_Pending;
 	protected int m_iLastSequence = -1;
 
-	//! shortcut: дробные границы и неопределённость часов требуют отдельного профиля ретранслятора.
-	static bool MatchesCapture(RICON_QueuedMediaBlock block, string mappedTimebaseId)
+	static bool MatchesCapture(RICON_QueuedMediaBlock block, string mappedTimebaseId, RICON_MediaCaptureAnchor trustedAnchor = null)
 	{
 		if (!block || block.m_RfBudget || block.m_RfHistory
-			|| block.m_iSampleCount != RICON_MediaPcmProfile.FRAME_SAMPLES
-			|| block.m_iCaptureLowerMs < 0 || block.m_iCaptureUpperMs <= block.m_iCaptureLowerMs
-			|| block.m_iCaptureUpperMs - block.m_iCaptureLowerMs != RICON_MediaPcmProfile.FRAME_DURATION_MS) return false;
+			|| block.m_iSampleCount != RICON_MediaPcmTestProfile.FRAME_SAMPLES
+			|| block.m_iCaptureLowerMs < 0 || block.m_iCaptureUpperMs <= block.m_iCaptureLowerMs) return false;
 		RICON_MediaCaptureEnvelope envelope = block.m_CaptureEnvelope;
+		if (trustedAnchor)
+		{
+			return block.m_Binding && block.m_Binding.m_sProfileId == RICON_MediaPcmTestProfile.PROFILE_ID
+				&& !mappedTimebaseId.IsEmpty() && trustedAnchor.m_sTimebaseId == mappedTimebaseId
+				&& trustedAnchor.m_iSampleRateHz == RICON_MediaPcmTestProfile.SAMPLE_RATE_HZ
+				&& RICON_MediaCaptureClock.ValidAnchor(trustedAnchor, block.m_Binding) && envelope
+				&& envelope.Matches(block.m_Binding, block.m_iFirstSampleIndex, block.m_iSampleCount)
+				&& RICON_MediaCaptureClock.MatchesMappedBounds(trustedAnchor, envelope, block.m_iCaptureLowerMs, block.m_iCaptureUpperMs);
+		}
+		if (block.m_iCaptureUpperMs - block.m_iCaptureLowerMs != RICON_MediaPcmTestProfile.FRAME_DURATION_MS) return false;
 		if (mappedTimebaseId.IsEmpty()) return !envelope;
 		return envelope && envelope.m_sTimebaseId == mappedTimebaseId && envelope.m_iMappingRevision > 0
 			&& envelope.Matches(block.m_Binding, block.m_iFirstSampleIndex, block.m_iSampleCount)
@@ -20,13 +28,14 @@ class RICON_RelayInputFrame
 			&& envelope.m_iLowerSubUs == 0 && envelope.m_iUpperSubUs == 0;
 	}
 
-	bool Store(RICON_MediaEgressRoute route, RICON_QueuedMediaBlock block, string mappedTimebaseId = "")
+	bool Store(RICON_MediaEgressRoute route, RICON_QueuedMediaBlock block, string mappedTimebaseId = "",
+		RICON_MediaCaptureAnchor trustedAnchor = null)
 	{
 		if (m_Pending || !route || !route.IsValid() || !block || !route.m_Source.Same(block.m_Binding)
-			|| route.m_Source.m_sProfileId != RICON_MediaPcmProfile.PROFILE_ID || (m_Route && !m_Route.Same(route))) return false;
-		if (!MatchesCapture(block, mappedTimebaseId) || block.m_iSequence <= m_iLastSequence
+			|| route.m_Source.m_sProfileId != RICON_MediaPcmTestProfile.PROFILE_ID || (m_Route && !m_Route.Same(route))) return false;
+		if (!MatchesCapture(block, mappedTimebaseId, trustedAnchor) || block.m_iSequence <= m_iLastSequence
 			|| !RICON_MediaWireV1.ValidRange(block.m_iSequence, block.m_iFirstSampleIndex, block.m_iSampleCount)
-			|| !block.m_Bytes || block.m_Bytes.Count() != RICON_MediaPcmProfile.PAYLOAD_BYTES) return false;
+			|| !block.m_Bytes || block.m_Bytes.Count() != RICON_MediaPcmTestProfile.PAYLOAD_BYTES) return false;
 
 		RICON_QueuedMediaBlock snapshot = new RICON_QueuedMediaBlock();
 		foreach (int value : block.m_Bytes)

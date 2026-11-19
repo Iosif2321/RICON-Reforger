@@ -10,6 +10,18 @@ class RICON_MediaCaptureAnchor
 	int m_iValidFromLocalMs, m_iValidUntilLocalMs;
 	int m_iMaxMappingErrorUs, m_iMaxCaptureErrorUs, m_iMaxDriftPpm;
 
+	bool SameAnchor(RICON_MediaCaptureAnchor other)
+	{
+		if (!other || !m_Binding || !m_Binding.Same(other.m_Binding)) return false;
+		return m_sTimebaseId == other.m_sTimebaseId && m_iMappingRevision == other.m_iMappingRevision
+			&& m_iFirstSampleIndex == other.m_iFirstSampleIndex && m_iSampleRateHz == other.m_iSampleRateHz
+			&& m_iCaptureAnchorLocalMs == other.m_iCaptureAnchorLocalMs && m_iCaptureAnchorSubUs == other.m_iCaptureAnchorSubUs
+			&& m_iClockAnchorLocalMs == other.m_iClockAnchorLocalMs && m_iClockAnchorServerMs == other.m_iClockAnchorServerMs
+			&& m_iValidFromLocalMs == other.m_iValidFromLocalMs && m_iValidUntilLocalMs == other.m_iValidUntilLocalMs
+			&& m_iMaxMappingErrorUs == other.m_iMaxMappingErrorUs && m_iMaxCaptureErrorUs == other.m_iMaxCaptureErrorUs
+			&& m_iMaxDriftPpm == other.m_iMaxDriftPpm;
+	}
+
 	RICON_MediaCaptureAnchor CloneAnchor()
 	{
 		RICON_MediaCaptureAnchor copy = new RICON_MediaCaptureAnchor();
@@ -83,6 +95,22 @@ class RICON_MediaCaptureClock
 		int captureMs = anchor.m_iCaptureAnchorLocalMs;
 		int captureSubUs = anchor.m_iCaptureAnchorSubUs;
 		return LocalCovered(anchor, captureMs, captureSubUs, captureMs, captureSubUs, anchor.m_iMaxCaptureErrorUs);
+	}
+
+	//! Match the exact envelope and the conservative whole-millisecond bounds derived from that envelope.
+	static bool MatchesMappedBounds(RICON_MediaCaptureAnchor anchor, RICON_MediaCaptureEnvelope envelope,
+		int lowerMs, int upperMs)
+	{
+		if (!envelope || !envelope.m_Binding || lowerMs < 0 || upperMs <= lowerMs || lowerMs != envelope.m_iLowerMs) return false;
+		ref RICON_MediaCaptureEnvelope expected = Map(anchor, envelope.m_Binding, envelope.m_iFirstSampleIndex, envelope.m_iSampleCount);
+		if (!expected || !expected.SameEnvelope(envelope)) return false;
+		int ceiling = expected.m_iUpperMs;
+		if (expected.m_iUpperSubUs > 0)
+		{
+			if (ceiling == int.MAX) return false;
+			ceiling++;
+		}
+		return upperMs == ceiling;
 	}
 
 	//! The anchor comes from trusted capture qualification. This arithmetic cannot establish its provenance.

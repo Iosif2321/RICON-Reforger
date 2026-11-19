@@ -132,6 +132,11 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	protected ref array<ref RICON_OpenRadioPairEndpoint> m_RelayInputEndpoints;
 	protected ref RICON_RadioQueryContext m_RelayInputContext;
 	protected ref RICON_RelayInputFrame m_RelayInputFrame;
+	protected ref RICON_RelayProcessedInput m_RelayProcessedInput;
+	protected RICON_RelayStationComponent m_RelayStationObject;
+	protected BaseRadioComponent m_RelayStationRadio;
+	protected ref array<RICON_JammerComponent> m_RelayJammers;
+	protected ref array<int> m_RelayNoiseSamples;
 	protected ref RICON_RelayInputSeries m_RelayInputSeries;
 	protected int m_iRelayFirstRxSampleIndex, m_iRelayNextOriginSequence;
 	protected string m_sRelayMappedTimebaseId;
@@ -144,6 +149,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	protected static const int RELAY_INPUT_MAX_AGE_MS = 250;
 	protected float m_fRelayInputReferenceDbm;
 	protected bool m_bRelayInputTaken;
+	protected bool m_bRelayInputProcessing;
 	protected ref RICON_RelayPcmHandoff m_RelayInput;
 	protected ref RICON_RelayRfOutput m_RelayOutput;
 	protected ref RICON_RelayPcmPath m_RelayPath;
@@ -356,7 +362,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 
 	//! Explicit bootstrap for one fixed directional station grant in this authority epoch.
 	RICON_RelayStationAuthority ConfigureRelayStationAuthority(RICON_RelayPcmPath path, RICON_RelayStationDirection direction,
-		RICON_LifecycleStateMachine lifecycle, RICON_MediaStreamOwner sourceOwner)
+		RICON_LifecycleStateMachine lifecycle, RICON_MediaStreamOwner sourceOwner, RICON_RelayStationComponent station = null)
 	{
 		if (!IsAuthority() || m_RelayStationAuthority || !m_MediaReceiverAuthority || !m_GameControllerLifecycle
 			|| !m_GameControllerLifecycle.MatchesLifecycle(lifecycle) || !m_TemporalAuthorityJournal
@@ -368,7 +374,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			|| !MatchesRelayPlayer(direction.m_iListenerPlayerId, direction.m_iListenerConnectionId,
 				direction.m_iListenerGeneration, direction.m_iListenerEntityId)) return null;
 		RICON_RelayStationAuthority authority = new RICON_RelayStationAuthority();
-		if (!authority.Configure(path, direction, lifecycle, sourceOwner, m_MediaReceiverAuthority, nowMs)) return null;
+		if (!authority.Configure(path, direction, lifecycle, sourceOwner, m_MediaReceiverAuthority, nowMs, station)) return null;
 		m_RelayStationAuthority = authority;
 		m_RelayLifecycle = lifecycle;
 		return authority;
@@ -384,13 +390,16 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			|| !stationTx || !recipientRx || !GetGame()) return false;
 		int nowMs = m_GameControllerLifecycle.ReadWireAuthorityTime(m_RelayLifecycle);
 		if (nowMs < 0 || nowMs >= profile.m_iValidUntilMs
-			|| profile.m_iValidUntilMs - nowMs < RICON_MediaPcmProfile.FRAME_DURATION_MS) return false;
+			|| profile.m_iValidUntilMs - nowMs < RICON_MediaPcmTestProfile.FRAME_DURATION_MS) return false;
 		RICON_RelayDestination destination = m_RelayStationAuthority.ReadDestinationAddress(path, nowMs);
 		if (!RelayPlayersCurrent(path, destination)) return false;
 		RICON_PairEndpoint tx = ObserveRelayEndpoint(stationTx);
 		RICON_PairEndpoint rx = ObserveRelayEndpoint(recipientRx);
 		RICON_WirelessLinkEvaluator evaluator = GetBandEvaluator(context.m_sBandId);
 		if (!tx || !rx || !evaluator || !evaluator.UsesFixedRfModels()) return false;
+		IEntity stationOwner = stationTx.m_Radio.GetOwner();
+		RICON_RelayStationComponent stationObject = RICON_RelayStationComponent.Cast(stationOwner.FindComponent(RICON_RelayStationComponent));
+		if (!stationObject || !stationObject.MatchesRadio(stationTx.m_Radio) || recipientRx.m_Radio.GetOwner() == stationOwner) return false;
 		RICON_StaticLosGeometryAuthority geometry = new RICON_StaticLosGeometryAuthority();
 		array<ref RICON_OpenRadioPairEndpoint> endpoints = {stationTx, recipientRx};
 		if (!geometry.Seal(GetGame().GetWorld(), m_RelayLifecycle, m_MediaReceiverAuthority, endpoints, profile, timebaseId, true)) return false;
@@ -419,6 +428,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		m_RelayPath = boundPath;
 		m_RelayDestination = destination;
 		m_RelayWireGrant = grant;
+		m_RelayStationObject = stationObject;
+		m_RelayStationRadio = stationTx.m_Radio;
 		m_iRelayFirstRxSampleIndex = firstRxSampleIndex;
 		m_bRelayOutputInstalled = true;
 		return true;
@@ -433,10 +444,10 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			|| m_bRelayConfiguring || !RICON_StaticLosChannel.ValidProfile(profile) || !context || timebaseId != m_RelayWireGrant.m_sTimebaseId
 			|| !RICON_Num.IsFinite(referenceDbm) || !sourceTx || !stationRx || !sourceTx.m_Profile) return false;
 		int nowMs = ReadRelayTime();
-		if (nowMs < 0 || profile.m_iValidUntilMs - Math.Max(nowMs, profile.m_iValidFromMs) < RICON_MediaPcmProfile.FRAME_DURATION_MS)
+		if (nowMs < 0 || profile.m_iValidUntilMs - Math.Max(nowMs, profile.m_iValidFromMs) < RICON_MediaPcmTestProfile.FRAME_DURATION_MS)
 			return false;
 		RICON_MediaStreamBinding source = m_RelayPath.m_UpstreamRoute.m_Source;
-		if (source.m_sProfileId != RICON_MediaPcmProfile.PROFILE_ID || !m_RelayStationAuthority.CanUseInput(m_RelayPath, nowMs)) return false;
+		if (source.m_sProfileId != RICON_MediaPcmTestProfile.PROFILE_ID || !m_RelayStationAuthority.CanUseInput(m_RelayPath, nowMs)) return false;
 		if (firstOriginSequence < -1 || (firstOriginSequence == -1 && (firstOriginSampleIndex != 0 || mappedCapture))
 			|| (seriesCapacity != 2 && !mappedCapture)) return false;
 
@@ -465,6 +476,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		RICON_PairEndpoint rx = ObserveRelayEndpoint(copies[1]);
 		if (!tx || !rx || !m_RelayStationAuthority.MatchesInputEndpoints(m_RelayPath,
 			tx.m_Observation, copies[0].m_iGeneration, rx.m_Observation, copies[1].m_iGeneration)) return false;
+		if (!RelayObjectCurrent() || !m_RelayStationObject.MatchesRadio(copies[1].m_Radio)
+			|| copies[0].m_Radio.GetOwner() == m_RelayStationObject.GetOwner()) return false;
 		RICON_StaticLosGeometryAuthority geometry = new RICON_StaticLosGeometryAuthority();
 		if (!geometry.Seal(GetGame().GetWorld(), m_RelayLifecycle, m_MediaReceiverAuthority, copies, profile, timebaseId, true)) return false;
 		if (!geometry.QualifiesFixedPair(tx, copies[0].m_iGeneration, rx, copies[1].m_iGeneration, timebaseId,
@@ -476,10 +489,35 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		m_RelayInputEndpoints = copies;
 		m_RelayInputContext = frozen.m_Context;
 		m_RelayInputFrame = new RICON_RelayInputFrame();
+		m_RelayProcessedInput = new RICON_RelayProcessedInput();
 		m_sRelayMappedTimebaseId = mappedTimebaseId;
 		m_iRelayInputSealedAtMs = nowMs;
 		m_fRelayInputReferenceDbm = referenceDbm;
 		m_bRelayInputTaken = false;
+		return true;
+	}
+
+	//! Fixed TEST_ONLY noise realization; each EW descriptor comes from a distinct classified game component.
+	bool ConfigureRelayInputEnvironment(array<RICON_JammerComponent> jammers, array<int> noiseSamples)
+	{
+		if (!IsAuthority() || !m_RelayInputFrame || m_RelayJammers || m_bRelayInputTaken || m_RelayWireReady || m_RelayWirePublication) return false;
+		if (!GetGame() || !GetGame().GetWorld()) return false;
+		if (!jammers || jammers.Count() > 64 || !RICON_SharedRxTestMixer.IsPcmWindow(noiseSamples)) return false;
+		bool nonzero;
+		foreach (int sample : noiseSamples) { if (sample != 0) nonzero = true; }
+		if (!nonzero) return false;
+		array<RICON_JammerComponent> sources = {};
+		foreach (RICON_JammerComponent jammer : jammers)
+		{
+			if (!jammer || !jammer.ReadEmission() || jammer.GetOwner().GetWorld() != GetGame().GetWorld()) return false;
+			sources.Insert(jammer);
+		}
+		int nowMs = ReadRelayTime();
+		if (nowMs < 0) return false;
+		m_RelayJammers = sources;
+		m_RelayNoiseSamples = {};
+		m_RelayNoiseSamples.InsertAll(noiseSamples);
+		m_iRelayInputSealedAtMs = nowMs;
 		return true;
 	}
 
@@ -577,6 +615,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	//! The returned block is for RX staging; the authoritative copy stays here.
 	RICON_QueuedMediaBlock TakeRelayInputBlock()
 	{
+		if (RelayInputBusy() || (m_RelayProcessedInput && m_RelayProcessedInput.HasPending())) return null;
 		if (!IsAuthority() || !m_RelayInputFrame || m_bRelayConfiguring) return null;
 		int nowMs = ReadRelayTime();
 		if (nowMs < 0 || RelayWireGate(nowMs) != "OK") return null;
@@ -637,16 +676,27 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	//! Вызывается перед извлечением локального решения, чтобы не сдвигать курсор при заполненной очереди.
 	bool CanOfferRelaySeriesPCM()
 	{
-		return IsAuthority() && m_RelayInputSeries && m_RelayInput && m_RelayInput.HasSeriesRoom()
-			&& !m_bRelayConfiguring && m_bRelayInputTaken && !m_RelaySharedInput;
+		return IsAuthority() && !RelayInputBusy() && m_RelayInputSeries && m_RelayInput && m_RelayInput.HasSeriesRoom()
+			&& !m_bRelayConfiguring && m_bRelayInputTaken && !m_RelaySharedInput
+			&& m_RelayProcessedInput && !m_RelayProcessedInput.HasPending();
 	}
 
 	//! Accept only the exact receiver decision for the consumed server block. Never accept caller-supplied PCM or budget.
 	string OfferRelayInputPCM(RICON_MediaPlayoutDecision decision)
 	{
+		if (RelayInputBusy()) return "WAIT";
+		if (IsAuthority() && m_RelayProcessedInput && m_RelayProcessedInput.HasPending()) return "WAIT";
 		ref RICON_RelayInputSeries series = m_RelayInputSeries;
 		if (series && !CanOfferRelaySeriesPCM()) return "NOT_READY";
+		m_bRelayInputProcessing = true;
 		string status = OfferRelayInputPCMOnce(decision);
+		CompleteRelayInputOffer(series, status);
+		m_bRelayInputProcessing = false;
+		return status;
+	}
+
+	protected void CompleteRelayInputOffer(RICON_RelayInputSeries series, string status)
+	{
 		if (series && m_RelayInputSeries == series)
 		{
 			if (status == "OK")
@@ -659,8 +709,45 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 				if (promoteMs >= 0) PromoteRelayReservation(promoteMs);
 				else if (m_RelayReservation && m_RelayReservation.Count() > 0) InvalidateRelayOutput();
 			}
-			else InvalidateRelayOutput();
+			else if (status != "WAIT") InvalidateRelayOutput();
 		}
+	}
+
+	//! No receiver decision is consumed here: retries use the private processed head only.
+	string RetryRelayInputPCM()
+	{
+		if (RelayInputBusy()) return "WAIT";
+		m_bRelayInputProcessing = true;
+		string status = RetryRelayInputPCMOnce();
+		m_bRelayInputProcessing = false;
+		return status;
+	}
+
+	protected bool RelayInputBusy()
+	{
+		return m_bRelayInputProcessing || (m_RelayProcessedInput && m_RelayProcessedInput.IsBusy());
+	}
+
+	protected string RetryRelayInputPCMOnce()
+	{
+		if (!IsAuthority() || !m_RelayProcessedInput || m_bRelayConfiguring) return "CLOSED";
+		if (!m_RelayProcessedInput.HasPending()) return "EMPTY";
+		int nowMs = ReadRelayTime();
+		if (nowMs < 0) return "REVOKED";
+		string gate = RelayWireGate(nowMs);
+		if (gate != "OK") return gate;
+		if (!m_RelayStationAuthority.CanObserveTime(nowMs) || !m_RelayStationAuthority.CanUseInput(m_RelayPath, nowMs))
+		{
+			InvalidateRelayOutput();
+			return "REVOKED";
+		}
+		ref RICON_RelayInputSeries series = m_RelayInputSeries;
+		ref RICON_RelayProcessedInput pending = m_RelayProcessedInput;
+		ref RICON_RelayPcmPath path = m_RelayPath;
+		string status = pending.Commit(m_RelayInput, path, nowMs);
+		if (m_RelayProcessedInput != pending || m_RelayPath != path) return "REVOKED";
+		CompleteRelayInputOffer(series, status);
+		if (status != "OK" && status != "WAIT" && status != "BAD_TIME") InvalidateRelayOutput();
 		return status;
 	}
 
@@ -668,6 +755,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	{
 		if (!IsAuthority() || !m_RelayInputFrame || !m_RelayInput || !m_bRelayInputTaken
 			|| m_RelaySharedInput || m_bRelayConfiguring) return "CLOSED";
+		if (!m_RelayProcessedInput) return "CLOSED";
+		if (m_RelayProcessedInput.HasPending()) return "WAIT";
 		int nowMs = ReadRelayTime();
 		if (nowMs < 0) return "REVOKED";
 		string gate = RelayWireGate(nowMs);
@@ -691,12 +780,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		RICON_WirelessLinkEvaluator evaluator = GetBandEvaluator(m_RelayInputContext.m_sBandId);
 		ref RICON_StaticLosGeometryAuthority geometry = m_RelayInputGeometry;
 		ref RICON_RadioQueryContext context = m_RelayInputContext;
-		m_bRelayConfiguring = true;
-		RICON_LinkBudget budget = RICON_RelayRfInput.Evaluate(tx, txGeneration, rx, rxGeneration, context, evaluator,
-			geometry, m_RelayWireGrant.m_sTimebaseId, block.m_iCaptureLowerMs, block.m_iCaptureUpperMs);
-		m_bRelayConfiguring = false;
-		if (m_RelayPath != path || m_RelayInputGeometry != geometry) return "REVOKED";
-		if (!budget) return "INPUT_RF_UNCOVERED";
+		string timebaseId = m_RelayWireGrant.m_sTimebaseId;
+		ref array<int> noiseSamples = m_RelayNoiseSamples;
 		int first;
 		array<int> pcm;
 		RICON_RelayPcmOrigin origin;
@@ -718,7 +803,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		{
 			RICON_PcmResampler8To48 up = new RICON_PcmResampler8To48();
 			if (!up.Reset(block.m_iFirstSampleIndex)) return "INVALID_INPUT_FRAME";
-			pcm = up.Process(block.m_iFirstSampleIndex, RICON_MediaPcmProfile.DecodeBytes(block.m_Bytes), first);
+			pcm = up.Process(block.m_iFirstSampleIndex, RICON_MediaPcmTestProfile.DecodeBytes(block.m_Bytes), first);
 			origin = new RICON_RelayPcmOrigin();
 			origin.m_iSequence = block.m_iSequence;
 			origin.m_iFirstSampleIndex = block.m_iFirstSampleIndex;
@@ -728,15 +813,55 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			origin.m_iRxReadyMs = rxReadyMs;
 			origin.m_iDeadlineMs = deadlineMs;
 		}
-		RICON_SharedRxMixResult mix = RICON_RelayRfInput.Mix(route, permit, first, pcm, budget,
-			m_fRelayInputReferenceDbm, null);
+		m_bRelayConfiguring = true;
+		RICON_SharedRxMixResult mix;
+		if (m_RelayJammers)
+		{
+			RICON_RxEnvironmentInput environmentInput = new RICON_RxEnvironmentInput();
+			environmentInput.m_sTimebaseId = timebaseId;
+			environmentInput.m_iSessionEpoch = route.m_Source.m_iSessionEpoch;
+			environmentInput.m_iRevision = origin.m_iSequence + 1;
+			environmentInput.m_iObservedAtMs = origin.m_iCaptureFromMs;
+			if (origin.m_PreviousInput) environmentInput.m_iObservedAtMs = origin.m_PreviousInput.m_iCaptureFromMs;
+			environmentInput.m_iTtlMs = origin.m_iCaptureUntilMs - environmentInput.m_iObservedAtMs;
+			environmentInput.m_Receiver = rx.m_Observation;
+			environmentInput.m_Profile = rx.m_Profile;
+			environmentInput.m_Context = context;
+			environmentInput.m_Limits = new RICON_RxEnvironmentLimits();
+			environmentInput.m_Limits.m_iMaxEmitters = 64;
+			environmentInput.m_Limits.m_iMaxBandsPerEmitter = 64;
+			foreach (RICON_JammerComponent jammer : m_RelayJammers)
+			{
+				RICON_RfNoiseEmitter emission;
+				if (jammer) emission = jammer.ReadEmission();
+				environmentInput.m_aEmitters.Insert(emission);
+			}
+			RICON_RxEnvironment environment = RICON_RxEnvironmentService.Evaluate(environmentInput, evaluator);
+			RICON_RelayRfInputEnvironmentFrame frame = RICON_RelayRfInput.EvaluateEnvironment(route, tx, txGeneration, rx, rxGeneration,
+				context, evaluator, geometry, timebaseId, origin, nowMs, environment);
+			if (frame) mix = RICON_RelayRfInput.MixEnvironment(frame, route, permit, first, pcm, m_fRelayInputReferenceDbm, noiseSamples, nowMs);
+		}
+		else
+		{
+			RICON_LinkBudget budget = RICON_RelayRfInput.Evaluate(tx, txGeneration, rx, rxGeneration, context, evaluator,
+				geometry, timebaseId, block.m_iCaptureLowerMs, block.m_iCaptureUpperMs);
+			if (budget) mix = RICON_RelayRfInput.Mix(route, permit, first, pcm, budget, m_fRelayInputReferenceDbm, null);
+		}
+		m_bRelayConfiguring = false;
+		if (m_RelayPath != path || m_RelayInputGeometry != geometry) return "REVOKED";
 		if (!mix) return "INVALID_INPUT_PCM";
 
 		int commitMs = ReadRelayTime();
 		if (commitMs < 0 || m_RelayPath != path || !m_RelayInput) return "REVOKED";
 		if (RelayWireGate(commitMs) != "OK" || !m_RelayStationAuthority.CanObserveTime(commitMs)
 			|| !m_RelayStationAuthority.CanUseInput(path, commitMs)) return "REVOKED";
-		return CommitRelayRx(mix, origin, commitMs);
+		ref RICON_RelayProcessedInput pending = m_RelayProcessedInput;
+		ref RICON_RelayPcmHandoff handoff = m_RelayInput;
+		if (!pending || !pending.Stage(mix, origin, commitMs)) return "INVALID_INPUT_PCM";
+		if (m_RelayProcessedInput != pending || m_RelayInput != handoff || m_RelayPath != path) return "REVOKED";
+		string status = pending.Commit(handoff, path, commitMs);
+		if (m_RelayProcessedInput != pending || m_RelayInput != handoff || m_RelayPath != path) return "REVOKED";
+		return status;
 	}
 
 	//! Called by the trusted world owner before modifying a sealed pose or RF environment.
@@ -763,6 +888,12 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		m_RelayInputEndpoints = null;
 		m_RelayInputContext = null;
 		m_RelayInputFrame = null;
+		if (m_RelayProcessedInput) m_RelayProcessedInput.Clear();
+		m_RelayProcessedInput = null;
+		m_RelayJammers = null;
+		m_RelayNoiseSamples = null;
+		m_RelayStationObject = null;
+		m_RelayStationRadio = null;
 		if (m_RelayInputSeries) m_RelayInputSeries.Close();
 		m_RelayInputSeries = null;
 		m_sRelayMappedTimebaseId = "";
@@ -940,7 +1071,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 			|| m_bRelayInputTaken || m_iRelayGridDeadlineMs != 0 || m_bRelayConfiguring || m_bRelayMediaSubmitting) return false;
 		int nowMs = ReadRelayTime();
 		if (nowMs < 0 || firstEmitMs <= nowMs || deadlineMs <= firstEmitMs
-			|| deadlineMs - firstEmitMs <= RICON_MediaPcmProfile.FRAME_DURATION_MS || RelayWireGate(nowMs) != "OK") return false;
+			|| deadlineMs - firstEmitMs <= RICON_MediaPcmTestProfile.FRAME_DURATION_MS || RelayWireGate(nowMs) != "OK") return false;
 		if (!m_RelayOutput.EnableFixedGrid(firstEmitMs)) return false;
 		m_iRelayGridDeadlineMs = deadlineMs;
 		return true;
@@ -949,6 +1080,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 	//! Один синхронный вызов адресной отправки; SUBMITTED не означает доставку.
 	string SubmitRelayWireMedia()
 	{
+		if (RelayInputBusy()) return "WAIT";
 		if (!IsAuthority() || !m_RelayOutput) return "CLOSED";
 		if (m_bRelayMediaSubmitting) return "BUSY";
 		m_bRelayMediaSubmitting = true;
@@ -967,6 +1099,11 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		if (RetireExpiredRelayInput(gateMs)) return "EXPIRED";
 		string gate = RelayWireGate(gateMs);
 		if (gate != "OK") return gate;
+		if (m_RelayProcessedInput && m_RelayProcessedInput.HasPending())
+		{
+			string retry = RetryRelayInputPCM();
+			if (retry != "OK" && retry != "WAIT") return retry;
+		}
 		SCR_PlayerController recipient;
 		RICON_RelayAddressedFrame addressed;
 		string status = TakeRelayForRemote(recipient, addressed);
@@ -994,7 +1131,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 
 	protected bool RetireExpiredRelayInput(int nowMs)
 	{
-		if (!m_RelayInputSeries || !m_bRelayInputTaken || nowMs < m_iRelayInputDeadlineMs) return false;
+		if ((!m_RelayInputSeries && (!m_RelayProcessedInput || !m_RelayProcessedInput.HasPending()))
+			|| !m_bRelayInputTaken || nowMs < m_iRelayInputDeadlineMs) return false;
 		InvalidateRelayOutput();
 		return true;
 	}
@@ -1077,7 +1215,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 
 	protected int ReadRelayTime()
 	{
-		if (m_GameControllerLifecycle && RelayPlayersCurrent(m_RelayPath, m_RelayDestination)
+		if (m_GameControllerLifecycle && RelayObjectCurrent() && RelayPlayersCurrent(m_RelayPath, m_RelayDestination)
 			&& (!m_RelayInputGeometry || m_RelayInputGeometry.IsCurrent())
 			&& (!m_RelayFanoutSink || (m_RelayInputFanout && m_RelayInputFanout.HasRelaySink(m_RelayFanoutSink)
 				&& (m_sRelayMappedTimebaseId.IsEmpty() || RelayMappedUpstreamCurrent()))))
@@ -1087,6 +1225,14 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
 		}
 		InvalidateRelayOutput();
 		return -1;
+	}
+
+	protected bool RelayObjectCurrent()
+	{
+		if (!m_RelayStationObject || !m_RelayStationObject.MatchesRadio(m_RelayStationRadio)) return false;
+		if (!m_RelayInputEndpoints) return true;
+		return m_RelayStationObject.MatchesRadio(m_RelayInputEndpoints[1].m_Radio)
+			&& m_RelayInputEndpoints[0].m_Radio.GetOwner() != m_RelayStationObject.GetOwner();
 	}
 
 	protected bool RelayPlayersCurrent(RICON_RelayPcmPath path, RICON_RelayDestination destination)
@@ -1522,6 +1668,8 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
         return true;
     }
 
+    protected int TemporalRosterNetworkId() { return m_iOpenRadioNetworkId; }
+
     //! Source-only entrypoint: the owner calls the real PairService with this registered evaluator.
     RICON_TemporalPublicationResult PublishTemporalPairs2(RICON_TemporalProducerTick tick, RICON_LifecycleStateMachine lifecycle, int lifecycleNowMs)
     {
@@ -1534,7 +1682,7 @@ class RICON_CommsManagerComponent : SCR_BaseGameModeComponent
         if (m_GameControllerLifecycle)
         {
             if (!tick.m_ListenerRoster || !tick.m_ListenerRoster.UsesGameAuthority(m_GameControllerLifecycle,
-                m_MediaReceiverAuthority, m_iOpenRadioNetworkId)) return ProducerFailure("CONTROLLER_ROSTER_REQUIRED");
+                m_MediaReceiverAuthority, TemporalRosterNetworkId())) return ProducerFailure("CONTROLLER_ROSTER_REQUIRED");
         }
         if (tick.m_PairInput.m_Context.m_sBandId != m_sTemporalProducerBandId)
             return ProducerFailure("BAND_MISMATCH");

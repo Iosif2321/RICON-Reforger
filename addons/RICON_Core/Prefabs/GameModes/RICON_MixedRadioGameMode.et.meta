@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{F3CCABDC54C9877A}Prefabs/GameModes/RICON_MixedRadioGameMode.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

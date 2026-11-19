@@ -124,7 +124,7 @@ class RICON_MediaIngress
 		RICON_LifecycleLease lease = CurrentLease(m_Binding, m_Lifecycle, nowMs);
 		if (!lease) return RICON_EMediaIngressDecision.LEASE_INACTIVE;
 		if (captureLowerMs < lease.m_iIssuedAtMs || captureUpperMs < captureLowerMs || captureUpperMs > nowMs
-			|| captureUpperMs - lease.m_iIssuedAtMs >= lease.m_iTtlMs)
+			|| !lease.IsAuthorityLiveAt(captureUpperMs))
 			return RICON_EMediaIngressDecision.OUTSIDE_LEASE;
 		windowDecision = m_Window.Accept(m_Binding.m_iStreamGeneration, sequence, payload, firstSampleIndex, sampleCount);
 		if (windowDecision != RICON_EMediaWindowDecision.ACCEPTED) return RICON_EMediaIngressDecision.WINDOW_REJECTED;
