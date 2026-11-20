@@ -105,6 +105,7 @@ class RICON_PairServiceInput
 	ref RICON_PairServiceLimits m_Limits;
 	ref RICON_RadioQueryContext m_Context;
 	bool m_bUseRxEnvironments;
+	bool m_bPublishCleanRxEnvironments = true;
 	bool m_bExcludeOwnReceivers;
 	ref array<ref RICON_RxEnvironment> m_aRxEnvironments = {};
 	ref array<ref RICON_TransmissionBinding> m_aBindings = {};
@@ -385,9 +386,9 @@ class RICON_PairService
 			if (!environment || environment.m_iExcludedEmissionId != 0 || !environment.IsCurrentFor(rxEndpoint.m_Observation, rxEndpoint.m_Profile, input.m_Context,
 				input.m_iSessionEpoch, input.m_iNowMs)) return row;
 			if (l.m_iRxGeneration > 0 && environment.m_iRxGeneration > 0 && environment.m_iRxGeneration != l.m_iRxGeneration) return row;
-			row.m_bHasRxEnvironment = true;
-			row.m_iRxEnvironmentRevision = environment.m_iRevision;
-			if (l.m_iRxGeneration > 0 && environment.m_iRxGeneration == l.m_iRxGeneration
+			row.m_bHasRxEnvironment = input.m_bPublishCleanRxEnvironments || environment.m_bHasInterference;
+			if (row.m_bHasRxEnvironment) row.m_iRxEnvironmentRevision = environment.m_iRevision;
+			if (row.m_bHasRxEnvironment && l.m_iRxGeneration > 0 && environment.m_iRxGeneration == l.m_iRxGeneration
 				&& RICON_TemporalSnapshots.ValidKey(environment.m_sTimebaseId)
 				&& environment.m_iObservedAtMs <= int.MAX - environment.m_iTtlMs)
 			{

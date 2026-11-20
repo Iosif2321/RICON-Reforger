@@ -1,0 +1,29 @@
+Vehicle : "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.et" {
+ ID "054A6CB3580A6BDE"
+ components {
+  SCR_EditableVehicleComponent "{50DEB7C26B5EB312}" {
+   m_UIInfo SCR_EditableVehicleUIInfo "{5298E609432D192D}" {
+    Name "RICON Relay - Ural Command Vehicle"
+   }
+  }
+  RICON_RelayStationComponent "{B462D974D3F4492E}" {}
+  BaseRadioComponent "{51EAE036CCD0A08E}" {
+   "Turned on" 1
+   "Encryption key" ""
+   Transceivers {
+    RadioTransceiver "{DE86D8D5B7504B73}" {
+     ChannelFrequency 38000
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+    RadioTransceiver "{4AC59CCBF0BEEAAE}" {
+     ChannelFrequency 38200
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+   }
+  }
+ }
+}

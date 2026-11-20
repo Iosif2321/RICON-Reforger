@@ -11,21 +11,21 @@ SCR_LoadoutManager : "{B7E5D7F4864D81C0}Prefabs/MP/Managers/Loadouts/LoadoutMana
 SCR_SpawnPoint : "{5392C4D80E4B18F8}Prefabs/MP/Spawning/SpawnPoint_FFA.et" {
  coords 112 1 128
 }
-GenericEntity : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
+GenericEntity RICON_Pocket_1 : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
  coords 108 1 129
 }
-GenericEntity : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
+GenericEntity RICON_Pocket_2 : "{40B8B559FB29ADCA}Prefabs/Radios/RICON_DemoPocket.et" {
  coords 109 1 129
 }
-GenericEntity : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
+GenericEntity RICON_Manpack_1 : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
  coords 108 1 132
 }
-GenericEntity : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
+GenericEntity RICON_Manpack_2 : "{44735C29D1FEA086}Prefabs/Radios/RICON_DemoManpack.et" {
  coords 109 1 132
 }
-Vehicle : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
+Vehicle RICON_Vehicle_1 : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
  coords 112 1 150
 }
-Vehicle : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
+Vehicle RICON_Vehicle_2 : "{FD1338A6D0E6FE85}Prefabs/Radios/RICON_DemoVehicle.et" {
  coords 130 1 150
 }

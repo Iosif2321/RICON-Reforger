@@ -1,0 +1,11 @@
+SCR_DestructibleBuildingEntity : "{F6FC9703E7F4FDCA}Prefabs/Structures/Military/Houses/ControlTowerMilitary_E_01/ControlTowerMilitary_E_01.et" {
+ ID "7999B43750B8C72F"
+ components {
+  SCR_EditableEntityComponent "{B6BDDD3F27B7177A}" : "{996046FE206C699A}Prefabs/Editor/Components/Default_SCR_EditableEntityComponent.ct" {
+   m_UIInfo SCR_EditableEntityUIInfo "{933C0BE653C12F36}" {
+    Name "RICON EW - Fixed Station Building"
+   }
+  }
+  RICON_JammerComponent "{98395DBD4804CC17}" {}
+ }
+}

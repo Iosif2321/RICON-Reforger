@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{BD03116B994A5FC6}PrefabsEditable/RICON/E_RICON_JammerZone.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

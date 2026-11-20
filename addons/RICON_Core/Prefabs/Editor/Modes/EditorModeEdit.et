@@ -1,0 +1,15 @@
+SCR_EditorModeEntity {
+ ID "54F0A77282A3AA3B"
+ components {
+  SCR_AttributesManagerEditorComponent "{54C8DACDCD4AE14E}" {
+   m_AttributeLists + {
+    SCR_EditorAttributeList "{BBCBA3DA2113FE8F}" : "{9283B9EE81A6E093}Configs/Editor/AttributeLists/RICON_RfInfrastructure.conf" {}
+   }
+  }
+  SCR_PlacingEditorComponent "{5145484399BAA2E7}" {
+   m_Registries + {
+    SCR_PlaceableEntitiesRegistry "{A1156E6B49871862}" : "{2BDECA3D43D74425}Configs/Editor/PlaceableEntities/RICON_RfInfrastructure.conf" {}
+   }
+  }
+ }
+}

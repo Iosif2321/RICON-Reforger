@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{8C5427624904BEDB}PrefabsEditable/RICON/E_RICON_Relay_ControlTower.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

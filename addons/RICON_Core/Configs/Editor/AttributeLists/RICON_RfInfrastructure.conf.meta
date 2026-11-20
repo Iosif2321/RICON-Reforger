@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{9283B9EE81A6E093}Configs/Editor/AttributeLists/RICON_RfInfrastructure.conf"
+ Configurations {
+  CONFResourceClass PC {}
+  CONFResourceClass HEADLESS : PC {}
+ }
+}

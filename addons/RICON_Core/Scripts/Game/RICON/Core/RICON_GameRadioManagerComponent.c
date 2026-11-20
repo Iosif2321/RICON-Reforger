@@ -119,6 +119,9 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 	protected int m_iMixedRadioTuneKHz;
 	[Attribute("4096", UIWidgets.EditBox, "Maximum RF pair computations per mixed-equipment sample")]
 	protected int m_iMixedRadioPairBudget;
+	protected ref map<string, ref RICON_GameRadioHardwareSettings> m_MixedRadioHardware;
+	protected ref map<IEntity, ref RICON_GmJammerRole> m_GmJammers = new map<IEntity, ref RICON_GmJammerRole>();
+	protected int m_iGmEmissionHighWater;
 	[Attribute("1500", UIWidgets.EditBox, "Bounded server PTT lease milliseconds; no automatic renewal")]
 	protected int m_iInventoryPttTtlMs;
 
@@ -233,6 +236,13 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 			FailInventory("PUBLIC_DOMAIN_UNAVAILABLE");
 			return;
 		}
+		m_MixedRadioHardware = null;
+		if (m_bInventoryMixedEquipment && !RICON_GameRadioEquipment.ReadHardwareProfiles(m_MixedRadioHardware))
+		{
+			ReportInventory("INVALID_RADIO_HARDWARE_CONFIG");
+			return;
+		}
+		if (m_MixedRadioHardware) Print("[RICON_GAME_RADIO_INVENTORY] hardwareConfig=ricon-radio-hardware.json");
 		ref RICON_GameRadioControlPolicy policy;
 		if (m_iInventoryNetworkId > 0)
 		{
@@ -1217,7 +1227,7 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 		RICON_PairServiceInput input = tick.m_PairInput;
 		RICON_RadioQueryContext context = input.m_Context;
 		if (!context || context.m_sModelId != RICON_FreeSpaceModel.MODEL_ID || context.m_sNoiseEnvironmentId != "none"
-			|| context.m_bHasInterference || input.m_bUseRxEnvironments || tick.m_sMode != "SERVER") return null;
+			|| context.m_bHasInterference || tick.m_sMode != "SERVER") return null;
 		RICON_WirelessLinkEvaluator evaluator = GetBandEvaluator(context.m_sBandId);
 		if (!evaluator || !evaluator.UsesFixedRfModels() || !publication.MatchesCurrentMediaLink(linkId, route, committed.m_Lifecycle, nowMs)) return null;
 		RICON_TemporalRfBudget budget = publication.ReadMediaRfBudget(linkId, route, committed.m_Lifecycle, nowMs);
@@ -1358,6 +1368,7 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 		string projected = RICON_OpenRadioPairProjector.BuildFromGameEmissions(m_InventoryLifecycle, emissions,
 			m_InventoryReceivers, GetGame().GetWorld(), scope, endpoints, listeners, sampleMs, input);
 		if (projected != "OK") return projected;
+		if (!BuildGmRxEnvironments(input)) return "INVALID_GM_RX_ENVIRONMENT";
 		input.m_bExcludeOwnReceivers = m_bInventoryMixedEquipment;
 		RICON_StaticLosProfile sample = RICON_StaticLosGeometryAuthority.CopyProfile(profile.m_Los);
 		sample.m_iValidFromMs = sampleMs;
@@ -1375,8 +1386,93 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 		ref RICON_RadioRfProfile profile = RICON_OpenRadioPairProjector.CopyProfile(channel.m_Radio);
 		profile.m_iDeviceId = deviceId;
 		profile.m_iTransceiverIndex = index;
-		if (m_bInventoryMixedEquipment && !RICON_GameRadioEquipment.ApplyHardware(RICON_GameRadioEquipment.ReadType(radio), profile)) return null;
+		if (m_bInventoryMixedEquipment && !RICON_GameRadioEquipment.ApplyHardware(RICON_GameRadioEquipment.ReadType(radio), profile, RICON_GameRadioEquipment.ReadOverride(radio, m_MixedRadioHardware))) return null;
 		return profile;
+	}
+
+	static RICON_GameRadioManagerComponent FindGmManager()
+	{
+		RICON_GameRadioManagerComponent manager = RICON_GameRadioManagerComponent.Cast(GetInstance());
+		if (!manager || !manager.m_bInventoryOpenRadioAdmissions) return null;
+		return manager;
+	}
+
+	float ReadGmJammerField(IEntity target, RICON_EGmRfField field)
+	{
+		RICON_GmJammerRole role = m_GmJammers.Get(target);
+		if (!role) role = new RICON_GmJammerRole(target);
+		return role.ReadField(field);
+	}
+
+	bool WriteGmJammerField(IEntity target, RICON_EGmRfField field, float value)
+	{
+		if (!IsAuthority() || !RICON_GmJammerRole.IsTarget(target) || target.GetWorld() != GetOwner().GetWorld()) return false;
+		RICON_GmJammerRole role = m_GmJammers.Get(target);
+		if (role) return role.SetField(field, value);
+		role = new RICON_GmJammerRole(target);
+		if (!role.SetField(field, value) || m_iGmEmissionHighWater >= int.MAX - 1) return false;
+		m_iGmEmissionHighWater++;
+		role.m_iId = m_iGmEmissionHighWater;
+		m_GmJammers.Set(target, role);
+		return true;
+	}
+
+	protected bool BuildGmRxEnvironments(RICON_PairServiceInput input)
+	{
+		if (m_GmJammers.IsEmpty()) return true;
+		array<IEntity> active = {};
+		for (int i = m_GmJammers.Count() - 1; i >= 0; i--)
+		{
+			IEntity source = m_GmJammers.GetKey(i);
+			if (!RICON_GmJammerRole.IsTarget(source))
+				m_GmJammers.RemoveElement(i);
+			else if (m_GmJammers.GetElement(i).m_bEnabled)
+				active.Insert(source);
+		}
+		if (active.IsEmpty()) return true;
+		RICON_RxEnvironmentLimits limits = new RICON_RxEnvironmentLimits();
+		limits.m_iMaxEmitters = 4096;
+		limits.m_iMaxBandsPerEmitter = 1;
+		RICON_LinkEvaluator evaluator = GetBandEvaluator(input.m_Context.m_sBandId);
+		bool hasInterference;
+		foreach (RICON_PairEndpoint rx : input.m_aEndpoints)
+		{
+			RICON_RxEnvironmentInput sample = new RICON_RxEnvironmentInput();
+			sample.m_iSessionEpoch = input.m_iSessionEpoch;
+			sample.m_iRevision = Math.Max(1, m_iGameRfAttempt);
+			sample.m_iObservedAtMs = input.m_iNowMs;
+			sample.m_iTtlMs = m_iInventoryPollMs;
+			sample.m_Receiver = rx.m_Observation;
+			sample.m_Profile = rx.m_Profile;
+			sample.m_Limits = limits;
+			sample.m_Context = input.m_Context;
+			foreach (IEntity entity : active)
+			{
+				RICON_GmJammerRole role = m_GmJammers.Get(entity);
+				vector origin = entity.GetOrigin();
+				if (role.m_fRadiusM > 0 && vector.Distance(origin, rx.m_Observation.m_vAntennaPos) > role.m_fRadiusM) continue;
+				sample.m_aEmitters.Insert(role.ReadEmission(origin));
+			}
+			RICON_RxEnvironment environment = RICON_RxEnvironmentService.Evaluate(sample, evaluator);
+			if (!environment.m_bValid) return false;
+			if (environment.m_bHasInterference)
+			{
+				hasInterference = true;
+				// Preserve the existing PCM proof for clean receivers. Noise-aware wire coverage is a separate gate.
+				foreach (RICON_PairListener listener : input.m_aListeners)
+				{
+					if (listener.m_iDeviceId != environment.m_iRxDeviceId || listener.m_iTransceiverIndex != environment.m_iRxTransceiverIndex) continue;
+					environment.m_iRxGeneration = listener.m_iRxGeneration;
+					environment.m_sTimebaseId = "game-open-rf";
+					break;
+				}
+			}
+			input.m_aRxEnvironments.Insert(environment);
+		}
+		if (!hasInterference) input.m_aRxEnvironments.Clear();
+		input.m_bUseRxEnvironments = hasInterference;
+		input.m_bPublishCleanRxEnvironments = false;
+		return true;
 	}
 
 	bool OwnsInventoryLifecycle(RICON_LifecycleStateMachine lifecycle, int expectedEpoch)
@@ -1733,6 +1829,11 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 		m_bInventoryStopping = false;
 	}
 
-	override void OnGameEnd() { StopInventory(); super.OnGameEnd(); }
+	override void OnGameEnd()
+	{
+		m_GmJammers.Clear();
+		StopInventory();
+		super.OnGameEnd();
+	}
 	override void OnDelete(IEntity owner) { StopInventory(); super.OnDelete(owner); }
 }

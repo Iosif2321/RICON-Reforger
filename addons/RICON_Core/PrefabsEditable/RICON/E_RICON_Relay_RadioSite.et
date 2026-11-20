@@ -1,0 +1,29 @@
+GenericEntity : "{ABA12EC2F6D0F778}Prefabs/Props/Military/Compositions/USSR/RadioStation_USSR.et" {
+ ID "989C83624C21E088"
+ components {
+  SCR_EditableEntityComponent "{A0907FF20D0FDA62}" : "{996046FE206C699A}Prefabs/Editor/Components/Default_SCR_EditableEntityComponent.ct" {
+   m_UIInfo SCR_EditableEntityUIInfo "{B2328FD9406A944E}" {
+    Name "RICON Relay - Field Radio Station"
+   }
+  }
+  RICON_RelayStationComponent "{1F31F5A12B782C06}" {}
+  BaseRadioComponent "{FBF9747C900DFF74}" {
+   "Turned on" 1
+   "Encryption key" ""
+   Transceivers {
+    RadioTransceiver "{1FC43E3CE819E383}" {
+     ChannelFrequency 38000
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+    RadioTransceiver "{D08B05D2683FCF5F}" {
+     ChannelFrequency 38200
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+   }
+  }
+ }
+}

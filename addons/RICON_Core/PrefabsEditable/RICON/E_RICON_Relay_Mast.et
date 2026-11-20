@@ -1,0 +1,29 @@
+GenericEntity : "{063451452B71ED11}Prefabs/Props/Military/Antennas/Antenna_R142/Antenna_R142_01.et" {
+ ID "8344BDC316182C98"
+ components {
+  SCR_EditableEntityComponent "{B01F255BDD8B559D}" : "{996046FE206C699A}Prefabs/Editor/Components/Default_SCR_EditableEntityComponent.ct" {
+   m_UIInfo SCR_EditableEntityUIInfo "{508FE533B684B1C5}" {
+    Name "RICON Relay - R-142 Antenna Mast"
+   }
+  }
+  RICON_RelayStationComponent "{FD7890DEDC99E3D2}" {}
+  ScriptedRadioComponent "{5CB8818C71F12C73}" {
+   "Turned on" 1
+   "Encryption key" ""
+   Transceivers {
+    RadioTransceiver "{80371A19960048D9}" {
+     ChannelFrequency 38000
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+    RadioTransceiver "{BA7C2AA80E80A0EA}" {
+     ChannelFrequency 38200
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+   }
+  }
+ }
+}

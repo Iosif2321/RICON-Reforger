@@ -1,0 +1,11 @@
+GenericEntity : "{B4F2701CBBE49C48}Prefabs/Props/Military/Antennas/Antenna_RC292_01.et" {
+ ID "E2597611C5D0CF08"
+ components {
+  SCR_EditableEntityComponent "{A8090FB106F8C281}" : "{996046FE206C699A}Prefabs/Editor/Components/Default_SCR_EditableEntityComponent.ct" {
+   m_UIInfo SCR_EditableEntityUIInfo "{A6C93EEF8A217B9F}" {
+    Name "RICON Jammer Zone — RC-292"
+   }
+  }
+  RICON_JammerComponent "{E9FE800AB80D72A2}" {}
+ }
+}

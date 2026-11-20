@@ -1,0 +1,29 @@
+SCR_DestructibleBuildingEntity : "{F6FC9703E7F4FDCA}Prefabs/Structures/Military/Houses/ControlTowerMilitary_E_01/ControlTowerMilitary_E_01.et" {
+ ID "02E18D8E1DFDDF2F"
+ components {
+  SCR_EditableEntityComponent "{DE4418C79AAB029D}" : "{996046FE206C699A}Prefabs/Editor/Components/Default_SCR_EditableEntityComponent.ct" {
+   m_UIInfo SCR_EditableEntityUIInfo "{9988141E71EF2AD6}" {
+    Name "RICON Relay - Communications Building"
+   }
+  }
+  RICON_RelayStationComponent "{197B5E18781A4327}" {}
+  BaseRadioComponent "{DC5FDFB24ACFC877}" {
+   "Turned on" 1
+   "Encryption key" ""
+   Transceivers {
+    RadioTransceiver "{27D74078E246327C}" {
+     ChannelFrequency 38000
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+    RadioTransceiver "{5B705203CF9BD8E1}" {
+     ChannelFrequency 38200
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
+   }
+  }
+ }
+}

@@ -16,8 +16,69 @@ class RICON_GameRadioEquipmentComponent : ScriptComponent
 	RICON_EGameRadioEquipment ReadEquipment() { return m_eEquipment; }
 }
 
+class RICON_GameRadioHardwareSettings
+{
+	float m_fTxPowerDbm, m_fTxGainDbi, m_fRxGainDbi, m_fRxNoiseFigureDb, m_fRxSensitivityDbm;
+
+	bool Read(JsonLoadContext json, out string key)
+	{
+		if (!json.StartObject()) return false;
+		bool hasId = json.DoesKeyExist("id");
+		bool hasPrefab = json.DoesKeyExist("prefab");
+		string selector;
+		string field = "prefab";
+		if (hasId) field = "id";
+		bool valid = hasId != hasPrefab && json.ReadValue(field, selector) && !selector.IsEmpty()
+			&& json.ReadValue("txPowerDbm", m_fTxPowerDbm) && json.ReadValue("txGainDbi", m_fTxGainDbi)
+			&& json.ReadValue("rxGainDbi", m_fRxGainDbi) && json.ReadValue("rxNoiseFigureDb", m_fRxNoiseFigureDb)
+			&& json.ReadValue("rxSensitivityDbm", m_fRxSensitivityDbm)
+			&& RICON_Num.IsFinite(m_fTxPowerDbm) && RICON_Num.IsFinite(m_fTxGainDbi)
+			&& RICON_Num.IsFinite(m_fRxGainDbi) && RICON_Num.IsFinite(m_fRxNoiseFigureDb) && m_fRxNoiseFigureDb >= 0
+			&& RICON_Num.IsFinite(m_fRxSensitivityDbm);
+		key = field + ":" + selector;
+		return json.EndObject() && valid;
+	}
+}
+
 class RICON_GameRadioEquipment
 {
+	static const string HARDWARE_PATH = "$profile:ricon-radio-hardware.json";
+
+	static bool ReadHardwareProfiles(out map<string, ref RICON_GameRadioHardwareSettings> profiles)
+	{
+		profiles = null;
+		if (!FileIO.FileExists(HARDWARE_PATH)) return true;
+		JsonLoadContext json = new JsonLoadContext();
+		int schema, count;
+		if (!json.LoadFromFile(HARDWARE_PATH) || !json.ReadValue("schema", schema) || schema != 1
+			|| !json.StartArray("radios", count) || count < 0) return false;
+		map<string, ref RICON_GameRadioHardwareSettings> candidate = new map<string, ref RICON_GameRadioHardwareSettings>();
+		for (int index = 0; index < count; index++)
+		{
+			RICON_GameRadioHardwareSettings hardware = new RICON_GameRadioHardwareSettings();
+			string key;
+			if (!hardware.Read(json, key) || candidate.Contains(key)) return false;
+			candidate.Insert(key, hardware);
+		}
+		if (!json.EndArray()) return false;
+		profiles = candidate;
+		foreach (string key, RICON_GameRadioHardwareSettings hardware : candidate)
+			PrintFormat("[RICON_RADIO_HARDWARE] entry=%1 txDbm=%2", key, hardware.m_fTxPowerDbm);
+		return true;
+	}
+
+	static RICON_GameRadioHardwareSettings ReadOverride(BaseRadioComponent radio, map<string, ref RICON_GameRadioHardwareSettings> profiles)
+	{
+		if (!radio || !profiles) return null;
+		IEntity owner = radio.GetOwner();
+		if (!owner || owner.IsDeleted()) return null;
+		RICON_GameRadioHardwareSettings instance = profiles.Get("id:" + owner.GetName());
+		if (instance) return instance;
+		EntityPrefabData data = owner.GetPrefabData();
+		if (!data) return null;
+		return profiles.Get("prefab:" + data.GetPrefabName());
+	}
+
 	static BaseRadioComponent ReadNativeRadio(IEntity owner)
 	{
 		if (!owner || owner.IsDeleted()) return null;
@@ -74,7 +135,7 @@ class RICON_GameRadioEquipment
 	}
 
 	//! Scenario assumptions for the hardware only. The channel owns frequency and bandwidth.
-	static bool ApplyHardware(RICON_EGameRadioEquipment equipment, RICON_RadioRfProfile profile)
+	static bool ApplyHardware(RICON_EGameRadioEquipment equipment, RICON_RadioRfProfile profile, RICON_GameRadioHardwareSettings hardware = null)
 	{
 		if (!profile) return false;
 		switch (equipment)
@@ -95,6 +156,14 @@ class RICON_GameRadioEquipment
 				profile.m_fRxNoiseFigureDb = 5; profile.m_fRxSensitivityDbm = -115;
 				break;
 			default: return false;
+		}
+		if (hardware)
+		{
+			profile.m_fTxPowerDbm = hardware.m_fTxPowerDbm;
+			profile.m_fTxGainDbi = hardware.m_fTxGainDbi;
+			profile.m_fRxGainDbi = hardware.m_fRxGainDbi;
+			profile.m_fRxNoiseFigureDb = hardware.m_fRxNoiseFigureDb;
+			profile.m_fRxSensitivityDbm = hardware.m_fRxSensitivityDbm;
 		}
 		profile.m_sProvenance = RICON_RadioRfProfile.PROVENANCE_ASSUMED;
 		profile.m_bHasRxSensitivity = true;

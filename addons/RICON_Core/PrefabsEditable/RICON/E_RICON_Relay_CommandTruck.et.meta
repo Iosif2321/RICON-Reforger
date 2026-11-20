@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{0C9D0412FD58064F}PrefabsEditable/RICON/E_RICON_Relay_CommandTruck.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

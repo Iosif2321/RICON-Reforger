@@ -5,10 +5,44 @@ class RICON_RelayStationComponent : ScriptComponent
 {
 	protected bool m_bDeleted;
 	protected bool m_bRoleRevoked;
+	protected bool m_bGmEnabled = true;
+	protected float m_fGmInputMHz = 38;
+	protected float m_fGmOutputMHz = 38.2;
+	protected float m_fGmPowerDbm = 30;
+
+	float ReadGmField(RICON_EGmRfField field)
+	{
+		switch (field)
+		{
+			case RICON_EGmRfField.RELAY_ENABLED: return m_bGmEnabled;
+			case RICON_EGmRfField.RELAY_INPUT: return m_fGmInputMHz;
+			case RICON_EGmRfField.RELAY_OUTPUT: return m_fGmOutputMHz;
+			case RICON_EGmRfField.RELAY_POWER: return m_fGmPowerDbm;
+		}
+		return 0;
+	}
+
+	void WriteGmField(RICON_EGmRfField field, float value)
+	{
+		if (!RICON_CommsManagerComponent.IsAuthority() || m_bDeleted || m_bRoleRevoked || !RICON_Num.IsFinite(value)) return;
+		switch (field)
+		{
+			case RICON_EGmRfField.RELAY_ENABLED: m_bGmEnabled = value >= 0.5; break;
+			case RICON_EGmRfField.RELAY_INPUT:
+				if (value >= 30 && value <= 80) m_fGmInputMHz = value;
+				break;
+			case RICON_EGmRfField.RELAY_OUTPUT:
+				if (value >= 30 && value <= 80) m_fGmOutputMHz = value;
+				break;
+			case RICON_EGmRfField.RELAY_POWER:
+				if (value >= -30 && value <= 70) m_fGmPowerDbm = value;
+				break;
+		}
+	}
 	bool MatchesRadio(BaseRadioComponent radio)
 	{
 		IEntity owner = GetOwner();
-		return !m_bDeleted && !m_bRoleRevoked && owner && !owner.IsDeleted() && owner.GetWorld() && !owner.GetWorld().IsEditMode()
+		return m_bGmEnabled && !m_bDeleted && !m_bRoleRevoked && owner && !owner.IsDeleted() && owner.GetWorld() && !owner.GetWorld().IsEditMode()
 			&& radio && radio.GetOwner() == owner && radio.IsPowered()
 			&& owner.FindComponent(RICON_RelayStationComponent) == this;
 	}

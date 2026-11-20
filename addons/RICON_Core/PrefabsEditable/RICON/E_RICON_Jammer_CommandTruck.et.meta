@@ -1,0 +1,7 @@
+MetaFileClass {
+ Name "{30C2AE53E9A45E30}PrefabsEditable/RICON/E_RICON_Jammer_CommandTruck.et"
+ Configurations {
+  EntityTemplateResourceClass PC {}
+  EntityTemplateResourceClass HEADLESS : PC {}
+ }
+}

@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "_comment": {
+    "schema": "Версия формата конфигурации. Оставьте 1.",
+    "radios": "Отдельный блок на игровой prefab или именованный экземпляр. Укажите ровно одно из полей prefab и id. Если совпадений нет, действуют значения типа.",
+    "id": "Имя конкретной сущности, которой принадлежит радио, заданное в редакторе сценария. Имя должно быть уникальным. Блок id имеет приоритет над prefab.",
+    "prefab": "Полное имя ресурса с GUID из .et.meta. Совпадение точное.",
+    "txPowerDbm": "Мощность передатчика в игровой модели, дБм. Влияет на рассчитанный уровень сигнала у получателя.",
+    "txGainDbi": "Усиление передающей антенны в игровой модели, дБи.",
+    "rxGainDbi": "Усиление приёмной антенны в игровой модели, дБи.",
+    "rxNoiseFigureDb": "Коэффициент шума приёмника, дБ. Неотрицательный. При увеличении расчётный шум растёт.",
+    "rxSensitivityDbm": "Порог чувствительности в игровой модели, дБм. Более отрицательное значение соответствует более чувствительному приёмнику.",
+    "scope": "Опытные значения для игрового сценария. Частота и полоса задаются каналом сценария. Сервер читает файл при начале сценария."
+  },
+  "radios": [
+    {
+      "_comment": "Карманная AN/PRC-68 из RICON Radio Training, экземпляр 1",
+      "id": "RICON_Pocket_1",
+      "txPowerDbm": 30,
+      "txGainDbi": -3,
+      "rxGainDbi": -3,
+      "rxNoiseFigureDb": 8,
+      "rxSensitivityDbm": -105
+    },
+    {
+      "_comment": "Карманная AN/PRC-68 из RICON Radio Training, экземпляр 2",
+      "id": "RICON_Pocket_2",
+      "txPowerDbm": 30,
+      "txGainDbi": -3,
+      "rxGainDbi": -3,
+      "rxNoiseFigureDb": 8,
+      "rxSensitivityDbm": -105
+    },
+    {
+      "_comment": "Рюкзачная AN/PRC-77 из RICON Radio Training, экземпляр 1",
+      "id": "RICON_Manpack_1",
+      "txPowerDbm": 37,
+      "txGainDbi": 0,
+      "rxGainDbi": 0,
+      "rxNoiseFigureDb": 6,
+      "rxSensitivityDbm": -112
+    },
+    {
+      "_comment": "Рюкзачная AN/PRC-77 из RICON Radio Training, экземпляр 2",
+      "id": "RICON_Manpack_2",
+      "txPowerDbm": 37,
+      "txGainDbi": 0,
+      "rxGainDbi": 0,
+      "rxNoiseFigureDb": 6,
+      "rxSensitivityDbm": -112
+    },
+    {
+      "_comment": "Автомобильная станция УАЗ из RICON Radio Training, экземпляр 1",
+      "id": "RICON_Vehicle_1",
+      "txPowerDbm": 43,
+      "txGainDbi": 2,
+      "rxGainDbi": 2,
+      "rxNoiseFigureDb": 5,
+      "rxSensitivityDbm": -115
+    },
+    {
+      "_comment": "Автомобильная станция УАЗ из RICON Radio Training, экземпляр 2",
+      "id": "RICON_Vehicle_2",
+      "txPowerDbm": 43,
+      "txGainDbi": 2,
+      "rxGainDbi": 2,
+      "rxNoiseFigureDb": 5,
+      "rxSensitivityDbm": -115
+    }
+  ]
+}
