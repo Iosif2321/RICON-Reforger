@@ -3,6 +3,7 @@ Vehicle : "{259EE7B78C51B624}Prefabs/Vehicles/Wheeled/UAZ469/UAZ469.et" {
  components {
   BaseRadioComponent "{5AD4F813E67ECBF1}" {
    "Turned on" 1
+   "Encryption key" "RICON_TRAINING"
    Transceivers {
     IntercomTransceiver "{5AD4F813E67ECBCD}" {}
     RadioTransceiver "{3E6EF8A780334F13}" {

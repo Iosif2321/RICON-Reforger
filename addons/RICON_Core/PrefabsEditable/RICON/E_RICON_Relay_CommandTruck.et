@@ -9,7 +9,7 @@ Vehicle : "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.
   RICON_RelayStationComponent "{B462D974D3F4492E}" {}
   BaseRadioComponent "{51EAE036CCD0A08E}" {
    "Turned on" 1
-   "Encryption key" ""
+   "Encryption key" "RICON_TRAINING"
    Transceivers {
     RadioTransceiver "{DE86D8D5B7504B73}" {
      ChannelFrequency 38000
@@ -24,6 +24,7 @@ Vehicle : "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.
      "Frequency resolution" 25
     }
     RelayTransceiver "{C01FD57F5E897949}" {
+     "Any frequency" 0
      ChannelFrequency 38000
      "Transmitting Range" 1500
      "Min tunable frequency" 30000

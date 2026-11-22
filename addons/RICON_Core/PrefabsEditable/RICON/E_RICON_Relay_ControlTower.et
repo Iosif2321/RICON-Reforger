@@ -9,7 +9,7 @@ SCR_DestructibleBuildingEntity : "{F6FC9703E7F4FDCA}Prefabs/Structures/Military/
   RICON_RelayStationComponent "{197B5E18781A4327}" {}
   BaseRadioComponent "{DC5FDFB24ACFC877}" {
    "Turned on" 1
-   "Encryption key" ""
+   "Encryption key" "RICON_TRAINING"
    Transceivers {
     RadioTransceiver "{27D74078E246327C}" {
      ChannelFrequency 38000
@@ -24,6 +24,7 @@ SCR_DestructibleBuildingEntity : "{F6FC9703E7F4FDCA}Prefabs/Structures/Military/
      "Frequency resolution" 25
     }
     RelayTransceiver "{584A6595B89BD2C1}" {
+     "Any frequency" 0
      ChannelFrequency 38000
      "Transmitting Range" 1500
      "Min tunable frequency" 30000

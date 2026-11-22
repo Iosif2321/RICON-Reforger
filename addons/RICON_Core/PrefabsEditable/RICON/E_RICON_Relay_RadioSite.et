@@ -9,7 +9,7 @@ GenericEntity : "{ABA12EC2F6D0F778}Prefabs/Props/Military/Compositions/USSR/Radi
   RICON_RelayStationComponent "{1F31F5A12B782C06}" {}
   BaseRadioComponent "{FBF9747C900DFF74}" {
    "Turned on" 1
-   "Encryption key" ""
+   "Encryption key" "RICON_TRAINING"
    Transceivers {
     RadioTransceiver "{1FC43E3CE819E383}" {
      ChannelFrequency 38000
@@ -24,6 +24,7 @@ GenericEntity : "{ABA12EC2F6D0F778}Prefabs/Props/Military/Compositions/USSR/Radi
      "Frequency resolution" 25
     }
     RelayTransceiver "{CC668DD84D7FB1CB}" {
+     "Any frequency" 0
      ChannelFrequency 38000
      "Transmitting Range" 1500
      "Min tunable frequency" 30000

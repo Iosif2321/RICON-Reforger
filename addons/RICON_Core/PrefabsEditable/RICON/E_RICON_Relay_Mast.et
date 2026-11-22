@@ -9,7 +9,7 @@ GenericEntity : "{063451452B71ED11}Prefabs/Props/Military/Antennas/Antenna_R142/
   RICON_RelayStationComponent "{FD7890DEDC99E3D2}" {}
   ScriptedRadioComponent "{5CB8818C71F12C73}" {
    "Turned on" 1
-   "Encryption key" ""
+   "Encryption key" "RICON_TRAINING"
    Transceivers {
     RadioTransceiver "{80371A19960048D9}" {
      ChannelFrequency 38000
@@ -24,6 +24,7 @@ GenericEntity : "{063451452B71ED11}Prefabs/Props/Military/Antennas/Antenna_R142/
      "Frequency resolution" 25
     }
     RelayTransceiver "{FA1F0310582B9DB4}" {
+     "Any frequency" 0
      ChannelFrequency 38000
      "Transmitting Range" 1500
      "Min tunable frequency" 30000

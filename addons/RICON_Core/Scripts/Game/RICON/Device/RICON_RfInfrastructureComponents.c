@@ -62,7 +62,8 @@ class RICON_RelayStationComponent : ScriptComponent
 		BaseRadioComponent radio = RICON_GameRadioEquipment.ReadNativeRadio(owner);
 		if (!radio) return;
 		bool active = m_bGmEnabled && !m_bRoleRevoked && !RICON_StartupStatusProtocol.InGameVoiceRequested();
-		for (int i = 0; i < radio.TransceiversCount(); i++)
+		// The RICON relay is appended after any inherited native relay.
+		for (int i = radio.TransceiversCount() - 1; i >= 0; i--)
 		{
 			RelayTransceiver relay = RelayTransceiver.Cast(radio.GetTransceiver(i));
 			if (!relay) continue;

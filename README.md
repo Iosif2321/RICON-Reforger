@@ -10,17 +10,17 @@
 
 </div>
 
-## RICON 0.6.4-alpha.2 · штатный VoN
+## RICON 0.6.4 · штатный VoN
 
 Игровой аддон добавляет частотно-избирательное подавление радиослотов и одночастотные объекты ретрансляции на выделенном сервере. Радио и DIRECT работают через Reforger. Для обычного запуска достаточно игрового аддона.
 
-[Игровой выпуск](https://github.com/Iosif2321/RICON-Reforger/releases/tag/0.6.4-alpha.2) · [Установка](docs/INSTALL_RU.md) · [Настройки РЭБ и ретрансляторов](docs/GM_RF_INFRASTRUCTURE_RU.md)
+[Игровой выпуск](https://github.com/Iosif2321/RICON-Reforger/releases/tag/0.6.4) · [Установка](docs/INSTALL_RU.md) · [Настройки РЭБ и ретрансляторов](docs/GM_RF_INFRASTRUCTURE_RU.md)
 
-## Выпуск 0.6.3
+## Пакет TeamSpeak 0.6.3
 
 Игровой аддон для Arma Reforger и плагин радиосвязи для TeamSpeak 3.6.2 x64. Версии отображаются в главном меню. Обновления плагина подписаны и применяются после выхода из TeamSpeak.
 
-[Скачать выпуск](https://github.com/Iosif2321/RICON-Reforger/releases/latest) · [Установка на Windows](docs/INSTALL_RU.md) · [Сборка плагина](tools/RICON_TS3Probe/BUILD.md)
+[Открыть выпуск 0.6.3](https://github.com/Iosif2321/RICON-Reforger/releases/tag/0.6.3) · [Установка на Windows](docs/INSTALL_RU.md) · [Сборка плагина](tools/RICON_TS3Probe/BUILD.md)
 
 ## Радиооборудование и Game Master в текущих исходниках
 
