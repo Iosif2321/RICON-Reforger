@@ -122,6 +122,7 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 	protected ref map<string, ref RICON_GameRadioHardwareSettings> m_MixedRadioHardware;
 	protected ref map<IEntity, ref RICON_GmJammerRole> m_GmJammers = new map<IEntity, ref RICON_GmJammerRole>();
 	protected int m_iGmEmissionHighWater;
+	protected ref map<BaseTransceiver, ref RICON_StockJammerSlot> m_StockJammerMutes = new map<BaseTransceiver, ref RICON_StockJammerSlot>();
 	[Attribute("1500", UIWidgets.EditBox, "Bounded server PTT lease milliseconds; no automatic renewal")]
 	protected int m_iInventoryPttTtlMs;
 
@@ -331,6 +332,7 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 			PollTs3Bindings();
 			if (m_GameRfProfile && status == "OK" && attempt == m_iGameRfAttempt) PublishGameOpenRadioRfTick(expectedEpoch);
 		}
+		PollStockJamming(inventory, expectedEpoch, status);
 		ReportInventory(status);
 		if (CurrentInventory(inventory, expectedEpoch) && (status == "CLOSED" || status == "SCOPE_LOST")) StopInventory();
 	}
@@ -1793,6 +1795,7 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 	{
 		if (m_bInventoryStopping) return;
 		m_bInventoryStopping = true;
+		UpdateStockJammerMutes(null);
 		m_GameOpenRadioPcmOwner = null;
 		m_iGameOpenRadioPcmMaxAgeMs = 0;
 		if (m_GameRelayInputPcmSeries) m_GameRelayInputPcmSeries.Close();
@@ -1827,6 +1830,105 @@ class RICON_GameRadioManagerComponent : RICON_CommsManagerComponent
 			m_bInventoryStarted = false;
 		}
 		m_bInventoryStopping = false;
+	}
+
+	protected void PollStockJamming(RICON_GameRadioInventory inventory, int epoch, string status)
+	{
+		if (m_GmJammers.IsEmpty() && m_StockJammerMutes.IsEmpty()) return;
+		map<BaseTransceiver, ref RICON_StockJammerSlot> requested = new map<BaseTransceiver, ref RICON_StockJammerSlot>();
+		if (RplSession.Mode() == RplMode.Dedicated && m_GameRfProfile && m_bInventoryMixedEquipment
+			&& !RICON_StartupStatusProtocol.InGameVoiceRequested() && status == "OK" && CurrentInventory(inventory, epoch))
+		{
+			bool active;
+			foreach (IEntity entity, RICON_GmJammerRole role : m_GmJammers)
+			{
+				if (!role.m_bEnabled) continue;
+				active = true;
+				break;
+			}
+			if (active && !BuildStockJammerMutes(inventory, epoch, requested)) requested.Clear();
+		}
+		UpdateStockJammerMutes(requested);
+	}
+
+	protected bool BuildStockJammerMutes(RICON_GameRadioInventory inventory, int epoch,
+		map<BaseTransceiver, ref RICON_StockJammerSlot> requested)
+	{
+		array<ref RICON_StockJammerRadio> radios = {};
+		if (!inventory.ReadStockRadios(radios)) return false;
+		RICON_PairServiceInput input = new RICON_PairServiceInput();
+		input.m_iNowMs = m_InventoryBridge.ReadWireAuthorityTime(m_InventoryLifecycle);
+		input.m_iSessionEpoch = epoch;
+		input.m_Context = new RICON_RadioQueryContext();
+		input.m_Context.m_sBandId = m_GameRfProfile.m_sBandId;
+		input.m_Context.m_sModelId = "free_space";
+		input.m_Context.m_sNoiseEnvironmentId = "none";
+		input.m_Context.m_sIntelligibilityModelId = "linear_test";
+		RICON_LinkEvaluator evaluator = GetBandEvaluator(input.m_Context.m_sBandId);
+		array<ref RICON_StockJammerSlot> slots = {};
+		foreach (RICON_StockJammerRadio inventoried : radios)
+		{
+			BaseRadioComponent radio = inventoried.m_Radio;
+			int device = inventoried.m_iDeviceId;
+			vector position = RICON_OpenRadioPairProjector.AntennaPosition(radio.GetOwner(), m_GameRfProfile.m_vAntennaOffset);
+			for (int index = 0; index < radio.TransceiversCount(); index++)
+			{
+				RadioTransceiver slot = RadioTransceiver.Cast(radio.GetTransceiver(index));
+				if (!slot || slot.GetFrequency() <= 0) continue;
+				RICON_PairEndpoint endpoint = new RICON_PairEndpoint();
+				if (!RICON_BaseRadioObservationReader.TryRead(radio, device, index, position, endpoint.m_Observation)) return false;
+				endpoint.m_Profile = ReadGameEndpointProfile(m_GameRfProfile, radio, device, index);
+				if (!endpoint.m_Profile) return false;
+				endpoint.m_Profile.m_iExpectedTuningValue = endpoint.m_Observation.m_iTuningValue;
+				endpoint.m_Profile.m_fFrequencyMHz = endpoint.m_Observation.m_iTuningValue * 0.001;
+				RICON_StockJammerSlot candidate = new RICON_StockJammerSlot();
+				candidate.m_iPlayerId = inventoried.m_iPlayerId;
+				candidate.m_Radio = radio;
+				candidate.m_Slot = slot;
+				candidate.m_Endpoint = endpoint;
+				slots.Insert(candidate);
+				input.m_aEndpoints.Insert(endpoint);
+			}
+		}
+		if (!evaluator || !BuildGmRxEnvironments(input)) return false;
+		if (!input.m_bUseRxEnvironments) return true;
+		if (input.m_aRxEnvironments.Count() != slots.Count()) return false;
+		int budget = m_GameRfProfile.m_Limits.m_iMaxPairs;
+		for (int i = 0; i < slots.Count(); i++)
+		{
+			RICON_RxEnvironment environment = input.m_aRxEnvironments[i];
+			if (!environment.m_bHasInterference) continue;
+			RICON_StockJammerSlot rx = slots[i];
+			if (rx.DominatedBy(environment, input.m_Context, evaluator, slots, budget))
+				requested.Insert(rx.m_Slot, rx);
+			if (budget < 0) return false;
+		}
+		return CurrentInventory(inventory, epoch);
+	}
+
+	protected void UpdateStockJammerMutes(map<BaseTransceiver, ref RICON_StockJammerSlot> requested)
+	{
+		for (int i = m_StockJammerMutes.Count() - 1; i >= 0; i--)
+		{
+			RICON_StockJammerSlot held = m_StockJammerMutes.GetElement(i);
+			if (requested && requested.Contains(held.m_Slot) && held.SameSlot(true) && held.m_Slot.IsMuted()) continue;
+			if (held.SameSlot(false) && held.m_Slot.IsMuted())
+			{
+				held.m_Slot.SetMuteState(false);
+				if (held.m_Slot.IsMuted()) continue;
+				held.Trace(false);
+			}
+			m_StockJammerMutes.RemoveElement(i);
+		}
+		if (!requested) return;
+		foreach (BaseTransceiver slot, RICON_StockJammerSlot rx : requested)
+		{
+			if (m_StockJammerMutes.Contains(slot) || !rx.SameSlot(true) || slot.IsMuted()) continue;
+			slot.SetMuteState(true);
+			if (!slot.IsMuted()) continue;
+			m_StockJammerMutes.Insert(slot, rx);
+			rx.Trace(true);
+		}
 	}
 
 	override void OnGameEnd()

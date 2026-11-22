@@ -23,6 +23,13 @@ Vehicle : "{1BABF6B33DA0AEB6}Prefabs/Vehicles/Wheeled/Ural4320/Ural4320_command.
      "Max tunable frequency" 80000
      "Frequency resolution" 25
     }
+    RelayTransceiver "{C01FD57F5E897949}" {
+     ChannelFrequency 38000
+     "Transmitting Range" 1500
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
    }
   }
  }

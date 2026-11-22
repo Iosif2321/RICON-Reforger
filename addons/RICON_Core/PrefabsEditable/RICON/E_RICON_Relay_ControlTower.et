@@ -23,6 +23,13 @@ SCR_DestructibleBuildingEntity : "{F6FC9703E7F4FDCA}Prefabs/Structures/Military/
      "Max tunable frequency" 80000
      "Frequency resolution" 25
     }
+    RelayTransceiver "{584A6595B89BD2C1}" {
+     ChannelFrequency 38000
+     "Transmitting Range" 1500
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
    }
   }
  }

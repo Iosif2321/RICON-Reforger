@@ -23,6 +23,13 @@ GenericEntity : "{063451452B71ED11}Prefabs/Props/Military/Antennas/Antenna_R142/
      "Max tunable frequency" 80000
      "Frequency resolution" 25
     }
+    RelayTransceiver "{FA1F0310582B9DB4}" {
+     ChannelFrequency 38000
+     "Transmitting Range" 1500
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
    }
   }
  }

@@ -659,7 +659,9 @@ modded class ArmaReforgerScripted
 						&& m_sRICON_TS3RouteAnsweredNonce == m_sRICON_TS3RouteNonce) route = "INACTIVE";
 					if (route == "INACTIVE" && m_bRICON_TS3RouteAnswerActive) route = "ACTIVE";
 				}
-				string bridge = string.Format("TS3 metadata  tab=%1  PTT=%2  route=%3", m_bRICON_TS3TabEnabled, m_RICON_TS3PttEnabled, route);
+				string bridge = "Transport: stock VoN";
+				if (m_RICON_TS3LiveEnabled || m_bRICON_TS3TabEnabled || m_RICON_TS3PttEnabled || m_RICON_TS3RouteEnabled)
+					bridge = string.Format("TS3 metadata  tab=%1  PTT=%2  route=%3", m_bRICON_TS3TabEnabled, m_RICON_TS3PttEnabled, route);
 				m_RICON_RadioDevHud.Update(SCR_PlayerController.Cast(GetPlayerController()), bridge);
 			}
 		}

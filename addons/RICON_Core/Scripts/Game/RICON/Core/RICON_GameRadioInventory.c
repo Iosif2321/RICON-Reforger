@@ -134,6 +134,25 @@ class RICON_GameRadioInventory
 
 	int GetRecordCount() { return m_Records.Count(); }
 
+	//! A stock-VoN RF sample includes slots previously muted by the jammer.
+	bool ReadStockRadios(array<ref RICON_StockJammerRadio> radios)
+	{
+		if (!radios || m_bBusy || m_bClosed || FreshNow() < 0) return false;
+		foreach (RICON_GameRadioInventoryRecord record : m_Records)
+		{
+			RICON_GameRadioInventoryObservation observation = record.m_Observation;
+			if (!observation.m_bPowered) continue;
+			RICON_GameRadioNativeHandle handle = RICON_GameRadioNativeHandle.Cast(observation.m_Handle);
+			if (!handle || !Current(observation) || !handle.Radio()) return false;
+			RICON_StockJammerRadio radio = new RICON_StockJammerRadio();
+			radio.m_iDeviceId = record.m_iDeviceId;
+			radio.m_iPlayerId = observation.m_iPlayerId;
+			radio.m_Radio = handle.Radio();
+			radios.Insert(radio);
+		}
+		return SameScope();
+	}
+
 	int GetReconcileRevision()
 	{
 		if (m_bClosed || m_bBusy || m_iReconcileRevision == int.MAX) return 0;

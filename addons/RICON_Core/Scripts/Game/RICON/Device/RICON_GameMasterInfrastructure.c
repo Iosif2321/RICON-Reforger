@@ -9,7 +9,8 @@ enum RICON_EGmRfField
 	RELAY_ENABLED,
 	RELAY_INPUT,
 	RELAY_OUTPUT,
-	RELAY_POWER
+	RELAY_POWER,
+	RELAY_STOCK_RANGE
 }
 
 // One server-side role per selected entity. The entity remains the live position/ownership witness.
@@ -159,3 +160,5 @@ class RICON_GmRelayInputAttribute : RICON_GmRfEditorAttribute {}
 class RICON_GmRelayOutputAttribute : RICON_GmRfEditorAttribute {}
 [BaseContainerProps()]
 class RICON_GmRelayPowerAttribute : RICON_GmRfEditorAttribute {}
+[BaseContainerProps()]
+class RICON_GmRelayStockRangeAttribute : RICON_GmRfEditorAttribute {}

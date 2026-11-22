@@ -9,6 +9,15 @@ class RICON_RelayStationComponent : ScriptComponent
 	protected float m_fGmInputMHz = 38;
 	protected float m_fGmOutputMHz = 38.2;
 	protected float m_fGmPowerDbm = 30;
+	protected float m_fGmStockRangeM = 1500;
+
+	override void OnPostInit(IEntity owner)
+	{
+		super.OnPostInit(owner);
+		SetEventMask(owner, EntityEvent.INIT);
+	}
+
+	override void EOnInit(IEntity owner) { ApplyStockRelay(); }
 
 	float ReadGmField(RICON_EGmRfField field)
 	{
@@ -18,6 +27,7 @@ class RICON_RelayStationComponent : ScriptComponent
 			case RICON_EGmRfField.RELAY_INPUT: return m_fGmInputMHz;
 			case RICON_EGmRfField.RELAY_OUTPUT: return m_fGmOutputMHz;
 			case RICON_EGmRfField.RELAY_POWER: return m_fGmPowerDbm;
+			case RICON_EGmRfField.RELAY_STOCK_RANGE: return m_fGmStockRangeM;
 		}
 		return 0;
 	}
@@ -37,6 +47,33 @@ class RICON_RelayStationComponent : ScriptComponent
 			case RICON_EGmRfField.RELAY_POWER:
 				if (value >= -30 && value <= 70) m_fGmPowerDbm = value;
 				break;
+			case RICON_EGmRfField.RELAY_STOCK_RANGE:
+				if (value >= 1 && value <= 12000) m_fGmStockRangeM = value;
+				break;
+		}
+		ApplyStockRelay();
+	}
+
+	protected void ApplyStockRelay()
+	{
+		IEntity owner = GetOwner();
+		if (!RICON_CommsManagerComponent.IsAuthority() || m_bDeleted || !owner || !owner.GetWorld()
+			|| owner.GetWorld().IsEditMode()) return;
+		BaseRadioComponent radio = RICON_GameRadioEquipment.ReadNativeRadio(owner);
+		if (!radio) return;
+		bool active = m_bGmEnabled && !m_bRoleRevoked && !RICON_StartupStatusProtocol.InGameVoiceRequested();
+		for (int i = 0; i < radio.TransceiversCount(); i++)
+		{
+			RelayTransceiver relay = RelayTransceiver.Cast(radio.GetTransceiver(i));
+			if (!relay) continue;
+			if (active)
+			{
+				int tune = Math.Round(m_fGmInputMHz * 1000);
+				if (relay.GetFrequency() != tune) relay.SetFrequency(tune);
+				if (relay.GetRange() != m_fGmStockRangeM) relay.SetRange(m_fGmStockRangeM);
+			}
+			if (relay.IsMuted() == active) relay.SetMuteState(!active);
+			active = false;
 		}
 	}
 	bool MatchesRadio(BaseRadioComponent radio)
@@ -51,6 +88,7 @@ class RICON_RelayStationComponent : ScriptComponent
 	{
 		if (!RICON_CommsManagerComponent.IsAuthority()) return false;
 		m_bRoleRevoked = true;
+		ApplyStockRelay();
 		return true;
 	}
 

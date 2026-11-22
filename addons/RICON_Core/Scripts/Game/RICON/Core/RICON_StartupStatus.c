@@ -1,12 +1,26 @@
 //! Local startup metadata. These files describe plugin status and grant no voice permission.
 class RICON_StartupStatusProtocol
 {
-	static const string MOD_VERSION = "0.6.3";
+	static const string MOD_VERSION = "0.6.4";
 	static const string WANTED_PLUGIN_VERSION = "0.6.3";
 	static const string GAME_PATH = "$profile:ricon-status-game.txt";
 	static const string PLUGIN_PATH = "$profile:ricon-status-plugin.txt";
 	static const string ACK_PATH = "$profile:ricon-status-ack.txt";
 	static const int TOKEN_MS = 3000, FRESH_MS = 6500, MISSING_MS = 5000, BANNER_MS = 12000;
+
+	static bool InGameVoiceRequested()
+	{
+		string enabled;
+		return System.GetCLIParam("riconInGameVoice", enabled) && enabled == "1";
+	}
+
+	static bool Ts3StatusRequested()
+	{
+		string enabled;
+		return (System.GetCLIParam("riconTS3Status", enabled) && enabled == "1")
+			|| RICON_TS3GameBridge.Requested() || RICON_TS3GameBridge.PttRequested()
+			|| RICON_TS3GameBridge.TabBindingRequested() || RICON_TS3GameBridge.RouteRequested();
+	}
 
 	static bool LocalClient()
 	{
@@ -149,6 +163,11 @@ class RICON_StartupStatus
 		{
 			s_Instance.m_bStarted = true;
 			s_Instance.m_iStartedAt = System.GetTickCount();
+			if (!RICON_StartupStatusProtocol.Ts3StatusRequested())
+			{
+				Print("[RICON_STARTUP] mode=STOCK_VOICE");
+				return s_Instance;
+			}
 			s_Instance.m_iSession = System.GetUnixTime();
 			s_Instance.m_sPreviousGameToken = s_Instance.ExistingToken(RICON_StartupStatusProtocol.GAME_PATH);
 			s_Instance.m_sPreviousPluginToken = s_Instance.ExistingToken(RICON_StartupStatusProtocol.PLUGIN_PATH);
@@ -253,6 +272,12 @@ class RICON_StartupStatus
 
 	void Text(out string title, out string detail)
 	{
+		if (!RICON_StartupStatusProtocol.Ts3StatusRequested())
+		{
+			title = "Штатная связь Reforger";
+			detail = "Радио и DIRECT работают через VoN игры.";
+			return;
+		}
 		string state = State(System.GetTickCount());
 		title = "Проверка плагина TeamSpeak…";
 		detail = "Ожидается RICON " + RICON_StartupStatusProtocol.WANTED_PLUGIN_VERSION + ".";

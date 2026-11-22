@@ -23,6 +23,13 @@ GenericEntity : "{ABA12EC2F6D0F778}Prefabs/Props/Military/Compositions/USSR/Radi
      "Max tunable frequency" 80000
      "Frequency resolution" 25
     }
+    RelayTransceiver "{CC668DD84D7FB1CB}" {
+     ChannelFrequency 38000
+     "Transmitting Range" 1500
+     "Min tunable frequency" 30000
+     "Max tunable frequency" 80000
+     "Frequency resolution" 25
+    }
    }
   }
  }
